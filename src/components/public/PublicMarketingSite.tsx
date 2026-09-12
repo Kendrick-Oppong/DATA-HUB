@@ -173,9 +173,7 @@ export const PublicMarketingSite: React.FC<PublicMarketingSiteProps> = ({
               <div className="grid items-center gap-10 lg:grid-cols-[1.02fr_0.98fr] lg:gap-16">
                 <div className="relative z-10 space-y-7">
                   <div className="flex flex-wrap items-center gap-3 text-xs font-bold uppercase text-muted-foreground">
-                    <span className="inline-flex items-center gap-2 text-primary">
-                      <span className="size-2 rounded-full bg-emerald-500" />
-                      Ghana's digital service rail
+                    <span className="inline-flex items-center gap-2 text-primary">                      Ghana's digital service rail
                     </span>
                     <span className="h-px w-8 bg-border" />
                     <span>Live since 2026</span>
@@ -252,10 +250,7 @@ export const PublicMarketingSite: React.FC<PublicMarketingSiteProps> = ({
                           </p>
                         </div>
                       </div>
-                      <Badge variant="secondary" className="gap-1.5">
-                        <span className="size-1.5 rounded-full bg-emerald-500" />
-                        Operational
-                      </Badge>
+                      <Badge className="gap-1.5"> Operational</Badge>
                     </div>
 
                     <div className="space-y-5 p-5 sm:p-6">
