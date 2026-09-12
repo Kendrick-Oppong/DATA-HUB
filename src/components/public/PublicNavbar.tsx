@@ -148,24 +148,6 @@ export const PublicNavbar: React.FC<PublicNavbarProps> = ({
           </div>
         </nav>
 
-        {/* Live Operational Beacon & Storefront Link */}
-        <div className="hidden lg:flex items-center gap-2">
-          <button
-            onClick={() => onNavigateToDashboard("storefront")}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-primary/30 bg-primary/10 text-primary hover:bg-primary/20 text-xs font-bold transition-all cursor-pointer"
-          >
-            <Store className="w-3.5 h-3.5" />
-            <span>Storefront Demo</span>
-          </button>
-
-          <div className="hidden 2xl:flex shrink-0 items-center gap-2 px-2.5 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-xs">
-            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-            <span className="text-emerald-700 dark:text-emerald-400 font-bold text-[10px]">
-              99.8% Core Uptime
-            </span>
-          </div>
-        </div>
-
         {/* Right CTA / Auth Controls */}
         <div className="flex items-center gap-1 rounded-xl border border-border/70 bg-muted/40 p-1">
           {/* Credentials Cheat Sheet */}
@@ -285,7 +267,11 @@ export const PublicNavbar: React.FC<PublicNavbarProps> = ({
             className="p-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted xl:hidden cursor-pointer"
             aria-label="Toggle mobile menu"
           >
-            {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            {mobileMenuOpen ? (
+              <X className="w-5 h-5" />
+            ) : (
+              <Menu className="w-5 h-5" />
+            )}
           </button>
         </div>
       </div>
