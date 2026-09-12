@@ -173,7 +173,9 @@ export const PublicMarketingSite: React.FC<PublicMarketingSiteProps> = ({
               <div className="grid items-center gap-10 lg:grid-cols-[1.02fr_0.98fr] lg:gap-16">
                 <div className="relative z-10 space-y-7">
                   <div className="flex flex-wrap items-center gap-3 text-xs font-bold uppercase text-muted-foreground">
-                    <span className="inline-flex items-center gap-2 text-primary">                      Ghana's digital service rail
+                    <span className="inline-flex items-center gap-2 text-primary">
+                      {" "}
+                      Ghana's digital service rail
                     </span>
                     <span className="h-px w-8 bg-border" />
                     <span>Live since 2026</span>
@@ -918,8 +920,8 @@ export const PublicMarketingSite: React.FC<PublicMarketingSiteProps> = ({
                     Where to find your reference
                   </p>
                   <p className="mt-0.5">
-                    It is shown on your receipt and sent after a successful Mobile
-                    Money payment.
+                    It is shown on your receipt and sent after a successful
+                    Mobile Money payment.
                   </p>
                 </div>
 
