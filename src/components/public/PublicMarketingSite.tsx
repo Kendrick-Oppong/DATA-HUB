@@ -686,22 +686,6 @@ export const PublicMarketingSite: React.FC<PublicMarketingSiteProps> = ({
                       agent
                     </Button>
                   </div>
-                  <div className="flex flex-wrap gap-x-8 gap-y-3 border-t border-border/70 pt-6">
-                    {[
-                      { value: "03", label: "Networks live" },
-                      { value: "42s", label: "Avg dispatch" },
-                      { value: "99.8%", label: "SLA uptime" },
-                    ].map((s) => (
-                      <div key={s.label}>
-                        <p className="text-2xl font-black text-foreground tabular-nums">
-                          {s.value}
-                        </p>
-                        <p className="text-[11px] text-muted-foreground mt-0.5">
-                          {s.label}
-                        </p>
-                      </div>
-                    ))}
-                  </div>
                 </div>
 
                 {/* Live network card */}

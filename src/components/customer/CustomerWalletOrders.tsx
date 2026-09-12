@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Wallet,
   Clock,
@@ -6,32 +6,26 @@ import {
   BookOpen,
   User,
   Search,
-  Filter,
-  ArrowUpRight,
-  ArrowDownLeft,
   CheckCircle2,
   AlertCircle,
   Plus,
   Send,
-  RotateCcw,
-  ExternalLink,
   ShieldCheck,
-  Smartphone,
   Bell,
   Check,
   Trash2,
   KeyRound,
   Palette,
   Laptop,
-  CreditCard,
   Lock,
 } from "lucide-react";
 import { Order, Transaction, Complaint, AppTheme } from "../../types";
 import { SignalRail } from "../common/SignalRail";
-import { themeOptions } from "../../lib/themes";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Badge } from "../ui/badge";
+import { Label } from "../ui/label";
+import { Textarea } from "../ui/textarea";
 import {
   Card,
   CardHeader,
@@ -47,6 +41,31 @@ import {
   TableRow,
   TableCell,
 } from "../ui/table";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "../ui/dialog";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "../ui/pagination";
+
 
 interface CustomerWalletOrdersProps {
   view:
@@ -85,20 +104,23 @@ export const CustomerWalletOrders: React.FC<CustomerWalletOrdersProps> = ({
   onSetTheme,
   onOpenSecurityPins,
 }) => {
+  // Pagination constants
+  const ORDERS_PER_PAGE = 5;
+  const TX_PER_PAGE = 5;
+
   // Orders State & Deep Filters
   const [orderSearch, setOrderSearch] = useState("");
   const [orderFilterStatus, setOrderFilterStatus] = useState<string>("all");
   const [orderNetworkFilter, setOrderNetworkFilter] = useState<string>("all");
   const [orderServiceFilter, setOrderServiceFilter] = useState<string>("all");
   const [orderSortBy, setOrderSortBy] = useState<string>("newest");
-  const [orderViewMode, setOrderViewMode] = useState<"table" | "cards">(
-    "table",
-  );
+  const [ordersPage, setOrdersPage] = useState(1);
 
   // Transactions State & Filters
   const [txSearch, setTxSearch] = useState("");
   const [txTypeFilter, setTxTypeFilter] = useState<string>("all");
   const [txChannelFilter, setTxChannelFilter] = useState<string>("all");
+  const [txPage, setTxPage] = useState(1);
 
   // Notifications State
   const [notifications, setNotifications] = useState([
@@ -155,7 +177,7 @@ export const CustomerWalletOrders: React.FC<CustomerWalletOrdersProps> = ({
   );
   const [newReplyText, setNewReplyText] = useState("");
   const [showNewTicketModal, setShowNewTicketModal] = useState(false);
-  const [ticketCategory, setTicketCategory] = useState<any>("delivery_delay");
+  const [ticketCategory, setTicketCategory] = useState<string>("delivery_delay");
   const [ticketSubject, setTicketSubject] = useState("");
   const [ticketOrderRef, setTicketOrderRef] = useState("");
   const [ticketMessage, setTicketMessage] = useState("");
@@ -165,6 +187,21 @@ export const CustomerWalletOrders: React.FC<CustomerWalletOrdersProps> = ({
 
   const selectedTicket =
     complaints.find((c) => c.id === selectedTicketId) || complaints[0];
+
+  // Reset pagination on filter change
+  useEffect(() => {
+    setOrdersPage(1);
+  }, [
+    orderSearch,
+    orderFilterStatus,
+    orderNetworkFilter,
+    orderServiceFilter,
+    orderSortBy,
+  ]);
+
+  useEffect(() => {
+    setTxPage(1);
+  }, [txSearch, txTypeFilter, txChannelFilter]);
 
   // Robust Orders Filtering & Sorting
   const filteredOrders = orders
@@ -181,7 +218,9 @@ export const CustomerWalletOrders: React.FC<CustomerWalletOrdersProps> = ({
       const matchesNetwork =
         orderNetworkFilter === "all" || o.network === orderNetworkFilter;
       const matchesService =
-        orderServiceFilter === "all" || o.serviceType === orderServiceFilter;
+        orderServiceFilter === "all" ||
+        (o.serviceType &&
+          o.serviceType.toLowerCase().includes(orderServiceFilter.toLowerCase()));
       return matchesQuery && matchesStatus && matchesNetwork && matchesService;
     })
     .sort((a, b) => {
@@ -189,7 +228,7 @@ export const CustomerWalletOrders: React.FC<CustomerWalletOrdersProps> = ({
       if (orderSortBy === "amount-low") return a.amount - b.amount;
       if (orderSortBy === "oldest")
         return new Date(a.date).getTime() - new Date(b.date).getTime();
-      return new Date(b.date).getTime() - new Date(a.date).getTime(); // newest
+      return new Date(b.date).getTime() - new Date(a.date).getTime();
     });
 
   // Robust Transactions Filtering
@@ -206,6 +245,18 @@ export const CustomerWalletOrders: React.FC<CustomerWalletOrdersProps> = ({
       tx.channel.toLowerCase().includes(txChannelFilter.toLowerCase());
     return matchesQuery && matchesType && matchesChannel;
   });
+
+  // Pagination calculations
+  const totalOrderPages = Math.max(1, Math.ceil(filteredOrders.length / ORDERS_PER_PAGE));
+  const totalTxPages = Math.max(1, Math.ceil(filteredTransactions.length / TX_PER_PAGE));
+  const paginatedOrders = filteredOrders.slice(
+    (ordersPage - 1) * ORDERS_PER_PAGE,
+    ordersPage * ORDERS_PER_PAGE,
+  );
+  const paginatedTransactions = filteredTransactions.slice(
+    (txPage - 1) * TX_PER_PAGE,
+    txPage * TX_PER_PAGE,
+  );
 
   const handleSendReply = (e: React.FormEvent) => {
     e.preventDefault();
@@ -244,6 +295,8 @@ export const CustomerWalletOrders: React.FC<CustomerWalletOrdersProps> = ({
     setShowNewTicketModal(false);
     setTicketSubject("");
     setTicketMessage("");
+    setTicketOrderRef("");
+    setTicketCategory("delivery_delay");
   };
 
   const guides = [
@@ -277,6 +330,76 @@ export const CustomerWalletOrders: React.FC<CustomerWalletOrdersProps> = ({
     },
   ];
 
+  // Pagination renderer helper
+  const renderPagination = (
+    currentPage: number,
+    totalPages: number,
+    setPage: (page: number) => void,
+  ) => {
+    if (totalPages <= 1) return null;
+
+    const pages: (number | string)[] = [];
+    if (totalPages <= 7) {
+      for (let i = 1; i <= totalPages; i++) pages.push(i);
+    } else {
+      pages.push(1);
+      if (currentPage > 3) pages.push("...");
+      for (
+        let i = Math.max(2, currentPage - 1);
+        i <= Math.min(totalPages - 1, currentPage + 1);
+        i++
+      ) {
+        pages.push(i);
+      }
+      if (currentPage < totalPages - 2) pages.push("...");
+      pages.push(totalPages);
+    }
+
+    return (
+      <Pagination className="pt-4">
+        <PaginationContent>
+          <PaginationItem>
+            <PaginationPrevious
+              onClick={() => setPage(Math.max(1, currentPage - 1))}
+              className={
+                currentPage === 1
+                  ? "pointer-events-none opacity-50"
+                  : "cursor-pointer"
+              }
+            />
+          </PaginationItem>
+          {pages.map((p, idx) =>
+            p === "..." ? (
+              <PaginationItem key={`dots-${idx}`}>
+                <PaginationEllipsis />
+              </PaginationItem>
+            ) : (
+              <PaginationItem key={p}>
+                <PaginationLink
+                  onClick={() => setPage(p as number)}
+                  isActive={currentPage === p}
+                  className="cursor-pointer"
+                >
+                  {p}
+                </PaginationLink>
+              </PaginationItem>
+            ),
+          )}
+          <PaginationItem>
+            <PaginationNext
+              onClick={() => setPage(Math.min(totalPages, currentPage + 1))}
+              className={
+                currentPage === totalPages
+                  ? "pointer-events-none opacity-50"
+                  : "cursor-pointer"
+              }
+            />
+          </PaginationItem>
+        </PaginationContent>
+      </Pagination>
+    );
+  };
+
   return (
     <div className="space-y-6">
       {/* VIEW: WALLET & LEDGER */}
@@ -293,12 +416,13 @@ export const CustomerWalletOrders: React.FC<CustomerWalletOrdersProps> = ({
                 balance.
               </p>
             </div>
-            <button
+            <Button
               onClick={onOpenFundWallet}
-              className="px-5 py-2.5 rounded-xl bg-primary text-primary-foreground font-bold text-xs hover:bg-primary/90 transition-all flex items-center gap-1.5 shadow-sm cursor-pointer"
+              className="px-5 py-2.5 rounded-xl font-bold text-xs shadow-sm cursor-pointer"
             >
-              <span>+ Fund Wallet</span>
-            </button>
+              <Plus className="w-4 h-4 mr-1" />
+              Fund Wallet
+            </Button>
           </div>
 
           {/* Balances Grid */}
@@ -378,27 +502,32 @@ export const CustomerWalletOrders: React.FC<CustomerWalletOrdersProps> = ({
                     />
                   </div>
 
-                  <select
-                    value={txTypeFilter}
-                    onChange={(e) => setTxTypeFilter(e.target.value)}
-                    className="h-8 text-xs w-28 rounded-lg border border-input bg-background text-foreground px-2"
-                  >
-                    <option value="all">All Types</option>
-                    <option value="credit">Credits (+)</option>
-                    <option value="debit">Debits (-)</option>
-                  </select>
+                  <Select value={txTypeFilter} onValueChange={setTxTypeFilter}>
+                    <SelectTrigger className="h-8 w-32 text-xs">
+                      <SelectValue placeholder="All Types" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Types</SelectItem>
+                      <SelectItem value="credit">Credits (+)</SelectItem>
+                      <SelectItem value="debit">Debits (-)</SelectItem>
+                    </SelectContent>
+                  </Select>
 
-                  <select
+                  <Select
                     value={txChannelFilter}
-                    onChange={(e) => setTxChannelFilter(e.target.value)}
-                    className="h-8 text-xs w-32 rounded-lg border border-input bg-background text-foreground px-2"
+                    onValueChange={setTxChannelFilter}
                   >
-                    <option value="all">All Channels</option>
-                    <option value="MTN">MTN MoMo</option>
-                    <option value="Telecel">Telecel Cash</option>
-                    <option value="AT">AT Money</option>
-                    <option value="Wallet">Wallet Auto</option>
-                  </select>
+                    <SelectTrigger className="h-8 w-36 text-xs">
+                      <SelectValue placeholder="All Channels" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Channels</SelectItem>
+                      <SelectItem value="MTN">MTN MoMo</SelectItem>
+                      <SelectItem value="Telecel">Telecel Cash</SelectItem>
+                      <SelectItem value="AT">AT Money</SelectItem>
+                      <SelectItem value="Wallet">Wallet Auto</SelectItem>
+                    </SelectContent>
+                  </Select>
 
                   {(txSearch ||
                     txTypeFilter !== "all" ||
@@ -433,7 +562,7 @@ export const CustomerWalletOrders: React.FC<CustomerWalletOrdersProps> = ({
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {filteredTransactions.length === 0 ? (
+                  {paginatedTransactions.length === 0 ? (
                     <TableRow>
                       <TableCell
                         colSpan={6}
@@ -460,7 +589,7 @@ export const CustomerWalletOrders: React.FC<CustomerWalletOrdersProps> = ({
                       </TableCell>
                     </TableRow>
                   ) : (
-                    filteredTransactions.map((tx) => (
+                    paginatedTransactions.map((tx) => (
                       <TableRow key={tx.id}>
                         <TableCell className="font-mono font-bold text-foreground">
                           {tx.reference}
@@ -497,6 +626,13 @@ export const CustomerWalletOrders: React.FC<CustomerWalletOrdersProps> = ({
                   )}
                 </TableBody>
               </Table>
+
+              {/* Pagination */}
+              {filteredTransactions.length > TX_PER_PAGE && (
+                <div className="px-4 pb-4">
+                  {renderPagination(txPage, totalTxPages, setTxPage)}
+                </div>
+              )}
             </CardContent>
           </Card>
         </div>
@@ -516,32 +652,12 @@ export const CustomerWalletOrders: React.FC<CustomerWalletOrdersProps> = ({
                 or repeat purchases.
               </p>
             </div>
-
-            {/* View Mode Switcher */}
-            <div className="flex items-center gap-2">
-              <Button
-                variant={orderViewMode === "table" ? "default" : "outline"}
-                size="sm"
-                onClick={() => setOrderViewMode("table")}
-                className="text-xs font-semibold"
-              >
-                Table View
-              </Button>
-              <Button
-                variant={orderViewMode === "cards" ? "default" : "outline"}
-                size="sm"
-                onClick={() => setOrderViewMode("cards")}
-                className="text-xs font-semibold"
-              >
-                Detailed Cards
-              </Button>
-            </div>
           </div>
 
           {/* Deep Search & Multi-Filters Toolbar */}
-          <Card className="border-border shadow-xs">
+          <Card className="border-border !pt-0 shadow-xs">
             <CardContent className="p-4 space-y-3">
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2.5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-2.5">
                 {/* Search query */}
                 <div className="relative lg:col-span-2">
                   <Search className="absolute left-3 top-2.5 w-4 h-4 text-muted-foreground" />
@@ -555,99 +671,97 @@ export const CustomerWalletOrders: React.FC<CustomerWalletOrdersProps> = ({
                 </div>
 
                 {/* Status Filter */}
-                <select
+                <Select
                   value={orderFilterStatus}
-                  onChange={(e) => setOrderFilterStatus(e.target.value)}
-                  className="h-9 text-xs rounded-lg border border-input bg-background text-foreground px-2"
+                  onValueChange={setOrderFilterStatus}
                 >
-                  <option value="all">All Statuses</option>
-                  <option value="delivered">Delivered (Success)</option>
-                  <option value="processing">Processing (In Flight)</option>
-                  <option value="pending">Pending Gateway</option>
-                  <option value="failed">Failed</option>
-                  <option value="refunded">Refunded</option>
-                </select>
+                  <SelectTrigger className="h-9 text-xs w-full">
+                    <SelectValue placeholder="All Statuses" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Statuses</SelectItem>
+                    <SelectItem value="delivered">Delivered (Success)</SelectItem>
+                    <SelectItem value="processing">Processing (In Flight)</SelectItem>
+                    <SelectItem value="pending">Pending Gateway</SelectItem>
+                    <SelectItem value="failed">Failed</SelectItem>
+                    <SelectItem value="refunded">Refunded</SelectItem>
+                  </SelectContent>
+                </Select>
 
                 {/* Network Filter */}
-                <select
+                <Select
                   value={orderNetworkFilter}
-                  onChange={(e) => setOrderNetworkFilter(e.target.value)}
-                  className="h-9 text-xs rounded-lg border border-input bg-background text-foreground px-2"
+                  onValueChange={setOrderNetworkFilter}
                 >
-                  <option value="all">All Networks</option>
-                  <option value="MTN">MTN Ghana</option>
-                  <option value="Telecel">Telecel Ghana</option>
-                  <option value="AirtelTigo">AT (AirtelTigo)</option>
-                </select>
+                  <SelectTrigger className="h-9 text-xs w-full">
+                    <SelectValue placeholder="All Networks" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Networks</SelectItem>
+                    <SelectItem value="MTN">MTN Ghana</SelectItem>
+                    <SelectItem value="Telecel">Telecel Ghana</SelectItem>
+                    <SelectItem value="AirtelTigo">AT (AirtelTigo)</SelectItem>
+                  </SelectContent>
+                </Select>
+
+                {/* Type Filter - Airtime/Data */}
+                <Select
+                  value={orderServiceFilter}
+                  onValueChange={setOrderServiceFilter}
+                >
+                  <SelectTrigger className="h-9 text-xs w-full">
+                    <SelectValue placeholder="All Types" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Types</SelectItem>
+                    <SelectItem value="airtime">Airtime</SelectItem>
+                    <SelectItem value="data">Data Bundle</SelectItem>
+                    <SelectItem value="sms">SMS Package</SelectItem>
+                    <SelectItem value="voucher">Voucher</SelectItem>
+                  </SelectContent>
+                </Select>
 
                 {/* Sort Order */}
-                <select
-                  value={orderSortBy}
-                  onChange={(e) => setOrderSortBy(e.target.value)}
-                  className="h-9 text-xs rounded-lg border border-input bg-background text-foreground px-2"
-                >
-                  <option value="newest">Sort: Newest First</option>
-                  <option value="oldest">Sort: Oldest First</option>
-                  <option value="amount-high">Amount: High to Low</option>
-                  <option value="amount-low">Amount: Low to High</option>
-                </select>
+                <Select value={orderSortBy} onValueChange={setOrderSortBy}>
+                  <SelectTrigger className="h-9 text-xs w-full">
+                    <SelectValue placeholder="Sort by" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="newest">Sort: Newest First</SelectItem>
+                    <SelectItem value="oldest">Sort: Oldest First</SelectItem>
+                    <SelectItem value="amount-high">Amount: High to Low</SelectItem>
+                    <SelectItem value="amount-low">Amount: Low to High</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
 
-              {/* Status Pills Quick Strip & Active Filters Indicator */}
-              <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-border text-xs">
-                <div className="flex items-center gap-1.5 flex-wrap">
-                  <span className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider mr-1">
-                    Quick Status:
-                  </span>
-                  {["all", "delivered", "processing"].map((st) => (
-                    <button
-                      key={st}
-                      onClick={() => setOrderFilterStatus(st)}
-                      className={`px-2.5 py-1 rounded-md text-xs font-semibold capitalize transition-all cursor-pointer ${
-                        orderFilterStatus === st
-                          ? "bg-primary text-primary-foreground font-bold shadow-xs"
-                          : "bg-muted/70 text-muted-foreground hover:text-foreground"
-                      }`}
-                    >
-                      {st}
-                    </button>
-                  ))}
+              {/* Active Filters Indicator — clear button only, count moves to pagination footer */}
+              {(orderSearch ||
+                orderFilterStatus !== "all" ||
+                orderNetworkFilter !== "all" ||
+                orderServiceFilter !== "all" ||
+                orderSortBy !== "newest") && (
+                <div className="flex justify-end pt-2 border-t border-border">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => {
+                      setOrderSearch("");
+                      setOrderFilterStatus("all");
+                      setOrderNetworkFilter("all");
+                      setOrderServiceFilter("all");
+                      setOrderSortBy("newest");
+                    }}
+                    className="h-7 px-2 text-xs text-primary font-bold"
+                  >
+                    Clear Filters
+                  </Button>
                 </div>
-
-                <div className="flex items-center gap-3">
-                  <span className="text-xs text-muted-foreground">
-                    Showing{" "}
-                    <span className="font-bold text-foreground">
-                      {filteredOrders.length}
-                    </span>{" "}
-                    of {orders.length} orders
-                  </span>
-                  {(orderSearch ||
-                    orderFilterStatus !== "all" ||
-                    orderNetworkFilter !== "all" ||
-                    orderSortBy !== "newest") && (
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => {
-                        setOrderSearch("");
-                        setOrderFilterStatus("all");
-                        setOrderNetworkFilter("all");
-                        setOrderSortBy("newest");
-                      }}
-                      className="h-7 px-2 text-xs text-primary font-bold"
-                    >
-                      Clear Filters
-                    </Button>
-                  )}
-                </div>
-              </div>
+              )}
             </CardContent>
           </Card>
 
-          {/* TABLE VIEW (Standard Senior Engineer Pattern) */}
-          {orderViewMode === "table" ? (
-            <Card className="border-border shadow-xs">
+          <Card className="border-border !pt-0 shadow-xs">
               <CardContent className="p-0">
                 <Table>
                   <TableHeader>
@@ -663,7 +777,7 @@ export const CustomerWalletOrders: React.FC<CustomerWalletOrdersProps> = ({
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {filteredOrders.length === 0 ? (
+                    {paginatedOrders.length === 0 ? (
                       <TableRow>
                         <TableCell
                           colSpan={8}
@@ -684,6 +798,7 @@ export const CustomerWalletOrders: React.FC<CustomerWalletOrdersProps> = ({
                                 setOrderSearch("");
                                 setOrderFilterStatus("all");
                                 setOrderNetworkFilter("all");
+                                setOrderServiceFilter("all");
                               }}
                               className="mt-2 text-xs"
                             >
@@ -693,7 +808,7 @@ export const CustomerWalletOrders: React.FC<CustomerWalletOrdersProps> = ({
                         </TableCell>
                       </TableRow>
                     ) : (
-                      filteredOrders.map((order) => (
+                      paginatedOrders.map((order) => (
                         <TableRow key={order.id} className="hover:bg-muted/40">
                           <TableCell>
                             <span
@@ -750,114 +865,28 @@ export const CustomerWalletOrders: React.FC<CustomerWalletOrdersProps> = ({
                     )}
                   </TableBody>
                 </Table>
+
+                {/* Pagination footer — count left, controls right */}
+                <div className="flex items-center justify-between gap-4 border-t border-border px-4 py-3">
+                  <span className="text-xs text-muted-foreground shrink-0">
+                    Showing{" "}
+                    <span className="font-bold text-foreground">
+                      {Math.min(ordersPage * ORDERS_PER_PAGE, filteredOrders.length)}
+                    </span>{" "}
+                    of{" "}
+                    <span className="font-bold text-foreground">
+                      {filteredOrders.length}
+                    </span>{" "}
+                    orders
+                  </span>
+                  {filteredOrders.length > ORDERS_PER_PAGE && (
+                    <div className="flex justify-end">
+                      {renderPagination(ordersPage, totalOrderPages, setOrdersPage)}
+                    </div>
+                  )}
+                </div>
               </CardContent>
             </Card>
-          ) : (
-            /* DETAILED CARDS VIEW */
-            <div className="space-y-3">
-              {filteredOrders.length === 0 ? (
-                <Card className="p-8 text-center border-border">
-                  <p className="text-sm text-muted-foreground">
-                    No orders match the selected filters.
-                  </p>
-                </Card>
-              ) : (
-                filteredOrders.map((order) => (
-                  <Card
-                    key={order.id}
-                    className="p-5 border-border shadow-xs hover:border-primary/50 transition-colors space-y-3"
-                  >
-                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
-                      <div className="flex items-center gap-3">
-                        <div
-                          className={`w-10 h-10 rounded-xl flex items-center justify-center font-black text-xs shrink-0 ${
-                            order.network === "MTN"
-                              ? "bg-amber-400 text-amber-950"
-                              : order.network === "Telecel"
-                                ? "bg-red-600 text-white"
-                                : "bg-blue-600 text-white"
-                          }`}
-                        >
-                          {order.network.slice(0, 3)}
-                        </div>
-                        <div>
-                          <div className="font-extrabold text-sm text-foreground">
-                            {order.productName}
-                          </div>
-                          <div className="text-xs text-muted-foreground flex items-center gap-2">
-                            <span className="font-mono font-bold">
-                              {order.reference}
-                            </span>
-                            <span>•</span>
-                            <span>
-                              Recipient:{" "}
-                              <span className="font-mono text-foreground font-semibold">
-                                {order.recipientPhone}
-                              </span>
-                            </span>
-                            <span>•</span>
-                            <span className="tabular-nums">{order.date}</span>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-end">
-                        <div className="text-right">
-                          <div className="text-base font-black text-foreground tabular-nums">
-                            GH₵ {order.amount.toFixed(2)}
-                          </div>
-                          <div className="flex items-center gap-1.5 justify-end">
-                            <Badge
-                              variant={
-                                order.status === "delivered"
-                                  ? "default"
-                                  : "secondary"
-                              }
-                              className="text-[10px] font-bold uppercase"
-                            >
-                              {order.status}
-                            </Badge>
-                            <SignalRail
-                              status={
-                                order.status === "delivered"
-                                  ? "delivered"
-                                  : "processing"
-                              }
-                              size="sm"
-                            />
-                          </div>
-                        </div>
-
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => onOpenReceipt(order)}
-                          className="text-xs font-bold"
-                        >
-                          Receipt
-                        </Button>
-                      </div>
-                    </div>
-
-                    {/* Delivery Timeline Step Strip */}
-                    <div className="pt-3 border-t border-border/70 flex flex-wrap gap-4 text-[11px] text-muted-foreground">
-                      {order.deliveryTimeline.map((tl, idx) => (
-                        <div key={idx} className="flex items-center gap-1.5">
-                          <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
-                          <span className="font-medium text-foreground">
-                            {tl.step}
-                          </span>
-                          <span className="tabular-nums opacity-75">
-                            ({tl.timestamp})
-                          </span>
-                        </div>
-                      ))}
-                    </div>
-                  </Card>
-                ))
-              )}
-            </div>
-          )}
         </div>
       )}
 
@@ -875,13 +904,13 @@ export const CustomerWalletOrders: React.FC<CustomerWalletOrdersProps> = ({
                 engineers.
               </p>
             </div>
-            <button
+            <Button
               onClick={() => setShowNewTicketModal(true)}
-              className="px-4 py-2 rounded-xl bg-primary text-primary-foreground font-bold text-xs hover:bg-primary/90 transition-all flex items-center gap-1.5 cursor-pointer shadow-xs"
+              className="px-4 py-2 rounded-xl font-bold text-xs shadow-xs"
             >
-              <Plus className="w-4 h-4" />
-              <span>New Ticket</span>
-            </button>
+              <Plus className="w-4 h-4 mr-1" />
+              New Ticket
+            </Button>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
@@ -972,20 +1001,17 @@ export const CustomerWalletOrders: React.FC<CustomerWalletOrdersProps> = ({
                     onSubmit={handleSendReply}
                     className="pt-3 border-t border-border flex gap-2"
                   >
-                    <input
+                    <Input
                       type="text"
                       placeholder="Type your reply to SDH NOC support..."
                       value={newReplyText}
                       onChange={(e) => setNewReplyText(e.target.value)}
-                      className="flex-1 px-3.5 py-2.5 rounded-xl border border-input bg-background text-foreground text-xs focus:outline-hidden"
+                      className="flex-1"
                     />
-                    <button
-                      type="submit"
-                      className="px-4 py-2.5 rounded-xl bg-primary text-primary-foreground font-bold text-xs hover:bg-primary/90 flex items-center gap-1.5 cursor-pointer"
-                    >
-                      <Send className="w-3.5 h-3.5" />
-                      <span>Send</span>
-                    </button>
+                    <Button type="submit" size="sm" className="text-xs">
+                      <Send className="w-3.5 h-3.5 mr-1" />
+                      Send
+                    </Button>
                   </form>
                 </div>
               ) : (
@@ -996,96 +1022,92 @@ export const CustomerWalletOrders: React.FC<CustomerWalletOrdersProps> = ({
             </div>
           </div>
 
-          {/* New Ticket Modal */}
-          {showNewTicketModal && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4">
-              <div className="w-full max-w-md bg-card rounded-2xl border border-border shadow-2xl p-6 space-y-4">
-                <h3 className="font-bold text-base text-foreground">
-                  Open Support Complaint
-                </h3>
-                <form
-                  onSubmit={handleCreateTicket}
-                  className="space-y-3 text-xs"
-                >
-                  <div>
-                    <label className="block font-semibold text-muted-foreground mb-1">
-                      Category
-                    </label>
-                    <select
-                      value={ticketCategory}
-                      onChange={(e) => setTicketCategory(e.target.value)}
-                      className="w-full p-2 rounded-xl border border-input bg-background text-foreground"
-                    >
-                      <option value="delivery_delay">Delivery Delay</option>
-                      <option value="failed_recharge">
+          {/* New Ticket Dialog (shadcn) */}
+          <Dialog open={showNewTicketModal} onOpenChange={setShowNewTicketModal}>
+            <DialogContent className="sm:max-w-md">
+              <DialogHeader>
+                <DialogTitle>Open Support Complaint</DialogTitle>
+                <DialogDescription>
+                  Submit a new ticket to SDH NOC support. We'll respond within 24
+                  hours.
+                </DialogDescription>
+              </DialogHeader>
+              <form onSubmit={handleCreateTicket} className="space-y-4 text-xs">
+                <div className="space-y-2">
+                  <Label htmlFor="ticket-category">Category</Label>
+                  <Select
+                    value={ticketCategory}
+                    onValueChange={setTicketCategory}
+                  >
+                    <SelectTrigger id="ticket-category" className="w-full">
+                      <SelectValue placeholder="Select category" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="delivery_delay">Delivery Delay</SelectItem>
+                      <SelectItem value="failed_recharge">
                         Failed Recharge / No SMS
-                      </option>
-                      <option value="momo_debit_no_credit">
+                      </SelectItem>
+                      <SelectItem value="momo_debit_no_credit">
                         MoMo Debited with No Credit
-                      </option>
-                      <option value="wrong_number">
+                      </SelectItem>
+                      <SelectItem value="wrong_number">
                         Wrong Recipient Number
-                      </option>
-                      <option value="general">General Help</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block font-semibold text-muted-foreground mb-1">
-                      Related Order Reference (Optional)
-                    </label>
-                    <input
-                      type="text"
-                      placeholder="e.g. SDH-GH-2026-94814"
-                      value={ticketOrderRef}
-                      onChange={(e) => setTicketOrderRef(e.target.value)}
-                      className="w-full p-2 rounded-xl border border-input bg-background text-foreground"
-                    />
-                  </div>
-                  <div>
-                    <label className="block font-semibold text-muted-foreground mb-1">
-                      Subject
-                    </label>
-                    <input
-                      type="text"
-                      required
-                      placeholder="Brief summary of issue..."
-                      value={ticketSubject}
-                      onChange={(e) => setTicketSubject(e.target.value)}
-                      className="w-full p-2 rounded-xl border border-input bg-background text-foreground"
-                    />
-                  </div>
-                  <div>
-                    <label className="block font-semibold text-muted-foreground mb-1">
-                      Detailed Description
-                    </label>
-                    <textarea
-                      rows={3}
-                      required
-                      placeholder="Describe what happened..."
-                      value={ticketMessage}
-                      onChange={(e) => setTicketMessage(e.target.value)}
-                      className="w-full p-2 rounded-xl border border-input bg-background text-foreground"
-                    />
-                  </div>
-                  <div className="flex gap-2 pt-2">
-                    <button
-                      type="button"
-                      onClick={() => setShowNewTicketModal(false)}
-                      className="flex-1 py-2 rounded-xl border border-border text-foreground hover:bg-muted font-semibold"
-                    >
-                      Cancel
-                    </button>
-                    <button
-                      type="submit"
-                      className="flex-1 py-2 rounded-xl bg-primary text-primary-foreground font-bold hover:bg-primary/90"
-                    >
-                      Submit Ticket
-                    </button>
-                  </div>
-                </form>
-              </div>
-            </div>
-          )}
+                      </SelectItem>
+                      <SelectItem value="general">General Help</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="ticket-order-ref">
+                    Related Order Reference (Optional)
+                  </Label>
+                  <Input
+                    id="ticket-order-ref"
+                    type="text"
+                    placeholder="e.g. SDH-GH-2026-94814"
+                    value={ticketOrderRef}
+                    onChange={(e) => setTicketOrderRef(e.target.value)}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="ticket-subject">Subject</Label>
+                  <Input
+                    id="ticket-subject"
+                    type="text"
+                    required
+                    placeholder="Brief summary of issue..."
+                    value={ticketSubject}
+                    onChange={(e) => setTicketSubject(e.target.value)}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="ticket-message">Detailed Description</Label>
+                  <Textarea
+                    id="ticket-message"
+                    rows={4}
+                    required
+                    placeholder="Describe what happened..."
+                    value={ticketMessage}
+                    onChange={(e) => setTicketMessage(e.target.value)}
+                  />
+                </div>
+
+                <DialogFooter>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => setShowNewTicketModal(false)}
+                  >
+                    Cancel
+                  </Button>
+                  <Button type="submit">Submit Ticket</Button>
+                </DialogFooter>
+              </form>
+            </DialogContent>
+          </Dialog>
         </div>
       )}
 
@@ -1140,41 +1162,43 @@ export const CustomerWalletOrders: React.FC<CustomerWalletOrdersProps> = ({
               </p>
             </div>
             <div className="flex items-center gap-2">
-              <button
+              <Button
+                variant="outline"
+                size="sm"
                 onClick={() =>
                   setNotifications((prev) =>
                     prev.map((n) => ({ ...n, read: true })),
                   )
                 }
-                className="px-3 py-1.5 rounded-xl border border-border bg-card text-xs font-semibold hover:bg-muted text-foreground flex items-center gap-1.5 cursor-pointer"
+                className="text-xs font-semibold"
               >
-                <Check className="w-3.5 h-3.5 text-emerald-500" />
-                <span>Mark All Read</span>
-              </button>
-              <button
+                <Check className="w-3.5 h-3.5 mr-1 text-emerald-500" />
+                Mark All Read
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
                 onClick={() => setNotifications([])}
-                className="p-1.5 rounded-xl border border-border bg-card text-muted-foreground hover:text-destructive hover:bg-destructive/10 text-xs transition-colors cursor-pointer"
+                className="text-muted-foreground hover:text-destructive"
                 title="Clear notifications"
               >
                 <Trash2 className="w-4 h-4" />
-              </button>
+              </Button>
             </div>
           </div>
 
           {/* Category Filter Tabs */}
           <div className="flex items-center gap-1.5 overflow-x-auto pb-1 text-xs">
             {["all", "orders", "gateway", "wallet", "promo"].map((cat) => (
-              <button
+              <Button
                 key={cat}
+                variant={notificationCategory === cat ? "default" : "outline"}
+                size="sm"
                 onClick={() => setNotificationCategory(cat)}
-                className={`px-3 py-1.5 rounded-xl uppercase font-bold text-[11px] tracking-wide transition-all cursor-pointer ${
-                  notificationCategory === cat
-                    ? "bg-primary text-primary-foreground shadow-xs"
-                    : "bg-card border border-border text-muted-foreground hover:text-foreground"
-                }`}
+                className="uppercase font-bold text-[11px] tracking-wide"
               >
                 {cat}
-              </button>
+              </Button>
             ))}
           </div>
 
@@ -1238,7 +1262,9 @@ export const CustomerWalletOrders: React.FC<CustomerWalletOrdersProps> = ({
                     </div>
 
                     {!item.read && (
-                      <button
+                      <Button
+                        variant="outline"
+                        size="sm"
                         onClick={() =>
                           setNotifications((prev) =>
                             prev.map((n) =>
@@ -1246,10 +1272,10 @@ export const CustomerWalletOrders: React.FC<CustomerWalletOrdersProps> = ({
                             ),
                           )
                         }
-                        className="px-3 py-1.5 rounded-xl border border-border bg-card text-xs font-semibold hover:bg-muted text-foreground cursor-pointer shrink-0"
+                        className="text-xs font-semibold shrink-0"
                       >
                         Acknowledge
-                      </button>
+                      </Button>
                     )}
                   </div>
                 ))
@@ -1296,66 +1322,64 @@ export const CustomerWalletOrders: React.FC<CustomerWalletOrdersProps> = ({
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label className="text-muted-foreground block mb-1 font-semibold">
-                  Full Legal Name
-                </label>
-                <input
+              <div className="space-y-2">
+                <Label htmlFor="profile-name">Full Legal Name</Label>
+                <Input
+                  id="profile-name"
                   type="text"
                   defaultValue="Kojo Mensah"
-                  className="w-full p-2.5 rounded-xl border border-input bg-background text-foreground font-medium"
+                  className="font-medium"
                 />
               </div>
-              <div>
-                <label className="text-muted-foreground block mb-1 font-semibold">
-                  Primary Mobile Number
-                </label>
-                <input
+              <div className="space-y-2">
+                <Label htmlFor="profile-mobile">Primary Mobile Number</Label>
+                <Input
+                  id="profile-mobile"
                   type="tel"
                   defaultValue="0244192834"
-                  className="w-full p-2.5 rounded-xl border border-input bg-background text-foreground tabular-nums font-mono font-medium"
+                  className="tabular-nums font-mono font-medium"
                 />
               </div>
-              <div>
-                <label className="text-muted-foreground block mb-1 font-semibold">
-                  Email Address
-                </label>
-                <input
+              <div className="space-y-2">
+                <Label htmlFor="profile-email">Email Address</Label>
+                <Input
+                  id="profile-email"
                   type="email"
                   defaultValue="kojomensah94@gmail.com"
-                  className="w-full p-2.5 rounded-xl border border-input bg-background text-foreground font-medium"
+                  className="font-medium"
                 />
               </div>
-              <div>
-                <label className="text-muted-foreground block mb-1 font-semibold">
+              <div className="space-y-2">
+                <Label htmlFor="profile-ghana-card">
                   Ghana Card Number (NIA)
-                </label>
-                <input
+                </Label>
+                <Input
+                  id="profile-ghana-card"
                   type="text"
                   disabled
                   defaultValue="GHA-721948192-3"
-                  className="w-full p-2.5 rounded-xl border border-input bg-muted/60 text-foreground font-mono font-bold cursor-not-allowed"
+                  className="font-mono font-bold cursor-not-allowed"
                 />
               </div>
             </div>
 
             <div className="flex justify-end pt-2 border-t border-border">
-              <button
+              <Button
                 type="button"
                 onClick={() => {
                   setProfileSaved(true);
                   setTimeout(() => setProfileSaved(false), 3000);
                 }}
-                className="px-4 py-2 rounded-xl bg-primary text-primary-foreground font-bold text-xs hover:bg-primary/90 cursor-pointer shadow-2xs"
+                className="font-bold text-xs shadow-2xs"
               >
                 Save Account Changes
-              </button>
+              </Button>
             </div>
           </div>
 
           {/* Theme Selector Section (Dropdown & Cards) */}
           <div className="p-6 rounded-3xl bg-card border border-border shadow-xs space-y-4 text-xs">
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between flex-wrap gap-3">
               <div>
                 <h3 className="font-extrabold text-sm text-foreground flex items-center gap-2">
                   <Palette className="w-4 h-4 text-primary" />
@@ -1367,18 +1391,28 @@ export const CustomerWalletOrders: React.FC<CustomerWalletOrdersProps> = ({
                 </p>
               </div>
               {onSetTheme && (
-                <select
+                <Select
                   value={theme}
-                  onChange={(e) => onSetTheme(e.target.value as AppTheme)}
-                  className="px-3 py-1.5 rounded-xl border border-input bg-background text-foreground text-xs font-bold"
+                  onValueChange={(v) => onSetTheme(v as AppTheme)}
                 >
-                  <option value="light">☀️ Daylight Clean</option>
-                  <option value="dark">🌙 Midnight Obsidian</option>
-                  <option value="sunset-amber">� Sunset Amber</option>
-                  <option value="emerald-matrix">🌲 Emerald Matrix</option>
-                  <option value="royal-indigo">⚡ Royal Indigo</option>
-                  <option value="ruby-red">� Ruby Red</option>
-                </select>
+                  <SelectTrigger className="w-56">
+                    <SelectValue placeholder="Select theme" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="light">☀️ Daylight Clean</SelectItem>
+                    <SelectItem value="dark">🌙 Midnight Obsidian</SelectItem>
+                    <SelectItem value="sunset-amber">
+                      🌅 Sunset Amber
+                    </SelectItem>
+                    <SelectItem value="emerald-matrix">
+                      🌲 Emerald Matrix
+                    </SelectItem>
+                    <SelectItem value="royal-indigo">
+                      ⚡ Royal Indigo
+                    </SelectItem>
+                    <SelectItem value="ruby-red">💎 Ruby Red</SelectItem>
+                  </SelectContent>
+                </Select>
               )}
             </div>
 
@@ -1445,40 +1479,42 @@ export const CustomerWalletOrders: React.FC<CustomerWalletOrdersProps> = ({
                 </p>
               </div>
               {onOpenSecurityPins && (
-                <button
+                <Button
+                  variant="link"
+                  size="sm"
                   onClick={onOpenSecurityPins}
-                  className="text-xs font-bold text-primary hover:underline flex items-center gap-1 cursor-pointer"
+                  className="text-xs font-bold flex items-center gap-1 h-auto p-0"
                 >
                   <KeyRound className="w-3.5 h-3.5" />
                   <span>View All Hardcoded PINs</span>
-                </button>
+                </Button>
               )}
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label className="text-muted-foreground block mb-1 font-semibold">
+              <div className="space-y-2">
+                <Label htmlFor="current-pin">
                   Current PIN (Hardcoded: 2026)
-                </label>
-                <input
+                </Label>
+                <Input
+                  id="current-pin"
                   type="password"
                   maxLength={4}
                   value={currentPinInput}
                   onChange={(e) => setCurrentPinInput(e.target.value)}
-                  className="w-full p-2.5 rounded-xl border border-input bg-background text-foreground font-mono tabular-nums text-center text-sm font-bold"
+                  className="font-mono tabular-nums text-center text-sm font-bold"
                 />
               </div>
-              <div>
-                <label className="text-muted-foreground block mb-1 font-semibold">
-                  New 4-Digit PIN
-                </label>
-                <input
+              <div className="space-y-2">
+                <Label htmlFor="new-pin">New 4-Digit PIN</Label>
+                <Input
+                  id="new-pin"
                   type="password"
                   maxLength={4}
                   placeholder="Enter new 4 digits"
                   value={newPinInput}
                   onChange={(e) => setNewPinInput(e.target.value)}
-                  className="w-full p-2.5 rounded-xl border border-input bg-background text-foreground font-mono tabular-nums text-center text-sm font-bold"
+                  className="font-mono tabular-nums text-center text-sm font-bold"
                 />
               </div>
             </div>
@@ -1493,16 +1529,16 @@ export const CustomerWalletOrders: React.FC<CustomerWalletOrdersProps> = ({
             )}
 
             <div className="flex justify-end">
-              <button
+              <Button
                 type="button"
                 onClick={() => {
                   setPinChangeSuccess(true);
                   setTimeout(() => setPinChangeSuccess(false), 3000);
                 }}
-                className="px-4 py-2 rounded-xl bg-primary text-primary-foreground font-bold text-xs hover:bg-primary/90 cursor-pointer"
+                className="font-bold text-xs"
               >
                 Update Security PIN
-              </button>
+              </Button>
             </div>
           </div>
 
@@ -1537,12 +1573,13 @@ export const CustomerWalletOrders: React.FC<CustomerWalletOrdersProps> = ({
                     IP: 154.160.2.89 • 2 hours ago
                   </div>
                 </div>
-                <button
-                  type="button"
-                  className="text-xs text-destructive hover:underline font-semibold cursor-pointer"
+                <Button
+                  variant="link"
+                  size="sm"
+                  className="text-xs text-destructive hover:no-underline p-0 h-auto font-semibold"
                 >
                   Revoke
-                </button>
+                </Button>
               </div>
             </div>
           </div>

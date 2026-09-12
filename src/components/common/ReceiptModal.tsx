@@ -1,7 +1,16 @@
-import React from 'react';
-import { X, Printer, Share2, CheckCircle2, ShieldCheck, Copy, Check, ExternalLink } from 'lucide-react';
-import { Order } from '../../types';
-import { SignalRail } from './SignalRail';
+import React from "react";
+import {
+  X,
+  Printer,
+  Share2,
+  CheckCircle2,
+  ShieldCheck,
+  Copy,
+  Check,
+  ExternalLink,
+} from "lucide-react";
+import { Order } from "../../types";
+import { SignalRail } from "./SignalRail";
 
 interface ReceiptModalProps {
   order: Order | null;
@@ -9,7 +18,11 @@ interface ReceiptModalProps {
   onClose: () => void;
 }
 
-export const ReceiptModal: React.FC<ReceiptModalProps> = ({ order, isOpen, onClose }) => {
+export const ReceiptModal: React.FC<ReceiptModalProps> = ({
+  order,
+  isOpen,
+  onClose,
+}) => {
   const [copied, setCopied] = React.useState(false);
 
   if (!isOpen || !order) return null;
@@ -26,15 +39,15 @@ export const ReceiptModal: React.FC<ReceiptModalProps> = ({ order, isOpen, onClo
 
   const handleShareWhatsApp = () => {
     const text = encodeURIComponent(
-      `Smart Data Hub Receipt\nRef: ${order.reference}\nItem: ${order.productName}\nBeneficiary: ${order.recipientPhone}\nAmount: GH₵${order.amount.toFixed(2)}\nStatus: ${order.status.toUpperCase()}\nTrack at: https://smartdatahub.com/#track`
+      `Smart Data Hub Receipt\nRef: ${order.reference}\nItem: ${order.productName}\nBeneficiary: ${order.recipientPhone}\nAmount: GH₵${order.amount.toFixed(2)}\nStatus: ${order.status.toUpperCase()}\nTrack at: https://smartdatahub.com/#track`,
     );
-    window.open(`https://wa.me/?text=${text}`, '_blank');
+    window.open(`https://wa.me/?text=${text}`, "_blank");
   };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4 animate-in fade-in duration-200">
-      <div 
-        className="w-full max-w-md bg-card text-card-foreground rounded-2xl border border-border shadow-2xl overflow-hidden print:border-none print:shadow-none"
+      <div
+        className="w-full max-w-xl bg-card text-card-foreground rounded-2xl border border-border shadow-2xl overflow-hidden print:border-none print:shadow-none"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Receipt Header */}
@@ -44,8 +57,12 @@ export const ReceiptModal: React.FC<ReceiptModalProps> = ({ order, isOpen, onClo
               SDH
             </div>
             <div>
-              <h3 className="font-bold text-foreground tracking-tight">Smart Data Hub</h3>
-              <p className="text-xs text-muted-foreground">Digital Services Delivery Receipt</p>
+              <h3 className="font-bold text-foreground tracking-tight">
+                Smart Data Hub
+              </h3>
+              <p className="text-xs text-muted-foreground">
+                Digital Services Delivery Receipt
+              </p>
             </div>
           </div>
           <button
@@ -69,9 +86,16 @@ export const ReceiptModal: React.FC<ReceiptModalProps> = ({ order, isOpen, onClo
             <div className="flex items-center justify-center gap-2 mt-1.5">
               <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-500/15 text-emerald-700 dark:text-emerald-400">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                {order.status === 'delivered' ? 'Delivery Successful' : 'Processing Order'}
+                {order.status === "delivered"
+                  ? "Delivery Successful"
+                  : "Processing Order"}
               </span>
-              <SignalRail status={order.status === 'delivered' ? 'delivered' : 'processing'} size="sm" />
+              <SignalRail
+                status={
+                  order.status === "delivered" ? "delivered" : "processing"
+                }
+                size="sm"
+              />
             </div>
           </div>
 
@@ -80,25 +104,35 @@ export const ReceiptModal: React.FC<ReceiptModalProps> = ({ order, isOpen, onClo
             <div className="flex justify-between items-center py-1">
               <span className="text-muted-foreground">Order Reference:</span>
               <div className="flex items-center gap-1.5">
-                <span className="font-mono font-bold text-foreground">{order.reference}</span>
+                <span className="font-mono font-bold text-foreground">
+                  {order.reference}
+                </span>
                 <button
                   onClick={handleCopyRef}
                   className="p-1 hover:bg-muted rounded text-muted-foreground hover:text-foreground print:hidden"
                   title="Copy reference"
                 >
-                  {copied ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5" />}
+                  {copied ? (
+                    <Check className="w-3.5 h-3.5 text-emerald-500" />
+                  ) : (
+                    <Copy className="w-3.5 h-3.5" />
+                  )}
                 </button>
               </div>
             </div>
 
             <div className="flex justify-between items-center py-1">
               <span className="text-muted-foreground">Date & Time:</span>
-              <span className="text-foreground font-medium tabular-nums">{order.date}</span>
+              <span className="text-foreground font-medium tabular-nums">
+                {order.date}
+              </span>
             </div>
 
             <div className="flex justify-between items-center py-1">
               <span className="text-muted-foreground">Service Item:</span>
-              <span className="font-semibold text-foreground">{order.productName}</span>
+              <span className="font-semibold text-foreground">
+                {order.productName}
+              </span>
             </div>
 
             <div className="flex justify-between items-center py-1">
@@ -109,13 +143,19 @@ export const ReceiptModal: React.FC<ReceiptModalProps> = ({ order, isOpen, onClo
             </div>
 
             <div className="flex justify-between items-center py-1">
-              <span className="text-muted-foreground">Beneficiary Handset:</span>
-              <span className="font-mono font-medium text-foreground">{order.recipientPhone}</span>
+              <span className="text-muted-foreground">
+                Beneficiary Handset:
+              </span>
+              <span className="font-mono font-medium text-foreground">
+                {order.recipientPhone}
+              </span>
             </div>
 
             <div className="flex justify-between items-center py-1">
               <span className="text-muted-foreground">Payment Channel:</span>
-              <span className="text-foreground capitalize">{order.paymentMethod.replace('_', ' ')}</span>
+              <span className="text-foreground capitalize">
+                {order.paymentMethod.replace("_", " ")}
+              </span>
             </div>
 
             {/* Voucher Reveal if applicable */}
@@ -127,7 +167,9 @@ export const ReceiptModal: React.FC<ReceiptModalProps> = ({ order, isOpen, onClo
                 </div>
                 <div className="flex justify-between text-[11px] text-amber-900 dark:text-amber-300 font-semibold">
                   <span>VOUCHER PIN / CODE:</span>
-                  <span className="font-mono text-sm tracking-wider font-bold">{order.voucherCode}</span>
+                  <span className="font-mono text-sm tracking-wider font-bold">
+                    {order.voucherCode}
+                  </span>
                 </div>
               </div>
             )}
@@ -144,7 +186,9 @@ export const ReceiptModal: React.FC<ReceiptModalProps> = ({ order, isOpen, onClo
                   <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 mt-1.5 shrink-0" />
                   <div className="flex-1 flex justify-between items-center">
                     <span className="text-foreground">{item.step}</span>
-                    <span className="text-muted-foreground text-[10px] tabular-nums">{item.timestamp}</span>
+                    <span className="text-muted-foreground text-[10px] tabular-nums">
+                      {item.timestamp}
+                    </span>
                   </div>
                 </div>
               ))}

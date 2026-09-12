@@ -229,30 +229,6 @@ export const INITIAL_CHECKERS: ResultCheckerProduct[] = [
     stockCount: 810,
     description: 'Computerized School Selection and Placement System (CSSPS) Senior High Placement voucher'
   },
-  {
-    id: 'novdec-checker',
-    title: 'WAEC Nov/Dec Result Checker',
-    examBody: 'NOVDEC',
-    price: 26.00,
-    stockCount: 230,
-    description: 'Check Nov/Dec Private WASSCE candidate grades immediately'
-  },
-  {
-    id: 'ug-admission',
-    title: 'University of Ghana Admission E-Voucher',
-    examBody: 'UNIVERSITY',
-    price: 220.00,
-    stockCount: 95,
-    description: 'Legon Undergraduate & Graduate application voucher PIN'
-  },
-  {
-    id: 'knust-admission',
-    title: 'KNUST Admission E-Voucher',
-    examBody: 'UNIVERSITY',
-    price: 220.00,
-    stockCount: 110,
-    description: 'Kwame Nkrumah University of Science & Technology Admission voucher'
-  }
 ];
 
 export const INITIAL_ORDERS: Order[] = [
