@@ -3,20 +3,21 @@ import {
   Wifi,
   Smartphone,
   CheckCircle2,
-  AlertCircle,
   Loader2,
   ArrowRight,
-  ShieldCheck,
-  Zap,
-  RotateCcw,
-  FileSpreadsheet,
-  Layers,
+  ArrowLeft,
   Copy,
-  Check
+  Check,
 } from 'lucide-react';
 import { TelecomNetwork, DataBundle, Order } from '../../types';
 import { detectGhanaNetwork } from '../../mockData';
 import { SignalRail } from '../common/SignalRail';
+import { Button } from '../ui/button';
+import { Input } from '../ui/input';
+import { Textarea } from '../ui/textarea';
+import { Label } from '../ui/label';
+import { Card, CardContent } from '../ui/card';
+import { Badge } from '../ui/badge';
 
 interface BuyDataFlowProps {
   bundles: DataBundle[];
@@ -35,6 +36,8 @@ export const BuyDataFlow: React.FC<BuyDataFlowProps> = ({
   initialBundleId,
   initialNetwork = 'MTN',
 }) => {
+  const [step, setStep] = useState<'network' | 'bundle' | 'recipient' | 'review' | 'processing' | 'success'>('network');
+
   const [selectedNetwork, setSelectedNetwork] = useState<TelecomNetwork>(initialNetwork);
   const [selectedBundleId, setSelectedBundleId] = useState<string>(
     initialBundleId || bundles.find((b) => b.network === initialNetwork)?.id || 'mtn-5gb'
@@ -43,16 +46,19 @@ export const BuyDataFlow: React.FC<BuyDataFlowProps> = ({
   const [paymentMethod, setPaymentMethod] = useState<'wallet' | 'momo_mtn' | 'momo_telecel' | 'momo_at'>('wallet');
   const [inputMode, setInputMode] = useState<'cards' | 'text' | 'bulk'>('cards');
   const [bulkNumbersText, setBulkNumbersText] = useState<string>('');
-  
-  // Checkout State
-  const [step, setStep] = useState<'select' | 'confirm' | 'processing' | 'success'>('select');
   const [createdOrder, setCreatedOrder] = useState<Order | null>(null);
   const [copiedRef, setCopiedRef] = useState(false);
+
+  const steps = [
+    { id: 'network', label: 'Network', icon: Wifi },
+    { id: 'bundle', label: 'Bundle', icon: CheckCircle2 },
+    { id: 'recipient', label: 'Recipient', icon: Smartphone },
+    { id: 'review', label: 'Review', icon: CheckCircle2 },
+  ];
 
   const filteredBundles = bundles.filter((b) => b.network === selectedNetwork);
   const currentBundle = bundles.find((b) => b.id === selectedBundleId) || filteredBundles[0];
 
-  // Auto-detect network from phone
   const handlePhoneChange = (val: string) => {
     setRecipientPhone(val);
     if (val.length >= 3) {
@@ -65,20 +71,42 @@ export const BuyDataFlow: React.FC<BuyDataFlowProps> = ({
     }
   };
 
-  const handleStartCheckout = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!recipientPhone || recipientPhone.length < 10) {
-      alert('Please enter a valid 10-digit Ghana phone number (e.g. 0244123456).');
-      return;
+  const validateStep = (currentStep: string): boolean => {
+    switch (currentStep) {
+      case 'network':
+        return !!selectedNetwork;
+      case 'bundle':
+        return !!selectedBundleId;
+      case 'recipient':
+        return recipientPhone.length >= 10;
+      case 'review':
+        return paymentMethod !== 'wallet' || walletBalance >= currentBundle.retailPrice;
+      default:
+        return true;
     }
-    setStep('confirm');
   };
 
-  const handleExecutePayment = () => {
-    if (paymentMethod === 'wallet' && walletBalance < currentBundle.retailPrice) {
-      alert('Insufficient wallet balance. Please top up or choose Direct Mobile Money payment.');
+  const handleNext = () => {
+    if (!validateStep(step)) {
+      if (step === 'bundle') alert('Please select a data bundle.');
+      if (step === 'recipient') alert('Please enter a valid 10-digit phone number.');
+      if (step === 'review') alert('Insufficient wallet balance. Please choose Mobile Money.');
       return;
     }
+
+    if (step === 'network') setStep('bundle');
+    else if (step === 'bundle') setStep('recipient');
+    else if (step === 'recipient') setStep('review');
+  };
+
+  const handleBack = () => {
+    if (step === 'bundle') setStep('network');
+    else if (step === 'recipient') setStep('bundle');
+    else if (step === 'review') setStep('recipient');
+  };
+
+  const handleSubmit = () => {
+    if (!validateStep('review')) return;
 
     setStep('processing');
 
@@ -119,9 +147,10 @@ export const BuyDataFlow: React.FC<BuyDataFlowProps> = ({
     }
   };
 
+  const currentStepIndex = steps.findIndex(s => s.id === step);
+
   return (
     <div className="max-w-4xl mx-auto space-y-6">
-      {/* Step Indicator Header */}
       <div className="flex items-center justify-between pb-4 border-b border-border">
         <div>
           <h1 className="text-2xl font-extrabold text-foreground tracking-tight flex items-center gap-2">
@@ -132,45 +161,66 @@ export const BuyDataFlow: React.FC<BuyDataFlowProps> = ({
             Non-expiry and high-speed data for MTN, Telecel, and AirtelTigo.
           </p>
         </div>
-
-        {/* Input Mode Switcher */}
-        <div className="flex items-center p-1 rounded-xl bg-muted border border-border text-xs font-semibold">
-          <button
-            onClick={() => setInputMode('cards')}
-            className={`px-3 py-1 rounded-lg transition-colors cursor-pointer ${
-              inputMode === 'cards' ? 'bg-card text-foreground shadow-2xs' : 'text-muted-foreground hover:text-foreground'
-            }`}
-          >
-            Card View
-          </button>
-          <button
-            onClick={() => setInputMode('text')}
-            className={`px-3 py-1 rounded-lg transition-colors cursor-pointer ${
-              inputMode === 'text' ? 'bg-card text-foreground shadow-2xs' : 'text-muted-foreground hover:text-foreground'
-            }`}
-          >
-            Quick Text
-          </button>
-          <button
-            onClick={() => setInputMode('bulk')}
-            className={`px-3 py-1 rounded-lg transition-colors cursor-pointer ${
-              inputMode === 'bulk' ? 'bg-card text-foreground shadow-2xs' : 'text-muted-foreground hover:text-foreground'
-            }`}
-          >
-            Excel / Bulk
-          </button>
-        </div>
+        <SignalRail status="online" size="sm" label="Gateways Live" />
       </div>
 
-      {step === 'select' && (
-        <form onSubmit={handleStartCheckout} className="space-y-6">
-          {/* 1. Network Selection */}
-          <div className="p-5 rounded-2xl bg-card border border-border shadow-xs space-y-3">
-            <div className="flex justify-between items-center">
-              <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                Step 1: Choose Telecom Carrier
-              </label>
-              <SignalRail status="online" size="sm" label="Gateways Live" />
+      {/* Step Indicator */}
+      {step !== 'processing' && step !== 'success' && (
+        <Card className="border-border shadow-xs">
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between gap-2">
+              {steps.map((s, idx) => {
+                const Icon = s.icon;
+                const isActive = currentStepIndex === idx;
+                const isCompleted = currentStepIndex > idx;
+                return (
+                  <div key={s.id} className="flex items-center gap-2 flex-1">
+                    <div className="flex flex-col items-center gap-1 flex-1">
+                      <div
+                        className={`w-10 h-10 rounded-full flex items-center justify-center transition-all ${
+                          isActive
+                            ? 'bg-primary text-primary-foreground ring-2 ring-primary/30'
+                            : isCompleted
+                            ? 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400'
+                            : 'bg-muted text-muted-foreground'
+                        }`}
+                      >
+                        {isCompleted ? (
+                          <CheckCircle2 className="w-5 h-5" />
+                        ) : (
+                          <Icon className="w-5 h-5" />
+                        )}
+                      </div>
+                      <span className={`text-[10px] font-bold uppercase tracking-wider ${
+                        isActive ? 'text-primary' : isCompleted ? 'text-emerald-600 dark:text-emerald-400' : 'text-muted-foreground'
+                      }`}>
+                        {s.label}
+                      </span>
+                    </div>
+                    {idx < steps.length - 1 && (
+                      <div className={`h-0.5 flex-1 mb-6 ${
+                        isCompleted ? 'bg-emerald-500' : 'bg-border'
+                      }`} />
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Step Content */}
+      {step === 'network' && (
+        <Card className="border-border shadow-xs">
+          <CardContent className="p-6 space-y-4">
+            <div>
+              <Label className="text-xs font-bold uppercase tracking-wider">
+                Select Telecom Carrier
+              </Label>
+              <p className="text-xs text-muted-foreground mt-1">
+                Choose the mobile network for your data bundle.
+              </p>
             </div>
 
             <div className="grid grid-cols-3 gap-3">
@@ -185,7 +235,7 @@ export const BuyDataFlow: React.FC<BuyDataFlowProps> = ({
                       const first = bundles.find((b) => b.network === net);
                       if (first) setSelectedBundleId(first.id);
                     }}
-                    className={`py-3 px-2 rounded-xl border text-center transition-all flex flex-col items-center justify-center gap-1 cursor-pointer ${
+                    className={`py-4 px-3 rounded-xl border text-center transition-all cursor-pointer ${
                       isSelected
                         ? net === 'MTN'
                           ? 'bg-amber-400 text-amber-950 border-amber-500 ring-2 ring-amber-500/30 font-bold'
@@ -195,21 +245,59 @@ export const BuyDataFlow: React.FC<BuyDataFlowProps> = ({
                         : 'border-border bg-muted/40 hover:bg-muted text-foreground'
                     }`}
                   >
-                    <span className="text-sm font-extrabold">{net}</span>
-                    <span className="text-[10px] opacity-85">Instant EVD</span>
+                    <div className="text-sm font-extrabold">{net}</div>
+                    <div className="text-[10px] mt-1 opacity-85">Instant EVD</div>
                   </button>
                 );
               })}
             </div>
-          </div>
+          </CardContent>
+        </Card>
+      )}
 
-          {/* 2. Bundle Selection */}
-          <div className="p-5 rounded-2xl bg-card border border-border shadow-xs space-y-3">
+      {step === 'bundle' && (
+        <Card className="border-border shadow-xs">
+          <CardContent className="p-6 space-y-4">
             <div className="flex justify-between items-center">
-              <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                Step 2: Choose Data Size for {selectedNetwork}
-              </label>
-              <span className="text-xs text-muted-foreground">{filteredBundles.length} packages available</span>
+              <div>
+                <Label className="text-xs font-bold uppercase tracking-wider">
+                  Choose Data Bundle
+                </Label>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Select a data package for {selectedNetwork}.
+                </p>
+              </div>
+              <Badge variant="outline" className="text-xs">
+                {filteredBundles.length} packages
+              </Badge>
+            </div>
+
+            {/* Input Mode Switcher */}
+            <div className="flex items-center p-1 rounded-xl bg-muted border border-border text-xs font-semibold w-fit">
+              <button
+                onClick={() => setInputMode('cards')}
+                className={`px-3 py-1.5 rounded-lg transition-colors cursor-pointer ${
+                  inputMode === 'cards' ? 'bg-card text-foreground shadow-2xs' : 'text-muted-foreground hover:text-foreground'
+                }`}
+              >
+                Card View
+              </button>
+              <button
+                onClick={() => setInputMode('text')}
+                className={`px-3 py-1.5 rounded-lg transition-colors cursor-pointer ${
+                  inputMode === 'text' ? 'bg-card text-foreground shadow-2xs' : 'text-muted-foreground hover:text-foreground'
+                }`}
+              >
+                Quick Text
+              </button>
+              <button
+                onClick={() => setInputMode('bulk')}
+                className={`px-3 py-1.5 rounded-lg transition-colors cursor-pointer ${
+                  inputMode === 'bulk' ? 'bg-card text-foreground shadow-2xs' : 'text-muted-foreground hover:text-foreground'
+                }`}
+              >
+                Bulk
+              </button>
             </div>
 
             {inputMode === 'cards' ? (
@@ -265,51 +353,55 @@ export const BuyDataFlow: React.FC<BuyDataFlowProps> = ({
               </div>
             ) : (
               <div className="space-y-3">
-                <label className="text-xs font-semibold text-muted-foreground">
-                  Paste multiple phone numbers (comma or newline separated):
-                </label>
-                <textarea
+                <Label htmlFor="bulk-numbers">Paste multiple phone numbers (comma or newline separated):</Label>
+                <Textarea
+                  id="bulk-numbers"
                   rows={3}
                   placeholder="0244192834, 0558291034, 0209182391"
                   value={bulkNumbersText}
                   onChange={(e) => setBulkNumbersText(e.target.value)}
-                  className="w-full p-3 rounded-xl border border-input bg-background text-foreground text-xs"
                 />
               </div>
             )}
-          </div>
+          </CardContent>
+        </Card>
+      )}
 
-          {/* 3. Beneficiary Phone & Payment Method */}
-          <div className="p-5 rounded-2xl bg-card border border-border shadow-xs space-y-4">
-            <label className="block text-xs font-bold uppercase tracking-wider text-muted-foreground">
-              Step 3: Recipient & Payment
-            </label>
-
+      {step === 'recipient' && (
+        <Card className="border-border shadow-xs">
+          <CardContent className="p-6 space-y-5">
             <div>
-              <label className="block text-xs font-medium text-foreground mb-1">
-                Recipient Ghana Mobile Number
-              </label>
+              <Label className="text-xs font-bold uppercase tracking-wider">
+                Recipient & Payment
+              </Label>
+              <p className="text-xs text-muted-foreground mt-1">
+                Enter the recipient's phone number and choose payment method.
+              </p>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="recipient-phone">Recipient Phone Number</Label>
               <div className="relative">
                 <Smartphone className="absolute left-3.5 top-3 w-4 h-4 text-muted-foreground" />
-                <input
+                <Input
+                  id="recipient-phone"
                   type="tel"
                   required
                   placeholder="e.g. 0244123456"
                   value={recipientPhone}
                   onChange={(e) => handlePhoneChange(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-input bg-background text-foreground text-sm focus:outline-hidden focus:ring-2 focus:ring-ring tabular-nums"
+                  className="pl-10 tabular-nums"
                 />
               </div>
-              <p className="text-[11px] text-muted-foreground mt-1">
-                Carrier auto-detected: <strong className="text-foreground">{selectedNetwork}</strong>
-              </p>
+              {recipientPhone.length >= 3 && (
+                <p className="text-[11px] text-muted-foreground">
+                  Detected Network: <Badge variant="outline" className="ml-1">{selectedNetwork}</Badge>
+                </p>
+              )}
             </div>
 
-            {/* Payment Method Selector */}
-            <div>
-              <label className="block text-xs font-medium text-foreground mb-1.5">
-                Choose Payment Source
-              </label>
+            <div className="space-y-3">
+              <Label className="text-xs font-bold">Payment Method</Label>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 <button
                   type="button"
@@ -326,7 +418,7 @@ export const BuyDataFlow: React.FC<BuyDataFlowProps> = ({
                       Available: GH₵ {walletBalance.toFixed(2)}
                     </div>
                   </div>
-                  <span className="text-xs font-bold text-primary">Instant (0s)</span>
+                  <span className="text-xs font-bold text-primary">Instant</span>
                 </button>
 
                 <button
@@ -340,168 +432,170 @@ export const BuyDataFlow: React.FC<BuyDataFlowProps> = ({
                 >
                   <div>
                     <div className="text-xs font-bold text-foreground">Direct Mobile Money</div>
-                    <div className="text-[11px] text-muted-foreground">USSD PIN Prompt on SIM</div>
+                    <div className="text-[11px] text-muted-foreground">USSD PIN Prompt</div>
                   </div>
-                  <span className="text-xs font-bold text-amber-600">Push to Phone</span>
+                  <span className="text-xs font-bold text-amber-600">Push</span>
                 </button>
               </div>
             </div>
-          </div>
+          </CardContent>
+        </Card>
+      )}
 
-          {/* Sticky Review & Checkout Summary */}
-          <div className="p-5 rounded-2xl bg-muted/40 border border-border flex flex-col sm:flex-row justify-between items-center gap-4">
+      {step === 'review' && (
+        <Card className="border-border shadow-xs">
+          <CardContent className="p-6 space-y-5">
             <div>
-              <div className="text-xs text-muted-foreground">Order Summary:</div>
-              <div className="text-base font-extrabold text-foreground">
-                {currentBundle.name} ({currentBundle.validity})
+              <Label className="text-xs font-bold uppercase tracking-wider">
+                Review Your Order
+              </Label>
+              <p className="text-xs text-muted-foreground mt-1">
+                Verify all details before completing your purchase.
+              </p>
+            </div>
+
+            <div className="p-4 rounded-xl bg-muted/40 border border-border space-y-3 text-xs">
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Network:</span>
+                <span className="font-bold text-foreground">{selectedNetwork} Ghana</span>
               </div>
-              <div className="text-xs text-muted-foreground">
-                Recipient: <span className="font-mono text-foreground font-semibold">{recipientPhone}</span>
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Bundle:</span>
+                <span className="font-bold text-foreground">{currentBundle.name}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Validity:</span>
+                <span className="font-bold text-foreground">{currentBundle.validity}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Recipient:</span>
+                <span className=" font-bold text-foreground">{recipientPhone}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Payment:</span>
+                <span className="font-bold text-foreground capitalize">{paymentMethod.replace('_', ' ')}</span>
+              </div>
+              <div className="flex justify-between pt-2 border-t border-border font-extrabold text-sm">
+                <span>Total:</span>
+                <span className="text-primary tabular-nums">GH₵ {currentBundle.retailPrice.toFixed(2)}</span>
               </div>
             </div>
 
-            <div className="flex items-center gap-4 w-full sm:w-auto justify-between sm:justify-end">
-              <div className="text-right">
-                <div className="text-xs text-muted-foreground">Payable:</div>
-                <div className="text-2xl font-black text-foreground tabular-nums">
-                  GH₵ {currentBundle.retailPrice.toFixed(2)}
+            {paymentMethod === 'wallet' && walletBalance < currentBundle.retailPrice && (
+              <div className="p-3 rounded-xl bg-destructive/10 border border-destructive/30 text-destructive text-xs font-semibold">
+                Insufficient wallet balance. Please choose Mobile Money or fund your wallet.
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      )}
+
+      {step === 'processing' && (
+        <Card className="border-border shadow-lg">
+          <CardContent className="p-8 text-center space-y-4">
+            <div className="w-16 h-16 rounded-full bg-primary/10 text-primary mx-auto flex items-center justify-center">
+              <Loader2 className="w-8 h-8 animate-spin text-primary" />
+            </div>
+            <div>
+              <h3 className="text-lg font-bold text-foreground">Connecting to {selectedNetwork} Core Switch...</h3>
+              <p className="text-xs text-muted-foreground mt-1">
+                Dispatching {currentBundle.name} to <strong>{recipientPhone}</strong>.
+              </p>
+            </div>
+            <SignalRail status="processing" size="md" className="justify-center" label="EVD Dispatching" />
+          </CardContent>
+        </Card>
+      )}
+
+      {step === 'success' && createdOrder && (
+        <Card className="border-border shadow-xl">
+          <CardContent className="p-6 sm:p-8 space-y-6 text-center">
+            <div className="w-16 h-16 rounded-full bg-emerald-500/10 text-emerald-500 mx-auto flex items-center justify-center">
+              <CheckCircle2 className="w-10 h-10" />
+            </div>
+
+            <div>
+              <h3 className="text-xl font-bold text-foreground">Data Delivered Successfully!</h3>
+              <p className="text-xs text-muted-foreground mt-1">
+                <strong>{createdOrder.productName}</strong> has been credited to <span className=" text-foreground font-semibold">{createdOrder.recipientPhone}</span>.
+              </p>
+            </div>
+
+            <div className="p-4 rounded-xl bg-muted/40 border border-border text-xs space-y-2 text-left">
+              <div className="flex justify-between items-center">
+                <span className="text-muted-foreground">Order Reference:</span>
+                <div className="flex items-center gap-1.5">
+                  <span className=" font-bold text-foreground">{createdOrder.reference}</span>
+                  <button
+                    onClick={handleCopyRef}
+                    className="p-1 hover:bg-muted rounded text-muted-foreground"
+                  >
+                    {copiedRef ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5" />}
+                  </button>
                 </div>
               </div>
-
-              <button
-                type="submit"
-                className="py-3 px-6 rounded-xl bg-primary text-primary-foreground font-bold text-sm hover:bg-primary/90 transition-all flex items-center gap-2 shadow-md cursor-pointer"
-              >
-                <span>Review & Pay</span>
-                <ArrowRight className="w-4 h-4" />
-              </button>
-            </div>
-          </div>
-        </form>
-      )}
-
-      {/* CONFIRMATION STEP */}
-      {step === 'confirm' && (
-        <div className="p-6 rounded-2xl bg-card border border-border shadow-lg space-y-6 max-w-lg mx-auto">
-          <div className="text-center pb-4 border-b border-border">
-            <h3 className="text-lg font-bold text-foreground">Confirm Data Recharge</h3>
-            <p className="text-xs text-muted-foreground mt-0.5">
-              Verify beneficiary and carrier before dispatching to network gateway.
-            </p>
-          </div>
-
-          <div className="space-y-3 text-xs">
-            <div className="flex justify-between py-1 border-b border-border/60">
-              <span className="text-muted-foreground">Carrier Network:</span>
-              <span className="font-bold text-foreground">{selectedNetwork} Ghana</span>
-            </div>
-            <div className="flex justify-between py-1 border-b border-border/60">
-              <span className="text-muted-foreground">Package:</span>
-              <span className="font-bold text-foreground">{currentBundle.name}</span>
-            </div>
-            <div className="flex justify-between py-1 border-b border-border/60">
-              <span className="text-muted-foreground">Beneficiary Handset:</span>
-              <span className="font-mono font-bold text-foreground">{recipientPhone}</span>
-            </div>
-            <div className="flex justify-between py-1 border-b border-border/60">
-              <span className="text-muted-foreground">Payment Channel:</span>
-              <span className="font-bold text-foreground capitalize">{paymentMethod.replace('_', ' ')}</span>
-            </div>
-            <div className="flex justify-between py-2 font-extrabold text-sm text-foreground">
-              <span>Total Deduction:</span>
-              <span className="text-primary tabular-nums">GH₵ {currentBundle.retailPrice.toFixed(2)}</span>
-            </div>
-          </div>
-
-          <div className="flex gap-3 pt-2">
-            <button
-              type="button"
-              onClick={() => setStep('select')}
-              className="flex-1 py-2.5 rounded-xl border border-border text-foreground hover:bg-muted font-semibold text-xs cursor-pointer"
-            >
-              Back & Modify
-            </button>
-            <button
-              type="button"
-              onClick={handleExecutePayment}
-              className="flex-1 py-2.5 rounded-xl bg-primary text-primary-foreground font-bold text-xs hover:bg-primary/90 transition-colors flex items-center justify-center gap-1.5 shadow-sm cursor-pointer"
-            >
-              <span>Confirm & Pay GH₵ {currentBundle.retailPrice.toFixed(2)}</span>
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* PROCESSING STEP */}
-      {step === 'processing' && (
-        <div className="p-8 rounded-2xl bg-card border border-border shadow-lg text-center space-y-4 max-w-md mx-auto">
-          <div className="w-16 h-16 rounded-full bg-primary/10 text-primary mx-auto flex items-center justify-center">
-            <Loader2 className="w-8 h-8 animate-spin text-primary" />
-          </div>
-          <div>
-            <h3 className="text-lg font-bold text-foreground">Connecting to {selectedNetwork} Core Switch...</h3>
-            <p className="text-xs text-muted-foreground mt-1">
-              Dispatching bundle to <strong>{recipientPhone}</strong>. Waiting for carrier acknowledgement.
-            </p>
-          </div>
-          <SignalRail status="processing" size="md" className="justify-center" label="EVD Dispatching" />
-        </div>
-      )}
-
-      {/* SUCCESS STEP */}
-      {step === 'success' && createdOrder && (
-        <div className="p-6 sm:p-8 rounded-2xl bg-card border border-border shadow-xl space-y-6 max-w-lg mx-auto text-center">
-          <div className="w-16 h-16 rounded-full bg-emerald-500/10 text-emerald-500 mx-auto flex items-center justify-center">
-            <CheckCircle2 className="w-10 h-10" />
-          </div>
-
-          <div>
-            <h3 className="text-xl font-bold text-foreground">Data Delivered Successfully!</h3>
-            <p className="text-xs text-muted-foreground mt-1">
-              <strong>{createdOrder.productName}</strong> has been credited to <span className="font-mono text-foreground font-semibold">{createdOrder.recipientPhone}</span>.
-            </p>
-          </div>
-
-          <div className="p-4 rounded-xl bg-muted/40 border border-border text-xs space-y-2 text-left">
-            <div className="flex justify-between items-center">
-              <span className="text-muted-foreground">Order Reference:</span>
-              <div className="flex items-center gap-1.5">
-                <span className="font-mono font-bold text-foreground">{createdOrder.reference}</span>
-                <button
-                  onClick={handleCopyRef}
-                  className="p-1 hover:bg-muted rounded text-muted-foreground"
-                >
-                  {copiedRef ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5" />}
-                </button>
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Amount:</span>
+                <span className="font-bold text-foreground tabular-nums">GH₵ {createdOrder.amount.toFixed(2)}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Network Status:</span>
+                <span className="text-emerald-600 dark:text-emerald-400 font-semibold">Credited & SMS Sent</span>
               </div>
             </div>
-            <div className="flex justify-between">
-              <span className="text-muted-foreground">Amount:</span>
-              <span className="font-bold text-foreground tabular-nums">GH₵ {createdOrder.amount.toFixed(2)}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-muted-foreground">Network Status:</span>
-              <span className="text-emerald-600 dark:text-emerald-400 font-semibold">Credited & SMS Sent</span>
-            </div>
-          </div>
 
-          <div className="flex gap-3">
-            <button
-              onClick={() => onOpenReceipt(createdOrder)}
-              className="flex-1 py-2.5 rounded-xl border border-border bg-card text-foreground hover:bg-muted font-semibold text-xs cursor-pointer"
+            <div className="flex gap-3">
+              <Button
+                variant="outline"
+                onClick={() => onOpenReceipt(createdOrder)}
+                className="flex-1"
+              >
+                View Receipt
+              </Button>
+              <Button
+                onClick={() => {
+                  setStep('network');
+                  setCreatedOrder(null);
+                }}
+                className="flex-1"
+              >
+                Buy Another
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Navigation Buttons */}
+      {step !== 'processing' && step !== 'success' && (
+        <div className="flex gap-3">
+          {step !== 'network' && (
+            <Button
+              variant="outline"
+              onClick={handleBack}
+              className="flex-1"
             >
-              View Official Receipt
-            </button>
-            <button
-              onClick={() => {
-                setStep('select');
-                setCreatedOrder(null);
-              }}
-              className="flex-1 py-2.5 rounded-xl bg-primary text-primary-foreground font-bold text-xs hover:bg-primary/90 cursor-pointer"
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Back
+            </Button>
+          )}
+          {step !== 'review' ? (
+            <Button
+              onClick={handleNext}
+              className="flex-1"
             >
-              Buy Another Bundle
-            </button>
-          </div>
+              Next
+              <ArrowRight className="w-4 h-4 ml-2" />
+            </Button>
+          ) : (
+            <Button
+              onClick={handleSubmit}
+              className="flex-1"
+            >
+              Complete Purchase
+              <CheckCircle2 className="w-4 h-4 ml-2" />
+            </Button>
+          )}
         </div>
       )}
     </div>
