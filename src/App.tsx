@@ -283,9 +283,13 @@ export default function App() {
     }
   };
 
-  const handleUnlockAdmin = () => {
-    setIsAdminUnlocked(true);
-    localStorage.setItem('sdh_admin_unlocked', 'true');
+  const handleAdminPinSubmit = (pin: string) => {
+    const authorized = pin === '0000' || pin === '7788';
+    if (authorized) {
+      setIsAdminUnlocked(true);
+      localStorage.setItem('sdh_admin_unlocked', 'true');
+    }
+    return authorized;
   };
 
   const handleLockAdmin = () => {
@@ -832,7 +836,7 @@ export default function App() {
         />
 
         {/* Dynamic Content Main Pane */}
-        <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto w-full">
+        <main className={`${sidebarCollapsed ? 'ml-20' : 'ml-64'} flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto w-full transition-[margin] duration-200`}>
           {/* CUSTOMER PORTAL */}
           {currentRole === 'customer' && (
             <>
@@ -955,9 +959,11 @@ export default function App() {
           {/* ADMIN OPERATIONS CONSOLE WITH CLEARANCE PIN GUARD */}
           {currentRole === 'admin' && (
             !isAdminUnlocked ? (
-              <AdminPinGate
-                onUnlock={handleUnlockAdmin}
-                onCancel={() => navigateToDashboard('customer', 'overview')}
+<AdminPinGate
+              onSubmitPin={handleAdminPinSubmit}
+              error=""
+              isSuccess={isAdminUnlocked}
+              onCancel={() => navigateToDashboard('customer', 'overview')}
                 onOpenSecurityPins={() => setIsSecurityPinsOpen(true)}
               />
             ) : (
