@@ -16,7 +16,13 @@ export default defineConfig(() => {
       // Do not modifyâfile watching is disabled to prevent flickering during agent edits.
       hmr: process.env.DISABLE_HMR !== 'true',
       // Disable file watching when DISABLE_HMR is true to save CPU during agent edits.
-      watch: process.env.DISABLE_HMR === 'true' ? null : {},
+      // Ignore project env files so v0's env mirroring cannot repeatedly restart Vite
+      // and invalidate the esbuild transform service mid-request.
+      watch: process.env.DISABLE_HMR === 'true'
+        ? null
+        : {
+            ignored: ['**/.env', '**/.env.*'],
+          },
     },
   };
 });
