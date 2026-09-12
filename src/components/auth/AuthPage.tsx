@@ -326,10 +326,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
               <div>
                 <span className="font-extrabold text-sm tracking-tight text-foreground flex items-center gap-1.5">
                   Smart Data Hub
-                  <Badge
-                    variant="outline"
-                    className="text-[10px] px-1.5 py-0 "
-                  >
+                  <Badge variant="outline" className="text-[10px] px-1.5 py-0 ">
                     Ghana
                   </Badge>
                 </span>
@@ -409,7 +406,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
               <div className="mb-4 p-3.5 rounded-xl bg-amber-500/15 border border-amber-500/30 flex items-start gap-2.5 text-xs text-amber-900 dark:text-amber-300 animate-in fade-in-50">
                 <Info className="w-4 h-4 shrink-0 mt-0.5" />
                 <div>
-                  <div className="font-bold">Authentication Required</div>
+                  <div className="font-semibold">Authentication Required</div>
                   <div className="text-amber-800/90 dark:text-amber-300/90">
                     {redirectReason}
                   </div>
@@ -813,9 +810,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                       <span className="font-bold text-foreground">
                         Demo Testing Code:{" "}
                       </span>
-                      <span className=" font-extrabold text-primary">
-                        4190
-                      </span>
+                      <span className=" font-extrabold text-primary">4190</span>
                     </div>
 
                     <div className="space-y-2">

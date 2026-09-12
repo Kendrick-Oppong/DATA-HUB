@@ -245,12 +245,9 @@ export const PublicMarketingSite: React.FC<PublicMarketingSiteProps> = ({
             <div className="max-w-[95%] mx-auto px-4 py-10 sm:px-6 md:py-16 lg:py-20">
               <div className="grid items-center gap-10 lg:grid-cols-[1.02fr_0.98fr] lg:gap-16">
                 <div className="relative z-10 space-y-7">
-                  <div className="flex flex-wrap items-center gap-3 text-xs font-bold uppercase text-muted-foreground">
-                    <span className="inline-flex items-center gap-2 text-primary">
-                      Ghana's digital service rail
-                    </span>
-                    <span className="h-px w-8 bg-border" />
-                    <span>Live since 2026</span>
+                  <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-4 py-1.5 text-xs font-bold text-primary uppercase tracking-wider">
+                    <Wifi className="size-3.5" />
+                    Ghana's live service rail
                   </div>
                   <div className="max-w-3xl space-y-5">
                     <h1 className="text-4xl font-black leading-[0.98] text-foreground sm:text-6xl lg:text-7xl">
@@ -265,7 +262,7 @@ export const PublicMarketingSite: React.FC<PublicMarketingSiteProps> = ({
                   <div className="flex flex-wrap items-center gap-3">
                     <Button
                       size="lg"
-                      className="font-bold"
+                      className="font-semibold"
                       onClick={() =>
                         handleStartPurchase(selectedBundleId, selectedNetwork)
                       }
@@ -276,7 +273,7 @@ export const PublicMarketingSite: React.FC<PublicMarketingSiteProps> = ({
                     <Button
                       size="lg"
                       variant="outline"
-                      className="font-bold"
+                      className="font-semibold"
                       onClick={() => navigatePublicTab("agent")}
                     >
                       <Store className="size-4 text-amber-500" />
@@ -399,7 +396,7 @@ export const PublicMarketingSite: React.FC<PublicMarketingSiteProps> = ({
                                   ? "default"
                                   : "outline"
                               }
-                              className="font-bold"
+                              className="font-semibold"
                               onClick={() => {
                                 setSelectedNetwork(network);
                                 const nextBundle = bundles.find(
@@ -640,7 +637,7 @@ export const PublicMarketingSite: React.FC<PublicMarketingSiteProps> = ({
                   <div className="shrink-0 flex flex-col sm:flex-row gap-3">
                     <Button
                       size="lg"
-                      className="font-bold"
+                      className="font-semibold"
                       onClick={() => navigatePublicTab("agent")}
                     >
                       View Agent Benefits
@@ -648,7 +645,7 @@ export const PublicMarketingSite: React.FC<PublicMarketingSiteProps> = ({
                     <Button
                       size="lg"
                       variant="outline"
-                      className="font-bold"
+                      className="font-semibold"
                       onClick={handleApplyAgent}
                     >
                       Apply as Agent
@@ -661,126 +658,219 @@ export const PublicMarketingSite: React.FC<PublicMarketingSiteProps> = ({
         </div>
       )}
 
-      {/* ============ SERVICES — same bones, network-branded ============ */}
+      {/* ============ SERVICES — Premium redesign ============ */}
       {activeTab === "services" && (
-        <div className="max-w-[95%] mx-auto px-4 sm:px-6 py-10 space-y-10">
-          <section className="grid gap-8 border-b border-border pb-10 lg:grid-cols-[1fr_auto] lg:items-end">
-            <div className="space-y-4">
-              <div className="inline-flex items-center gap-2 text-xs font-bold uppercase text-primary">
-                <Wifi className="size-4" />
-                Service rail
+        <div className="flex flex-col">
+          {/* Hero */}
+          <section className="relative isolate overflow-hidden bg-background border-b border-border">
+            <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_60%_60%_at_70%_50%,hsl(var(--primary)/0.10),transparent)]" />
+            <div className="max-w-[95%] mx-auto px-4 sm:px-6 py-16 sm:py-24">
+              <div className="grid gap-12 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
+                <div className="space-y-7">
+                  <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-4 py-1.5 text-xs font-bold text-primary uppercase tracking-wider">
+                    <Wifi className="size-3.5" />
+                    Ghana's live service rail
+                  </div>
+                  <h1 className="text-5xl font-black leading-[0.95] tracking-tight text-foreground sm:text-6xl lg:text-7xl">
+                    Every service.
+                    <br />
+                    <span className="text-primary">One platform.</span>
+                  </h1>
+                  <p className="max-w-lg text-base leading-relaxed text-muted-foreground">
+                    Browse live packages from all three Ghana carriers. Pick a
+                    bundle, approve your MoMo prompt, and data lands on the
+                    recipient's SIM in under 60 seconds.
+                  </p>
+                  <div className="flex flex-col sm:flex-row gap-3">
+                    <Button
+                      size="lg"
+                      className="font-semibold"
+                      onClick={() =>
+                        handleStartPurchase(selectedBundleId, selectedNetwork)
+                      }
+                    >
+                      Buy data now <ArrowRight className="size-4" />
+                    </Button>
+                    <Button
+                      size="lg"
+                      variant="outline"
+                      className="font-semibold"
+                      onClick={() => navigatePublicTab("agent")}
+                    >
+                      <Store className="size-4 text-amber-500" /> Become an agent
+                    </Button>
+                  </div>
+                  <div className="flex flex-wrap gap-x-8 gap-y-3 border-t border-border/70 pt-6">
+                    {[
+                      { value: "03", label: "Networks live" },
+                      { value: "42s", label: "Avg dispatch" },
+                      { value: "99.8%", label: "SLA uptime" },
+                    ].map((s) => (
+                      <div key={s.label}>
+                        <p className="text-2xl font-black text-foreground tabular-nums">
+                          {s.value}
+                        </p>
+                        <p className="text-[11px] text-muted-foreground mt-0.5">
+                          {s.label}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Live network card */}
+                <div className="rounded-3xl border border-border bg-card shadow-2xl shadow-primary/8 overflow-hidden">
+                  <div className="border-b border-border px-6 py-4 flex items-center justify-between">
+                    <div>
+                      <p className="text-xs font-bold uppercase text-primary tracking-wider">
+                        Carrier status
+                      </p>
+                      <h2 className="mt-0.5 text-lg font-black text-foreground">
+                        Live network feed
+                      </h2>
+                    </div>
+                    <SignalRail status="online" size="sm" label="All live" />
+                  </div>
+                  <div className="p-6 space-y-4">
+                    {(
+                      [
+                        {
+                          network: "MTN",
+                          color: "bg-yellow-400/15 text-yellow-700 dark:text-yellow-400",
+                          dot: "bg-yellow-400",
+                          ping: "42s",
+                          status: "Operational",
+                        },
+                        {
+                          network: "Telecel",
+                          color: "bg-red-500/10 text-red-600 dark:text-red-400",
+                          dot: "bg-red-500",
+                          ping: "38s",
+                          status: "Operational",
+                        },
+                        {
+                          network: "AirtelTigo",
+                          color: "bg-blue-500/10 text-blue-600 dark:text-blue-400",
+                          dot: "bg-blue-500",
+                          ping: "51s",
+                          status: "Operational",
+                        },
+                      ] as const
+                    ).map((n) => (
+                      <div
+                        key={n.network}
+                        className="flex items-center justify-between rounded-xl border border-border bg-muted/30 px-4 py-3"
+                      >
+                        <div className="flex items-center gap-3">
+                          <span
+                            className={`inline-flex size-8 items-center justify-center rounded-lg text-[10px] font-black ${n.color}`}
+                          >
+                            {n.network === "AirtelTigo" ? "AT" : n.network.slice(0, 3)}
+                          </span>
+                          <div>
+                            <p className="text-xs font-bold text-foreground">
+                              {n.network}
+                            </p>
+                            <p className="text-[10px] text-muted-foreground">
+                              {n.status}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-1.5">
+                          <span
+                            className={`size-1.5 rounded-full ${n.dot} animate-pulse`}
+                          />
+                          <span className="text-[10px] font-bold tabular-nums text-muted-foreground">
+                            {n.ping}
+                          </span>
+                        </div>
+                      </div>
+                    ))}
+                    <Button
+                      className="w-full font-semibold h-11 mt-2"
+                      onClick={() =>
+                        handleStartPurchase(selectedBundleId, selectedNetwork)
+                      }
+                    >
+                      Buy a bundle <ArrowRight className="size-4" />
+                    </Button>
+                  </div>
+                </div>
               </div>
-              <h1 className="max-w-3xl text-4xl font-black leading-[0.98] text-foreground sm:text-6xl">
-                Everything you need, routed from one place.
-              </h1>
-              <p className="max-w-2xl text-base leading-relaxed text-muted-foreground">
-                Compare live Ghana network bundles, choose a package, and send
-                it directly to any active SIM.
-              </p>
-            </div>
-            <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:w-[25rem]">
-              <Card>
-                <CardContent className="p-4">
-                  <p className="text-[10px] font-bold uppercase text-muted-foreground">
-                    Networks
-                  </p>
-                  <p className="mt-2 text-2xl font-black text-foreground">03</p>
-                  <p className="text-[11px] text-emerald-600 dark:text-emerald-400">
-                    live now
-                  </p>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardContent className="p-4">
-                  <p className="text-[10px] font-bold uppercase text-muted-foreground">
-                    Dispatch
-                  </p>
-                  <p className="mt-2 text-2xl font-black text-foreground">
-                    42s
-                  </p>
-                  <p className="text-[11px] text-muted-foreground">average</p>
-                </CardContent>
-              </Card>
-              <Card className="col-span-2 sm:col-span-1">
-                <CardContent className="p-4">
-                  <p className="text-[10px] font-bold uppercase text-muted-foreground">
-                    Delivery promise
-                  </p>
-                  <p className="mt-2 text-sm font-bold text-foreground">
-                    Automatic refund protection
-                  </p>
-                </CardContent>
-              </Card>
             </div>
           </section>
 
-          <section className="space-y-5">
+
+          {/* Network selector + bundle grid */}
+          <section className="max-w-[95%] mx-auto px-4 sm:px-6 py-12 w-full space-y-8">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
               <div>
-                <p className="text-xs font-bold uppercase text-muted-foreground">
+                <p className="text-xs font-bold uppercase text-muted-foreground tracking-wider">
                   Choose a network
                 </p>
-                <h2 className="mt-1 text-xl font-black text-foreground">
+                <h2 className="mt-1 text-2xl font-black text-foreground">
                   {selectedNetwork} Ghana packages
                 </h2>
               </div>
-              <div className="flex items-center gap-1 rounded-xl border border-border/70 bg-muted/40 p-1">
+              <div className="flex items-center gap-1 rounded-2xl border border-border bg-muted/40 p-1.5">
                 {(["MTN", "Telecel", "AirtelTigo"] as TelecomNetwork[]).map(
                   (net) => {
                     const a = NETWORK_ACCENT[net];
                     const isActive = selectedNetwork === net;
                     return (
-                      <Button
+                      <button
                         key={net}
-                        size="sm"
-                        variant="ghost"
-                        className={`font-bold gap-1.5 ${
+                        type="button"
+                        className={`flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-bold transition-all ${
                           isActive
-                            ? `${a.bg} ${a.text} hover:${a.bg}`
-                            : "text-muted-foreground"
+                            ? `${a.bg} ${a.text} shadow-sm`
+                            : "text-muted-foreground hover:text-foreground"
                         }`}
                         onClick={() => setSelectedNetwork(net)}
                       >
-                        <span className={`size-2 rounded-full ${a.solid}`} />
+                        <span className={`size-2.5 rounded-full ${a.solid}`} />
                         {net === "AirtelTigo" ? "AT Ghana" : `${net} Ghana`}
-                      </Button>
+                      </button>
                     );
                   },
                 )}
               </div>
             </div>
 
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+            <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
               {filteredBundles.map((b, index) => (
-                <Card
+                <div
                   key={b.id}
-                  className={`relative overflow-hidden transition-all hover:-translate-y-1 hover:shadow-xl ${
-                    index === 0 ? `${accent.border} shadow-lg` : ""
+                  className={`group relative overflow-hidden rounded-2xl border bg-card transition-all duration-300 hover:-translate-y-1.5 hover:shadow-2xl ${
+                    index === 0
+                      ? `${accent.border} shadow-lg shadow-primary/10`
+                      : "border-border hover:border-primary/30"
                   }`}
                 >
-                  <div className={`h-1 w-full ${accent.solid}`} />
+                  <div className={`h-1.5 w-full ${accent.solid}`} />
                   {index === 0 && (
-                    <Badge
-                      className={`absolute right-4 top-5 uppercase text-[10px] ${accent.bg} ${accent.text} border-0`}
+                    <div
+                      className={`absolute right-4 top-5 rounded-full px-3 py-1 text-[10px] font-bold uppercase ${accent.bg} ${accent.text}`}
                     >
-                      Popular route
-                    </Badge>
+                      Most popular
+                    </div>
                   )}
-                  <CardContent className="p-5">
+                  <div className="p-6">
                     <div className="flex items-start justify-between gap-4">
                       <div>
-                        <p className="text-[10px] font-bold uppercase text-muted-foreground">
-                          {b.network} / data
+                        <p className="text-[10px] font-bold uppercase text-muted-foreground tracking-widest">
+                          {b.network} · data bundle
                         </p>
-                        <h3 className="mt-2 text-3xl font-black text-foreground">
+                        <h3 className="mt-2 text-4xl font-black tracking-tight text-foreground">
                           {b.sizeLabel}
                         </h3>
+                        <p className="mt-1 text-xs text-muted-foreground">
+                          {b.validity}
+                        </p>
                       </div>
                       <SignalRail status="online" size="sm" />
                     </div>
-
-                    {/* mini routing strip — echoes the Home console */}
-                    <div className="mt-4 flex items-center gap-1.5">
+                    <div className="mt-5 flex items-center gap-1.5 rounded-xl bg-muted/40 px-3 py-2.5">
                       <div
                         className={`flex size-7 items-center justify-center rounded-lg text-[9px] font-black text-white ${accent.solid}`}
                       >
@@ -795,704 +885,1117 @@ export const PublicMarketingSite: React.FC<PublicMarketingSiteProps> = ({
                         <SignalRail status="online" size="sm" />
                       </div>
                     </div>
-
-                    <Separator className="my-4" />
-                    <div className="flex items-end justify-between gap-4">
-                      <div>
-                        <p className="text-[10px] uppercase text-muted-foreground">
-                          Valid for
-                        </p>
-                        <p className="mt-1 text-sm font-bold text-foreground">
-                          {b.validity}
-                        </p>
-                        <p className="mt-2 text-xl font-black tabular-nums text-foreground">
-                          GH₵ {b.retailPrice.toFixed(2)}
-                        </p>
-                      </div>
+                    <div className="mt-5 flex items-center justify-between gap-4">
+                      <p className="text-2xl font-black tabular-nums text-foreground">
+                        GH₵ {b.retailPrice.toFixed(2)}
+                      </p>
                       <Button
-                        size="sm"
-                        className="font-bold"
+                        className="font-bold rounded-xl"
                         onClick={() => handleStartPurchase(b.id, b.network)}
                       >
-                        Buy package
-                        <ArrowRight className="size-3.5" />
+                        Buy now <ArrowRight className="size-3.5" />
                       </Button>
                     </div>
-                  </CardContent>
-                </Card>
+                  </div>
+                </div>
               ))}
+            </div>
+
+            {/* Other services */}
+            <div className="pt-8 border-t border-border">
+              <p className="text-xs font-bold uppercase text-muted-foreground tracking-wider mb-5">
+                Other services on Smart Data Hub
+              </p>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                {[
+                  {
+                    icon: PhoneCall,
+                    color: "text-amber-600",
+                    bg: "bg-amber-500/10",
+                    label: "Airtime Top-up",
+                    desc: "Instant electronic recharge GH₵1–500 on all networks",
+                    cta: "Recharge SIM",
+                  },
+                  {
+                    icon: GraduationCap,
+                    color: "text-purple-600",
+                    bg: "bg-purple-500/10",
+                    label: "Results Checkers",
+                    desc: "WAEC WASSCE, BECE Placement, and University vouchers",
+                    cta: "Buy voucher",
+                  },
+                  {
+                    icon: ShieldCheck,
+                    color: "text-emerald-600",
+                    bg: "bg-emerald-500/10",
+                    label: "AFA Registration",
+                    desc: "Farmer & Worker subsidized tariff enrollment",
+                    cta: "Register SIM",
+                  },
+                ].map((svc) => (
+                  <div
+                    key={svc.label}
+                    className="group flex items-center gap-4 rounded-2xl border border-border bg-card p-5 hover:border-primary/30 hover:shadow-lg transition-all cursor-pointer"
+                    onClick={() => handleStartPurchase("mtn-5gb", "MTN")}
+                  >
+                    <div
+                      className={`flex size-12 items-center justify-center rounded-2xl ${svc.bg} shrink-0 group-hover:scale-110 transition-transform`}
+                    >
+                      <svc.icon className={`size-5 ${svc.color}`} />
+                    </div>
+                    <div className="min-w-0">
+                      <p className="font-bold text-sm text-foreground">
+                        {svc.label}
+                      </p>
+                      <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">
+                        {svc.desc}
+                      </p>
+                      <span
+                        className={`inline-block mt-2 text-xs font-bold ${svc.color}`}
+                      >
+                        {svc.cta} →
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           </section>
         </div>
       )}
 
-      {/* ============ AGENT ============ */}
+      {/* ============ AGENT — Premium redesign ============ */}
       {activeTab === "agent" && (
-        <div className="max-w-[95%] mx-auto px-4 sm:px-6 py-10 space-y-10">
-          <section className="relative overflow-hidden rounded-[2rem] border border-amber-500/30 bg-gradient-to-br from-amber-500/15 via-card to-primary/10 p-6 sm:p-10">
-            <div className="pointer-events-none absolute -right-20 -top-24 size-72 rounded-full border-[28px] border-amber-500/10" />
-            <div className="relative grid gap-8 lg:grid-cols-[1fr_auto] lg:items-end">
-              <div className="max-w-2xl space-y-4">
-                <Badge
-                  variant="secondary"
-                  className="bg-amber-500/15 text-amber-900 dark:text-amber-300 gap-1.5"
-                >
-                  <Sparkles className="size-3.5" /> Merchant program
-                </Badge>
-                <h1 className="text-4xl font-black leading-[0.98] text-foreground sm:text-6xl">
-                  Turn everyday connections into daily income.
-                </h1>
-                <p className="max-w-xl text-base leading-relaxed text-muted-foreground">
-                  Sell data, vouchers, and utilities from your own branded
-                  storefront with wholesale rates and instant MoMo payouts.
-                </p>
+        <div className="flex flex-col">
+          {/* Hero */}
+          <section className="relative isolate overflow-hidden bg-background border-b border-border">
+            <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_60%_60%_at_70%_50%,hsl(43_94%_56%/0.12),transparent)]" />
+            <div className="pointer-events-none absolute -right-32 -top-32 size-[500px] rounded-full border-[40px] border-amber-500/8" />
+            <div className="max-w-[95%] mx-auto px-4 sm:px-6 py-16 sm:py-24">
+              <div className="grid gap-12 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
+                <div className="space-y-7">
+                  {" "}
+                  <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-4 py-1.5 text-xs font-bold text-primary uppercase tracking-wider">
+                    <Sparkles className="size-3.5" />
+                    Merchant program · Zero setup fee
+                  </div>
+                  <h1 className="text-5xl font-black leading-[0.95] tracking-tight text-foreground sm:text-6xl lg:text-7xl">
+                    Turn everyday
+                    <br />
+                    <span className="text-primary">connections</span>
+                    <br />
+                    into daily income.
+                  </h1>
+                  <p className="max-w-lg text-base leading-relaxed text-muted-foreground">
+                    Sell data bundles, exam vouchers, airtime, and utilities
+                    from your own branded storefront with wholesale rates and
+                    instant Mobile Money payouts — starting today, for free.
+                  </p>
+                  <div className="flex flex-col sm:flex-row gap-3">
+                    <Button
+                      size="lg"
+                      className="font-semibold"
+                      onClick={handleApplyAgent}
+                    >
+                      Open my data store <ArrowRight className="size-4" />
+                    </Button>
+                    <Button
+                      size="lg"
+                      variant="outline"
+                      className="font-semibold"
+                      onClick={() => navigatePublicTab("services")}
+                    >
+                      Browse wholesale rates
+                    </Button>
+                  </div>
+                  <div className="flex flex-wrap gap-x-8 gap-y-3 border-t border-border/70 pt-6">
+                    {[
+                      { value: "GH₵ 0", label: "Setup fee" },
+                      { value: "Instant", label: "MoMo payout speed" },
+                      { value: "Your URL", label: "Public storefront" },
+                    ].map((s) => (
+                      <div key={s.label}>
+                        <p className="text-2xl font-black text-foreground tabular-nums">
+                          {s.value}
+                        </p>
+                        <p className="text-[11px] text-muted-foreground mt-0.5">
+                          {s.label}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Profit calculator */}
+                <div className="rounded-3xl border border-border bg-card shadow-2xl shadow-primary/8 overflow-hidden">
+                  <div className="border-b border-border px-6 py-4 flex items-center justify-between">
+                    <div>
+                      <p className="text-xs font-bold uppercase text-primary tracking-wider">
+                        Plan your margin
+                      </p>
+                      <h2 className="mt-0.5 text-lg font-black text-foreground">
+                        Profit calculator
+                      </h2>
+                    </div>
+                    <SignalRail status="online" size="sm" label="MoMo live" />
+                  </div>
+                  <div className="p-6 space-y-6">
+                    <div className="space-y-3">
+                      <div className="flex justify-between text-xs font-semibold">
+                        <Label className="text-muted-foreground">
+                          Bundles sold per day
+                        </Label>
+                        <span className="font-black tabular-nums text-foreground">
+                          {calcDailyBundles}
+                        </span>
+                      </div>
+                      <Slider
+                        min={5}
+                        max={200}
+                        step={5}
+                        value={[calcDailyBundles]}
+                        onValueChange={(val) => {
+                          const v = Array.isArray(val) ? val[0] : val;
+                          if (typeof v === "number") setCalcDailyBundles(v);
+                        }}
+                      />
+                      <div className="flex justify-between text-[10px] text-muted-foreground">
+                        <span>5 bundles</span>
+                        <span>200 bundles</span>
+                      </div>
+                    </div>
+                    <div className="space-y-3">
+                      <div className="flex justify-between text-xs font-semibold">
+                        <Label className="text-muted-foreground">
+                          Average margin per bundle
+                        </Label>
+                        <span className="font-black tabular-nums text-foreground">
+                          GH₵ {calcAvgMargin.toFixed(2)}
+                        </span>
+                      </div>
+                      <Slider
+                        min={1}
+                        max={10}
+                        step={0.5}
+                        value={[calcAvgMargin]}
+                        onValueChange={(val) => {
+                          const v = Array.isArray(val) ? val[0] : val;
+                          if (typeof v === "number") setCalcAvgMargin(v);
+                        }}
+                      />
+                      <div className="flex justify-between text-[10px] text-muted-foreground">
+                        <span>GH₵ 1.00</span>
+                        <span>GH₵ 10.00</span>
+                      </div>
+                    </div>
+                    <div className="rounded-2xl bg-gradient-to-br bg-gradient-to-r from-primary/8 border border-border via-card to-amber-500/8 p-5 ">
+                      <div className="flex items-center gap-2 text-xs font-bold uppercase">
+                        <TrendingUp className="size-3.5" />
+                        Projected monthly commission
+                      </div>
+                      <p className="mt-3 text-4xl font-black tabular-nums">
+                        GH₵{" "}
+                        {(calcDailyBundles * calcAvgMargin * 30).toLocaleString(
+                          "en-US",
+                          { minimumFractionDigits: 2 },
+                        )}
+                      </p>
+                      <p className="mt-2 text-xs leading-relaxed">
+                        At {calcDailyBundles * 30} orders/month — a reliable
+                        local customer base turning into predictable income.
+                      </p>
+                    </div>
+                    <Button
+                      className="w-full font-semibold h-11"
+                      onClick={handleApplyAgent}
+                    >
+                      Apply to become an agent <ArrowRight className="size-4" />
+                    </Button>
+                  </div>
+                </div>
               </div>
+            </div>
+          </section>
+
+          {/* Benefits grid */}
+          <section className="max-w-[95%] mx-auto px-4 sm:px-6 py-14 w-full">
+            <div className="text-center max-w-xl mx-auto mb-10 space-y-2">
+              <h2 className="text-2xl sm:text-3xl font-black text-foreground tracking-tight">
+                Everything you need to run a data business
+              </h2>
+              <p className="text-sm text-muted-foreground">
+                SDH provides the infrastructure. You bring the customers.
+              </p>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+              {[
+                {
+                  icon: Store,
+                  color: "text-amber-600",
+                  bg: "bg-amber-500/10",
+                  title: "Branded Storefront URL",
+                  desc: "Get your own public URL like smartdatahub.com/store/your-name. Share it on WhatsApp, print it on receipts — it's your brand.",
+                },
+                {
+                  icon: TrendingUp,
+                  color: "text-primary",
+                  bg: "bg-primary/10",
+                  title: "Set Your Own Margins",
+                  desc: "You decide how much profit to make per bundle. Our live wholesale rates let you be competitive and profitable at the same time.",
+                },
+                {
+                  icon: Zap,
+                  color: "text-emerald-600",
+                  bg: "bg-emerald-500/10",
+                  title: "Instant MoMo Payouts",
+                  desc: "Request a commission withdrawal anytime. Funds hit your Mobile Money in seconds, no minimum balance required.",
+                },
+                {
+                  icon: ShieldCheck,
+                  color: "text-purple-600",
+                  bg: "bg-purple-500/10",
+                  title: "Zero Setup Cost",
+                  desc: "No registration fee, no minimum order. Start selling data, airtime, and vouchers from your first day as an agent.",
+                },
+                {
+                  icon: Wifi,
+                  color: "text-cyan-600",
+                  bg: "bg-cyan-500/10",
+                  title: "All 3 Networks Covered",
+                  desc: "MTN, Telecel, and AirtelTigo — all at wholesale carrier rates. Your customers never need to go elsewhere.",
+                },
+                {
+                  icon: MessageCircle,
+                  color: "text-rose-500",
+                  bg: "bg-rose-500/10",
+                  title: "Dedicated Agent Support",
+                  desc: "A dedicated WhatsApp desk for agents. Delivery issues, top-up questions, or store help — always a real person responds.",
+                },
+              ].map((item) => (
+                <div
+                  key={item.title}
+                  className="group rounded-2xl border border-border bg-card p-6 hover:border-primary/30 hover:shadow-xl transition-all duration-300"
+                >
+                  <div
+                    className={`flex size-12 items-center justify-center rounded-2xl ${item.bg} mb-4 group-hover:scale-110 transition-transform`}
+                  >
+                    <item.icon className={`size-5 ${item.color}`} />
+                  </div>
+                  <h3 className="font-bold text-base text-foreground">
+                    {item.title}
+                  </h3>
+                  <p className="mt-2 text-xs text-muted-foreground leading-relaxed">
+                    {item.desc}
+                  </p>
+                </div>
+              ))}
+            </div>
+            <div className="mt-10 text-center">
               <Button
                 size="lg"
-                className="font-bold shadow-lg shadow-primary/20"
+                className="font-semibold px-4"
                 onClick={handleApplyAgent}
               >
-                Open my data store <ArrowRight className="size-4" />
+                Start your free data store now <ArrowRight className="size-4" />
               </Button>
             </div>
           </section>
-
-          <div className="grid gap-4 sm:grid-cols-3">
-            <Card>
-              <CardContent className="p-5">
-                <p className="text-[10px] font-bold uppercase text-muted-foreground">
-                  Setup fee
-                </p>
-                <p className="mt-2 text-2xl font-black text-foreground">
-                  GH₵ 0
-                </p>
-                <p className="mt-1 text-xs text-emerald-600 dark:text-emerald-400">
-                  start selling today
-                </p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="p-5">
-                <p className="text-[10px] font-bold uppercase text-muted-foreground">
-                  Payout speed
-                </p>
-                <p className="mt-2 text-2xl font-black text-foreground">
-                  Instant
-                </p>
-                <p className="mt-1 text-xs text-muted-foreground">
-                  to your MoMo wallet
-                </p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="p-5">
-                <p className="text-[10px] font-bold uppercase text-muted-foreground">
-                  Storefront
-                </p>
-                <p className="mt-2 text-2xl font-black text-foreground">
-                  Your brand
-                </p>
-                <p className="mt-1 text-xs text-muted-foreground">
-                  your own public URL
-                </p>
-              </CardContent>
-            </Card>
-          </div>
-
-          <Card className="shadow-xl">
-            <CardContent className="grid gap-8 p-6 sm:p-8 lg:grid-cols-[0.9fr_1.1fr]">
-              <div className="space-y-7">
-                <div className="flex items-start justify-between gap-4 border-b border-border pb-5">
-                  <div>
-                    <p className="text-xs font-bold uppercase text-primary">
-                      Plan your margin
-                    </p>
-                    <h2 className="mt-1 text-2xl font-black text-foreground">
-                      Profit calculator
-                    </h2>
-                  </div>
-                  <SignalRail status="online" size="sm" label="MoMo live" />
-                </div>
-                <div className="space-y-8">
-                  <div className="space-y-3">
-                    <div className="flex justify-between text-xs font-semibold">
-                      <Label className="text-muted-foreground">
-                        Bundles sold per day
-                      </Label>
-                      <span className="font-bold tabular-nums text-foreground">
-                        {calcDailyBundles}
-                      </span>
-                    </div>
-                    <Slider
-                      min={5}
-                      max={200}
-                      step={5}
-                      value={[calcDailyBundles]}
-                      onValueChange={([v]) => setCalcDailyBundles(v)}
-                    />
-                    <div className="flex justify-between text-[10px] text-muted-foreground">
-                      <span>5 bundles</span>
-                      <span>200 bundles</span>
-                    </div>
-                  </div>
-                  <div className="space-y-3">
-                    <div className="flex justify-between text-xs font-semibold">
-                      <Label className="text-muted-foreground">
-                        Average margin per bundle
-                      </Label>
-                      <span className="font-bold tabular-nums text-foreground">
-                        GH₵ {calcAvgMargin.toFixed(2)}
-                      </span>
-                    </div>
-                    <Slider
-                      min={1}
-                      max={10}
-                      step={0.5}
-                      value={[calcAvgMargin]}
-                      onValueChange={([v]) => setCalcAvgMargin(v)}
-                    />
-                    <div className="flex justify-between text-[10px] text-muted-foreground">
-                      <span>GH₵ 1.00</span>
-                      <span>GH₵ 10.00</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex flex-col justify-between rounded-2xl bg-primary p-6 text-primary-foreground sm:p-8">
-                <div>
-                  <div className="flex items-center gap-2 text-xs font-bold uppercase text-primary-foreground/70">
-                    <TrendingUp className="size-3.5" />
-                    Projected monthly commission
-                  </div>
-                  <p className="mt-4 text-5xl font-black tabular-nums">
-                    GH₵{" "}
-                    {(calcDailyBundles * calcAvgMargin * 30).toLocaleString(
-                      "en-US",
-                      { minimumFractionDigits: 2 },
-                    )}
-                  </p>
-                  <p className="mt-4 max-w-sm text-sm leading-relaxed text-primary-foreground/75">
-                    At {calcDailyBundles * 30} orders per month, your storefront
-                    could turn a reliable local customer base into predictable
-                    income.
-                  </p>
-                </div>
-                <Button
-                  variant="secondary"
-                  className="mt-8 font-bold"
-                  onClick={handleApplyAgent}
-                >
-                  Apply to become an agent
-                  <ArrowRight className="size-4" />
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
         </div>
       )}
 
-      {/* ============ TRACK — with routing console echo on results ============ */}
+      {/* ============ TRACK — Premium redesign ============ */}
       {activeTab === "track" && (
-        <div className="max-w-[95%] mx-auto px-4 sm:px-6 py-10 space-y-10">
-          <section className="grid gap-8 border-b border-border pb-10 lg:grid-cols-[1fr_auto] lg:items-end">
-            <div className="space-y-4">
-              <div className="inline-flex items-center gap-2 text-xs font-bold uppercase text-primary">
-                <Search className="size-4" /> Delivery control
+        <div className="flex flex-col">
+          {/* Hero */}
+          <section className="relative isolate overflow-hidden border-b border-border bg-background">
+            <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_50%_-10%,hsl(var(--primary)/0.10),transparent)]" />
+            <div className="max-w-[95%] mx-auto px-4 sm:px-6 py-14 sm:py-20 text-center">
+              <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-4 py-1.5 text-xs font-bold text-primary uppercase tracking-wider mb-6">
+                <Search className="size-3.5" />
+                Live delivery control
               </div>
-              <h1 className="max-w-3xl text-4xl font-black leading-[0.98] text-foreground sm:text-6xl">
-                Know where your order is, every second.
+              <h1 className="text-5xl font-black leading-[0.95] tracking-tight text-foreground sm:text-6xl">
+                Know where your
+                <br />
+                <span className="text-primary">order is.</span>
               </h1>
-              <p className="max-w-xl text-base leading-relaxed text-muted-foreground">
-                Use your order reference or Ghana mobile number to inspect the
-                live dispatch trail.
+              <p className="mt-4 text-base text-muted-foreground max-w-xl mx-auto leading-relaxed">
+                Use your order reference or mobile number to inspect the live
+                dispatch trail — from MoMo authorization all the way to carrier
+                delivery.
               </p>
             </div>
-            <Card className="sm:w-64">
-              <CardContent className="p-4">
-                <div className="flex items-center gap-2 text-xs font-bold text-muted-foreground">
-                  <span className="size-2 rounded-full bg-emerald-500 animate-pulse" />
-                  Tracking rail online
-                </div>
-                <p className="mt-3 text-sm font-bold text-foreground">
-                  Orders are monitored from payment to delivery.
-                </p>
-              </CardContent>
-            </Card>
           </section>
 
-          <section className="grid gap-8 lg:grid-cols-[0.72fr_1.28fr]">
-            <Card className="shadow-lg">
-              <CardContent className="space-y-5 p-6 sm:p-8">
-                <div>
-                  <p className="text-xs font-bold uppercase text-primary">
+          {/* Search + Results */}
+          <section className="max-w-[95%] mx-auto px-4 sm:px-6 py-12 w-full">
+            <div className="grid gap-8 lg:grid-cols-[0.72fr_1.28fr]">
+              {/* Search card */}
+              <div className="rounded-2xl border border-border bg-card shadow-lg overflow-hidden">
+                <div className="border-b border-border px-6 py-4 bg-muted/30">
+                  <p className="text-xs font-bold uppercase text-primary tracking-wider">
                     Find an order
                   </p>
-                  <h2 className="mt-1 text-2xl font-black text-foreground">
+                  <h2 className="mt-0.5 text-xl font-black text-foreground">
                     Enter your details
                   </h2>
                 </div>
-                <form onSubmit={handleTrackSubmit} className="space-y-3">
-                  <Label
-                    htmlFor="track-input"
-                    className="text-xs font-bold text-muted-foreground"
-                  >
-                    Reference or phone number
-                  </Label>
-                  <div className="relative">
-                    <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
-                    <Input
-                      id="track-input"
-                      required
-                      placeholder="SDH-GH-2026-94812"
-                      value={searchTrackInput}
-                      onChange={(e) => setSearchTrackInput(e.target.value)}
-                      className="pl-10"
-                    />
-                  </div>
-                  <Button type="submit" className="w-full font-bold">
-                    Inspect delivery status
-                    <ArrowRight className="size-4" />
-                  </Button>
-                </form>
-                <Separator />
-                <div className="text-xs leading-relaxed text-muted-foreground space-y-2">
-                  <div>
-                    <p className="font-bold text-foreground">
-                      Where to find your reference
-                    </p>
-                    <p className="mt-0.5">
-                      It is shown on your receipt and sent after a successful
-                      Mobile Money payment.
-                    </p>
-                  </div>
-
-                  {orders && orders.length > 0 && (
-                    <div className="pt-2 border-t border-border/60">
-                      <span className="text-[11px] font-bold text-foreground block mb-1.5">
-                        Or test with sample orders:
-                      </span>
-                      <div className="flex flex-wrap gap-1.5">
-                        {orders.slice(0, 3).map((o) => (
-                          <Button
-                            key={o.id}
-                            type="button"
-                            size="sm"
-                            variant="outline"
-                            className="h-7 px-2 font-mono text-[10px] font-bold"
-                            onClick={() => {
-                              setSearchTrackInput(o.reference);
-                              setTrackSearched(true);
-                              setTrackedOrder(o);
-                            }}
-                          >
-                            {o.reference}
-                          </Button>
-                        ))}
-                      </div>
+                <div className="p-6 space-y-5">
+                  <form onSubmit={handleTrackSubmit} className="space-y-3">
+                    <Label
+                      htmlFor="track-input"
+                      className="text-xs font-bold text-muted-foreground"
+                    >
+                      Reference or phone number
+                    </Label>
+                    <div className="relative">
+                      <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+                      <Input
+                        id="track-input"
+                        required
+                        placeholder="SDH-GH-2026-94812"
+                        value={searchTrackInput}
+                        onChange={(e) => setSearchTrackInput(e.target.value)}
+                        className="pl-10 h-11"
+                      />
                     </div>
-                  )}
+                    <Button type="submit" className="w-full font-bold h-11">
+                      Inspect delivery status <ArrowRight className="size-4" />
+                    </Button>
+                  </form>
+                  <Separator />
+                  <div className="space-y-3">
+                    <div>
+                      <p className="text-xs font-bold text-foreground">
+                        Where to find your reference
+                      </p>
+                      <p className="mt-1 text-xs text-muted-foreground leading-relaxed">
+                        Shown on your receipt and sent after a successful Mobile
+                        Money payment.
+                      </p>
+                    </div>
+                    {orders && orders.length > 0 && (
+                      <div>
+                        <span className="text-[11px] font-bold text-foreground block mb-2">
+                          Or test with sample orders:
+                        </span>
+                        <div className="flex flex-wrap gap-1.5">
+                          {orders.slice(0, 3).map((o) => (
+                            <Button
+                              key={o.id}
+                              type="button"
+                              size="sm"
+                              variant="outline"
+                              className="h-7 px-2 font-mono text-[10px] font-bold"
+                              onClick={() => {
+                                setSearchTrackInput(o.reference);
+                                setTrackSearched(true);
+                                setTrackedOrder(o);
+                              }}
+                            >
+                              {o.reference}
+                            </Button>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 </div>
-              </CardContent>
-            </Card>
+              </div>
 
-            <Card className="min-h-[20rem] bg-muted/30">
-              <CardContent className="p-6 sm:p-8 h-full">
+              {/* Results panel */}
+              <div className="rounded-2xl border border-border bg-card min-h-[22rem] overflow-hidden">
                 {!trackSearched ? (
-                  <div className="flex h-full min-h-[16rem] flex-col items-center justify-center text-center">
-                    <div className="flex size-14 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+                  <div className="flex h-full min-h-[22rem] flex-col items-center justify-center text-center p-8">
+                    <div className="flex size-16 items-center justify-center rounded-2xl bg-primary/10 text-primary mb-5 ring-8 ring-primary/5">
                       <SignalRail status="online" size="md" />
                     </div>
-                    <h3 className="mt-5 text-xl font-black text-foreground">
+                    <h3 className="text-xl font-black text-foreground">
                       Your live dispatch trail appears here.
                     </h3>
                     <p className="mt-2 max-w-sm text-sm leading-relaxed text-muted-foreground">
                       Search an order to see its route through the SDH core and
-                      carrier gateway.
+                      carrier gateway in real time.
                     </p>
                   </div>
                 ) : trackedOrder ? (
-                  <div className="space-y-6 animate-in fade-in duration-200">
-                    <div className="flex flex-wrap items-start justify-between gap-4 border-b border-border pb-5">
-                      <div>
-                        <p className="text-xs font-bold uppercase text-muted-foreground">
-                          {trackedOrder.reference}
-                        </p>
-                        <h3 className="mt-2 text-2xl font-black text-foreground">
-                          {trackedOrder.productName}
-                        </h3>
-                        <p className="mt-1 text-xs text-muted-foreground">
-                          {trackedOrder.network} / {trackedOrder.recipientPhone}
-                        </p>
-                      </div>
-                      <div className="text-right">
-                        <p className="text-xl font-black tabular-nums text-foreground">
-                          GH₵ {trackedOrder.amount.toFixed(2)}
-                        </p>
-                        <Badge className="mt-2 bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 uppercase text-[10px]">
-                          {trackedOrder.status}
-                        </Badge>
-                      </div>
-                    </div>
-
-                    {/* routing console echo */}
-                    <div className="rounded-2xl border border-border/80 bg-background p-4">
-                      <div className="flex items-center justify-between text-[10px] font-bold uppercase text-muted-foreground">
-                        <span>Delivery path</span>
-                        <span className="text-emerald-600 dark:text-emerald-400">
-                          Clear route
-                        </span>
-                      </div>
-                      <div className="mt-3 flex items-center gap-2">
-                        {(() => {
-                          const a =
-                            NETWORK_ACCENT[
-                              trackedOrder.network as TelecomNetwork
-                            ] ?? NETWORK_ACCENT.MTN;
-                          return (
-                            <div
-                              className={`flex size-9 items-center justify-center rounded-xl text-[10px] font-black text-white ${a.solid}`}
-                            >
-                              {a.short}
-                            </div>
-                          );
-                        })()}
-                        <div className="h-px flex-1 bg-primary/40" />
-                        <div className="flex size-9 items-center justify-center rounded-xl bg-primary text-[10px] font-black text-primary-foreground">
-                          SDH
+                  <div className="animate-in fade-in duration-200">
+                    <div className="border-b border-border p-6 bg-muted/20">
+                      <div className="flex flex-wrap items-start justify-between gap-4">
+                        <div>
+                          <p className="text-xs font-bold uppercase text-muted-foreground tracking-widest">
+                            {trackedOrder.reference}
+                          </p>
+                          <h3 className="mt-2 text-2xl font-black text-foreground">
+                            {trackedOrder.productName}
+                          </h3>
+                          <p className="mt-1 text-xs text-muted-foreground">
+                            {trackedOrder.network} ·{" "}
+                            {trackedOrder.recipientPhone}
+                          </p>
                         </div>
-                        <div className="h-px flex-1 bg-primary/40" />
-                        <div className="flex size-9 items-center justify-center rounded-xl bg-emerald-500/15 text-emerald-700 dark:text-emerald-400">
-                          <SignalRail status="online" size="sm" />
+                        <div className="text-right">
+                          <p className="text-2xl font-black tabular-nums text-foreground">
+                            GH₵ {trackedOrder.amount.toFixed(2)}
+                          </p>
+                          <Badge className="mt-2 bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 uppercase text-[10px]">
+                            {trackedOrder.status}
+                          </Badge>
                         </div>
                       </div>
                     </div>
-
-                    <div>
-                      <div className="mb-4 flex items-center justify-between">
-                        <p className="text-xs font-bold uppercase text-muted-foreground">
-                          Signal dispatch timeline
-                        </p>
-                        <SignalRail status="online" size="sm" label="Live" />
-                      </div>
-                      <div className="space-y-4 border-l-2 border-primary/30 pl-5">
-                        {trackedOrder.deliveryTimeline.map((step, idx) => (
-                          <div key={idx} className="relative text-sm">
-                            <span className="absolute -left-[1.65rem] top-1 size-2.5 rounded-full bg-primary ring-4 ring-muted/80" />
-                            <div className="flex flex-wrap justify-between gap-2 font-bold text-foreground">
-                              <span>{step.step}</span>
-                              <span className="text-xs font-normal tabular-nums text-muted-foreground">
-                                {step.timestamp}
-                              </span>
-                            </div>
-                            {step.note && (
-                              <p className="mt-1 text-xs text-muted-foreground">
-                                {step.note}
-                              </p>
-                            )}
+                    <div className="p-6 space-y-6">
+                      {/* Routing strip */}
+                      <div className="rounded-xl border border-border bg-muted/30 p-4">
+                        <div className="flex items-center justify-between text-[10px] font-bold uppercase text-muted-foreground mb-3">
+                          <span>Delivery path</span>
+                          <span className="text-emerald-600 dark:text-emerald-400">
+                            Clear route
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          {(() => {
+                            const a =
+                              NETWORK_ACCENT[
+                                trackedOrder.network as TelecomNetwork
+                              ] ?? NETWORK_ACCENT.MTN;
+                            return (
+                              <div
+                                className={`flex size-9 items-center justify-center rounded-xl text-[10px] font-black text-white ${a.solid}`}
+                              >
+                                {a.short}
+                              </div>
+                            );
+                          })()}
+                          <div className="h-px flex-1 bg-primary/40" />
+                          <div className="flex size-9 items-center justify-center rounded-xl bg-primary text-[10px] font-black text-primary-foreground">
+                            SDH
                           </div>
-                        ))}
+                          <div className="h-px flex-1 bg-primary/40" />
+                          <div className="flex size-9 items-center justify-center rounded-xl bg-emerald-500/15 text-emerald-700 dark:text-emerald-400">
+                            <SignalRail status="online" size="sm" />
+                          </div>
+                        </div>
+                        <div className="mt-2 flex justify-between text-[10px] text-muted-foreground">
+                          <span>{trackedOrder.network} EVD</span>
+                          <span>SDH Core</span>
+                          <span>Recipient</span>
+                        </div>
+                      </div>
+                      {/* Timeline */}
+                      <div>
+                        <div className="mb-4 flex items-center justify-between">
+                          <p className="text-xs font-bold uppercase text-muted-foreground">
+                            Signal dispatch timeline
+                          </p>
+                          <SignalRail status="online" size="sm" label="Live" />
+                        </div>
+                        <div className="space-y-4 border-l-2 border-primary/30 pl-5">
+                          {trackedOrder.deliveryTimeline.map((step, idx) => (
+                            <div key={idx} className="relative text-sm">
+                              <span className="absolute -left-[1.65rem] top-1 size-2.5 rounded-full bg-primary ring-4 ring-muted/80" />
+                              <div className="flex flex-wrap justify-between gap-2 font-bold text-foreground">
+                                <span>{step.step}</span>
+                                <span className="text-xs font-normal tabular-nums text-muted-foreground">
+                                  {step.timestamp}
+                                </span>
+                              </div>
+                              {step.note && (
+                                <p className="mt-1 text-xs text-muted-foreground">
+                                  {step.note}
+                                </p>
+                              )}
+                            </div>
+                          ))}
+                        </div>
                       </div>
                     </div>
                   </div>
                 ) : (
-                  <Alert
-                    variant="destructive"
-                    className="flex h-full min-h-[16rem] flex-col items-center justify-center border-none bg-transparent text-center"
-                  >
-                    <AlertCircle className="size-10 text-amber-500" />
-                    <AlertTitle className="mt-4 text-lg font-black text-foreground">
+                  <div className="flex h-full min-h-[22rem] flex-col items-center justify-center text-center p-8">
+                    <AlertCircle className="size-14 text-amber-500 mb-4" />
+                    <h3 className="text-xl font-black text-foreground">
                       No matching order found.
-                    </AlertTitle>
-                    <AlertDescription className="mt-2 max-w-sm text-sm text-muted-foreground">
+                    </h3>
+                    <p className="mt-2 max-w-sm text-sm text-muted-foreground">
                       Check the reference spelling or try the phone number used
                       at checkout.
-                    </AlertDescription>
-                  </Alert>
+                    </p>
+                    <Button
+                      variant="outline"
+                      className="mt-5 font-bold"
+                      onClick={() => {
+                        setTrackSearched(false);
+                        setSearchTrackInput("");
+                      }}
+                    >
+                      Try again
+                    </Button>
+                  </div>
                 )}
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           </section>
         </div>
       )}
 
-      {/* ============ FAQ — with live filter + category tags ============ */}
+      {/* ============ FAQ — Premium redesign ============ */}
       {activeTab === "faq" && (
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 py-12 space-y-8">
-          <div className="text-center space-y-3">
-            <h1 className="text-3xl font-extrabold text-foreground tracking-tight">
-              Frequently Asked Questions
-            </h1>
-            <p className="text-sm text-muted-foreground">
-              Everything you need to know about purchasing, delivery, and
-              reselling on Smart Data Hub.
-            </p>
-            <div className="relative max-w-sm mx-auto pt-2">
-              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
-              <Input
-                value={faqQuery}
-                onChange={(e) => setFaqQuery(e.target.value)}
-                placeholder="Search FAQs — e.g. refund, agent, voucher"
-                className="pl-10"
-              />
+        <div className="flex flex-col">
+          {/* Hero */}
+          <section className="relative isolate overflow-hidden border-b border-border bg-background">
+            <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_50%_-10%,hsl(var(--primary)/0.10),transparent)]" />
+            <div className="max-w-[95%] mx-auto px-4 sm:px-6 py-14 sm:py-20 text-center">
+              <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-4 py-1.5 text-xs font-bold text-primary uppercase tracking-wider mb-6">
+                <MessageCircle className="size-3.5" />
+                Help & support
+              </div>
+              <h1 className="text-5xl font-black leading-[0.95] tracking-tight text-foreground sm:text-6xl">
+                Frequently Asked
+                <br />
+                <span className="text-primary">Questions</span>
+              </h1>
+              <p className="mt-4 text-base text-muted-foreground max-w-xl mx-auto leading-relaxed">
+                Everything about purchasing, delivery, vouchers, and reselling
+                on Smart Data Hub. Can't find what you need? Chat us on
+                WhatsApp.
+              </p>
+              <div className="relative max-w-md mx-auto mt-8">
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+                <Input
+                  value={faqQuery}
+                  onChange={(e) => setFaqQuery(e.target.value)}
+                  placeholder="Search FAQs — e.g. refund, agent, voucher"
+                  className="pl-11 h-12 rounded-2xl border-border/80 bg-card shadow-sm text-sm"
+                />
+              </div>
             </div>
-          </div>
+          </section>
 
-          <Card>
-            <CardContent className="p-2 sm:p-4">
-              {filteredFaqs.length === 0 ? (
-                <p className="p-6 text-center text-sm text-muted-foreground">
-                  No results for "{faqQuery}" — try WhatsApp support instead.
+          {/* FAQ content */}
+          <section className="max-w-3xl mx-auto px-4 sm:px-6 py-12 w-full space-y-4">
+            {/* Category pills */}
+            <div className="flex flex-wrap gap-2 pb-2">
+              {[
+                "All",
+                "Delivery",
+                "Networks",
+                "Payments",
+                "Agents",
+                "Vouchers",
+                "AFA",
+              ].map((tag) => (
+                <button
+                  key={tag}
+                  type="button"
+                  onClick={() =>
+                    setFaqQuery(tag === "All" ? "" : tag.toLowerCase())
+                  }
+                  className={`rounded-full px-4 py-1.5 text-xs font-bold border transition-all ${
+                    (tag === "All" && !faqQuery) ||
+                    faqQuery.toLowerCase() === tag.toLowerCase()
+                      ? "bg-primary text-primary-foreground border-primary shadow-sm"
+                      : "border-border text-muted-foreground hover:text-foreground hover:border-primary/40 bg-card"
+                  }`}
+                >
+                  {tag}
+                </button>
+              ))}
+            </div>
+
+            {filteredFaqs.length === 0 ? (
+              <div className="text-center py-12">
+                <MessageCircle className="size-12 text-muted-foreground/40 mx-auto mb-4" />
+                <p className="text-sm text-muted-foreground">
+                  No results for "{faqQuery}" —{" "}
+                  <button
+                    type="button"
+                    className="text-primary font-bold hover:underline"
+                    onClick={() => navigatePublicTab("contact")}
+                  >
+                    chat us on WhatsApp instead
+                  </button>
                 </p>
-              ) : (
-                <Accordion type="single" collapsible defaultValue="faq-0">
-                  {filteredFaqs.map((faq, idx) => (
-                    <AccordionItem key={idx} value={`faq-${idx}`}>
-                      <AccordionTrigger className="px-3 text-left text-sm font-bold text-foreground gap-3">
-                        <span className="flex items-center gap-2">
-                          <Badge
-                            variant="secondary"
-                            className="text-[10px] font-semibold shrink-0"
-                          >
-                            {faq.tag}
-                          </Badge>
-                          {faq.q}
-                        </span>
-                      </AccordionTrigger>
-                      <AccordionContent className="px-3 text-xs text-muted-foreground leading-relaxed">
-                        {faq.a}
-                      </AccordionContent>
-                    </AccordionItem>
-                  ))}
-                </Accordion>
-              )}
-            </CardContent>
-          </Card>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {filteredFaqs.map((faq, idx) => (
+                  <div
+                    key={idx}
+                    className="group rounded-2xl border border-border bg-card overflow-hidden hover:border-primary/30 transition-all"
+                  >
+                    <Accordion defaultValue={idx === 0 ? [`faq-${idx}`] : []}>
+                      <AccordionItem value={`faq-${idx}`} className="border-0">
+                        <AccordionTrigger className="px-5 py-4 text-left text-sm font-bold text-foreground gap-3 hover:no-underline">
+                          <span className="flex items-center gap-3">
+                            <Badge
+                              variant="secondary"
+                              className={`text-[10px] font-semibold shrink-0 rounded-full ${
+                                faq.tag === "Delivery"
+                                  ? "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400"
+                                  : faq.tag === "Networks"
+                                    ? "bg-primary/10 text-primary"
+                                    : faq.tag === "Payments"
+                                      ? "bg-amber-500/10 text-amber-700 dark:text-amber-400"
+                                      : faq.tag === "Agents"
+                                        ? "bg-purple-500/10 text-purple-600"
+                                        : faq.tag === "Vouchers"
+                                          ? "bg-rose-500/10 text-rose-600"
+                                          : "bg-cyan-500/10 text-cyan-600"
+                              }`}
+                            >
+                              {faq.tag}
+                            </Badge>
+                            {faq.q}
+                          </span>
+                        </AccordionTrigger>
+                        <AccordionContent className="px-5 pb-5">
+                          <div className="pl-0 text-sm text-muted-foreground leading-relaxed border-t border-border/60 pt-4 mt-1">
+                            {faq.a}
+                          </div>
+                        </AccordionContent>
+                      </AccordionItem>
+                    </Accordion>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* CTA */}
+            <div className="mt-8 rounded-2xl border border-border bg-gradient-to-r from-primary/8 via-card to-amber-500/8 p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div>
+                <p className="font-bold text-foreground">
+                  Still have questions?
+                </p>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  Our support engineers respond in real time via WhatsApp.
+                </p>
+              </div>
+              <Button
+                className="font-bold shrink-0"
+                onClick={() => navigatePublicTab("contact")}
+              >
+                <MessageCircle className="size-4" /> Chat support
+              </Button>
+            </div>
+          </section>
         </div>
       )}
 
-      {/* ============ ABOUT — with stat banner ============ */}
+      {/* ============ ABOUT — Premium redesign ============ */}
       {activeTab === "about" && (
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 py-12 space-y-10">
-          <div className="space-y-4">
-            <Badge variant="secondary" className="gap-1.5">
-              <Building2 className="size-3.5" />
-              About us
-            </Badge>
-            <h1 className="text-3xl sm:text-4xl font-extrabold text-foreground tracking-tight">
-              About Smart Data Hub
-            </h1>
-            <p className="text-base text-muted-foreground leading-relaxed">
-              Smart Data Hub (SDH) is Ghana's mission-driven digital commerce
-              and telecom distribution network. We power connectivity for
-              thousands of Ghanaian students, professionals, micro-enterprises,
-              and telecom merchants across all 16 regions.
-            </p>
-          </div>
+        <div className="flex flex-col">
+          {/* Hero */}
+          <section className="relative isolate overflow-hidden border-b border-border bg-background">
+            <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_50%_-10%,hsl(var(--primary)/0.10),transparent)]" />
+            <div className="max-w-[95%] mx-auto px-4 sm:px-6 py-14 sm:py-20 text-center">
+              <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-4 py-1.5 text-xs font-bold text-primary uppercase tracking-wider mb-6">
+                <Building2 className="size-3.5" />
+                About Smart Data Hub
+              </div>
+              <h1 className="text-5xl font-black leading-[0.95] tracking-tight text-foreground sm:text-6xl">
+                Ghana's
+                <br />
+                <span className="text-primary">digital service</span>
+                <br />
+                backbone.
+              </h1>
+              <p className="mt-4 text-base text-muted-foreground max-w-xl mx-auto leading-relaxed">
+                Smart Data Hub (SDH) is Ghana's mission-driven digital commerce
+                and telecom distribution network — powering connectivity for
+                thousands of students, professionals, and merchants across all
+                16 regions with direct carrier-level access.
+              </p>
+            </div>
+          </section>
 
-          <div className="grid grid-cols-3 divide-x divide-border rounded-2xl border border-border overflow-hidden">
-            <div className="p-5 text-center">
-              <MapPin className="size-4 text-primary mx-auto mb-1.5" />
-              <p className="text-2xl font-black text-foreground">16</p>
-              <p className="text-[11px] text-muted-foreground">regions</p>
+          {/* Stats banner */}
+          <section className="border-b border-border bg-gradient-to-r from-primary/8 via-card to-amber-500/8">
+            <div className="max-w-[95%] mx-auto px-4 sm:px-6 py-10">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-8 text-center">
+                {[
+                  { value: "16", label: "Regions covered", icon: MapPin },
+                  { value: "3", label: "Carrier gateways", icon: Radio },
+                  { value: "99.8%", label: "SLA uptime", icon: Zap },
+                  { value: "24/7", label: "NOC support desk", icon: Users },
+                ].map((s) => (
+                  <div key={s.label}>
+                    <s.icon className="size-5 mx-auto mb-2" />
+                    <p className="text-3xl font-black tabular-nums">
+                      {s.value}
+                    </p>
+                    <p className="text-xs  mt-1">{s.label}</p>
+                  </div>
+                ))}
+              </div>
             </div>
-            <div className="p-5 text-center">
-              <Radio className="size-4 text-primary mx-auto mb-1.5" />
-              <p className="text-2xl font-black text-foreground">3</p>
-              <p className="text-[11px] text-muted-foreground">networks</p>
-            </div>
-            <div className="p-5 text-center">
-              <Users className="size-4 text-primary mx-auto mb-1.5" />
-              <p className="text-2xl font-black text-foreground">24/7</p>
-              <p className="text-[11px] text-muted-foreground">NOC support</p>
-            </div>
-          </div>
+          </section>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-            <Card>
-              <CardContent className="p-5 space-y-2">
-                <Radio className="size-5 text-primary" />
-                <h3 className="font-bold text-foreground">
-                  Carrier Level Direct
-                </h3>
-                <p className="text-xs text-muted-foreground">
-                  Automated core gateway integration with MTN Ghana, Telecel,
-                  and AT Ghana.
+          {/* Mission + pillars */}
+          <section className="max-w-[95%] mx-auto px-4 sm:px-6 py-14 w-full space-y-12">
+            <div className="grid grid-cols-1 lg:grid-cols-[1fr_1fr] gap-12 items-center">
+              <div className="space-y-5">
+                <p className="text-xs font-bold uppercase text-primary tracking-widest">
+                  Our mission
                 </p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="p-5 space-y-2">
-                <ShieldCheck className="size-5 text-primary" />
-                <h3 className="font-bold text-foreground">
-                  BoG Regulated Rails
-                </h3>
-                <p className="text-xs text-muted-foreground">
-                  All Mobile Money flows are settled via authorized financial
-                  institutions with instant dispute resolution.
+                <h2 className="text-3xl sm:text-4xl font-black text-foreground leading-tight tracking-tight">
+                  Fast, fair, and frictionless access to digital services — for
+                  every Ghanaian.
+                </h2>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  We built SDH because buying data in Ghana felt unnecessarily
+                  hard. Long waits, failed transactions, and no transparency. We
+                  connected directly to carrier EVD and MoMo gateways to fix
+                  that — 42 seconds from payment to delivery, with automated
+                  refund protection on every order.
                 </p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="p-5 space-y-2">
-                <MessageCircle className="size-5 text-primary" />
-                <h3 className="font-bold text-foreground">
-                  Local Customer Support
-                </h3>
-                <p className="text-xs text-muted-foreground">
-                  Dedicated Accra-based NOC support desk reachable 24/7 via
-                  WhatsApp and phone.
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  For agents and resellers, we built a full merchant platform:
+                  branded storefronts, live commission dashboards, and instant
+                  MoMo payouts — turning everyday connections into a real income
+                  stream.
                 </p>
-              </CardContent>
-            </Card>
-          </div>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {[
+                  {
+                    icon: Radio,
+                    color: "text-primary",
+                    bg: "bg-primary/10",
+                    title: "Carrier Level Direct",
+                    desc: "Automated core gateway integration with MTN Ghana, Telecel, and AT Ghana for sub-minute delivery.",
+                  },
+                  {
+                    icon: ShieldCheck,
+                    color: "text-emerald-600",
+                    bg: "bg-emerald-500/10",
+                    title: "BoG Regulated Rails",
+                    desc: "All Mobile Money flows settled via authorized financial institutions with instant dispute resolution.",
+                  },
+                  {
+                    icon: MessageCircle,
+                    color: "text-amber-600",
+                    bg: "bg-amber-500/10",
+                    title: "Local NOC Support",
+                    desc: "Accra-based network operations desk reachable 24/7 via WhatsApp and phone — a real person, always.",
+                  },
+                  {
+                    icon: Store,
+                    color: "text-purple-600",
+                    bg: "bg-purple-500/10",
+                    title: "Agent Merchant Program",
+                    desc: "Free branded storefronts, wholesale pricing, and instant MoMo payouts for Ghana's data resellers.",
+                  },
+                ].map((item) => (
+                  <div
+                    key={item.title}
+                    className="rounded-2xl border border-border bg-card p-5 hover:border-primary/30 hover:shadow-lg transition-all"
+                  >
+                    <div
+                      className={`flex size-10 items-center justify-center rounded-xl ${item.bg} mb-3`}
+                    >
+                      <item.icon className={`size-5 ${item.color}`} />
+                    </div>
+                    <h3 className="font-bold text-sm text-foreground">
+                      {item.title}
+                    </h3>
+                    <p className="mt-1.5 text-xs text-muted-foreground leading-relaxed">
+                      {item.desc}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* CTA */}
+            <div className="rounded-3xl bg-gradient-to-r from-primary/10 via-card to-amber-500/10 border border-border p-8 sm:p-12 flex flex-col sm:flex-row items-center justify-between gap-8">
+              <div className="space-y-2 max-w-xl">
+                <h3 className="text-2xl font-black text-foreground tracking-tight">
+                  Ready to get started?
+                </h3>
+                <p className="text-sm text-muted-foreground">
+                  Buy data in seconds, or open your own branded data store —
+                  both are one click away.
+                </p>
+              </div>
+              <div className="flex flex-col sm:flex-row gap-3 shrink-0">
+                <Button
+                  size="lg"
+                  className="font-semibold"
+                  onClick={() =>
+                    handleStartPurchase(selectedBundleId, selectedNetwork)
+                  }
+                >
+                  Buy data now <ArrowRight className="size-4" />
+                </Button>
+                <Button
+                  size="lg"
+                  variant="outline"
+                  className="font-semibold"
+                  onClick={handleApplyAgent}
+                >
+                  Become an agent
+                </Button>
+              </div>
+            </div>
+          </section>
         </div>
       )}
 
-      {/* ============ CONTACT — WhatsApp elevated as primary CTA ============ */}
+      {/* ============ CONTACT — Premium redesign ============ */}
       {activeTab === "contact" && (
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 py-12 space-y-8">
-          <div className="text-center space-y-2">
-            <h1 className="text-3xl font-extrabold text-foreground tracking-tight">
-              Contact & NOC Support
-            </h1>
-            <p className="text-sm text-muted-foreground">
-              Have an issue with an order or payment? Our support engineers
-              resolve tickets in real-time.
-            </p>
-          </div>
+        <div className="flex flex-col">
+          {/* Hero */}
+          <section className="relative isolate overflow-hidden border-b border-border bg-background">
+            <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_60%_60%_at_50%_-10%,hsl(152_60%_40%/0.08),transparent)]" />
+            <div className="max-w-[95%] mx-auto px-4 sm:px-6 py-14 sm:py-20 text-center">
+              <div className="inline-flex items-center gap-2 rounded-full border border-emerald-500/20 bg-emerald-500/8 px-4 py-1.5 text-xs font-bold text-emerald-700 dark:text-emerald-400 uppercase tracking-wider mb-6">
+                <MessageCircle className="size-3.5" />
+                NOC Support desk · 24/7
+              </div>
+              <h1 className="text-5xl font-black leading-[0.95] tracking-tight text-foreground sm:text-6xl">
+                Contact &<br />
+                <span className="text-primary">NOC Support</span>
+              </h1>
+              <p className="mt-4 text-base text-muted-foreground max-w-xl mx-auto leading-relaxed">
+                Issue with an order or payment? Our support engineers resolve
+                tickets in real-time — most queries answered within 5 minutes.
+              </p>
+            </div>
+          </section>
 
-          <a
-            href="https://wa.me/233244192834?text=Hello%20Smart%20Data%20Hub%20Support"
-            target="_blank"
-            rel="noreferrer"
-            className="block"
-          >
-            <Card className="overflow-hidden border-0 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white hover:from-emerald-600 hover:to-emerald-700 transition-colors shadow-lg shadow-emerald-500/20">
-              <CardContent className="p-6 flex items-center justify-between gap-4">
-                <div className="flex items-center gap-4">
-                  <div className="flex size-12 items-center justify-center rounded-2xl bg-white/15">
-                    <MessageCircle className="w-6 h-6" />
+          {/* Contact channels + form */}
+          <section className="max-w-[95%] mx-auto px-4 sm:px-6 py-12 w-full">
+            <div className="grid gap-8 lg:grid-cols-[0.85fr_1.15fr]">
+              {/* Left: contact channels */}
+              <div className="space-y-4">
+                {/* WhatsApp CTA */}
+                <a
+                  href="https://wa.me/233244192834?text=Hello%20Smart%20Data%20Hub%20Support"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block"
+                >
+                  <div className="group rounded-2xl overflow-hidden bg-card border border-border p-6 transition-all hover:-translate-y-0.5">
+                    <div className="flex items-center gap-4">
+                      <div className="flex size-14 items-center justify-center rounded-2xl bg-foreground/15">
+                        <MessageCircle className="size-7" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="font-black text-md leading-tight">
+                          WhatsApp Priority Desk
+                        </p>
+                        <p className="text-sm text-foreground/85 mt-0.5">
+                          +233 24 419 2834 · Live now
+                        </p>
+                        <p className="text-xs text-foreground/60 mt-1">
+                          Fastest response channel — real agent, always
+                        </p>
+                      </div>
+                      <ArrowRight className="size-5 shrink-0 group-hover:translate-x-1 transition-transform" />
+                    </div>
+                  </div>
+                </a>
+
+                {/* Operating hours */}
+                <div className="rounded-2xl border border-border bg-card p-5 flex items-start gap-4">
+                  <div className="flex size-10 items-center justify-center rounded-xl bg-primary/10 shrink-0">
+                    <Clock className="size-5 text-primary" />
                   </div>
                   <div>
-                    <div className="font-bold text-base">
-                      WhatsApp Priority Desk
-                    </div>
-                    <div className="text-sm text-white/85">
-                      +233 24 419 2834 · Live now
-                    </div>
+                    <p className="font-bold text-sm text-foreground">
+                      Operating Hours
+                    </p>
+                    <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">
+                      24 Hours / 7 Days a week — same desk handles calls and
+                      WhatsApp
+                    </p>
                   </div>
                 </div>
-                <ArrowRight className="size-5 shrink-0" />
-              </CardContent>
-            </Card>
-          </a>
 
-          <Card>
-            <CardContent className="p-5 flex items-center gap-3">
-              <Clock className="w-6 h-6 text-primary" />
-              <div>
-                <div className="font-bold text-sm text-foreground">
-                  Operating Hours
+                {/* Office details */}
+                <div className="rounded-2xl border border-border bg-card p-5 flex items-start gap-4">
+                  <div className="flex size-10 items-center justify-center rounded-xl bg-amber-500/10 shrink-0">
+                    <MapPin className="size-5 text-amber-600" />
+                  </div>
+                  <div>
+                    <p className="font-bold text-sm text-foreground">
+                      Accra NOC Desk
+                    </p>
+                    <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">
+                      Airport Residential Area, Accra, Ghana.
+                    </p>
+                    <p className="text-xs text-muted-foreground leading-relaxed mt-1">
+                      Email:{" "}
+                      <span className="text-foreground font-medium">
+                        support@smartdatahub.com
+                      </span>
+                    </p>
+                  </div>
                 </div>
-                <div className="text-xs text-muted-foreground">
-                  24 Hours / 7 Days a week — same desk handles calls
+
+                {/* Quick links */}
+                <div className="rounded-2xl border border-border bg-card p-5">
+                  <p className="text-xs font-bold uppercase text-muted-foreground tracking-wider mb-3">
+                    Before you reach out
+                  </p>
+                  <div className="space-y-2">
+                    {[
+                      {
+                        label: "Track your order status",
+                        tab: "track" as const,
+                      },
+                      {
+                        label: "Browse FAQs for quick answers",
+                        tab: "faq" as const,
+                      },
+                    ].map((link) => (
+                      <button
+                        key={link.tab}
+                        type="button"
+                        className="w-full flex items-center justify-between text-sm text-muted-foreground hover:text-primary p-2 rounded-lg hover:bg-muted/50 transition-colors"
+                        onClick={() => navigatePublicTab(link.tab)}
+                      >
+                        <span>{link.label}</span>
+                        <ArrowRight className="size-3.5" />
+                      </button>
+                    ))}
+                  </div>
                 </div>
               </div>
-            </CardContent>
-          </Card>
 
-          <Card>
-            <CardContent className="p-6">
-              {contactSubmitted ? (
-                <Alert className="border-none bg-transparent text-center py-8">
-                  <div className="flex flex-col items-center gap-3">
-                    <CheckCircle2 className="w-12 h-12 text-emerald-500" />
-                    <AlertTitle className="text-lg font-bold text-foreground">
-                      Support Ticket Submitted!
-                    </AlertTitle>
-                    <AlertDescription className="max-w-sm text-xs text-muted-foreground">
-                      Ticket{" "}
-                      <strong className="text-foreground">{ticketRef}</strong>{" "}
-                      has been opened. An NOC engineer will contact your phone
-                      shortly.
-                    </AlertDescription>
-                    <Button
-                      className="font-bold"
-                      onClick={() => setContactSubmitted(false)}
-                    >
-                      Send Another Message
-                    </Button>
-                  </div>
-                </Alert>
-              ) : (
-                <form onSubmit={handleContactSubmit} className="space-y-4">
-                  <h3 className="text-base font-bold text-foreground">
+              {/* Right: support form */}
+              <div className="rounded-2xl border border-border bg-card overflow-hidden shadow-lg">
+                <div className="border-b border-border px-6 py-5 bg-muted/20">
+                  <p className="text-xs font-bold uppercase text-primary tracking-wider">
+                    Support ticket
+                  </p>
+                  <h2 className="mt-0.5 text-xl font-black text-foreground">
                     File a Support Request
-                  </h3>
+                  </h2>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    NOC engineers respond within 5 minutes during operating
+                    hours.
+                  </p>
+                </div>
+                <div className="p-6">
+                  {contactSubmitted ? (
+                    <div className="py-10 flex flex-col items-center gap-4 text-center">
+                      <div className="flex size-16 items-center justify-center rounded-full bg-emerald-500/15 ring-8 ring-emerald-500/5">
+                        <CheckCircle2 className="size-9 text-emerald-500" />
+                      </div>
+                      <div>
+                        <h3 className="text-lg font-black text-foreground">
+                          Support Ticket Submitted!
+                        </h3>
+                        <p className="mt-2 max-w-sm text-sm text-muted-foreground">
+                          Ticket{" "}
+                          <strong className="text-foreground font-mono">
+                            {ticketRef}
+                          </strong>{" "}
+                          has been opened. An NOC engineer will contact your
+                          phone shortly.
+                        </p>
+                      </div>
+                      <Button
+                        className="font-bold mt-2"
+                        onClick={() => setContactSubmitted(false)}
+                      >
+                        Send another message
+                      </Button>
+                    </div>
+                  ) : (
+                    <form onSubmit={handleContactSubmit} className="space-y-5">
+                      <div className="space-y-1.5">
+                        <Label className="text-xs font-bold uppercase text-muted-foreground tracking-wider">
+                          Issue Category
+                        </Label>
+                        <Select
+                          value={contactCategory}
+                          onValueChange={setContactCategory}
+                        >
+                          <SelectTrigger className="h-11 rounded-xl">
+                            <SelectValue placeholder="Select an issue category" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {[
+                              {
+                                value: "order-delivery-issue",
+                                label: "Order Delivery Delay",
+                              },
+                              {
+                                value: "momo-debited",
+                                label: "Mobile Money Debited but No Data",
+                              },
+                              {
+                                value: "voucher-failed",
+                                label: "Failed Result Checker Voucher",
+                              },
+                              {
+                                value: "agent-payout",
+                                label: "Agent Onboarding / Payout Question",
+                              },
+                              { value: "general", label: "General Feedback" },
+                            ].map((c) => (
+                              <SelectItem key={c.value} value={c.value}>
+                                {c.label}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
 
-                  <div className="space-y-1.5">
-                    <Label className="text-xs font-semibold uppercase text-muted-foreground">
-                      Issue Category
-                    </Label>
-                    <Select
-                      value={contactCategory}
-                      onValueChange={setContactCategory}
-                    >
-                      <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Select an issue category" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {contactCategories.map((c) => (
-                          <SelectItem key={c.value} value={c.value}>
-                            {c.label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
+                      <div className="space-y-1.5">
+                        <Label
+                          htmlFor="contact-phone"
+                          className="text-xs font-bold uppercase text-muted-foreground tracking-wider"
+                        >
+                          Your Mobile Phone Number
+                        </Label>
+                        <Input
+                          id="contact-phone"
+                          type="tel"
+                          required
+                          placeholder="e.g. 0244192834"
+                          value={contactPhone}
+                          onChange={(e) => setContactPhone(e.target.value)}
+                          className="h-11 rounded-xl"
+                        />
+                      </div>
 
-                  <div className="space-y-1.5">
-                    <Label
-                      htmlFor="contact-phone"
-                      className="text-xs font-semibold uppercase text-muted-foreground"
-                    >
-                      Your Mobile Phone Number
-                    </Label>
-                    <Input
-                      id="contact-phone"
-                      type="tel"
-                      required
-                      placeholder="e.g. 0244192834"
-                      value={contactPhone}
-                      onChange={(e) => setContactPhone(e.target.value)}
-                    />
-                  </div>
+                      <div className="space-y-1.5">
+                        <Label
+                          htmlFor="contact-message"
+                          className="text-xs font-bold uppercase text-muted-foreground tracking-wider"
+                        >
+                          Message Details
+                        </Label>
+                        <Textarea
+                          id="contact-message"
+                          rows={4}
+                          required
+                          placeholder="Describe your issue with order reference number..."
+                          value={contactMessage}
+                          onChange={(e) => setContactMessage(e.target.value)}
+                          className="rounded-xl resize-none"
+                        />
+                      </div>
 
-                  <div className="space-y-1.5">
-                    <Label
-                      htmlFor="contact-message"
-                      className="text-xs font-semibold uppercase text-muted-foreground"
-                    >
-                      Message Details
-                    </Label>
-                    <Textarea
-                      id="contact-message"
-                      rows={4}
-                      required
-                      placeholder="Describe your issue with order reference number..."
-                      value={contactMessage}
-                      onChange={(e) => setContactMessage(e.target.value)}
-                    />
-                  </div>
-
-                  <Button type="submit" className="w-full font-bold">
-                    Submit Support Ticket
-                  </Button>
-                </form>
-              )}
-            </CardContent>
-          </Card>
+                      <Button
+                        type="submit"
+                        className="w-full font-bold h-11 rounded-xl"
+                      >
+                        Submit Support Ticket <ArrowRight className="size-4" />
+                      </Button>
+                      <p className="text-[10px] text-center text-muted-foreground">
+                        We'll call or WhatsApp the number you provided above.
+                      </p>
+                    </form>
+                  )}
+                </div>
+              </div>
+            </div>
+          </section>
         </div>
       )}
 
@@ -1630,7 +2133,6 @@ export const PublicMarketingSite: React.FC<PublicMarketingSiteProps> = ({
               <span>MTN MoMo</span>
               <span>Telecel Cash</span>
               <span>AT Money</span>
-              <span>GhQR</span>
             </div>
           </div>
         </div>
