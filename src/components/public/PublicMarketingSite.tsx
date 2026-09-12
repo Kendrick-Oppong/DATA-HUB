@@ -23,6 +23,9 @@ import {
 } from 'lucide-react';
 import { TelecomNetwork, DataBundle, Order, UserRole } from '../../types';
 import { SignalRail } from '../common/SignalRail';
+import { Button } from '../ui/button';
+import { Badge } from '../ui/badge';
+import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { KeyRound, LogIn } from 'lucide-react';
 
 interface PublicMarketingSiteProps {
@@ -292,117 +295,27 @@ export const PublicMarketingSite: React.FC<PublicMarketingSiteProps> = ({
                   </div>
                 </div>
 
-                {/* Right: Live Interactive Quick Buy Card */}
+                {/* Right: Service Snapshot */}
                 <div className="lg:col-span-5">
-                  <div className="bg-card text-card-foreground rounded-2xl border border-border shadow-xl p-5 sm:p-6 space-y-4">
-                    <div className="flex items-center justify-between pb-3 border-b border-border">
-                      <div className="flex items-center gap-2">
-                        <Zap className="w-4 h-4 text-amber-500" />
-                        <h3 className="font-bold text-sm text-foreground">DATA-HUB at a glance</h3>
+                  <Card className="overflow-hidden border-border shadow-xl">
+                    <CardHeader className="border-b border-border/70 bg-muted/30 pb-4">
+                      <div className="flex items-start justify-between gap-4">
+                        <div className="flex items-start gap-3">
+                          <div className="flex size-10 items-center justify-center rounded-2xl bg-primary/10 text-primary"><Zap className="size-5" /></div>
+                          <div><CardTitle className="text-base">Service snapshot</CardTitle><p className="mt-1 text-xs text-muted-foreground">The hub is ready when you are.</p></div>
+                        </div>
+                        <Badge variant="secondary" className="gap-1.5"><span className="size-1.5 rounded-full bg-emerald-500" />Live</Badge>
                       </div>
-                      <SignalRail status="online" size="sm" label="Systems live" />
-                    </div>
-
-                    {/* Network Selector Tabs */}
-                    <div>
-                      <label className="block text-[11px] font-bold uppercase tracking-wider text-muted-foreground mb-1.5">
-                        Select Network
-                      </label>
-                      <div className="grid grid-cols-3 gap-2">
-                        {(['MTN', 'Telecel', 'AirtelTigo'] as TelecomNetwork[]).map((net) => {
-                          const isSelected = selectedNetwork === net;
-                          return (
-                            <button
-                              key={net}
-                              type="button"
-                              onClick={() => {
-                                setSelectedNetwork(net);
-                                const first = bundles.find((b) => b.network === net);
-                                if (first) setSelectedBundleId(first.id);
-                              }}
-                              className={`py-2 px-1 text-center rounded-xl border text-xs font-bold transition-all cursor-pointer ${
-                                isSelected
-                                  ? net === 'MTN'
-                                    ? 'bg-amber-400 text-amber-950 border-amber-500 ring-2 ring-amber-500/30'
-                                    : net === 'Telecel'
-                                    ? 'bg-red-600 text-white border-red-700 ring-2 ring-red-500/30'
-                                    : 'bg-blue-600 text-white border-blue-700 ring-2 ring-blue-500/30'
-                                  : 'border-border bg-muted/40 hover:bg-muted text-foreground'
-                              }`}
-                            >
-                              {net}
-                            </button>
-                          );
-                        })}
+                    </CardHeader>
+                    <CardContent className="flex flex-col gap-5 p-5 sm:p-6">
+                      <div className="grid grid-cols-2 gap-3">
+                        <div className="rounded-2xl border border-border bg-background p-3"><p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Networks</p><p className="mt-1 text-lg font-black">3 active</p><p className="text-[11px] text-muted-foreground">MTN, Telecel, AT</p></div>
+                        <div className="rounded-2xl border border-border bg-background p-3"><p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Delivery</p><p className="mt-1 text-lg font-black">42 sec</p><p className="text-[11px] text-muted-foreground">average dispatch</p></div>
                       </div>
-                    </div>
-
-                    {/* Bundle Grid */}
-                    <div>
-                      <label className="block text-[11px] font-bold uppercase tracking-wider text-muted-foreground mb-1.5">
-                        Select Data Package
-                      </label>
-                      <div className="grid grid-cols-3 gap-2">
-                        {filteredBundles.slice(0, 6).map((bundle) => {
-                          const isSelected = selectedBundleId === bundle.id;
-                          return (
-                            <button
-                              key={bundle.id}
-                              type="button"
-                              onClick={() => setSelectedBundleId(bundle.id)}
-                              className={`p-2 rounded-xl border text-left transition-all cursor-pointer ${
-                                isSelected
-                                  ? 'border-primary bg-primary/10 ring-2 ring-primary/30'
-                                  : 'border-border bg-background hover:bg-muted'
-                              }`}
-                            >
-                              <div className="text-xs font-extrabold text-foreground">{bundle.sizeLabel}</div>
-                              <div className="text-[11px] font-semibold text-primary tabular-nums">
-                                GH₵ {bundle.retailPrice.toFixed(2)}
-                              </div>
-                              <div className="text-[9px] text-muted-foreground truncate">{bundle.validity}</div>
-                            </button>
-                          );
-                        })}
-                      </div>
-                    </div>
-
-                    {/* Recipient Phone Input */}
-                    <div>
-                      <label className="block text-[11px] font-bold uppercase tracking-wider text-muted-foreground mb-1">
-                        Recipient Ghana Mobile Number
-                      </label>
-                      <div className="relative">
-                        <input
-                          type="tel"
-                          placeholder="e.g. 0244123456"
-                          value={quickPhone}
-                          onChange={(e) => setQuickPhone(e.target.value)}
-                          className="w-full px-3.5 py-2.5 rounded-xl border border-input bg-background text-foreground text-sm focus:outline-hidden focus:ring-2 focus:ring-ring tabular-nums"
-                        />
-                      </div>
-                      <p className="text-[10px] text-muted-foreground mt-1">
-                        {selectedNetwork} network delivery will trigger instantly upon payment.
-                      </p>
-                    </div>
-
-                    {/* Total & Submit Button */}
-                    <div className="pt-2">
-                      <div className="flex justify-between items-center text-xs mb-2">
-                        <span className="text-muted-foreground">Amount to Pay:</span>
-                        <span className="text-lg font-black text-foreground tabular-nums">
-                          GH₵ {currentBundle?.retailPrice.toFixed(2) || '0.00'}
-                        </span>
-                      </div>
-                      <button
-                        onClick={() => handleStartPurchase(selectedBundleId, selectedNetwork)}
-                        className="w-full py-3 rounded-xl bg-primary text-primary-foreground font-bold text-sm hover:bg-primary/90 transition-all flex items-center justify-center gap-2 shadow-md cursor-pointer"
-                      >
-                        <span>Explore services</span>
-                        <ArrowRight className="w-4 h-4" />
-                      </button>
-                    </div>
-                  </div>
+                      <div className="rounded-2xl bg-primary/10 p-4"><div className="flex items-center justify-between gap-3"><div><p className="text-[10px] font-bold uppercase tracking-wider text-primary">Popular today</p><p className="mt-1 font-bold">{currentBundle?.sizeLabel || 'Flexible data'} bundle</p><p className="mt-1 text-xs text-muted-foreground">Instant data, airtime, vouchers, and AFA services.</p></div><SignalRail status="online" size="sm" label="99.8% uptime" /></div></div>
+                      <Button className="w-full font-bold" onClick={() => onNavigate ? onNavigate('customer', 'buy-data') : handleStartPurchase(selectedBundleId, selectedNetwork)}>Explore services <ArrowRight data-icon="inline-end" /></Button>
+                    </CardContent>
+                  </Card>
                 </div>
 
               </div>
