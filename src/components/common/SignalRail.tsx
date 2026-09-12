@@ -5,7 +5,7 @@ interface SignalRailProps {
   bars?: number;
   className?: string;
   label?: string;
-  size?: 'sm' | 'md' | 'lg';
+  size?: 'xs'| 'sm' | 'md' | 'lg';
   animated?: boolean;
 }
 
@@ -71,12 +71,14 @@ export const SignalRail: React.FC<SignalRailProps> = ({
   const heights = [35, 50, 68, 85, 100]; // stepped heights like telecom signal bars & kente rhythm
 
   const getContainerHeight = () => {
+    if (size === 'xs') return 'h-3';
     if (size === 'sm') return 'h-3.5';
     if (size === 'lg') return 'h-6';
     return 'h-4.5';
   };
 
   const getBarWidth = () => {
+    if (size === 'xs') return 'w-[2.5px]';
     if (size === 'sm') return 'w-1';
     if (size === 'lg') return 'w-1.5';
     return 'w-1.25';

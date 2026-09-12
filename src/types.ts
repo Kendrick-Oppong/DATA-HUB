@@ -1,6 +1,12 @@
-export type UserRole = 'public' | 'customer' | 'agent' | 'admin' | 'storefront';
+export type UserRole = "public" | "customer" | "agent" | "admin" | "storefront";
 
-export type AppTheme = 'light' | 'dark' | 'ghana-gold' | 'emerald-matrix' | 'royal-indigo' | 'crimson-telecel';
+export type AppTheme =
+  | "light"
+  | "dark"
+  | "sunset-amber"
+  | "emerald-matrix"
+  | "royal-indigo"
+  | "ruby-red";
 
 export interface UserAccount {
   id: string;
@@ -13,11 +19,22 @@ export interface UserAccount {
   securityPin: string; // default 2026
 }
 
-export type TelecomNetwork = 'MTN' | 'Telecel' | 'AirtelTigo';
+export type TelecomNetwork = "MTN" | "Telecel" | "AirtelTigo";
 
-export type OrderStatus = 'processing' | 'delivered' | 'failed' | 'refunded' | 'pending_payment';
+export type OrderStatus =
+  | "processing"
+  | "delivered"
+  | "failed"
+  | "refunded"
+  | "pending_payment";
 
-export type ServiceType = 'data' | 'airtime' | 'checker' | 'afa' | 'utility' | 'sms';
+export type ServiceType =
+  | "data"
+  | "airtime"
+  | "checker"
+  | "afa"
+  | "utility"
+  | "sms";
 
 export interface DataBundle {
   id: string;
@@ -27,9 +44,9 @@ export interface DataBundle {
   sizeLabel: string;
   validity: string;
   wholesalePrice: number; // in GH₵
-  retailPrice: number;    // default retail
-  agentPrice?: number;    // agent customized price
-  category: 'non_expiry' | 'turbonet' | 'special' | 'sika';
+  retailPrice: number; // default retail
+  agentPrice?: number; // agent customized price
+  category: "non_expiry" | "turbonet" | "special" | "sika";
   isPopular?: boolean;
 }
 
@@ -43,14 +60,14 @@ export interface Order {
   serviceType: ServiceType;
   productName: string;
   amount: number;
-  paymentMethod: 'wallet' | 'momo_mtn' | 'momo_telecel' | 'momo_at' | 'card';
+  paymentMethod: "wallet" | "momo_mtn" | "momo_telecel" | "momo_at" | "card";
   status: OrderStatus;
   agentId?: string;
   agentMargin?: number;
   deliveryTimeline: {
     step: string;
     timestamp: string;
-    status: 'completed' | 'current' | 'pending' | 'failed';
+    status: "completed" | "current" | "pending" | "failed";
     note?: string;
   }[];
   failureReason?: string;
@@ -64,20 +81,25 @@ export interface Transaction {
   id: string;
   reference: string;
   date: string;
-  type: 'credit' | 'debit';
-  category: 'wallet_funding' | 'purchase' | 'commission' | 'withdrawal' | 'refund';
+  type: "credit" | "debit";
+  category:
+    | "wallet_funding"
+    | "purchase"
+    | "commission"
+    | "withdrawal"
+    | "refund";
   amount: number;
   fee: number;
   balanceAfter: number;
   description: string;
-  status: 'completed' | 'pending' | 'failed';
+  status: "completed" | "pending" | "failed";
   channel: string;
 }
 
 export interface ResultCheckerProduct {
   id: string;
   title: string;
-  examBody: 'WAEC' | 'CSSPS' | 'UNIVERSITY' | 'NOVDEC';
+  examBody: "WAEC" | "CSSPS" | "UNIVERSITY" | "NOVDEC";
   price: number;
   stockCount: number;
   description: string;
@@ -92,7 +114,7 @@ export interface AfaApplication {
   region: string;
   occupation: string;
   dateSubmitted: string;
-  status: 'under_review' | 'approved' | 'rejected' | 'needs_correction';
+  status: "under_review" | "approved" | "rejected" | "needs_correction";
   fee: number;
   notes?: string;
 }
@@ -101,15 +123,20 @@ export interface Complaint {
   id: string;
   ticketNumber: string;
   orderReference?: string;
-  category: 'delivery_delay' | 'failed_recharge' | 'wrong_number' | 'momo_debit_no_credit' | 'general';
+  category:
+    | "delivery_delay"
+    | "failed_recharge"
+    | "wrong_number"
+    | "momo_debit_no_credit"
+    | "general";
   subject: string;
-  status: 'open' | 'investigating' | 'resolved' | 'closed';
-  priority: 'low' | 'medium' | 'high' | 'urgent';
+  status: "open" | "investigating" | "resolved" | "closed";
+  priority: "low" | "medium" | "high" | "urgent";
   createdAt: string;
   lastUpdated: string;
   messages: {
     id: string;
-    sender: 'customer' | 'agent' | 'support_admin';
+    sender: "customer" | "agent" | "support_admin";
     senderName: string;
     text: string;
     timestamp: string;
@@ -125,7 +152,7 @@ export interface AgentStoreConfig {
   whatsappNumber: string;
   phone: string;
   email: string;
-  status: 'published' | 'paused' | 'draft';
+  status: "published" | "paused" | "draft";
   themeColor: string;
   bannerGradient: string;
   defaultNetwork: TelecomNetwork;
@@ -147,8 +174,8 @@ export interface PayoutRequest {
   momoNumber: string;
   accountName: string;
   requestDate: string;
-  status: 'pending' | 'approved' | 'rejected' | 'processed';
-  riskScore: 'low' | 'medium' | 'high';
+  status: "pending" | "approved" | "rejected" | "processed";
+  riskScore: "low" | "medium" | "high";
   notes?: string;
 }
 
@@ -162,15 +189,15 @@ export interface BulkSmsCampaign {
   totalCost: number;
   pagesPerSms: number;
   dateCreated: string;
-  status: 'draft' | 'scheduled' | 'sent' | 'delivering' | 'failed';
+  status: "draft" | "scheduled" | "sent" | "delivering" | "failed";
   deliveryRatePercent: number;
 }
 
 export interface TelecomGateway {
   id: string;
   name: string;
-  network: TelecomNetwork | 'WAEC' | 'MOFA' | 'ECG';
-  status: 'online' | 'degraded' | 'offline';
+  network: TelecomNetwork | "WAEC" | "MOFA" | "ECG";
+  status: "online" | "degraded" | "offline";
   latencyMs: number;
   successRate: number;
   lastPing: string;

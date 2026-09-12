@@ -81,15 +81,15 @@
     --sidebar-ring: hsl(var(--ring));
   }
 
-  /* Theme 3: Ghana Black Star Gold & Deep Cocoa */
-  .theme-ghana-gold {
+  /* Theme 3: Sunset Amber & Deep Cocoa */
+  .theme-sunset-amber {
     --background: 32 25% 8%;
     --foreground: 40 30% 96%;
     --card: 32 22% 12%;
     --card-foreground: 40 30% 96%;
     --popover: 32 22% 14%;
     --popover-foreground: 40 30% 96%;
-    --primary: 43 96% 50%; /* Ghana Gold */
+    --primary: 43 96% 50%; /* Sunset Amber */
     --primary-foreground: 32 30% 8%;
     --secondary: 25 95% 54%; /* Warm Amber */
     --secondary-foreground: 32 30% 8%;
@@ -156,15 +156,15 @@
     --warning: 43 94% 60%;
   }
 
-  /* Theme 6: Telecel Crimson & Carbon Dark */
-  .theme-crimson-telecel {
+  /* Theme 6: Ruby Red & Carbon Dark */
+  .theme-ruby-red {
     --background: 0 16% 8%;
     --foreground: 0 15% 96%;
     --card: 0 14% 12%;
     --card-foreground: 0 15% 96%;
     --popover: 0 14% 15%;
     --popover-foreground: 0 15% 96%;
-    --primary: 355 85% 55%; /* Telecel Bold Crimson */
+    --primary: 355 85% 55%; /* Ruby Red */
     --primary-foreground: 0 0% 100%;
     --secondary: 43 94% 56%;
     --secondary-foreground: 0 20% 10%;

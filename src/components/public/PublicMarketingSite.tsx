@@ -349,9 +349,7 @@ export const PublicMarketingSite: React.FC<PublicMarketingSiteProps> = ({
                       <div className="rounded-2xl border border-border/80 bg-muted/30 p-4">
                         <div className="flex items-center justify-between text-[10px] font-bold uppercase text-muted-foreground">
                           <span>Delivery path</span>
-                          <span className="text-emerald-600 dark:text-emerald-400">
-                            Clear route
-                          </span>
+                          <span className="text-emerald-600">Clear route</span>
                         </div>
                         <div className="mt-4 flex items-center gap-2">
                           <div className="flex size-9 items-center justify-center rounded-xl bg-background text-xs font-black text-foreground">
@@ -367,7 +365,7 @@ export const PublicMarketingSite: React.FC<PublicMarketingSiteProps> = ({
                           </div>
                           <div className="h-px flex-1 bg-primary/40" />
                           <div className="flex size-9 items-center justify-center rounded-xl bg-emerald-500/15 text-emerald-700 dark:text-emerald-400">
-                            <SignalRail status="online" size="sm" />
+                            <SignalRail status="online" size="xs" />
                           </div>
                         </div>
                         <div className="mt-2 flex justify-between text-[10px] text-muted-foreground">
@@ -377,14 +375,14 @@ export const PublicMarketingSite: React.FC<PublicMarketingSiteProps> = ({
                         </div>
                       </div>
                       <div>
-                        <div className="mb-2 flex items-center justify-between">
+                        {/* <div className="mb-2 flex items-center justify-between">
                           <p className="text-xs font-bold text-foreground">
                             Choose a network
                           </p>
                           <p className="text-[11px] text-muted-foreground">
                             Popular: {currentBundle?.sizeLabel || "5 GB"}
                           </p>
-                        </div>
+                        </div> */}
                         <div className="grid grid-cols-3 gap-2">
                           {(
                             ["MTN", "Telecel", "AirtelTigo"] as TelecomNetwork[]
@@ -396,7 +394,7 @@ export const PublicMarketingSite: React.FC<PublicMarketingSiteProps> = ({
                                   ? "default"
                                   : "outline"
                               }
-                              className="font-semibold"
+                              className="font-semibold h-10"
                               onClick={() => {
                                 setSelectedNetwork(network);
                                 const nextBundle = bundles.find(
@@ -411,20 +409,7 @@ export const PublicMarketingSite: React.FC<PublicMarketingSiteProps> = ({
                           ))}
                         </div>
                       </div>
-                      <Button
-                        className="w-full font-bold h-11"
-                        onClick={() =>
-                          onNavigate
-                            ? onNavigate("customer", "buy-data")
-                            : handleStartPurchase(
-                                selectedBundleId,
-                                selectedNetwork,
-                              )
-                        }
-                      >
-                        Continue with {currentBundle?.sizeLabel || "data"}
-                        <ArrowRight className="size-4" />
-                      </Button>
+
                     </div>
                   </div>
                 </div>
@@ -697,7 +682,8 @@ export const PublicMarketingSite: React.FC<PublicMarketingSiteProps> = ({
                       className="font-semibold"
                       onClick={() => navigatePublicTab("agent")}
                     >
-                      <Store className="size-4 text-amber-500" /> Become an agent
+                      <Store className="size-4 text-amber-500" /> Become an
+                      agent
                     </Button>
                   </div>
                   <div className="flex flex-wrap gap-x-8 gap-y-3 border-t border-border/70 pt-6">
@@ -736,7 +722,8 @@ export const PublicMarketingSite: React.FC<PublicMarketingSiteProps> = ({
                       [
                         {
                           network: "MTN",
-                          color: "bg-yellow-400/15 text-yellow-700 dark:text-yellow-400",
+                          color:
+                            "bg-yellow-400/15 text-yellow-700 dark:text-yellow-400",
                           dot: "bg-yellow-400",
                           ping: "42s",
                           status: "Operational",
@@ -750,7 +737,8 @@ export const PublicMarketingSite: React.FC<PublicMarketingSiteProps> = ({
                         },
                         {
                           network: "AirtelTigo",
-                          color: "bg-blue-500/10 text-blue-600 dark:text-blue-400",
+                          color:
+                            "bg-blue-500/10 text-blue-600 dark:text-blue-400",
                           dot: "bg-blue-500",
                           ping: "51s",
                           status: "Operational",
@@ -765,7 +753,9 @@ export const PublicMarketingSite: React.FC<PublicMarketingSiteProps> = ({
                           <span
                             className={`inline-flex size-8 items-center justify-center rounded-lg text-[10px] font-black ${n.color}`}
                           >
-                            {n.network === "AirtelTigo" ? "AT" : n.network.slice(0, 3)}
+                            {n.network === "AirtelTigo"
+                              ? "AT"
+                              : n.network.slice(0, 3)}
                           </span>
                           <div>
                             <p className="text-xs font-bold text-foreground">
@@ -799,7 +789,6 @@ export const PublicMarketingSite: React.FC<PublicMarketingSiteProps> = ({
               </div>
             </div>
           </section>
-
 
           {/* Network selector + bundle grid */}
           <section className="max-w-[95%] mx-auto px-4 sm:px-6 py-12 w-full space-y-8">
@@ -847,14 +836,7 @@ export const PublicMarketingSite: React.FC<PublicMarketingSiteProps> = ({
                       : "border-border hover:border-primary/30"
                   }`}
                 >
-                  <div className={`h-1.5 w-full ${accent.solid}`} />
-                  {index === 0 && (
-                    <div
-                      className={`absolute right-4 top-5 rounded-full px-3 py-1 text-[10px] font-bold uppercase ${accent.bg} ${accent.text}`}
-                    >
-                      Most popular
-                    </div>
-                  )}
+                  <div className={`h-1 w-full ${accent.solid}`} />
                   <div className="p-6">
                     <div className="flex items-start justify-between gap-4">
                       <div>
@@ -868,7 +850,6 @@ export const PublicMarketingSite: React.FC<PublicMarketingSiteProps> = ({
                           {b.validity}
                         </p>
                       </div>
-                      <SignalRail status="online" size="sm" />
                     </div>
                     <div className="mt-5 flex items-center gap-1.5 rounded-xl bg-muted/40 px-3 py-2.5">
                       <div
@@ -882,7 +863,7 @@ export const PublicMarketingSite: React.FC<PublicMarketingSiteProps> = ({
                       </div>
                       <div className="h-px flex-1 bg-border" />
                       <div className="flex size-7 items-center justify-center rounded-lg bg-emerald-500/15 text-emerald-700 dark:text-emerald-400">
-                        <SignalRail status="online" size="sm" />
+                        <SignalRail status="online" size="xs" bars={4} />
                       </div>
                     </div>
                     <div className="mt-5 flex items-center justify-between gap-4">
@@ -1307,113 +1288,298 @@ export const PublicMarketingSite: React.FC<PublicMarketingSiteProps> = ({
               <div className="rounded-2xl border border-border bg-card min-h-[22rem] overflow-hidden">
                 {!trackSearched ? (
                   <div className="flex h-full min-h-[22rem] flex-col items-center justify-center text-center p-8">
-                    <div className="flex size-16 items-center justify-center rounded-2xl bg-primary/10 text-primary mb-5 ring-8 ring-primary/5">
-                      <SignalRail status="online" size="md" />
+                    <div className="relative mb-6">
+                      <div className="flex size-20 items-center justify-center rounded-3xl bg-primary/10 text-primary ring-8 ring-primary/5">
+                        <SignalRail status="online" size="md" />
+                      </div>
+                      <span className="absolute -top-1 -right-1 flex size-4">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                        <span className="relative inline-flex size-4 rounded-full bg-emerald-500" />
+                      </span>
                     </div>
                     <h3 className="text-xl font-black text-foreground">
                       Your live dispatch trail appears here.
                     </h3>
                     <p className="mt-2 max-w-sm text-sm leading-relaxed text-muted-foreground">
-                      Search an order to see its route through the SDH core and
-                      carrier gateway in real time.
+                      Search an order to see its full route through the SDH core
+                      and carrier gateway in real time.
                     </p>
-                  </div>
-                ) : trackedOrder ? (
-                  <div className="animate-in fade-in duration-200">
-                    <div className="border-b border-border p-6 bg-muted/20">
-                      <div className="flex flex-wrap items-start justify-between gap-4">
-                        <div>
-                          <p className="text-xs font-bold uppercase text-muted-foreground tracking-widest">
-                            {trackedOrder.reference}
-                          </p>
-                          <h3 className="mt-2 text-2xl font-black text-foreground">
-                            {trackedOrder.productName}
-                          </h3>
-                          <p className="mt-1 text-xs text-muted-foreground">
-                            {trackedOrder.network} ·{" "}
-                            {trackedOrder.recipientPhone}
-                          </p>
-                        </div>
-                        <div className="text-right">
-                          <p className="text-2xl font-black tabular-nums text-foreground">
-                            GH₵ {trackedOrder.amount.toFixed(2)}
-                          </p>
-                          <Badge className="mt-2 bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 uppercase text-[10px]">
-                            {trackedOrder.status}
-                          </Badge>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="p-6 space-y-6">
-                      {/* Routing strip */}
-                      <div className="rounded-xl border border-border bg-muted/30 p-4">
-                        <div className="flex items-center justify-between text-[10px] font-bold uppercase text-muted-foreground mb-3">
-                          <span>Delivery path</span>
-                          <span className="text-emerald-600 dark:text-emerald-400">
-                            Clear route
+                    <div className="mt-6 flex items-center gap-6 text-center">
+                      {[
+                        { label: "Order Placed", icon: "①" },
+                        { label: "Dispatched", icon: "②" },
+                        { label: "Delivered", icon: "③" },
+                      ].map((s, i) => (
+                        <div
+                          key={s.label}
+                          className="flex flex-col items-center gap-1.5"
+                        >
+                          <div className="size-8 rounded-full border-2 border-dashed border-border flex items-center justify-center text-[10px] font-black text-muted-foreground/40">
+                            {i + 1}
+                          </div>
+                          <span className="text-[10px] text-muted-foreground/50 font-semibold">
+                            {s.label}
                           </span>
                         </div>
-                        <div className="flex items-center gap-2">
-                          {(() => {
-                            const a =
-                              NETWORK_ACCENT[
-                                trackedOrder.network as TelecomNetwork
-                              ] ?? NETWORK_ACCENT.MTN;
-                            return (
+                      ))}
+                    </div>
+                  </div>
+                ) : trackedOrder ? (
+                  (() => {
+                    const a =
+                      NETWORK_ACCENT[trackedOrder.network as TelecomNetwork] ??
+                      NETWORK_ACCENT.MTN;
+                    const timeline = trackedOrder.deliveryTimeline;
+                    const completedCount = timeline.filter(
+                      (s) => s.status === "completed",
+                    ).length;
+                    const progress = Math.round(
+                      (completedCount / timeline.length) * 100,
+                    );
+                    return (
+                      <div className="animate-in fade-in duration-300">
+                        {/* Order header */}
+                        <div className="border-b border-border bg-muted/20 p-5 sm:p-6">
+                          <div className="flex flex-wrap items-start justify-between gap-4">
+                            <div className="flex items-center gap-3">
                               <div
-                                className={`flex size-9 items-center justify-center rounded-xl text-[10px] font-black text-white ${a.solid}`}
+                                className={`flex size-11 shrink-0 items-center justify-center rounded-2xl text-[11px] font-black text-white ${a.solid}`}
                               >
                                 {a.short}
                               </div>
-                            );
-                          })()}
-                          <div className="h-px flex-1 bg-primary/40" />
-                          <div className="flex size-9 items-center justify-center rounded-xl bg-primary text-[10px] font-black text-primary-foreground">
-                            SDH
-                          </div>
-                          <div className="h-px flex-1 bg-primary/40" />
-                          <div className="flex size-9 items-center justify-center rounded-xl bg-emerald-500/15 text-emerald-700 dark:text-emerald-400">
-                            <SignalRail status="online" size="sm" />
-                          </div>
-                        </div>
-                        <div className="mt-2 flex justify-between text-[10px] text-muted-foreground">
-                          <span>{trackedOrder.network} EVD</span>
-                          <span>SDH Core</span>
-                          <span>Recipient</span>
-                        </div>
-                      </div>
-                      {/* Timeline */}
-                      <div>
-                        <div className="mb-4 flex items-center justify-between">
-                          <p className="text-xs font-bold uppercase text-muted-foreground">
-                            Signal dispatch timeline
-                          </p>
-                          <SignalRail status="online" size="sm" label="Live" />
-                        </div>
-                        <div className="space-y-4 border-l-2 border-primary/30 pl-5">
-                          {trackedOrder.deliveryTimeline.map((step, idx) => (
-                            <div key={idx} className="relative text-sm">
-                              <span className="absolute -left-[1.65rem] top-1 size-2.5 rounded-full bg-primary ring-4 ring-muted/80" />
-                              <div className="flex flex-wrap justify-between gap-2 font-bold text-foreground">
-                                <span>{step.step}</span>
-                                <span className="text-xs font-normal tabular-nums text-muted-foreground">
-                                  {step.timestamp}
-                                </span>
-                              </div>
-                              {step.note && (
-                                <p className="mt-1 text-xs text-muted-foreground">
-                                  {step.note}
+                              <div>
+                                <p className="font-mono text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                                  {trackedOrder.reference}
                                 </p>
-                              )}
+                                <h3 className="mt-0.5 text-lg font-black text-foreground leading-tight">
+                                  {trackedOrder.productName}
+                                </h3>
+                                <p className="text-xs text-muted-foreground mt-0.5">
+                                  {trackedOrder.recipientPhone} ·{" "}
+                                  {trackedOrder.network}
+                                </p>
+                              </div>
                             </div>
-                          ))}
+                            <div className="text-right shrink-0">
+                              <p className="text-2xl font-black tabular-nums text-foreground">
+                                GH₵ {trackedOrder.amount.toFixed(2)}
+                              </p>
+                              <Badge
+                                className={`mt-1.5 uppercase text-[10px] font-bold ${
+                                  trackedOrder.status === "delivered"
+                                    ? "bg-emerald-500/15 text-emerald-700 dark:text-emerald-400"
+                                    : trackedOrder.status === "processing"
+                                      ? "bg-amber-500/15 text-amber-700 dark:text-amber-400"
+                                      : "bg-red-500/15 text-red-600"
+                                }`}
+                              >
+                                {trackedOrder.status === "delivered"
+                                  ? "✓ Delivered"
+                                  : trackedOrder.status === "processing"
+                                    ? "⟳ In Transit"
+                                    : trackedOrder.status}
+                              </Badge>
+                            </div>
+                          </div>
+
+                          {/* Progress bar */}
+                          <div className="mt-4">
+                            <div className="flex items-center justify-between mb-1.5">
+                              <span className="text-[10px] font-bold uppercase text-muted-foreground tracking-wider">
+                                Delivery progress
+                              </span>
+                              <span className="text-[10px] font-bold text-primary tabular-nums">
+                                {progress}%
+                              </span>
+                            </div>
+                            <div className="h-1.5 w-full rounded-full bg-muted overflow-hidden">
+                              <div
+                                className="h-full rounded-full bg-primary transition-all duration-700"
+                                style={{ width: `${progress}%` }}
+                              />
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="p-5 sm:p-6 space-y-6">
+                          {/* Routing path */}
+                          <div className="rounded-xl border border-border bg-muted/20 p-4">
+                            <p className="text-[10px] font-bold uppercase text-muted-foreground tracking-wider mb-3">
+                              Delivery route
+                            </p>
+                            <div className="flex items-center gap-2">
+                              <div
+                                className={`flex size-9 shrink-0 items-center justify-center rounded-xl text-[10px] font-black text-white ${a.solid}`}
+                              >
+                                {a.short}
+                              </div>
+                              <div className="relative flex-1 h-px bg-primary/25">
+                                <div
+                                  className="absolute inset-y-0 left-0 bg-primary transition-all duration-700 rounded-full"
+                                  style={{ width: `${progress}%` }}
+                                />
+                                {trackedOrder.status === "processing" && (
+                                  <span
+                                    className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 flex size-2.5 rounded-full bg-primary"
+                                    style={{ left: `${progress}%` }}
+                                  >
+                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75" />
+                                  </span>
+                                )}
+                              </div>
+                              <div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-primary text-[10px] font-black text-primary-foreground">
+                                SDH
+                              </div>
+                              <div className="relative flex-1 h-px bg-primary/25">
+                                <div
+                                  className="absolute inset-y-0 left-0 bg-primary transition-all duration-700 rounded-full"
+                                  style={{
+                                    width: progress === 100 ? "100%" : "0%",
+                                  }}
+                                />
+                              </div>
+                              <div
+                                className={`flex size-9 shrink-0 items-center justify-center rounded-xl transition-colors ${
+                                  trackedOrder.status === "delivered"
+                                    ? "bg-emerald-500 text-white"
+                                    : "bg-muted border border-border text-muted-foreground"
+                                }`}
+                              >
+                                {trackedOrder.status === "delivered" ? (
+                                  <svg
+                                    viewBox="0 0 16 16"
+                                    className="size-4 fill-current"
+                                  >
+                                    <path d="M13.5 2.5l-7 7-3-3-1.5 1.5 4.5 4.5 8.5-8.5z" />
+                                  </svg>
+                                ) : (
+                                  <SignalRail
+                                    status="online"
+                                    size="xs"
+                                    bars={4}
+                                  />
+                                )}
+                              </div>
+                            </div>
+                            <div className="mt-2 flex justify-between text-[10px] text-muted-foreground">
+                              <span>{trackedOrder.network} EVD</span>
+                              <span>SDH Core</span>
+                              <span>Recipient</span>
+                            </div>
+                          </div>
+
+                          {/* Step tracker */}
+                          <div>
+                            <div className="flex items-center justify-between mb-4">
+                              <p className="text-xs font-bold uppercase text-muted-foreground tracking-wider">
+                                Signal dispatch timeline
+                              </p>
+                              <SignalRail
+                                status="online"
+                                size="sm"
+                                label="Live"
+                              />
+                            </div>
+                            <div className="space-y-0">
+                              {timeline.map((step, idx) => {
+                                const isCompleted = step.status === "completed";
+                                const isCurrent = step.status === "current";
+                                const isPending = step.status === "pending";
+                                const isFailed = step.status === "failed";
+                                const isLast = idx === timeline.length - 1;
+                                return (
+                                  <div key={idx} className="flex gap-4">
+                                    {/* Left: connector + dot */}
+                                    <div className="flex flex-col items-center shrink-0 w-8">
+                                      <div
+                                        className={`relative flex size-8 items-center justify-center rounded-full border-2 shrink-0 transition-all ${
+                                          isCompleted
+                                            ? "bg-primary border-primary text-primary-foreground"
+                                            : isCurrent
+                                              ? "bg-background border-primary text-primary"
+                                              : isFailed
+                                                ? "bg-red-500/10 border-red-500 text-red-500"
+                                                : "bg-muted border-border text-muted-foreground"
+                                        }`}
+                                      >
+                                        {isCurrent && (
+                                          <span className="absolute inset-0 rounded-full animate-ping bg-primary/20" />
+                                        )}
+                                        {isCompleted ? (
+                                          <svg
+                                            viewBox="0 0 16 16"
+                                            className="size-3.5 fill-current"
+                                          >
+                                            <path d="M13.5 2.5l-7 7-3-3-1.5 1.5 4.5 4.5 8.5-8.5z" />
+                                          </svg>
+                                        ) : isCurrent ? (
+                                          <span className="size-2 rounded-full bg-primary" />
+                                        ) : isFailed ? (
+                                          <span className="text-[10px] font-black">
+                                            ✕
+                                          </span>
+                                        ) : (
+                                          <span className="text-[10px] font-black">
+                                            {idx + 1}
+                                          </span>
+                                        )}
+                                      </div>
+                                      {!isLast && (
+                                        <div
+                                          className={`w-0.5 flex-1 my-1 min-h-[1.5rem] ${isCompleted ? "bg-primary" : "bg-border"}`}
+                                        />
+                                      )}
+                                    </div>
+                                    {/* Right: content */}
+                                    <div
+                                      className={`pb-5 flex-1 ${isLast ? "pb-0" : ""}`}
+                                    >
+                                      <div className="flex flex-wrap items-center justify-between gap-2">
+                                        <p
+                                          className={`text-sm font-bold ${
+                                            isCompleted
+                                              ? "text-foreground"
+                                              : isCurrent
+                                                ? "text-primary"
+                                                : isFailed
+                                                  ? "text-red-600"
+                                                  : "text-muted-foreground"
+                                          }`}
+                                        >
+                                          {step.step}
+                                          {isCurrent && (
+                                            <span className="ml-2 inline-flex items-center gap-1 rounded-full bg-amber-500/10 px-2 py-0.5 text-[9px] font-bold uppercase text-amber-600 dark:text-amber-400">
+                                              <span className="size-1.5 rounded-full bg-amber-500 animate-pulse" />
+                                              In progress
+                                            </span>
+                                          )}
+                                        </p>
+                                        <span
+                                          className={`text-[10px] font-mono tabular-nums ${isPending ? "text-muted-foreground/40 italic" : "text-muted-foreground"}`}
+                                        >
+                                          {step.timestamp}
+                                        </span>
+                                      </div>
+                                      {step.note && (
+                                        <p className="mt-0.5 text-xs text-muted-foreground leading-relaxed">
+                                          {step.note}
+                                        </p>
+                                      )}
+                                    </div>
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </div>
+                    );
+                  })()
                 ) : (
                   <div className="flex h-full min-h-[22rem] flex-col items-center justify-center text-center p-8">
-                    <AlertCircle className="size-14 text-amber-500 mb-4" />
+                    <div className="flex size-16 items-center justify-center rounded-2xl bg-amber-500/10 text-amber-500 mb-4">
+                      <AlertCircle className="size-8" />
+                    </div>
                     <h3 className="text-xl font-black text-foreground">
                       No matching order found.
                     </h3>
@@ -1423,7 +1589,7 @@ export const PublicMarketingSite: React.FC<PublicMarketingSiteProps> = ({
                     </p>
                     <Button
                       variant="outline"
-                      className="mt-5 font-bold"
+                      className="mt-5 font-semibold"
                       onClick={() => {
                         setTrackSearched(false);
                         setSearchTrackInput("");
@@ -1914,7 +2080,7 @@ export const PublicMarketingSite: React.FC<PublicMarketingSiteProps> = ({
                           value={contactCategory}
                           onValueChange={setContactCategory}
                         >
-                          <SelectTrigger className="h-11 rounded-xl">
+                          <SelectTrigger className="!h-11 w-full rounded-xl">
                             <SelectValue placeholder="Select an issue category" />
                           </SelectTrigger>
                           <SelectContent>

@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from "react";
 import {
   Wallet,
   Bell,
@@ -21,10 +21,11 @@ import {
   Lock,
   Check,
   ShieldCheck,
-  LogIn
-} from 'lucide-react';
-import { UserRole, AppTheme, UserAccount } from '../../types';
-import { SignalRail } from './SignalRail';
+  LogIn,
+} from "lucide-react";
+import { UserRole, AppTheme, UserAccount } from "../../types";
+import { SignalRail } from "./SignalRail";
+import { themeOptions, getThemeOption } from "../../lib/themes";
 
 interface NavbarProps {
   currentRole: UserRole;
@@ -43,7 +44,7 @@ interface NavbarProps {
   onToggleMobileMenu?: () => void;
   isMobileMenuOpen?: boolean;
   user?: UserAccount | null;
-  onOpenAuth?: (mode?: 'signin' | 'signup' | 'demo') => void;
+  onOpenAuth?: (mode?: "signin" | "signup" | "demo") => void;
   onLogout?: () => void;
   onOpenSecurityPins?: () => void;
   isAdminUnlocked?: boolean;
@@ -76,16 +77,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
   const [themeDropdownOpen, setThemeDropdownOpen] = useState(false);
 
-  const themeOptions: { id: AppTheme; name: string; dot: string }[] = [
-    { id: 'light', name: 'Daylight Clean', dot: 'bg-blue-600' },
-    { id: 'dark', name: 'Midnight Obsidian', dot: 'bg-slate-900 border border-slate-700' },
-    { id: 'ghana-gold', name: 'Ghana Black Star Gold', dot: 'bg-amber-400' },
-    { id: 'emerald-matrix', name: 'Emerald Matrix', dot: 'bg-emerald-500' },
-    { id: 'royal-indigo', name: 'Royal Indigo', dot: 'bg-indigo-600' },
-    { id: 'crimson-telecel', name: 'Crimson Telecel', dot: 'bg-red-600' },
-  ];
-
-  const currentThemeObj = themeOptions.find((t) => t.id === theme) || themeOptions[0];
+  const currentThemeObj = getThemeOption(theme);
 
   const handleOpenCommand = () => {
     if (onOpenCommand) onOpenCommand();
@@ -98,18 +90,24 @@ export const Navbar: React.FC<NavbarProps> = ({
         {/* Left: Brand Logo & Wordmark */}
         <div className="flex items-center gap-3">
           {/* Mobile menu toggle button */}
-          {onToggleMobileMenu && currentRole !== 'public' && currentRole !== 'storefront' && (
-            <button
-              onClick={onToggleMobileMenu}
-              className="md:hidden p-2 rounded-xl text-muted-foreground hover:text-foreground hover:bg-muted"
-              aria-label="Toggle Navigation"
-            >
-              {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-            </button>
-          )}
+          {onToggleMobileMenu &&
+            currentRole !== "public" &&
+            currentRole !== "storefront" && (
+              <button
+                onClick={onToggleMobileMenu}
+                className="md:hidden p-2 rounded-xl text-muted-foreground hover:text-foreground hover:bg-muted"
+                aria-label="Toggle Navigation"
+              >
+                {isMobileMenuOpen ? (
+                  <X className="w-5 h-5" />
+                ) : (
+                  <Menu className="w-5 h-5" />
+                )}
+              </button>
+            )}
 
           <div
-            onClick={() => onRoleChange('public')}
+            onClick={() => onRoleChange("public")}
             className="flex items-center gap-2.5 cursor-pointer group"
           >
             <div className="w-9 h-9 rounded-xl bg-primary text-primary-foreground flex items-center justify-center font-extrabold text-sm shadow-sm group-hover:scale-105 transition-transform">
@@ -124,7 +122,9 @@ export const Navbar: React.FC<NavbarProps> = ({
                   GH₵
                 </span>
               </div>
-              <p className="text-[10px] text-muted-foreground -mt-0.5">Telecom & Digital Services</p>
+              <p className="text-[10px] text-muted-foreground -mt-0.5">
+                Telecom & Digital Services
+              </p>
             </div>
           </div>
 
@@ -133,7 +133,6 @@ export const Navbar: React.FC<NavbarProps> = ({
             <SignalRail status="online" size="sm" label="Gateway 99.8%" />
           </div>
         </div>
-
 
         {/* Right: Quick actions, Wallet balance, notifications, theme, profile */}
         <div className="flex items-center gap-1.5 sm:gap-2">
@@ -165,7 +164,9 @@ export const Navbar: React.FC<NavbarProps> = ({
           {/* Wallet Balance Pill */}
           <div className="flex items-center rounded-xl border border-border bg-card shadow-2xs overflow-hidden">
             <div className="px-2.5 py-1 text-xs">
-              <span className="text-[10px] uppercase text-muted-foreground block leading-tight font-medium">Wallet</span>
+              <span className="text-[10px] uppercase text-muted-foreground block leading-tight font-medium">
+                Wallet
+              </span>
               <span className="font-bold text-foreground tabular-nums text-xs sm:text-sm">
                 GH₵ {walletBalance.toFixed(2)}
               </span>
@@ -185,8 +186,8 @@ export const Navbar: React.FC<NavbarProps> = ({
               onClick={onToggleMobileShell}
               className={`p-2 rounded-xl border text-xs font-medium transition-colors hidden sm:flex items-center gap-1.5 cursor-pointer ${
                 isMobileShell
-                  ? 'bg-primary text-primary-foreground border-primary shadow-xs'
-                  : 'border-border bg-card text-muted-foreground hover:text-foreground hover:bg-muted'
+                  ? "bg-primary text-primary-foreground border-primary shadow-xs"
+                  : "border-border bg-card text-muted-foreground hover:text-foreground hover:bg-muted"
               }`}
               title="Toggle Phone Frame Mobile Shell Mode"
             >
@@ -220,7 +221,9 @@ export const Navbar: React.FC<NavbarProps> = ({
               title={`Active Theme: ${currentThemeObj.name}. Click to change theme.`}
               aria-label="Theme Selector"
             >
-              <span className={`w-3.5 h-3.5 rounded-full ${currentThemeObj.dot}`} />
+              <span
+                className={`w-3.5 h-3.5 rounded-full ${currentThemeObj.dot}`}
+              />
               <Palette className="w-3.5 h-3.5 hidden sm:inline" />
               <ChevronDown className="w-3 h-3 text-muted-foreground hidden sm:inline" />
             </button>
@@ -242,15 +245,17 @@ export const Navbar: React.FC<NavbarProps> = ({
                       onClick={() => onSetTheme(opt.id)}
                       className={`w-full text-left px-2.5 py-2 rounded-xl flex items-center justify-between transition-colors cursor-pointer ${
                         theme === opt.id
-                          ? 'bg-primary/10 text-primary font-bold'
-                          : 'text-foreground hover:bg-muted'
+                          ? "bg-primary/10 text-primary font-bold"
+                          : "text-foreground hover:bg-muted"
                       }`}
                     >
                       <div className="flex items-center gap-2">
                         <span className={`w-3 h-3 rounded-full ${opt.dot}`} />
                         <span className="text-xs">{opt.name}</span>
                       </div>
-                      {theme === opt.id && <Check className="w-3.5 h-3.5 text-primary" />}
+                      {theme === opt.id && (
+                        <Check className="w-3.5 h-3.5 text-primary" />
+                      )}
                     </button>
                   ))}
                 </div>
@@ -268,7 +273,11 @@ export const Navbar: React.FC<NavbarProps> = ({
               className="flex items-center gap-1.5 p-1 sm:p-1.5 rounded-xl border border-border bg-card hover:bg-muted transition-colors cursor-pointer"
             >
               <div className="w-7 h-7 rounded-lg bg-primary/10 text-primary font-bold text-xs flex items-center justify-center">
-                {currentRole === 'admin' ? 'AD' : currentRole === 'agent' ? 'KO' : 'KM'}
+                {currentRole === "admin"
+                  ? "AD"
+                  : currentRole === "agent"
+                    ? "KO"
+                    : "KM"}
               </div>
               <ChevronDown className="w-3.5 h-3.5 text-muted-foreground hidden sm:block" />
             </button>
@@ -282,14 +291,14 @@ export const Navbar: React.FC<NavbarProps> = ({
                   <div>
                     <p className="text-xs font-bold text-foreground">
                       {user?.name ||
-                        (currentRole === 'admin'
-                          ? 'NOC Super Admin'
-                          : currentRole === 'agent'
-                          ? 'Kofi Owusu (Agent)'
-                          : 'Kojo Mensah')}
+                        (currentRole === "admin"
+                          ? "NOC Super Admin"
+                          : currentRole === "agent"
+                            ? "Kofi Owusu (Agent)"
+                            : "Kojo Mensah")}
                     </p>
                     <p className="text-[11px] text-muted-foreground">
-                      {user?.phone || '024 419 2834'} • Verified
+                      {user?.phone || "024 419 2834"} • Verified
                     </p>
                   </div>
                   <span className="text-[10px] font-bold uppercase px-2 py-0.5 rounded-full bg-primary/15 text-primary">
@@ -302,52 +311,74 @@ export const Navbar: React.FC<NavbarProps> = ({
                     Switch Workspace Mode
                   </div>
                   <button
-                    onClick={() => onRoleChange('customer')}
+                    onClick={() => onRoleChange("customer")}
                     className={`w-full text-left px-2.5 py-1.5 rounded-lg flex items-center justify-between ${
-                      currentRole === 'customer' ? 'bg-primary/10 text-primary font-bold' : 'hover:bg-muted text-foreground'
+                      currentRole === "customer"
+                        ? "bg-primary/10 text-primary font-bold"
+                        : "hover:bg-muted text-foreground"
                     }`}
                   >
                     <span>Customer Dashboard</span>
-                    {currentRole === 'customer' && <span className="w-1.5 h-1.5 rounded-full bg-primary" />}
+                    {currentRole === "customer" && (
+                      <span className="w-1.5 h-1.5 rounded-full bg-primary" />
+                    )}
                   </button>
                   <button
-                    onClick={() => onRoleChange('agent')}
+                    onClick={() => onRoleChange("agent")}
                     className={`w-full text-left px-2.5 py-1.5 rounded-lg flex items-center justify-between ${
-                      currentRole === 'agent' ? 'bg-primary/10 text-primary font-bold' : 'hover:bg-muted text-foreground'
+                      currentRole === "agent"
+                        ? "bg-primary/10 text-primary font-bold"
+                        : "hover:bg-muted text-foreground"
                     }`}
                   >
                     <span>Agent Workspace</span>
-                    {currentRole === 'agent' && <span className="w-1.5 h-1.5 rounded-full bg-primary" />}
+                    {currentRole === "agent" && (
+                      <span className="w-1.5 h-1.5 rounded-full bg-primary" />
+                    )}
                   </button>
                   <button
-                    onClick={() => onRoleChange('admin')}
+                    onClick={() => onRoleChange("admin")}
                     className={`w-full text-left px-2.5 py-1.5 rounded-lg flex items-center justify-between ${
-                      currentRole === 'admin' ? 'bg-primary/10 text-primary font-bold' : 'hover:bg-muted text-foreground'
+                      currentRole === "admin"
+                        ? "bg-primary/10 text-primary font-bold"
+                        : "hover:bg-muted text-foreground"
                     }`}
                   >
                     <div className="flex items-center gap-1.5">
                       <span>Admin NOC Console</span>
-                      {!isAdminUnlocked && <Lock className="w-3 h-3 text-muted-foreground" />}
+                      {!isAdminUnlocked && (
+                        <Lock className="w-3 h-3 text-muted-foreground" />
+                      )}
                     </div>
-                    {currentRole === 'admin' && <span className="w-1.5 h-1.5 rounded-full bg-primary" />}
+                    {currentRole === "admin" && (
+                      <span className="w-1.5 h-1.5 rounded-full bg-primary" />
+                    )}
                   </button>
                   <button
-                    onClick={() => onRoleChange('storefront')}
+                    onClick={() => onRoleChange("storefront")}
                     className={`w-full text-left px-2.5 py-1.5 rounded-lg flex items-center justify-between ${
-                      currentRole === 'storefront' ? 'bg-primary/10 text-primary font-bold' : 'hover:bg-muted text-foreground'
+                      currentRole === "storefront"
+                        ? "bg-primary/10 text-primary font-bold"
+                        : "hover:bg-muted text-foreground"
                     }`}
                   >
                     <span>Kofi Telecom Storefront</span>
-                    {currentRole === 'storefront' && <span className="w-1.5 h-1.5 rounded-full bg-primary" />}
+                    {currentRole === "storefront" && (
+                      <span className="w-1.5 h-1.5 rounded-full bg-primary" />
+                    )}
                   </button>
                   <button
-                    onClick={() => onRoleChange('public')}
+                    onClick={() => onRoleChange("public")}
                     className={`w-full text-left px-2.5 py-1.5 rounded-lg flex items-center justify-between ${
-                      currentRole === 'public' ? 'bg-primary/10 text-primary font-bold' : 'hover:bg-muted text-foreground'
+                      currentRole === "public"
+                        ? "bg-primary/10 text-primary font-bold"
+                        : "hover:bg-muted text-foreground"
                     }`}
                   >
                     <span>Public Marketing Site</span>
-                    {currentRole === 'public' && <span className="w-1.5 h-1.5 rounded-full bg-primary" />}
+                    {currentRole === "public" && (
+                      <span className="w-1.5 h-1.5 rounded-full bg-primary" />
+                    )}
                   </button>
                 </div>
 
@@ -363,19 +394,21 @@ export const Navbar: React.FC<NavbarProps> = ({
                     </button>
                   )}
 
-                  {currentRole === 'admin' && isAdminUnlocked && onLockAdmin && (
-                    <button
-                      onClick={onLockAdmin}
-                      className="w-full text-left px-2.5 py-1.5 rounded-lg text-xs font-bold text-amber-600 dark:text-amber-400 hover:bg-amber-500/10 flex items-center gap-2 cursor-pointer"
-                    >
-                      <Lock className="w-3.5 h-3.5" />
-                      <span>Lock Admin Console</span>
-                    </button>
-                  )}
+                  {currentRole === "admin" &&
+                    isAdminUnlocked &&
+                    onLockAdmin && (
+                      <button
+                        onClick={onLockAdmin}
+                        className="w-full text-left px-2.5 py-1.5 rounded-lg text-xs font-bold text-amber-600 dark:text-amber-400 hover:bg-amber-500/10 flex items-center gap-2 cursor-pointer"
+                      >
+                        <Lock className="w-3.5 h-3.5" />
+                        <span>Lock Admin Console</span>
+                      </button>
+                    )}
 
                   {onOpenAuth && (
                     <button
-                      onClick={() => onOpenAuth('signin')}
+                      onClick={() => onOpenAuth("signin")}
                       className="w-full text-left px-2.5 py-1.5 rounded-lg text-xs font-bold text-primary hover:bg-primary/10 flex items-center gap-2 cursor-pointer"
                     >
                       <LogIn className="w-3.5 h-3.5" />
@@ -386,7 +419,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                   <button
                     onClick={() => {
                       if (onLogout) onLogout();
-                      onRoleChange('public');
+                      onRoleChange("public");
                     }}
                     className="w-full text-left px-2.5 py-1.5 rounded-lg text-xs text-destructive hover:bg-destructive/10 flex items-center gap-2 cursor-pointer"
                   >

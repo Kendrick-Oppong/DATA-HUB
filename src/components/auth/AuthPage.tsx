@@ -21,6 +21,7 @@ import {
 } from "lucide-react";
 import { UserRole, AppTheme } from "../../types";
 import { Button } from "../ui/button";
+import { themeOptions } from "../../lib/themes";
 import { Input } from "../ui/input";
 import {
   Card,
@@ -289,15 +290,6 @@ export const AuthPage: React.FC<AuthPageProps> = ({
     }, 400);
   };
 
-  const themes: { id: AppTheme; label: string; dot: string }[] = [
-    { id: "light", label: "Modern Light", dot: "bg-blue-600" },
-    { id: "dark", label: "Dark Slate", dot: "bg-slate-700" },
-    { id: "ghana-gold", label: "Ghana Gold", dot: "bg-amber-500" },
-    { id: "emerald-matrix", label: "Emerald Matrix", dot: "bg-emerald-500" },
-    { id: "royal-indigo", label: "Royal Indigo", dot: "bg-indigo-600" },
-    { id: "crimson-telecel", label: "Crimson Telecel", dot: "bg-red-600" },
-  ];
-
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col selection:bg-primary/20">
       {/* Top Standalone Header for Auth View */}
@@ -366,7 +358,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                   <div className="px-2.5 py-1.5 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
                     Select Theme
                   </div>
-                  {themes.map((t) => (
+                  {themeOptions.map((t) => (
                     <button
                       key={t.id}
                       onClick={() => {
@@ -381,7 +373,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                     >
                       <div className="flex items-center gap-2">
                         <span className={`w-2.5 h-2.5 rounded-full ${t.dot}`} />
-                        <span>{t.label}</span>
+                        <span>{t.name}</span>
                       </div>
                       {theme === t.id && (
                         <Check className="w-3 h-3 text-primary" />

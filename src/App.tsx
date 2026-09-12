@@ -117,7 +117,7 @@ function parsePathToRoute(pathname: string, search = ""): AppRoute {
 }
 
 export default function App() {
-  // Theme state (supports 6 themes: light, dark, ghana-gold, emerald-matrix, royal-indigo, crimson-telecel)
+  // Theme state (supports 6 themes: light, dark, sunset-amber, emerald-matrix, royal-indigo, ruby-red)
   const [theme, setTheme] = useState<AppTheme>(() => {
     return (localStorage.getItem("sdh_theme") as AppTheme) || "light";
   });
@@ -126,21 +126,21 @@ export default function App() {
     const root = document.documentElement;
     root.classList.remove(
       "dark",
-      "theme-ghana-gold",
+      "theme-sunset-amber",
       "theme-emerald-matrix",
       "theme-royal-indigo",
-      "theme-crimson-telecel",
+      "theme-ruby-red",
     );
     if (theme === "dark") {
       root.classList.add("dark");
-    } else if (theme === "ghana-gold") {
-      root.classList.add("dark", "theme-ghana-gold");
+    } else if (theme === "sunset-amber") {
+      root.classList.add("dark", "theme-sunset-amber");
     } else if (theme === "emerald-matrix") {
       root.classList.add("dark", "theme-emerald-matrix");
     } else if (theme === "royal-indigo") {
       root.classList.add("dark", "theme-royal-indigo");
-    } else if (theme === "crimson-telecel") {
-      root.classList.add("dark", "theme-crimson-telecel");
+    } else if (theme === "ruby-red") {
+      root.classList.add("dark", "theme-ruby-red");
     }
     localStorage.setItem("sdh_theme", theme);
   }, [theme]);
@@ -1039,7 +1039,9 @@ export default function App() {
         isOpen={isFundWalletOpen}
         onClose={() => setIsFundWalletOpen(false)}
         currentBalance={walletBalance}
-        onSuccess={(amount, channel) => handleFundSuccess(amount, channel, `FW-${Date.now()}`)}
+        onSuccess={(amount, channel) =>
+          handleFundSuccess(amount, channel, `FW-${Date.now()}`)
+        }
       />
 
       <ReceiptModal
