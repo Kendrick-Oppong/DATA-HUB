@@ -32,7 +32,6 @@ import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Badge } from '../ui/badge';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '../ui/card';
-import { Select } from '../ui/select';
 import {
   Table,
   TableHeader,
@@ -333,27 +332,27 @@ export const CustomerWalletOrders: React.FC<CustomerWalletOrdersProps> = ({
                     />
                   </div>
 
-                  <Select
+                  <select
                     value={txTypeFilter}
                     onChange={(e) => setTxTypeFilter(e.target.value)}
-                    className="h-8 text-xs w-28"
+                    className="h-8 text-xs w-28 rounded-lg border border-input bg-background text-foreground px-2"
                   >
                     <option value="all">All Types</option>
                     <option value="credit">Credits (+)</option>
                     <option value="debit">Debits (-)</option>
-                  </Select>
+                  </select>
 
-                  <Select
+                  <select
                     value={txChannelFilter}
                     onChange={(e) => setTxChannelFilter(e.target.value)}
-                    className="h-8 text-xs w-32"
+                    className="h-8 text-xs w-32 rounded-lg border border-input bg-background text-foreground px-2"
                   >
                     <option value="all">All Channels</option>
                     <option value="MTN">MTN MoMo</option>
                     <option value="Telecel">Telecel Cash</option>
                     <option value="AT">AT Money</option>
                     <option value="Wallet">Wallet Auto</option>
-                  </Select>
+                  </select>
 
                   {(txSearch || txTypeFilter !== 'all' || txChannelFilter !== 'all') && (
                     <Button
@@ -494,10 +493,10 @@ export const CustomerWalletOrders: React.FC<CustomerWalletOrdersProps> = ({
                 </div>
 
                 {/* Status Filter */}
-                <Select
+                <select
                   value={orderFilterStatus}
                   onChange={(e) => setOrderFilterStatus(e.target.value)}
-                  className="h-9 text-xs"
+                  className="h-9 text-xs rounded-lg border border-input bg-background text-foreground px-2"
                 >
                   <option value="all">All Statuses</option>
                   <option value="delivered">Delivered (Success)</option>
@@ -505,31 +504,31 @@ export const CustomerWalletOrders: React.FC<CustomerWalletOrdersProps> = ({
                   <option value="pending">Pending Gateway</option>
                   <option value="failed">Failed</option>
                   <option value="refunded">Refunded</option>
-                </Select>
+                </select>
 
                 {/* Network Filter */}
-                <Select
+                <select
                   value={orderNetworkFilter}
                   onChange={(e) => setOrderNetworkFilter(e.target.value)}
-                  className="h-9 text-xs"
+                  className="h-9 text-xs rounded-lg border border-input bg-background text-foreground px-2"
                 >
                   <option value="all">All Networks</option>
                   <option value="MTN">MTN Ghana</option>
                   <option value="Telecel">Telecel Ghana</option>
                   <option value="AirtelTigo">AT (AirtelTigo)</option>
-                </Select>
+                </select>
 
                 {/* Sort Order */}
-                <Select
+                <select
                   value={orderSortBy}
                   onChange={(e) => setOrderSortBy(e.target.value)}
-                  className="h-9 text-xs"
+                  className="h-9 text-xs rounded-lg border border-input bg-background text-foreground px-2"
                 >
                   <option value="newest">Sort: Newest First</option>
                   <option value="oldest">Sort: Oldest First</option>
                   <option value="amount-high">Amount: High to Low</option>
                   <option value="amount-low">Amount: Low to High</option>
-                </Select>
+                </select>
               </div>
 
               {/* Status Pills Quick Strip & Active Filters Indicator */}
@@ -648,7 +647,7 @@ export const CustomerWalletOrders: React.FC<CustomerWalletOrdersProps> = ({
                           </TableCell>
                           <TableCell className="text-center">
                             <Badge
-                              variant={order.status === 'delivered' ? 'success' : 'warning'}
+                              variant={order.status === 'delivered' ? 'default' : 'secondary'}
                               className="text-[10px] font-bold uppercase"
                             >
                               {order.status}
@@ -714,7 +713,7 @@ export const CustomerWalletOrders: React.FC<CustomerWalletOrdersProps> = ({
                           </div>
                           <div className="flex items-center gap-1.5 justify-end">
                             <Badge
-                              variant={order.status === 'delivered' ? 'success' : 'warning'}
+                              variant={order.status === 'delivered' ? 'default' : 'secondary'}
                               className="text-[10px] font-bold uppercase"
                             >
                               {order.status}

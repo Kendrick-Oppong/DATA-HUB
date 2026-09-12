@@ -684,10 +684,16 @@ export default function App() {
       <div className="min-h-screen bg-background text-foreground flex flex-col selection:bg-primary/20">
         <PublicNavbar
           user={user}
-          activeTab={route.tab}
+          activeTab={route.tab as any}
           onNavigateToPublic={navigateToPublic}
           onNavigateToAuth={(mode) => navigateToAuth(mode || "login")}
-          onNavigateToDashboard={(role) => navigateToDashboard(role)}
+          onNavigateToDashboard={(role) => {
+            if (role === "storefront") {
+              navigateTo({ type: "storefront" });
+            } else if (role !== "public") {
+              navigateToDashboard(role);
+            }
+          }}
           onSignOut={handleSignOut}
           theme={theme}
           onSetTheme={handleSetTheme}
@@ -697,7 +703,7 @@ export default function App() {
         <main className="flex-1">
           <PublicMarketingSite
             bundles={initialBundles}
-            activeTab={route.tab}
+            activeTab={route.tab as any}
             orders={orders}
             onNavigate={(role, tab) => {
               if (role === "public") {
@@ -865,7 +871,7 @@ export default function App() {
           unreadNotifications={0}
           openComplaintsCount={
             complaints.filter(
-              (c) => c.status === "open" || c.status === "in_investigation",
+              (c) => c.status === "open" || c.status === "investigating",
             ).length
           }
         />
@@ -1033,7 +1039,7 @@ export default function App() {
         isOpen={isFundWalletOpen}
         onClose={() => setIsFundWalletOpen(false)}
         currentBalance={walletBalance}
-        onFundSuccess={handleFundSuccess}
+        onSuccess={(amount, channel) => handleFundSuccess(amount, channel, `FW-${Date.now()}`)}
       />
 
       <ReceiptModal

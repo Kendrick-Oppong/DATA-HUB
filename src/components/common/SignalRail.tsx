@@ -1,7 +1,7 @@
 import React from 'react';
 
 interface SignalRailProps {
-  status?: 'delivered' | 'processing' | 'failed' | 'idle' | 'online';
+  status?: 'delivered' | 'processing' | 'failed' | 'idle' | 'online' | 'degraded' | 'offline';
   bars?: number;
   className?: string;
   label?: string;
@@ -26,6 +26,21 @@ export const SignalRail: React.FC<SignalRailProps> = ({
           dot: 'bg-emerald-500',
           ring: 'border-emerald-500/30',
           text: 'text-emerald-700 dark:text-emerald-400'
+        };
+      case 'degraded':
+        return {
+          bar: 'bg-amber-500 dark:bg-amber-400',
+          dot: 'bg-amber-500',
+          ring: 'border-amber-500/30',
+          text: 'text-amber-700 dark:text-amber-400'
+        };
+      case 'offline':
+      case 'failed':
+        return {
+          bar: 'bg-destructive dark:bg-destructive',
+          dot: 'bg-destructive',
+          ring: 'border-destructive/30',
+          text: 'text-destructive dark:text-destructive'
         };
       case 'processing':
         return {

@@ -14,6 +14,12 @@ import {
   Home,
   Layers3,
   Search,
+  HelpCircle,
+  Info,
+  PhoneCall,
+  Menu,
+  X,
+  ExternalLink,
 } from "lucide-react";
 import { AppTheme, UserAccount, UserRole } from "../../types";
 import { Button } from "../ui/button";
@@ -50,6 +56,7 @@ export const PublicNavbar: React.FC<PublicNavbarProps> = ({
   onOpenSecurityPins,
 }) => {
   const [showThemeMenu, setShowThemeMenu] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const themes: { id: AppTheme; label: string; dot: string }[] = [
     { id: "light", label: "Modern Light", dot: "bg-blue-600" },
@@ -70,43 +77,57 @@ export const PublicNavbar: React.FC<PublicNavbarProps> = ({
     { id: "services", label: "Services", icon: Layers3 },
     { id: "agent", label: "Agent Program", badge: "Earn MoMo", icon: Store },
     { id: "track", label: "Track Order", icon: Search },
+    { id: "faq", label: "FAQ", icon: HelpCircle },
+    { id: "about", label: "About NOC", icon: Info },
+    { id: "contact", label: "Contact", icon: PhoneCall },
   ] as const;
+
+  const handleNavClick = (id: PublicNavbarProps["activeTab"]) => {
+    onNavigateToPublic(id);
+    setMobileMenuOpen(false);
+  };
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/80 bg-card/90 backdrop-blur-md transition-colors">
       <div className="mx-auto w-full max-w-[95%] px-4 sm:px-6 h-16 flex items-center justify-between gap-3 overflow-visible">
         {/* Brand Logo */}
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl bg-primary flex items-center justify-center text-primary-foreground font-black text-sm shadow-xs">
-            SDH
-          </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <span className="font-black text-base tracking-tight text-foreground">
-                Smart Data Hub
-              </span>
-              <Badge
-                variant="outline"
-                className="text-[10px] px-1.5 py-0 font-mono"
-              >
-                Ghana EVD
-              </Badge>
+          <button
+            onClick={() => handleNavClick("home")}
+            className="flex items-center gap-2.5 text-left cursor-pointer group"
+          >
+            <div className="w-9 h-9 rounded-xl bg-primary flex items-center justify-center text-primary-foreground font-black text-sm shadow-xs group-hover:scale-105 transition-transform">
+              SDH
             </div>
-            <p className="text-[10px] text-muted-foreground hidden sm:block">
-              MTN • Telecel • AT Direct Carrier Bridge
-            </p>
-          </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="font-black text-base tracking-tight text-foreground group-hover:text-primary transition-colors">
+                  Smart Data Hub
+                </span>
+                <Badge
+                  variant="outline"
+                  className="text-[10px] px-1.5 py-0 font-mono hidden sm:inline-flex"
+                >
+                  Ghana EVD
+                </Badge>
+              </div>
+              <p className="text-[10px] text-muted-foreground hidden md:block">
+                MTN • Telecel • AT Direct Carrier Bridge
+              </p>
+            </div>
+          </button>
         </div>
 
+        {/* Desktop Nav Items */}
         <nav
           aria-label="Public site navigation"
-          className="hidden lg:flex items-center"
+          className="hidden xl:flex items-center"
         >
           <div className="flex items-center gap-1 rounded-xl border border-border/70 bg-muted/40 p-1">
             {publicNavItems.map((item) => (
               <button
                 key={item.id}
-                onClick={() => onNavigateToPublic(item.id)}
+                onClick={() => handleNavClick(item.id)}
                 className={`px-2.5 py-1.5 rounded-lg text-[11px] font-semibold whitespace-nowrap transition-all cursor-pointer ${
                   activeTab === item.id
                     ? "bg-primary text-primary-foreground font-bold shadow-sm"
@@ -127,12 +148,22 @@ export const PublicNavbar: React.FC<PublicNavbarProps> = ({
           </div>
         </nav>
 
-        {/* Live Operational Beacon */}
-        <div className="hidden 2xl:flex shrink-0 items-center gap-2 px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-xs">
-          <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-          <span className="text-emerald-700 dark:text-emerald-400 font-bold text-[10px]">
-            99.8% Uptime
-          </span>
+        {/* Live Operational Beacon & Storefront Link */}
+        <div className="hidden lg:flex items-center gap-2">
+          <button
+            onClick={() => onNavigateToDashboard("storefront")}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-primary/30 bg-primary/10 text-primary hover:bg-primary/20 text-xs font-bold transition-all cursor-pointer"
+          >
+            <Store className="w-3.5 h-3.5" />
+            <span>Storefront Demo</span>
+          </button>
+
+          <div className="hidden 2xl:flex shrink-0 items-center gap-2 px-2.5 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-xs">
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+            <span className="text-emerald-700 dark:text-emerald-400 font-bold text-[10px]">
+              99.8% Core Uptime
+            </span>
+          </div>
         </div>
 
         {/* Right CTA / Auth Controls */}
@@ -158,6 +189,7 @@ export const PublicNavbar: React.FC<PublicNavbarProps> = ({
               size="icon-sm"
               onClick={() => setShowThemeMenu(!showThemeMenu)}
               className="text-xs text-muted-foreground hover:text-foreground hidden sm:flex border-transparent bg-transparent hover:bg-muted"
+              title="Change color theme"
             >
               <Palette className="w-3.5 h-3.5" />
             </Button>
@@ -169,13 +201,14 @@ export const PublicNavbar: React.FC<PublicNavbarProps> = ({
                 </div>
                 {themes.map((t) => (
                   <button
+                    key={t.id}
                     onClick={() => {
                       onSetTheme(t.id);
                       setShowThemeMenu(false);
                     }}
                     className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg text-xs font-semibold transition-colors cursor-pointer ${
                       theme === t.id
-                        ? "bg-primary/10 text-primary"
+                        ? "bg-primary/10 text-primary font-bold"
                         : "hover:bg-muted text-foreground"
                     }`}
                   >
@@ -245,8 +278,65 @@ export const PublicNavbar: React.FC<PublicNavbarProps> = ({
               </Button>
             </div>
           )}
+
+          {/* Mobile Hamburger Toggle */}
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="p-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted xl:hidden cursor-pointer"
+            aria-label="Toggle mobile menu"
+          >
+            {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          </button>
         </div>
       </div>
+
+      {/* Mobile Drawer Menu */}
+      {mobileMenuOpen && (
+        <div className="xl:hidden border-t border-border bg-card/95 backdrop-blur-md px-4 py-4 space-y-3 shadow-xl animate-in slide-in-from-top-2">
+          <div className="grid grid-cols-2 gap-1.5">
+            {publicNavItems.map((item) => (
+              <button
+                key={item.id}
+                onClick={() => handleNavClick(item.id)}
+                className={`flex items-center gap-2 p-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                  activeTab === item.id
+                    ? "bg-primary text-primary-foreground shadow-xs"
+                    : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                }`}
+              >
+                <item.icon className="w-4 h-4" />
+                <span>{item.label}</span>
+              </button>
+            ))}
+          </div>
+
+          <div className="pt-3 border-t border-border flex flex-col gap-2">
+            <button
+              onClick={() => {
+                onNavigateToDashboard("storefront");
+                setMobileMenuOpen(false);
+              }}
+              className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl border border-primary/40 bg-primary/10 text-primary font-bold text-xs"
+            >
+              <Store className="w-4 h-4" />
+              <span>Preview Agent Storefront</span>
+            </button>
+
+            {onOpenSecurityPins && (
+              <button
+                onClick={() => {
+                  onOpenSecurityPins();
+                  setMobileMenuOpen(false);
+                }}
+                className="w-full flex items-center justify-center gap-2 py-2 rounded-xl bg-muted text-foreground font-semibold text-xs"
+              >
+                <KeyRound className="w-4 h-4 text-primary" />
+                <span>View Demo PINs (0000)</span>
+              </button>
+            )}
+          </div>
+        </div>
+      )}
     </header>
   );
 };

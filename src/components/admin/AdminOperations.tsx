@@ -27,7 +27,6 @@ import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Badge } from '../ui/badge';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '../ui/card';
-import { Select } from '../ui/select';
 import {
   Table,
   TableHeader,
@@ -164,16 +163,16 @@ export const AdminOperations: React.FC<AdminOperationsProps> = ({
             </div>
 
             <div className="flex items-center gap-2">
-              <Select
+              <select
                 value={gatewayStatusFilter}
                 onChange={(e) => setGatewayStatusFilter(e.target.value)}
-                className="h-9 text-xs w-36"
+                className="h-9 text-xs w-36 rounded-lg border border-input bg-background text-foreground px-2"
               >
                 <option value="all">All Switch States</option>
                 <option value="online">Online / Active</option>
                 <option value="degraded">Degraded</option>
                 <option value="offline">Offline / Standby</option>
-              </Select>
+              </select>
             </div>
           </div>
 
@@ -262,22 +261,22 @@ export const AdminOperations: React.FC<AdminOperationsProps> = ({
                 </div>
 
                 {/* Network filter */}
-                <Select
+                <select
                   value={selectedNetwork}
                   onChange={(e) => setSelectedNetwork(e.target.value)}
-                  className="h-9 text-xs"
+                  className="h-9 text-xs rounded-lg border border-input bg-background text-foreground px-2"
                 >
                   <option value="all">All Networks</option>
                   <option value="MTN">MTN Ghana</option>
                   <option value="Telecel">Telecel Ghana</option>
                   <option value="AirtelTigo">AT (AirtelTigo)</option>
-                </Select>
+                </select>
 
                 {/* Status filter */}
-                <Select
+                <select
                   value={selectedStatus}
                   onChange={(e) => setSelectedStatus(e.target.value)}
-                  className="h-9 text-xs"
+                  className="h-9 text-xs rounded-lg border border-input bg-background text-foreground px-2"
                 >
                   <option value="all">All Statuses</option>
                   <option value="delivered">Delivered</option>
@@ -285,19 +284,19 @@ export const AdminOperations: React.FC<AdminOperationsProps> = ({
                   <option value="pending">Pending</option>
                   <option value="failed">Failed</option>
                   <option value="refunded">Refunded</option>
-                </Select>
+                </select>
 
                 {/* Sort dropdown */}
-                <Select
+                <select
                   value={orderSortBy}
                   onChange={(e) => setOrderSortBy(e.target.value)}
-                  className="h-9 text-xs"
+                  className="h-9 text-xs rounded-lg border border-input bg-background text-foreground px-2"
                 >
                   <option value="newest">Sort: Newest</option>
                   <option value="oldest">Sort: Oldest</option>
                   <option value="amount-high">Amount: High-Low</option>
                   <option value="amount-low">Amount: Low-High</option>
-                </Select>
+                </select>
               </div>
 
               {/* Active filters summary */}
@@ -382,7 +381,7 @@ export const AdminOperations: React.FC<AdminOperationsProps> = ({
                         </TableCell>
                         <TableCell className="text-center">
                           <Badge
-                            variant={ord.status === 'delivered' ? 'success' : 'warning'}
+                            variant={ord.status === 'delivered' ? 'default' : 'secondary'}
                             className="text-[10px] font-bold uppercase"
                           >
                             {ord.status}
@@ -434,7 +433,7 @@ export const AdminOperations: React.FC<AdminOperationsProps> = ({
               </p>
             </div>
             <Badge variant="outline" className="font-mono text-xs">
-              Pending Verification: {afaApplications.filter(a => a.status === 'pending').length}
+              Pending Verification: {afaApplications.filter(a => a.status === 'under_review').length}
             </Badge>
           </div>
 
@@ -451,16 +450,16 @@ export const AdminOperations: React.FC<AdminOperationsProps> = ({
               />
             </div>
 
-            <Select
+            <select
               value={afaStatusFilter}
               onChange={(e) => setAfaStatusFilter(e.target.value)}
-              className="h-9 text-xs w-40"
+              className="h-9 text-xs w-40 rounded-lg border border-input bg-background text-foreground px-2"
             >
               <option value="all">All Verification States</option>
-              <option value="pending">Pending Review</option>
+              <option value="under_review">Pending Review</option>
               <option value="approved">Approved & Whitelisted</option>
               <option value="needs_correction">Flagged for Correction</option>
-            </Select>
+            </select>
           </div>
 
           {/* AFA Applicants List */}
@@ -480,7 +479,7 @@ export const AdminOperations: React.FC<AdminOperationsProps> = ({
                       <span className="font-bold text-sm text-foreground">{app.fullName}</span>
                       <span className="font-mono text-muted-foreground font-semibold">({app.phoneNumber})</span>
                       <Badge
-                        variant={app.status === 'approved' ? 'success' : 'warning'}
+                        variant={app.status === 'approved' ? 'default' : 'secondary'}
                         className="text-[10px] font-bold uppercase"
                       >
                         {app.status}

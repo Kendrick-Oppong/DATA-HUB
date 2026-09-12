@@ -912,14 +912,40 @@ export const PublicMarketingSite: React.FC<PublicMarketingSiteProps> = ({
                   <ArrowRight className="ml-1 inline size-4" />
                 </button>
               </form>
-              <div className="border-t border-border pt-4 text-xs leading-relaxed text-muted-foreground">
-                <p className="font-bold text-foreground">
-                  Where to find your reference
-                </p>
-                <p className="mt-1">
-                  It is shown on your receipt and sent after a successful Mobile
-                  Money payment.
-                </p>
+              <div className="border-t border-border pt-4 text-xs leading-relaxed text-muted-foreground space-y-2">
+                <div>
+                  <p className="font-bold text-foreground">
+                    Where to find your reference
+                  </p>
+                  <p className="mt-0.5">
+                    It is shown on your receipt and sent after a successful Mobile
+                    Money payment.
+                  </p>
+                </div>
+
+                {orders && orders.length > 0 && (
+                  <div className="pt-2 border-t border-border/60">
+                    <span className="text-[11px] font-bold text-foreground block mb-1.5">
+                      Or test with sample orders:
+                    </span>
+                    <div className="flex flex-wrap gap-1.5">
+                      {orders.slice(0, 3).map((o) => (
+                        <button
+                          key={o.id}
+                          type="button"
+                          onClick={() => {
+                            setSearchTrackInput(o.reference);
+                            setTrackSearched(true);
+                            setTrackedOrder(o);
+                          }}
+                          className="px-2 py-1 rounded-md text-[10px] font-mono font-bold bg-background hover:bg-primary/10 hover:text-primary transition-colors border border-border cursor-pointer"
+                        >
+                          {o.reference}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
 
