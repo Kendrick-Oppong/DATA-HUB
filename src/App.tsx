@@ -916,6 +916,7 @@ export default function App() {
                 <ResultsCheckerFlow
                   checkers={checkers}
                   walletBalance={walletBalance}
+                  orders={orders}
                   onOrderCreated={handleOrderCreated}
                   onOpenReceipt={(order) => setSelectedReceiptOrder(order)}
                 />

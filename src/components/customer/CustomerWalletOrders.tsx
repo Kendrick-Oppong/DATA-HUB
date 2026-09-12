@@ -20,7 +20,6 @@ import {
   Lock,
 } from "lucide-react";
 import { Order, Transaction, Complaint, AppTheme } from "../../types";
-import { SignalRail } from "../common/SignalRail";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Badge } from "../ui/badge";
@@ -177,7 +176,8 @@ export const CustomerWalletOrders: React.FC<CustomerWalletOrdersProps> = ({
   );
   const [newReplyText, setNewReplyText] = useState("");
   const [showNewTicketModal, setShowNewTicketModal] = useState(false);
-  const [ticketCategory, setTicketCategory] = useState<string>("delivery_delay");
+  const [ticketCategory, setTicketCategory] =
+    useState<Complaint["category"]>("delivery_delay");
   const [ticketSubject, setTicketSubject] = useState("");
   const [ticketOrderRef, setTicketOrderRef] = useState("");
   const [ticketMessage, setTicketMessage] = useState("");
@@ -1037,7 +1037,9 @@ export const CustomerWalletOrders: React.FC<CustomerWalletOrdersProps> = ({
                   <Label htmlFor="ticket-category">Category</Label>
                   <Select
                     value={ticketCategory}
-                    onValueChange={setTicketCategory}
+                    onValueChange={(val) =>
+                      setTicketCategory(val as Complaint["category"])
+                    }
                   >
                     <SelectTrigger id="ticket-category" className="w-full">
                       <SelectValue placeholder="Select category" />

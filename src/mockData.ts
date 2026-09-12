@@ -326,6 +326,231 @@ export const INITIAL_ORDERS: Order[] = [
       { step: 'E-Load Dispatched', timestamp: '16:58:03', status: 'completed' },
       { step: 'Delivered', timestamp: '16:58:08', status: 'completed', note: 'GH₵20.00 Credited' }
     ]
+  },
+  {
+    id: 'ord-1006',
+    reference: 'SDH-GH-2026-94817',
+    date: '2026-09-11 17:15',
+    customerName: 'Kojo Mensah',
+    recipientPhone: '0244192834',
+    network: 'MTN',
+    serviceType: 'checker',
+    productName: 'BECE Placement Checker 2026',
+    amount: 15.00,
+    paymentMethod: 'wallet',
+    status: 'delivered',
+    voucherCode: '4810-5829-1092',
+    voucherSerial: 'B26-102948'
+  },
+  {
+    id: 'ord-1007',
+    reference: 'SDH-GH-2026-94818',
+    date: '2026-09-11 18:05',
+    customerName: 'Akosua Serwaa',
+    recipientPhone: '0502847192',
+    network: 'Telecel',
+    serviceType: 'checker',
+    productName: 'WASSCE Result Checker 2026',
+    amount: 24.00,
+    paymentMethod: 'momo_telecel',
+    status: 'delivered',
+    voucherCode: '1029-4820-9581',
+    voucherSerial: 'W26-992014'
+  },
+  {
+    id: 'ord-1008',
+    reference: 'SDH-GH-2026-94819',
+    date: '2026-09-10 09:22',
+    customerName: 'Yaw Boateng',
+    recipientPhone: '0553920194',
+    network: 'MTN',
+    serviceType: 'checker',
+    productName: 'NOVDEC Result Checker 2026',
+    amount: 28.00,
+    paymentMethod: 'wallet',
+    status: 'delivered',
+    voucherCode: '3910-4829-1058',
+    voucherSerial: 'N26-440192'
+  },
+  {
+    id: 'ord-1009',
+    reference: 'SDH-GH-2026-94820',
+    date: '2026-09-10 11:45',
+    customerName: 'Priscilla Addo',
+    recipientPhone: '0277382910',
+    network: 'AirtelTigo',
+    serviceType: 'checker',
+    productName: 'BECE Placement Checker 2026',
+    amount: 15.00,
+    paymentMethod: 'wallet',
+    status: 'delivered',
+    voucherCode: '8392-1049-5829',
+    voucherSerial: 'B26-382910'
+  },
+  {
+    id: 'ord-1010',
+    reference: 'SDH-GH-2026-94821',
+    date: '2026-09-10 14:10',
+    customerName: 'Kojo Mensah',
+    recipientPhone: '0244192834',
+    network: 'MTN',
+    serviceType: 'checker',
+    productName: 'WASSCE Result Checker 2026',
+    amount: 24.00,
+    paymentMethod: 'wallet',
+    status: 'delivered',
+    voucherCode: '5829-1049-3920',
+    voucherSerial: 'W26-102938'
+  },
+  {
+    id: 'ord-1011',
+    reference: 'SDH-GH-2026-94822',
+    date: '2026-09-09 10:00',
+    customerName: 'Emmanuel Osei',
+    recipientPhone: '0249821034',
+    network: 'MTN',
+    serviceType: 'checker',
+    productName: 'WASSCE Result Checker 2026',
+    amount: 24.00,
+    paymentMethod: 'wallet',
+    status: 'delivered',
+    voucherCode: '9201-4829-1058',
+    voucherSerial: 'W26-482910'
+  },
+  {
+    id: 'ord-1012',
+    reference: 'SDH-GH-2026-94823',
+    date: '2026-09-09 12:30',
+    customerName: 'Akosua Serwaa',
+    recipientPhone: '0502847192',
+    network: 'Telecel',
+    serviceType: 'checker',
+    productName: 'BECE Placement Checker 2026',
+    amount: 15.00,
+    paymentMethod: 'momo_telecel',
+    status: 'delivered',
+    voucherCode: '1049-5829-3920',
+    voucherSerial: 'B26-582910'
+  },
+  {
+    id: 'ord-1013',
+    reference: 'SDH-GH-2026-94824',
+    date: '2026-09-08 15:20',
+    customerName: 'Yaw Boateng',
+    recipientPhone: '0553920194',
+    network: 'MTN',
+    serviceType: 'checker',
+    productName: 'WASSCE Result Checker 2026',
+    amount: 24.00,
+    paymentMethod: 'wallet',
+    status: 'delivered',
+    voucherCode: '4829-1058-3920',
+    voucherSerial: 'W26-839201'
+  },
+  {
+    id: 'ord-1014',
+    reference: 'SDH-GH-2026-94825',
+    date: '2026-09-08 16:45',
+    customerName: 'Priscilla Addo',
+    recipientPhone: '0277382910',
+    network: 'AirtelTigo',
+    serviceType: 'checker',
+    productName: 'NOVDEC Result Checker 2026',
+    amount: 28.00,
+    paymentMethod: 'wallet',
+    status: 'delivered',
+    voucherCode: '2910-5829-3920',
+    voucherSerial: 'N26-104958'
+  },
+  {
+    id: 'ord-1015',
+    reference: 'SDH-GH-2026-94826',
+    date: '2026-09-07 08:15',
+    customerName: 'Kojo Mensah',
+    recipientPhone: '0244192834',
+    network: 'MTN',
+    serviceType: 'checker',
+    productName: 'BECE Placement Checker 2026',
+    amount: 15.00,
+    paymentMethod: 'wallet',
+    status: 'delivered',
+    voucherCode: '3920-1049-5829',
+    voucherSerial: 'B26-291058'
+  },
+  {
+    id: 'ord-1016',
+    reference: 'SDH-GH-2026-94827',
+    date: '2026-09-07 11:30',
+    customerName: 'Emmanuel Osei',
+    recipientPhone: '0249821034',
+    network: 'MTN',
+    serviceType: 'checker',
+    productName: 'WASSCE Result Checker 2026',
+    amount: 24.00,
+    paymentMethod: 'wallet',
+    status: 'delivered',
+    voucherCode: '4829-5829-1049',
+    voucherSerial: 'W26-392010'
+  },
+  {
+    id: 'ord-1017',
+    reference: 'SDH-GH-2026-94828',
+    date: '2026-09-06 14:00',
+    customerName: 'Akosua Serwaa',
+    recipientPhone: '0502847192',
+    network: 'Telecel',
+    serviceType: 'checker',
+    productName: 'WASSCE Result Checker 2026',
+    amount: 24.00,
+    paymentMethod: 'momo_telecel',
+    status: 'delivered',
+    voucherCode: '1049-3920-5829',
+    voucherSerial: 'W26-482958'
+  },
+  {
+    id: 'ord-1018',
+    reference: 'SDH-GH-2026-94829',
+    date: '2026-09-06 16:10',
+    customerName: 'Yaw Boateng',
+    recipientPhone: '0553920194',
+    network: 'MTN',
+    serviceType: 'checker',
+    productName: 'BECE Placement Checker 2026',
+    amount: 15.00,
+    paymentMethod: 'wallet',
+    status: 'delivered',
+    voucherCode: '5829-4829-1049',
+    voucherSerial: 'B26-104939'
+  },
+  {
+    id: 'ord-1019',
+    reference: 'SDH-GH-2026-94830',
+    date: '2026-09-05 09:40',
+    customerName: 'Priscilla Addo',
+    recipientPhone: '0277382910',
+    network: 'AirtelTigo',
+    serviceType: 'checker',
+    productName: 'WASSCE Result Checker 2026',
+    amount: 24.00,
+    paymentMethod: 'wallet',
+    status: 'delivered',
+    voucherCode: '3920-5829-1049',
+    voucherSerial: 'W26-582948'
+  },
+  {
+    id: 'ord-1020',
+    reference: 'SDH-GH-2026-94831',
+    date: '2026-09-05 13:25',
+    customerName: 'Kojo Mensah',
+    recipientPhone: '0244192834',
+    network: 'MTN',
+    serviceType: 'checker',
+    productName: 'NOVDEC Result Checker 2026',
+    amount: 28.00,
+    paymentMethod: 'wallet',
+    status: 'delivered',
+    voucherCode: '1049-4829-5829',
+    voucherSerial: 'N26-392058'
   }
 ];
 
@@ -393,7 +618,7 @@ export const INITIAL_AFA: AfaApplication[] = [
     ghanaCardNumber: 'GHA-728192834-1',
     region: 'Ashanti',
     occupation: 'Farmer / Agribusiness',
-    dateSubmitted: '2026-09-10 11:30',
+    dateSubmitted: '2026-09-12 14:20',
     status: 'approved',
     fee: 50.00,
     notes: 'National ID verified successfully. Tariff activated.'
@@ -406,10 +631,166 @@ export const INITIAL_AFA: AfaApplication[] = [
     ghanaCardNumber: 'GHA-829103847-9',
     region: 'Greater Accra',
     occupation: 'Produce Trader',
-    dateSubmitted: '2026-09-11 09:15',
+    dateSubmitted: '2026-09-12 11:15',
     status: 'under_review',
     fee: 50.00,
     notes: 'Awaiting biometric checksum from MoFA portal.'
+  },
+  {
+    id: 'afa-03',
+    reference: 'AFA-GH-9384',
+    fullName: 'Kojo Mensah',
+    phoneNumber: '0244192834',
+    ghanaCardNumber: 'GHA-592810394-2',
+    region: 'Greater Accra',
+    occupation: 'Agribusiness / Produce Retail',
+    dateSubmitted: '2026-09-11 16:45',
+    status: 'under_review',
+    fee: 50.00
+  },
+  {
+    id: 'afa-04',
+    reference: 'AFA-GH-9385',
+    fullName: 'Yaw Boateng',
+    phoneNumber: '0502847192',
+    ghanaCardNumber: 'GHA-102938475-3',
+    region: 'Eastern',
+    occupation: 'Cocoa Farmer',
+    dateSubmitted: '2026-09-11 10:30',
+    status: 'approved',
+    fee: 50.00
+  },
+  {
+    id: 'afa-05',
+    reference: 'AFA-GH-9386',
+    fullName: 'Akosua Serwaa',
+    phoneNumber: '0277382910',
+    ghanaCardNumber: 'GHA-938201948-4',
+    region: 'Volta',
+    occupation: 'Food Logistics',
+    dateSubmitted: '2026-09-10 15:10',
+    status: 'approved',
+    fee: 50.00
+  },
+  {
+    id: 'afa-06',
+    reference: 'AFA-GH-9387',
+    fullName: 'Emmanuel Osei',
+    phoneNumber: '0249821034',
+    ghanaCardNumber: 'GHA-482910394-5',
+    region: 'Central',
+    occupation: 'Poultry Farmer',
+    dateSubmitted: '2026-09-10 09:20',
+    status: 'needs_correction',
+    fee: 50.00
+  },
+  {
+    id: 'afa-07',
+    reference: 'AFA-GH-9388',
+    fullName: 'Priscilla Addo',
+    phoneNumber: '0553920194',
+    ghanaCardNumber: 'GHA-291039485-6',
+    region: 'Bono',
+    occupation: 'Maize Trader',
+    dateSubmitted: '2026-09-09 13:40',
+    status: 'approved',
+    fee: 50.00
+  },
+  {
+    id: 'afa-08',
+    reference: 'AFA-GH-9389',
+    fullName: 'Abdul Rahman',
+    phoneNumber: '0241029384',
+    ghanaCardNumber: 'GHA-839201948-7',
+    region: 'Northern',
+    occupation: 'Cattle Farming',
+    dateSubmitted: '2026-09-09 11:00',
+    status: 'approved',
+    fee: 50.00
+  },
+  {
+    id: 'afa-09',
+    reference: 'AFA-GH-9390',
+    fullName: 'Grace Ansah',
+    phoneNumber: '0509837261',
+    ghanaCardNumber: 'GHA-192837465-8',
+    region: 'Western',
+    occupation: 'Fish Processor',
+    dateSubmitted: '2026-09-08 17:25',
+    status: 'approved',
+    fee: 50.00
+  },
+  {
+    id: 'afa-10',
+    reference: 'AFA-GH-9391',
+    fullName: 'Daniel Baah',
+    phoneNumber: '0271928374',
+    ghanaCardNumber: 'GHA-583920194-9',
+    region: 'Upper East',
+    occupation: 'Grain Wholesale',
+    dateSubmitted: '2026-09-08 08:50',
+    status: 'rejected',
+    fee: 50.00
+  },
+  {
+    id: 'afa-11',
+    reference: 'AFA-GH-9392',
+    fullName: 'Mercy Ofori',
+    phoneNumber: '0248291034',
+    ghanaCardNumber: 'GHA-392019485-0',
+    region: 'Ashanti',
+    occupation: 'Vegetable Farmer',
+    dateSubmitted: '2026-09-07 14:15',
+    status: 'approved',
+    fee: 50.00
+  },
+  {
+    id: 'afa-12',
+    reference: 'AFA-GH-9393',
+    fullName: 'Samuel Kwarteng',
+    phoneNumber: '0552910384',
+    ghanaCardNumber: 'GHA-748392019-1',
+    region: 'Eastern',
+    occupation: 'Yam Farm Logistics',
+    dateSubmitted: '2026-09-07 10:05',
+    status: 'approved',
+    fee: 50.00
+  },
+  {
+    id: 'afa-13',
+    reference: 'AFA-GH-9394',
+    fullName: 'Janet Owusu',
+    phoneNumber: '0501928374',
+    ghanaCardNumber: 'GHA-839201948-2',
+    region: 'Ahafo',
+    occupation: 'Cocoa Produce Buyer',
+    dateSubmitted: '2026-09-06 16:30',
+    status: 'approved',
+    fee: 50.00
+  },
+  {
+    id: 'afa-14',
+    reference: 'AFA-GH-9395',
+    fullName: 'Ibrahim Musah',
+    phoneNumber: '0278392019',
+    ghanaCardNumber: 'GHA-291049583-3',
+    region: 'Savannah',
+    occupation: 'Shea Butter Retail',
+    dateSubmitted: '2026-09-06 12:10',
+    status: 'approved',
+    fee: 50.00
+  },
+  {
+    id: 'afa-15',
+    reference: 'AFA-GH-9396',
+    fullName: 'Evelyn Appiah',
+    phoneNumber: '0247382910',
+    ghanaCardNumber: 'GHA-948302910-4',
+    region: 'Greater Accra',
+    occupation: 'Agro-input Dealer',
+    dateSubmitted: '2026-09-05 09:15',
+    status: 'approved',
+    fee: 50.00
   }
 ];
 
@@ -616,7 +997,32 @@ export function detectGhanaNetwork(phone: string): TelecomNetwork {
 export function loadFromStorage<T>(key: string, fallback: T): T {
   try {
     const item = localStorage.getItem(`sdh_${key}`);
-    return item ? JSON.parse(item) : fallback;
+    if (!item) return fallback;
+    const parsed = JSON.parse(item);
+    if (key === "orders" && Array.isArray(parsed)) {
+      const checkerCount = parsed.filter((o: any) => o?.serviceType === "checker").length;
+      if (checkerCount < 5 && Array.isArray(fallback)) {
+        const existingIds = new Set(parsed.map((o: any) => o.id));
+        const missingCheckers = (fallback as any[]).filter(
+          (o: any) => o.serviceType === "checker" && !existingIds.has(o.id)
+        );
+        const merged = [...parsed, ...missingCheckers];
+        saveToStorage(key, merged);
+        return merged as T;
+      }
+    }
+    if (key === "afa_apps" && Array.isArray(parsed)) {
+      if (parsed.length < 5 && Array.isArray(fallback)) {
+        const existingIds = new Set(parsed.map((a: any) => a.id));
+        const missingApps = (fallback as any[]).filter(
+          (a: any) => !existingIds.has(a.id)
+        );
+        const merged = [...parsed, ...missingApps];
+        saveToStorage(key, merged);
+        return merged as T;
+      }
+    }
+    return parsed;
   } catch {
     return fallback;
   }

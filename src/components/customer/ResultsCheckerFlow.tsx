@@ -1,77 +1,291 @@
-import React, { useState } from 'react';
-import { GraduationCap, CheckCircle2, Copy, Check, Eye, EyeOff, Download, ExternalLink, ArrowRight, ShieldCheck } from 'lucide-react';
-import { ResultCheckerProduct, Order } from '../../types';
-import { SignalRail } from '../common/SignalRail';
+import React, { useState, useEffect } from "react";
+import {
+  GraduationCap,
+  CheckCircle2,
+  Copy,
+  Check,
+  Eye,
+  EyeOff,
+  ExternalLink,
+  ArrowRight,
+  Search,
+  Ticket,
+} from "lucide-react";
+import { ResultCheckerProduct, Order } from "../../types";
+import { SignalRail } from "../common/SignalRail";
+import { Button, buttonVariants } from "../ui/button";
+import { Input } from "../ui/input";
+import { Label } from "../ui/label";
+import { Badge } from "../ui/badge";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+} from "../ui/card";
+import {
+  Table,
+  TableHeader,
+  TableBody,
+  TableHead,
+  TableRow,
+  TableCell,
+} from "../ui/table";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "../ui/dialog";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "../ui/pagination";
 
 interface ResultsCheckerFlowProps {
   checkers: ResultCheckerProduct[];
   walletBalance: number;
+  orders?: Order[];
   onOrderCreated: (order: Order) => void;
   onOpenReceipt: (order: Order) => void;
 }
 
+// Date-time formatter for the "When" column (e.g. "2026-09-12 19:44")
+const formatDateTime = (dateStr: string): string => {
+  if (!dateStr) return "";
+  const d = new Date(dateStr.includes("T") ? dateStr : dateStr.replace(" ", "T"));
+  if (isNaN(d.getTime())) return dateStr;
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  const hours = String(d.getHours()).padStart(2, "0");
+  const mins = String(d.getMinutes()).padStart(2, "0");
+  return `${year}-${month}-${day} ${hours}:${mins}`;
+};
+
 export const ResultsCheckerFlow: React.FC<ResultsCheckerFlowProps> = ({
   checkers,
   walletBalance,
+  orders = [],
   onOrderCreated,
   onOpenReceipt,
 }) => {
-  const [selectedCheckerId, setSelectedCheckerId] = useState<string>(checkers[0]?.id || 'waec-wassce');
-  const [quantity, setQuantity] = useState<number>(1);
-  const [recipientPhone, setRecipientPhone] = useState<string>('0244192834');
+  const CHECKERS_PER_PAGE = 5;
+
+  const [selectedCheckerId, setSelectedCheckerId] = useState<string>(
+    checkers[0]?.id || "waec-wassce",
+  );
+  const [quantityInput, setQuantityInput] = useState<string>("1");
+  const [recipientPhone, setRecipientPhone] = useState<string>("0244192834");
   const [purchasedOrder, setPurchasedOrder] = useState<Order | null>(null);
   const [revealed, setRevealed] = useState<boolean>(false);
   const [copied, setCopied] = useState<boolean>(false);
 
-  const currentChecker = checkers.find((c) => c.id === selectedCheckerId) || checkers[0];
+  // Checker Orders Table State
+  const [checkerSearch, setCheckerSearch] = useState("");
+  const [checkerPage, setCheckerPage] = useState(1);
+
+  // Voucher View Dialog State
+  const [voucherViewOrder, setVoucherViewOrder] = useState<Order | null>(null);
+  const [dialogRevealed, setDialogRevealed] = useState(false);
+  const [voucherCopied, setVoucherCopied] = useState(false);
+
+  const currentChecker =
+    checkers.find((c) => c.id === selectedCheckerId) || checkers[0];
+
+  // Manual quantity with safe clamping (1 - 99)
+  const parsedQty = parseInt(quantityInput, 10);
+  const quantity =
+    isNaN(parsedQty) || parsedQty < 1 ? 1 : Math.min(parsedQty, 99);
   const totalPrice = Number((currentChecker.price * quantity).toFixed(2));
+
+  // Reset pagination when search changes
+  useEffect(() => {
+    setCheckerPage(1);
+  }, [checkerSearch]);
+
+  // All checker orders (search-filtered, newest first)
+  const allCheckerOrders = orders.filter((o) => o.serviceType === "checker");
+  const checkerOrders = allCheckerOrders
+    .filter((o) => {
+      const q = checkerSearch.toLowerCase().trim();
+      return (
+        !q ||
+        o.reference.toLowerCase().includes(q) ||
+        o.productName.toLowerCase().includes(q) ||
+        o.recipientPhone.includes(q) ||
+        (o.voucherSerial || "").toLowerCase().includes(q)
+      );
+    })
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+
+  const totalCheckerPages = Math.max(
+    1,
+    Math.ceil(checkerOrders.length / CHECKERS_PER_PAGE),
+  );
+  const paginatedCheckerOrders = checkerOrders.slice(
+    (checkerPage - 1) * CHECKERS_PER_PAGE,
+    checkerPage * CHECKERS_PER_PAGE,
+  );
 
   const handlePurchase = (e: React.FormEvent) => {
     e.preventDefault();
     if (walletBalance < totalPrice) {
-      alert('Insufficient wallet balance. Please fund your wallet.');
+      alert("Insufficient wallet balance. Please fund your wallet.");
+      return;
+    }
+    if (quantity > currentChecker.stockCount) {
+      alert(
+        `Only ${currentChecker.stockCount} vouchers left in stock for ${currentChecker.title}.`,
+      );
       return;
     }
 
-    const ref = `SDH-GH-2026-${Math.floor(10000 + Math.random() * 90000)}`;
+    const ref = `CHK-${Date.now()}-${Math.floor(1000 + Math.random() * 9000)}`;
     const randomSerial = `W26-${Math.floor(100000 + Math.random() * 900000)}`;
     const randomPin = `${Math.floor(1000 + Math.random() * 9000)}-${Math.floor(1000 + Math.random() * 9000)}-${Math.floor(1000 + Math.random() * 9000)}`;
 
     const newOrder: Order = {
       id: `ord-chk-${Date.now()}`,
       reference: ref,
-      date: new Date().toISOString().replace('T', ' ').slice(0, 16),
-      customerName: 'Kojo Mensah',
+      date: new Date().toISOString().replace("T", " ").slice(0, 16),
+      customerName: "Kojo Mensah",
       recipientPhone,
-      network: 'MTN',
-      serviceType: 'checker',
-      productName: `${currentChecker.title} (${quantity}x)`,
+      network: "MTN",
+      serviceType: "checker",
+      productName:
+        quantity > 1
+          ? `${currentChecker.title} (${quantity}x)`
+          : currentChecker.title,
       amount: totalPrice,
-      paymentMethod: 'wallet',
-      status: 'delivered',
+      paymentMethod: "wallet",
+      status: "delivered",
       voucherSerial: randomSerial,
       voucherCode: randomPin,
       deliveryTimeline: [
-        { step: 'Order Placed', timestamp: '10:00:01', status: 'completed' },
-        { step: 'Voucher Allocated', timestamp: '10:00:03', status: 'completed', note: 'Authentic WAEC stock' },
-        { step: 'SMS Dispatched', timestamp: '10:00:06', status: 'completed', note: `Sent to ${recipientPhone}` }
-      ]
+        { step: "Order Placed", timestamp: "10:00:01", status: "completed" },
+        {
+          step: "Voucher Allocated",
+          timestamp: "10:00:03",
+          status: "completed",
+          note: "Authentic WAEC stock",
+        },
+        {
+          step: "SMS Dispatched",
+          timestamp: "10:00:06",
+          status: "completed",
+          note: `Sent to ${recipientPhone}`,
+        },
+      ],
     };
 
     onOrderCreated(newOrder);
     setPurchasedOrder(newOrder);
   };
 
+  const buildVoucherText = (order: Order) =>
+    `Smart Data Hub Voucher\n${order.productName}\nSerial: ${order.voucherSerial}\nPIN: ${order.voucherCode}\nCheck on: https://ghana.waecdirect.org`;
+
   const handleCopyVoucher = () => {
     if (!purchasedOrder) return;
-    const text = `Smart Data Hub Voucher\n${purchasedOrder.productName}\nSerial: ${purchasedOrder.voucherSerial}\nPIN: ${purchasedOrder.voucherCode}\nCheck on: https://ghana.waecdirect.org`;
-    navigator.clipboard.writeText(text);
+    navigator.clipboard.writeText(buildVoucherText(purchasedOrder));
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
 
+  const handleCopyDialogVoucher = () => {
+    if (!voucherViewOrder) return;
+    navigator.clipboard.writeText(buildVoucherText(voucherViewOrder));
+    setVoucherCopied(true);
+    setTimeout(() => setVoucherCopied(false), 2000);
+  };
+
+  const openVoucherDialog = (order: Order) => {
+    setVoucherViewOrder(order);
+    setDialogRevealed(false);
+    setVoucherCopied(false);
+  };
+
+  // Pagination renderer — identical to CustomerWalletOrders
+  const renderPagination = (
+    currentPage: number,
+    totalPages: number,
+    setPage: (page: number) => void,
+  ) => {
+    if (totalPages <= 1) return null;
+
+    const pages: (number | string)[] = [];
+    if (totalPages <= 7) {
+      for (let i = 1; i <= totalPages; i++) pages.push(i);
+    } else {
+      pages.push(1);
+      if (currentPage > 3) pages.push("...");
+      for (
+        let i = Math.max(2, currentPage - 1);
+        i <= Math.min(totalPages - 1, currentPage + 1);
+        i++
+      ) {
+        pages.push(i);
+      }
+      if (currentPage < totalPages - 2) pages.push("...");
+      pages.push(totalPages);
+    }
+
+    return (
+      <Pagination className="pt-4">
+        <PaginationContent>
+          <PaginationItem>
+            <PaginationPrevious
+              onClick={() => setPage(Math.max(1, currentPage - 1))}
+              className={
+                currentPage === 1
+                  ? "pointer-events-none opacity-50"
+                  : "cursor-pointer"
+              }
+            />
+          </PaginationItem>
+          {pages.map((p, idx) =>
+            p === "..." ? (
+              <PaginationItem key={`dots-${idx}`}>
+                <PaginationEllipsis />
+              </PaginationItem>
+            ) : (
+              <PaginationItem key={p}>
+                <PaginationLink
+                  onClick={() => setPage(p as number)}
+                  isActive={currentPage === p}
+                  className="cursor-pointer"
+                >
+                  {p}
+                </PaginationLink>
+              </PaginationItem>
+            ),
+          )}
+          <PaginationItem>
+            <PaginationNext
+              onClick={() => setPage(Math.min(totalPages, currentPage + 1))}
+              className={
+                currentPage === totalPages
+                  ? "pointer-events-none opacity-50"
+                  : "cursor-pointer"
+              }
+            />
+          </PaginationItem>
+        </PaginationContent>
+      </Pagination>
+    );
+  };
+
   return (
-    <div className="max-w-3xl mx-auto space-y-6">
+    <div className="max-w-5xl mx-auto space-y-6">
       <div className="flex items-center justify-between pb-4 border-b border-border">
         <div>
           <h1 className="text-2xl font-extrabold text-foreground tracking-tight flex items-center gap-2">
@@ -79,7 +293,8 @@ export const ResultsCheckerFlow: React.FC<ResultsCheckerFlowProps> = ({
             <span>Results Checkers & Admission Vouchers</span>
           </h1>
           <p className="text-xs text-muted-foreground mt-0.5">
-            Instant delivery of authentic WAEC, BECE Placement, and University application scratch codes.
+            Instant delivery of authentic WAEC, BECE Placement, and University
+            application scratch codes.
           </p>
         </div>
         <SignalRail status="online" size="sm" label="WAEC Server Sync" />
@@ -97,8 +312,8 @@ export const ResultsCheckerFlow: React.FC<ResultsCheckerFlowProps> = ({
                   onClick={() => setSelectedCheckerId(item.id)}
                   className={`p-4 rounded-2xl border transition-all cursor-pointer flex flex-col justify-between ${
                     isSelected
-                      ? 'border-primary bg-primary/10 ring-2 ring-primary/30 shadow-xs'
-                      : 'border-border bg-card hover:bg-muted/50'
+                      ? "border-primary bg-primary/10 ring-2 ring-primary/30 shadow-xs"
+                      : "border-border bg-card hover:bg-muted/50"
                   }`}
                 >
                   <div>
@@ -110,12 +325,18 @@ export const ResultsCheckerFlow: React.FC<ResultsCheckerFlowProps> = ({
                         {item.stockCount} in stock
                       </span>
                     </div>
-                    <h3 className="font-bold text-sm text-foreground">{item.title}</h3>
-                    <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{item.description}</p>
+                    <h3 className="font-bold text-sm text-foreground">
+                      {item.title}
+                    </h3>
+                    <p className="text-xs text-muted-foreground mt-1 line-clamp-2">
+                      {item.description}
+                    </p>
                   </div>
 
                   <div className="pt-3 mt-3 border-t border-border flex justify-between items-center">
-                    <span className="text-xs text-muted-foreground">Unit Price:</span>
+                    <span className="text-xs text-muted-foreground">
+                      Unit Price:
+                    </span>
                     <span className="text-base font-black text-foreground tabular-nums">
                       GH₵ {item.price.toFixed(2)}
                     </span>
@@ -128,38 +349,55 @@ export const ResultsCheckerFlow: React.FC<ResultsCheckerFlowProps> = ({
           {/* Quantity & Phone Input */}
           <div className="p-5 rounded-2xl bg-card border border-border shadow-xs space-y-4">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-muted-foreground mb-1.5">
+              <div className="space-y-2">
+                <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
                   Number of Vouchers
-                </label>
+                </Label>
                 <div className="flex items-center gap-2">
                   {[1, 2, 5, 10].map((qty) => (
-                    <button
+                    <Button
                       key={qty}
                       type="button"
-                      onClick={() => setQuantity(qty)}
-                      className={`flex-1 py-2 rounded-xl border text-xs font-bold transition-all cursor-pointer ${
-                        quantity === qty
-                          ? 'bg-primary text-primary-foreground border-primary'
-                          : 'bg-muted/60 text-foreground border-border hover:bg-muted'
-                      }`}
+                      variant={quantity === qty ? "default" : "outline"}
+                      size="sm"
+                      onClick={() => setQuantityInput(String(qty))}
+                      className="flex-1 text-xs font-bold"
                     >
                       {qty}x
-                    </button>
+                    </Button>
                   ))}
+                  {/* Manual quantity input */}
+                  <Input
+                    type="number"
+                    min={1}
+                    max={99}
+                    value={quantityInput}
+                    onChange={(e) => setQuantityInput(e.target.value)}
+                    placeholder="Qty"
+                    aria-label="Manual voucher quantity"
+                    className="w-20 h-9 text-xs font-bold tabular-nums text-center"
+                  />
                 </div>
+                <p className="text-[11px] text-muted-foreground">
+                  Pick a quick quantity or type any number up to 99. Unit price
+                  GH₵ {currentChecker.price.toFixed(2)} each.
+                </p>
               </div>
 
-              <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-muted-foreground mb-1.5">
+              <div className="space-y-2">
+                <Label
+                  htmlFor="checker-phone"
+                  className="text-xs font-bold uppercase tracking-wider text-muted-foreground"
+                >
                   Phone for Instant SMS Copy
-                </label>
-                <input
+                </Label>
+                <Input
+                  id="checker-phone"
                   type="tel"
                   required
                   value={recipientPhone}
                   onChange={(e) => setRecipientPhone(e.target.value)}
-                  className="w-full px-3.5 py-2 rounded-xl border border-input bg-background text-foreground text-sm focus:outline-hidden focus:ring-2 focus:ring-ring tabular-nums"
+                  className="tabular-nums"
                   placeholder="e.g. 0244192834"
                 />
               </div>
@@ -168,19 +406,21 @@ export const ResultsCheckerFlow: React.FC<ResultsCheckerFlowProps> = ({
             {/* Total and Buy Action */}
             <div className="pt-3 border-t border-border flex flex-col sm:flex-row justify-between items-center gap-3">
               <div>
-                <span className="text-xs text-muted-foreground">Total Voucher Price:</span>
+                <span className="text-xs text-muted-foreground">
+                  Total Voucher Price ({quantity}x):
+                </span>
                 <div className="text-2xl font-black text-foreground tabular-nums">
                   GH₵ {totalPrice.toFixed(2)}
                 </div>
               </div>
 
-              <button
+              <Button
                 type="submit"
-                className="w-full sm:w-auto px-8 py-3 rounded-xl bg-primary text-primary-foreground font-bold text-sm hover:bg-primary/90 transition-all flex items-center justify-center gap-2 shadow-md cursor-pointer"
+                className="w-full h-8 sm:w-auto font-semibold text-sm shadow-md"
               >
                 <span>Pay & Reveal Voucher</span>
                 <ArrowRight className="w-4 h-4" />
-              </button>
+              </Button>
             </div>
           </div>
         </form>
@@ -191,8 +431,12 @@ export const ResultsCheckerFlow: React.FC<ResultsCheckerFlowProps> = ({
             <div className="flex items-center gap-2">
               <CheckCircle2 className="w-6 h-6 text-emerald-500" />
               <div>
-                <h3 className="font-bold text-base text-foreground">Voucher Purchased & Verified</h3>
-                <p className="text-xs text-muted-foreground">Order Ref: {purchasedOrder.reference}</p>
+                <h3 className="font-bold text-base text-foreground">
+                  Voucher Purchased & Verified
+                </h3>
+                <p className="text-xs text-muted-foreground">
+                  Order Ref: {purchasedOrder.reference}
+                </p>
               </div>
             </div>
             <span className="text-xs px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 font-bold">
@@ -206,64 +450,324 @@ export const ResultsCheckerFlow: React.FC<ResultsCheckerFlowProps> = ({
               <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
                 Authentic E-Voucher Card
               </span>
-              <button
+              <Button
                 type="button"
+                variant="outline"
+                size="sm"
                 onClick={() => setRevealed(!revealed)}
-                className="px-2.5 py-1 rounded-lg border border-border bg-card text-xs font-semibold hover:bg-muted flex items-center gap-1.5 cursor-pointer"
+                className="text-xs font-semibold"
               >
-                {revealed ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
-                <span>{revealed ? 'Mask Code' : 'Reveal PIN'}</span>
-              </button>
+                {revealed ? (
+                  <EyeOff className="w-3.5 h-3.5 mr-1.5" />
+                ) : (
+                  <Eye className="w-3.5 h-3.5 mr-1.5" />
+                )}
+                <span>{revealed ? "Mask Code" : "Reveal PIN"}</span>
+              </Button>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="p-3 bg-card rounded-xl border border-border">
-                <span className="text-[10px] uppercase font-bold text-muted-foreground block">Serial Number:</span>
+                <span className="text-[10px] uppercase font-bold text-muted-foreground block">
+                  Serial Number:
+                </span>
                 <span className="font-mono text-base font-extrabold text-foreground tabular-nums">
                   {purchasedOrder.voucherSerial}
                 </span>
               </div>
 
               <div className="p-3 bg-card rounded-xl border border-border">
-                <span className="text-[10px] uppercase font-bold text-muted-foreground block">Voucher PIN:</span>
+                <span className="text-[10px] uppercase font-bold text-muted-foreground block">
+                  Voucher PIN:
+                </span>
                 <span className="font-mono text-base font-extrabold text-primary tracking-wider tabular-nums">
-                  {revealed ? purchasedOrder.voucherCode : '•••• - •••• - ••••'}
+                  {revealed ? purchasedOrder.voucherCode : "•••• - •••• - ••••"}
                 </span>
               </div>
             </div>
           </div>
 
           <div className="flex flex-wrap gap-3">
-            <button
+            <Button
+              variant="outline"
+              size="sm"
               onClick={handleCopyVoucher}
-              className="flex-1 py-2.5 px-4 rounded-xl border border-border bg-card text-foreground font-semibold text-xs hover:bg-muted flex items-center justify-center gap-2 cursor-pointer"
+              className="flex-1"
             >
-              {copied ? <Check className="w-4 h-4 text-emerald-500" /> : <Copy className="w-4 h-4" />}
-              <span>{copied ? 'Copied to Clipboard' : 'Copy Serial & PIN'}</span>
-            </button>
+              {copied ? (
+                <Check className="w-4 h-4 mr-2 text-emerald-500" />
+              ) : (
+                <Copy className="w-4 h-4 mr-2" />
+              )}
+              <span>
+                {copied ? "Copied to Clipboard" : "Copy Serial & PIN"}
+              </span>
+            </Button>
 
             <a
               href="https://ghana.waecdirect.org"
               target="_blank"
               rel="noreferrer"
-              className="flex-1 py-2.5 px-4 rounded-xl bg-purple-600 text-white font-bold text-xs hover:bg-purple-700 flex items-center justify-center gap-2 cursor-pointer"
+              className={`${buttonVariants({ variant: "default" })} flex-1 bg-primary`}
             >
               <span>Check on WAEC Portal</span>
-              <ExternalLink className="w-3.5 h-3.5" />
+              <ExternalLink className="w-3.5 h-3.5 ml-2" />
             </a>
 
-            <button
+            <Button
               onClick={() => {
                 setPurchasedOrder(null);
                 setRevealed(false);
               }}
-              className="py-2.5 px-4 rounded-xl bg-primary text-primary-foreground font-bold text-xs hover:bg-primary/90 cursor-pointer"
             >
               Buy Another
-            </button>
+            </Button>
           </div>
         </div>
       )}
+
+      {/* ============ MY CHECKER ORDERS TABLE ============ */}
+      <Card className="border-border shadow-xs">
+        <CardHeader className="pb-3 border-b border-border">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+            <div>
+              <CardTitle className="text-base font-extrabold text-foreground flex items-center gap-2">
+                <span>My Checker Orders</span>
+              </CardTitle>
+              <CardDescription className="text-xs">
+                Authentic WAEC / BECE voucher purchases with serial & PIN
+                retrieval.
+              </CardDescription>
+            </div>
+
+            <div className="relative w-1/2">
+              <Search className="absolute left-2.5 top-3 w-3.5 h-3.5 text-muted-foreground" />
+              <Input
+                type="text"
+                placeholder="Search ref, product, phone..."
+                value={checkerSearch}
+                onChange={(e) => setCheckerSearch(e.target.value)}
+                className="pl-8 text-xs"
+              />
+            </div>
+          </div>
+        </CardHeader>
+
+        <CardContent className="p-0">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Reference</TableHead>
+                <TableHead>Product</TableHead>
+                <TableHead>Send To</TableHead>
+                <TableHead>Voucher</TableHead>
+                <TableHead className="text-right">Total</TableHead>
+                <TableHead className="text-center">Status</TableHead>
+                <TableHead className="text-right">When</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {paginatedCheckerOrders.length === 0 ? (
+                <TableRow>
+                  <TableCell
+                    colSpan={7}
+                    className="text-center py-10 text-muted-foreground"
+                  >
+                    <div className="flex flex-col items-center justify-center space-y-2">
+                      {checkerSearch ? (
+                        <Search className="w-8 h-8 text-muted-foreground/40" />
+                      ) : (
+                        <Ticket className="w-8 h-8 text-muted-foreground/40" />
+                      )}
+                      <p className="text-sm font-bold text-foreground">
+                        {checkerSearch
+                          ? "No matching checker orders"
+                          : "No checker orders yet"}
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        {checkerSearch
+                          ? "Try a different reference, product, or phone number."
+                          : "Purchase a result checker above to see it here."}
+                      </p>
+                      {checkerSearch && (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setCheckerSearch("")}
+                          className="mt-2 text-xs"
+                        >
+                          Clear Search
+                        </Button>
+                      )}
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ) : (
+                paginatedCheckerOrders.map((order) => (
+                  <TableRow key={order.id} className="hover:bg-muted/40">
+                    <TableCell className="font-mono text-xs text-muted-foreground">
+                      {order.reference}
+                    </TableCell>
+                    <TableCell className="font-bold text-xs text-foreground">
+                      {order.productName}
+                    </TableCell>
+                    <TableCell className="font-mono text-xs text-muted-foreground">
+                      {order.recipientPhone}
+                    </TableCell>
+                    <TableCell>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => openVoucherDialog(order)}
+                        className="rounded-full h-8 px-3 text-xs font-semibold"
+                      >
+                        <Ticket className="w-3.5 h-3.5 mr-1.5" />
+                        View & copy
+                      </Button>
+                    </TableCell>
+                    <TableCell className="text-right font-black text-foreground tabular-nums text-xs">
+                      GH₵ {order.amount.toFixed(2)}
+                    </TableCell>
+                    <TableCell className="text-center">
+                      <span
+                        className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold ${
+                          order.status === "delivered"
+                            ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400"
+                            : "bg-amber-500/15 text-amber-700 dark:text-amber-400"
+                        }`}
+                      >
+                        <span
+                          className={`w-1.5 h-1.5 rounded-full ${
+                            order.status === "delivered"
+                              ? "bg-emerald-500"
+                              : "bg-amber-500"
+                          }`}
+                        />
+                        {order.status}
+                      </span>
+                    </TableCell>
+                    <TableCell className="text-right text-xs text-muted-foreground tabular-nums">
+                      {formatDateTime(order.date)}
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
+            </TableBody>
+          </Table>
+
+          {/* Pagination footer — count left, controls right (same as CustomerWalletOrders) */}
+          <div className="flex items-center justify-between gap-4 border-t border-border px-4 py-3">
+            <span className="text-xs text-muted-foreground shrink-0">
+              Showing{" "}
+              <span className="font-bold text-foreground">
+                {Math.min(
+                  checkerPage * CHECKERS_PER_PAGE,
+                  checkerOrders.length,
+                )}
+              </span>{" "}
+              of{" "}
+              <span className="font-bold text-foreground">
+                {checkerOrders.length}
+              </span>{" "}
+              checker orders
+            </span>
+            {checkerOrders.length > CHECKERS_PER_PAGE && (
+              <div className="flex justify-end">
+                {renderPagination(
+                  checkerPage,
+                  totalCheckerPages,
+                  setCheckerPage,
+                )}
+              </div>
+            )}
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* ============ VOUCHER VIEW & COPY DIALOG ============ */}
+      <Dialog
+        open={!!voucherViewOrder}
+        onOpenChange={(open) => {
+          if (!open) setVoucherViewOrder(null);
+        }}
+      >
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Ticket className="w-4 h-4 text-primary" />
+              <span>Voucher Serial & PIN</span>
+            </DialogTitle>
+            <DialogDescription>
+              Order{" "}
+              <span className="font-mono font-bold text-foreground">
+                {voucherViewOrder?.reference}
+              </span>{" "}
+            </DialogDescription>
+          </DialogHeader>
+
+          {voucherViewOrder && (
+            <div className="space-y-3 text-xs">
+              <div className="p-3 rounded-xl bg-muted/40 border border-border flex justify-between items-center">
+                <span className="text-muted-foreground">Product:</span>
+                <span className="font-bold text-foreground">
+                  {voucherViewOrder.productName}
+                </span>
+              </div>
+
+              <div className="p-3 rounded-xl bg-muted/40 border border-border flex justify-between items-center">
+                <span className="text-muted-foreground">Serial Number:</span>
+                <span className="font-mono font-extrabold text-foreground tabular-nums">
+                  {voucherViewOrder.voucherSerial}
+                </span>
+              </div>
+
+              <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 flex justify-between items-center gap-2">
+                <span className="text-amber-900 dark:text-amber-300 font-semibold">
+                  Voucher PIN:
+                </span>
+                <div className="flex items-center gap-1.5">
+                  <span className="font-mono font-extrabold text-amber-900 dark:text-amber-300 tracking-wider tabular-nums">
+                    {dialogRevealed
+                      ? voucherViewOrder.voucherCode
+                      : "•••• - •••• - ••••"}
+                  </span>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setDialogRevealed(!dialogRevealed)}
+                    className="h-7 w-7 p-0 text-amber-900 dark:text-amber-300"
+                    title={dialogRevealed ? "Mask PIN" : "Reveal PIN"}
+                  >
+                    {dialogRevealed ? (
+                      <EyeOff className="w-3.5 h-3.5" />
+                    ) : (
+                      <Eye className="w-3.5 h-3.5" />
+                    )}
+                  </Button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          <DialogFooter>
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={handleCopyDialogVoucher}
+            >
+              {voucherCopied ? (
+                <Check className="w-4 h-4 mr-1.5 text-emerald-500" />
+              ) : (
+                <Copy className="w-4 h-4 mr-1.5" />
+              )}
+              {voucherCopied ? "Copied" : "Copy Serial & PIN"}
+            </Button>
+            <Button size="sm" onClick={() => setVoucherViewOrder(null)}>
+              Done
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

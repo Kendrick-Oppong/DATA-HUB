@@ -64,7 +64,7 @@ export interface Order {
   status: OrderStatus;
   agentId?: string;
   agentMargin?: number;
-  deliveryTimeline: {
+  deliveryTimeline?: {
     step: string;
     timestamp: string;
     status: "completed" | "current" | "pending" | "failed";
