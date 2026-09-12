@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import {
   Lock,
   KeyRound,
@@ -16,12 +16,12 @@ import {
   Sparkles,
   Check,
   Building2,
-  HelpCircle
-} from 'lucide-react';
-import { UserRole, UserAccount } from '../../types';
-import { detectGhanaNetwork } from '../../mockData';
+  HelpCircle,
+} from "lucide-react";
+import { UserRole, UserAccount } from "../../types";
+import { detectGhanaNetwork } from "../../mockData";
 
-export type AuthMode = 'sign-in' | 'sign-up' | 'otp-verify' | 'forgot-password';
+export type AuthMode = "sign-in" | "sign-up" | "otp-verify" | "forgot-password";
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -33,69 +33,71 @@ interface AuthModalProps {
 
 export const DEMO_ACCOUNTS: Record<string, UserAccount> = {
   customer: {
-    id: 'usr-kojo-01',
-    name: 'Kojo Mensah',
-    phone: '0244192834',
-    email: 'kojomensah94@gmail.com',
-    role: 'customer',
+    id: "usr-kojo-01",
+    name: "Kojo Mensah",
+    phone: "0244192834",
+    email: "kojomensah94@gmail.com",
+    role: "customer",
     isKycVerified: true,
-    ghanaCardNumber: 'GHA-721948192-3',
-    securityPin: '2026'
+    ghanaCardNumber: "GHA-721948192-3",
+    securityPin: "2026",
   },
   agent: {
-    id: 'usr-kofi-02',
-    name: 'Kofi Owusu',
-    phone: '0244192834',
-    email: 'kofitelecom@gmail.com',
-    role: 'agent',
+    id: "usr-kofi-02",
+    name: "Kofi Owusu",
+    phone: "0244192834",
+    email: "kofitelecom@gmail.com",
+    role: "agent",
     isKycVerified: true,
-    ghanaCardNumber: 'GHA-948102941-8',
-    securityPin: '1122'
+    ghanaCardNumber: "GHA-948102941-8",
+    securityPin: "1122",
   },
   admin: {
-    id: 'usr-admin-03',
-    name: 'SDH NOC Superadmin',
-    phone: '0200000001',
-    email: 'noc.admin@smartdatahub.gh',
-    role: 'admin',
+    id: "usr-admin-03",
+    name: "SDH NOC Superadmin",
+    phone: "0200000001",
+    email: "noc.admin@smartdatahub.gh",
+    role: "admin",
     isKycVerified: true,
-    ghanaCardNumber: 'GHA-000000001-0',
-    securityPin: '0000'
-  }
+    ghanaCardNumber: "GHA-000000001-0",
+    securityPin: "0000",
+  },
 };
 
 export const AuthModal: React.FC<AuthModalProps> = ({
   isOpen,
   onClose,
-  initialMode = 'sign-in',
+  initialMode = "sign-in",
   onLoginSuccess,
   onOpenSecurityPins,
 }) => {
   const [mode, setMode] = useState<AuthMode>(initialMode);
 
   // Form State
-  const [phoneOrEmail, setPhoneOrEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [phoneOrEmail, setPhoneOrEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [fullName, setFullName] = useState('');
-  const [signupPhone, setSignupPhone] = useState('');
-  const [signupEmail, setSignupEmail] = useState('');
-  const [signupRole, setSignupRole] = useState<'customer' | 'agent'>('customer');
-  const [signupPin, setSignupPin] = useState('2026');
-  const [referralCode, setReferralCode] = useState('');
+  const [fullName, setFullName] = useState("");
+  const [signupPhone, setSignupPhone] = useState("");
+  const [signupEmail, setSignupEmail] = useState("");
+  const [signupRole, setSignupRole] = useState<"customer" | "agent">(
+    "customer",
+  );
+  const [signupPin, setSignupPin] = useState("2026");
+  const [referralCode, setReferralCode] = useState("");
 
   // OTP State
-  const [otpCode, setOtpCode] = useState(['', '', '', '', '', '']);
+  const [otpCode, setOtpCode] = useState(["", "", "", "", "", ""]);
   const [timer, setTimer] = useState(59);
-  const [otpTargetPhone, setOtpTargetPhone] = useState('0244192834');
+  const [otpTargetPhone, setOtpTargetPhone] = useState("0244192834");
   const [otpSuccessMessage, setOtpSuccessMessage] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState("");
 
   // Sync mode when prop changes
   useEffect(() => {
     if (isOpen) {
       setMode(initialMode);
-      setErrorMessage('');
+      setErrorMessage("");
       setOtpSuccessMessage(false);
     }
   }, [isOpen, initialMode]);
@@ -103,7 +105,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   // Countdown timer for OTP
   useEffect(() => {
     let interval: any = null;
-    if (mode === 'otp-verify' && timer > 0) {
+    if (mode === "otp-verify" && timer > 0) {
       interval = setInterval(() => {
         setTimer((prev) => prev - 1);
       }, 1000);
@@ -115,7 +117,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
 
   const detectedNetwork = detectGhanaNetwork(signupPhone || phoneOrEmail);
 
-  const handleQuickDemoLogin = (accountKey: 'customer' | 'agent' | 'admin') => {
+  const handleQuickDemoLogin = (accountKey: "customer" | "agent" | "admin") => {
     const user = DEMO_ACCOUNTS[accountKey];
     onLoginSuccess(user);
     onClose();
@@ -123,29 +125,35 @@ export const AuthModal: React.FC<AuthModalProps> = ({
 
   const handleSignInSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setErrorMessage('');
+    setErrorMessage("");
 
     if (!phoneOrEmail.trim() || !password.trim()) {
-      setErrorMessage('Please provide your phone number / email and password.');
+      setErrorMessage("Please provide your phone number / email and password.");
       return;
     }
 
     // Check if matching any demo account or login as customer
     let foundUser = Object.values(DEMO_ACCOUNTS).find(
-      (u) => u.phone === phoneOrEmail.trim() || u.email.toLowerCase() === phoneOrEmail.trim().toLowerCase()
+      (u) =>
+        u.phone === phoneOrEmail.trim() ||
+        u.email.toLowerCase() === phoneOrEmail.trim().toLowerCase(),
     );
 
     if (!foundUser) {
       // Dynamic fallback user creation
       foundUser = {
         id: `usr-${Date.now()}`,
-        name: phoneOrEmail.includes('@') ? phoneOrEmail.split('@')[0] : 'Ghana Subscriber',
-        phone: phoneOrEmail.replace(/\D/g, '') || '0244192834',
-        email: phoneOrEmail.includes('@') ? phoneOrEmail : `${phoneOrEmail}@smartdatahub.gh`,
-        role: 'customer',
+        name: phoneOrEmail.includes("@")
+          ? phoneOrEmail.split("@")[0]
+          : "Ghana Subscriber",
+        phone: phoneOrEmail.replace(/\D/g, "") || "0244192834",
+        email: phoneOrEmail.includes("@")
+          ? phoneOrEmail
+          : `${phoneOrEmail}@smartdatahub.gh`,
+        role: "customer",
         isKycVerified: true,
-        ghanaCardNumber: 'GHA-782194120-1',
-        securityPin: '2026'
+        ghanaCardNumber: "GHA-782194120-1",
+        securityPin: "2026",
       };
     }
 
@@ -155,17 +163,17 @@ export const AuthModal: React.FC<AuthModalProps> = ({
 
   const handleSignUpSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setErrorMessage('');
+    setErrorMessage("");
 
     if (!fullName || !signupPhone || !password) {
-      setErrorMessage('Please fill in all mandatory fields.');
+      setErrorMessage("Please fill in all mandatory fields.");
       return;
     }
 
     // Transition to Ghana SMS OTP Verification screen
     setOtpTargetPhone(signupPhone);
     setTimer(59);
-    setMode('otp-verify');
+    setMode("otp-verify");
   };
 
   const handleOtpInput = (index: number, val: string) => {
@@ -182,15 +190,15 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   };
 
   const handleFillDemoOtp = () => {
-    setOtpCode(['1', '2', '3', '4', '5', '6']);
+    setOtpCode(["1", "2", "3", "4", "5", "6"]);
   };
 
   const handleVerifyOtp = (e: React.FormEvent) => {
     e.preventDefault();
-    const fullOtp = otpCode.join('');
+    const fullOtp = otpCode.join("");
 
     if (fullOtp.length !== 6) {
-      setErrorMessage('Please enter the full 6-digit SMS verification code.');
+      setErrorMessage("Please enter the full 6-digit SMS verification code.");
       return;
     }
 
@@ -199,13 +207,13 @@ export const AuthModal: React.FC<AuthModalProps> = ({
     setTimeout(() => {
       const newUser: UserAccount = {
         id: `usr-${Date.now()}`,
-        name: fullName || 'Kojo Mensah',
+        name: fullName || "Kojo Mensah",
         phone: signupPhone || otpTargetPhone,
         email: signupEmail || `${signupPhone}@smartdatahub.gh`,
         role: signupRole,
         isKycVerified: true,
-        ghanaCardNumber: 'GHA-721948192-3',
-        securityPin: signupPin || '2026'
+        ghanaCardNumber: "GHA-721948192-3",
+        securityPin: signupPin || "2026",
       };
       onLoginSuccess(newUser);
       onClose();
@@ -215,35 +223,39 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   const handleForgotPasswordSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!phoneOrEmail) {
-      setErrorMessage('Enter your registered Ghana mobile number.');
+      setErrorMessage("Enter your registered Ghana mobile number.");
       return;
     }
     setOtpTargetPhone(phoneOrEmail);
     setTimer(59);
-    setMode('otp-verify');
+    setMode("otp-verify");
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/65 backdrop-blur-xs p-4 animate-in fade-in duration-200">
-      <div className="w-full max-w-md bg-card border border-border rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[92vh]">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-foreground/55 p-4 backdrop-blur-sm animate-in fade-in duration-200">
+      <div className="w-full max-w-md overflow-hidden rounded-[1.75rem] border border-primary/20 bg-card shadow-2xl shadow-primary/15 flex flex-col max-h-[92vh]">
         {/* Modal Header */}
-        <div className="px-6 pt-6 pb-4 border-b border-border flex items-center justify-between">
+        <div className="border-b border-border bg-muted/25 px-6 pb-4 pt-6 flex items-center justify-between">
           <div className="flex items-center gap-2.5">
             <div className="w-8 h-8 rounded-xl bg-primary/10 text-primary flex items-center justify-center font-bold">
               <ShieldCheck className="w-5 h-5" />
             </div>
             <div>
               <h2 className="font-extrabold text-base text-foreground">
-                {mode === 'sign-in' && 'Sign in to Smart Data Hub'}
-                {mode === 'sign-up' && 'Create Your SDH Account'}
-                {mode === 'otp-verify' && 'Ghana SMS OTP Verification'}
-                {mode === 'forgot-password' && 'Reset Security Credentials'}
+                {mode === "sign-in" && "Sign in to Smart Data Hub"}
+                {mode === "sign-up" && "Create Your SDH Account"}
+                {mode === "otp-verify" && "Ghana SMS OTP Verification"}
+                {mode === "forgot-password" && "Reset Security Credentials"}
               </h2>
               <span className="text-[11px] text-muted-foreground block">
-                {mode === 'sign-in' && 'Access customer wallet, agent store, or NOC console'}
-                {mode === 'sign-up' && 'Wholesale tariffs, personal data wallet & instant top-ups'}
-                {mode === 'otp-verify' && `Verification code sent to +233 ${otpTargetPhone.replace(/\D/g, '')}`}
-                {mode === 'forgot-password' && 'Recover access to your wallet and account'}
+                {mode === "sign-in" &&
+                  "Access customer wallet, agent store, or NOC console"}
+                {mode === "sign-up" &&
+                  "Wholesale tariffs, personal data wallet & instant top-ups"}
+                {mode === "otp-verify" &&
+                  `Verification code sent to +233 ${otpTargetPhone.replace(/\D/g, "")}`}
+                {mode === "forgot-password" &&
+                  "Recover access to your wallet and account"}
               </span>
             </div>
           </div>
@@ -265,7 +277,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
           )}
 
           {/* Quick Demo Access Bar */}
-          {(mode === 'sign-in' || mode === 'sign-up') && (
+          {(mode === "sign-in" || mode === "sign-up") && (
             <div className="p-3.5 rounded-2xl bg-muted/40 border border-border space-y-2 text-xs">
               <div className="flex items-center justify-between">
                 <span className="font-bold text-[11px] uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
@@ -285,21 +297,21 @@ export const AuthModal: React.FC<AuthModalProps> = ({
               <div className="grid grid-cols-3 gap-2">
                 <button
                   type="button"
-                  onClick={() => handleQuickDemoLogin('customer')}
+                  onClick={() => handleQuickDemoLogin("customer")}
                   className="px-2.5 py-1.5 rounded-xl border border-border bg-card hover:border-primary/50 text-[11px] font-bold text-foreground text-center transition-all cursor-pointer"
                 >
                   👤 Customer
                 </button>
                 <button
                   type="button"
-                  onClick={() => handleQuickDemoLogin('agent')}
+                  onClick={() => handleQuickDemoLogin("agent")}
                   className="px-2.5 py-1.5 rounded-xl border border-border bg-card hover:border-primary/50 text-[11px] font-bold text-amber-700 dark:text-amber-400 text-center transition-all cursor-pointer"
                 >
                   💼 Reseller Agent
                 </button>
                 <button
                   type="button"
-                  onClick={() => handleQuickDemoLogin('admin')}
+                  onClick={() => handleQuickDemoLogin("admin")}
                   className="px-2.5 py-1.5 rounded-xl border border-border bg-card hover:border-primary/50 text-[11px] font-bold text-primary text-center transition-all cursor-pointer"
                 >
                   🛡️ NOC Admin
@@ -309,7 +321,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
           )}
 
           {/* MODE: SIGN IN */}
-          {mode === 'sign-in' && (
+          {mode === "sign-in" && (
             <form onSubmit={handleSignInSubmit} className="space-y-3.5 text-xs">
               <div>
                 <label className="block font-semibold text-muted-foreground mb-1">
@@ -330,10 +342,12 @@ export const AuthModal: React.FC<AuthModalProps> = ({
 
               <div>
                 <div className="flex justify-between items-center mb-1">
-                  <label className="font-semibold text-muted-foreground">Password</label>
+                  <label className="font-semibold text-muted-foreground">
+                    Password
+                  </label>
                   <button
                     type="button"
-                    onClick={() => setMode('forgot-password')}
+                    onClick={() => setMode("forgot-password")}
                     className="text-[11px] text-primary hover:underline font-medium cursor-pointer"
                   >
                     Forgot Password?
@@ -342,7 +356,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                 <div className="relative">
                   <Lock className="absolute left-3 top-2.5 w-4 h-4 text-muted-foreground" />
                   <input
-                    type={showPassword ? 'text' : 'password'}
+                    type={showPassword ? "text" : "password"}
                     required
                     placeholder="••••••••"
                     value={password}
@@ -354,7 +368,11 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                     onClick={() => setShowPassword(!showPassword)}
                     className="absolute right-3 top-2.5 text-muted-foreground hover:text-foreground cursor-pointer"
                   >
-                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    {showPassword ? (
+                      <EyeOff className="w-4 h-4" />
+                    ) : (
+                      <Eye className="w-4 h-4" />
+                    )}
                   </button>
                 </div>
               </div>
@@ -370,10 +388,12 @@ export const AuthModal: React.FC<AuthModalProps> = ({
               </div>
 
               <div className="text-center pt-2 border-t border-border">
-                <span className="text-muted-foreground">Don't have an account? </span>
+                <span className="text-muted-foreground">
+                  Don't have an account?{" "}
+                </span>
                 <button
                   type="button"
-                  onClick={() => setMode('sign-up')}
+                  onClick={() => setMode("sign-up")}
                   className="font-bold text-primary hover:underline cursor-pointer"
                 >
                   Create free account
@@ -383,7 +403,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
           )}
 
           {/* MODE: SIGN UP */}
-          {mode === 'sign-up' && (
+          {mode === "sign-up" && (
             <form onSubmit={handleSignUpSubmit} className="space-y-3 text-xs">
               <div>
                 <label className="block font-semibold text-muted-foreground mb-1">
@@ -404,7 +424,9 @@ export const AuthModal: React.FC<AuthModalProps> = ({
 
               <div>
                 <div className="flex justify-between items-center mb-1">
-                  <label className="font-semibold text-muted-foreground">Ghana Mobile Number</label>
+                  <label className="font-semibold text-muted-foreground">
+                    Ghana Mobile Number
+                  </label>
                   <span className="text-[10px] font-bold px-1.5 py-0.2 rounded-md bg-muted text-foreground">
                     {detectedNetwork}
                   </span>
@@ -423,7 +445,9 @@ export const AuthModal: React.FC<AuthModalProps> = ({
               </div>
 
               <div>
-                <label className="block font-semibold text-muted-foreground mb-1">Email Address</label>
+                <label className="block font-semibold text-muted-foreground mb-1">
+                  Email Address
+                </label>
                 <div className="relative">
                   <Mail className="absolute left-3 top-2.5 w-4 h-4 text-muted-foreground" />
                   <input
@@ -438,41 +462,53 @@ export const AuthModal: React.FC<AuthModalProps> = ({
               </div>
 
               <div>
-                <label className="block font-semibold text-muted-foreground mb-1">Account Category</label>
+                <label className="block font-semibold text-muted-foreground mb-1">
+                  Account Category
+                </label>
                 <div className="grid grid-cols-2 gap-2">
                   <button
                     type="button"
-                    onClick={() => setSignupRole('customer')}
+                    onClick={() => setSignupRole("customer")}
                     className={`p-2.5 rounded-xl border text-left cursor-pointer transition-all ${
-                      signupRole === 'customer'
-                        ? 'border-primary bg-primary/10 text-primary font-bold shadow-2xs'
-                        : 'border-border bg-card text-muted-foreground hover:bg-muted'
+                      signupRole === "customer"
+                        ? "border-primary bg-primary/10 text-primary font-bold shadow-2xs"
+                        : "border-border bg-card text-muted-foreground hover:bg-muted"
                     }`}
                   >
-                    <div className="font-bold text-xs text-foreground">Personal Customer</div>
-                    <div className="text-[10px] opacity-80">Buy for self & family</div>
+                    <div className="font-bold text-xs text-foreground">
+                      Personal Customer
+                    </div>
+                    <div className="text-[10px] opacity-80">
+                      Buy for self & family
+                    </div>
                   </button>
                   <button
                     type="button"
-                    onClick={() => setSignupRole('agent')}
+                    onClick={() => setSignupRole("agent")}
                     className={`p-2.5 rounded-xl border text-left cursor-pointer transition-all ${
-                      signupRole === 'agent'
-                        ? 'border-primary bg-primary/10 text-primary font-bold shadow-2xs'
-                        : 'border-border bg-card text-muted-foreground hover:bg-muted'
+                      signupRole === "agent"
+                        ? "border-primary bg-primary/10 text-primary font-bold shadow-2xs"
+                        : "border-border bg-card text-muted-foreground hover:bg-muted"
                     }`}
                   >
-                    <div className="font-bold text-xs text-foreground">Reseller Agent</div>
-                    <div className="text-[10px] opacity-80">Wholesale margins & store</div>
+                    <div className="font-bold text-xs text-foreground">
+                      Reseller Agent
+                    </div>
+                    <div className="text-[10px] opacity-80">
+                      Wholesale margins & store
+                    </div>
                   </button>
                 </div>
               </div>
 
               <div>
-                <label className="block font-semibold text-muted-foreground mb-1">Password</label>
+                <label className="block font-semibold text-muted-foreground mb-1">
+                  Password
+                </label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-2.5 w-4 h-4 text-muted-foreground" />
                   <input
-                    type={showPassword ? 'text' : 'password'}
+                    type={showPassword ? "text" : "password"}
                     required
                     placeholder="Minimum 6 characters"
                     value={password}
@@ -493,10 +529,12 @@ export const AuthModal: React.FC<AuthModalProps> = ({
               </div>
 
               <div className="text-center pt-2 border-t border-border">
-                <span className="text-muted-foreground">Already registered? </span>
+                <span className="text-muted-foreground">
+                  Already registered?{" "}
+                </span>
                 <button
                   type="button"
-                  onClick={() => setMode('sign-in')}
+                  onClick={() => setMode("sign-in")}
                   className="font-bold text-primary hover:underline cursor-pointer"
                 >
                   Sign in here
@@ -506,7 +544,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
           )}
 
           {/* MODE: GHANA SMS OTP VERIFICATION */}
-          {mode === 'otp-verify' && (
+          {mode === "otp-verify" && (
             <form onSubmit={handleVerifyOtp} className="space-y-4 text-xs">
               <div className="p-3.5 rounded-2xl bg-primary/10 border border-primary/20 text-primary space-y-1">
                 <div className="flex items-center gap-1.5 font-bold">
@@ -514,21 +552,31 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                   <span>SMS Gateway Dispatch Active</span>
                 </div>
                 <p className="text-[11px] opacity-90 leading-relaxed">
-                  We dispatched a 6-digit one-time PIN via MTN/Telecel SMS Aggregator to{' '}
-                  <strong className="font-mono text-foreground">{otpTargetPhone}</strong>.
+                  We dispatched a 6-digit one-time PIN via MTN/Telecel SMS
+                  Aggregator to{" "}
+                  <strong className="font-mono text-foreground">
+                    {otpTargetPhone}
+                  </strong>
+                  .
                 </p>
               </div>
 
               {otpSuccessMessage ? (
                 <div className="p-4 rounded-2xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-700 dark:text-emerald-400 text-center space-y-1">
                   <CheckCircle2 className="w-6 h-6 mx-auto" />
-                  <div className="font-bold text-sm">Phone Number Verified!</div>
-                  <p className="text-[11px]">Redirecting to your dashboard...</p>
+                  <div className="font-bold text-sm">
+                    Phone Number Verified!
+                  </div>
+                  <p className="text-[11px]">
+                    Redirecting to your dashboard...
+                  </p>
                 </div>
               ) : (
                 <>
                   <div className="space-y-1 text-center">
-                    <label className="block font-bold text-muted-foreground">Enter 6-Digit SMS Code</label>
+                    <label className="block font-bold text-muted-foreground">
+                      Enter 6-Digit SMS Code
+                    </label>
                     <div className="flex justify-center gap-2 pt-1">
                       {otpCode.map((digit, idx) => (
                         <input
@@ -546,7 +594,10 @@ export const AuthModal: React.FC<AuthModalProps> = ({
 
                   <div className="flex items-center justify-between text-xs pt-1">
                     <span className="text-muted-foreground">
-                      Resend code in: <strong className="tabular-nums font-mono">{timer}s</strong>
+                      Resend code in:{" "}
+                      <strong className="tabular-nums font-mono">
+                        {timer}s
+                      </strong>
                     </span>
                     <button
                       type="button"
@@ -573,7 +624,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
               <div className="text-center pt-2 border-t border-border">
                 <button
                   type="button"
-                  onClick={() => setMode('sign-in')}
+                  onClick={() => setMode("sign-in")}
                   className="text-xs text-muted-foreground hover:text-foreground font-medium cursor-pointer"
                 >
                   ← Back to Sign In
@@ -583,10 +634,15 @@ export const AuthModal: React.FC<AuthModalProps> = ({
           )}
 
           {/* MODE: FORGOT PASSWORD */}
-          {mode === 'forgot-password' && (
-            <form onSubmit={handleForgotPasswordSubmit} className="space-y-3.5 text-xs">
+          {mode === "forgot-password" && (
+            <form
+              onSubmit={handleForgotPasswordSubmit}
+              className="space-y-3.5 text-xs"
+            >
               <p className="text-muted-foreground">
-                Enter the Ghana mobile number or email associated with your Smart Data Hub account. We will send an SMS OTP to reset your password and security PIN.
+                Enter the Ghana mobile number or email associated with your
+                Smart Data Hub account. We will send an SMS OTP to reset your
+                password and security PIN.
               </p>
               <div>
                 <label className="block font-semibold text-muted-foreground mb-1">
@@ -618,7 +674,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
               <div className="text-center pt-2 border-t border-border">
                 <button
                   type="button"
-                  onClick={() => setMode('sign-in')}
+                  onClick={() => setMode("sign-in")}
                   className="text-xs font-bold text-primary hover:underline cursor-pointer"
                 >
                   Return to Sign In
