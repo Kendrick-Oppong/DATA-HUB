@@ -349,67 +349,14 @@ export const AuthPage: React.FC<AuthPageProps> = ({
       <main className="flex-1 flex items-center justify-center p-4 sm:p-6 lg:p-12">
         <div className="w-full max-w-5xl grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
           
-          {/* Left Hero Branding (Desktop) */}
-          <div className="lg:col-span-5 space-y-6 hidden lg:block">
-            <div className="space-y-3">
-              <Badge variant="secondary" className="px-3 py-1 font-bold text-xs uppercase tracking-wider gap-1.5">
-                <Shield className="w-3.5 h-3.5 text-primary" />
-                Secure Telecom Gateway
-              </Badge>
-              <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-foreground leading-tight">
-                Single Sign-On for Ghana Telecom Services
-              </h1>
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                Connect directly to automated wholesale APIs for MTN, Telecel, and AT. Resell data bundles, disburse instant flexi airtime, and verify WAEC vouchers with 99.8% dispatch uptime.
-              </p>
+          {/* Compact trust panel */}
+          <div className="hidden lg:flex lg:col-span-5 flex-col gap-6">
+            <Badge variant="secondary" className="w-fit gap-1.5 px-3 py-1 font-bold text-xs uppercase tracking-wider"><Shield className="size-3.5 text-primary" />Secure telecom gateway</Badge>
+            <div className="flex flex-col gap-4">
+              <h1 className="text-3xl font-black leading-tight tracking-tight text-foreground xl:text-4xl">One secure hub for Ghana&apos;s everyday digital services.</h1>
+              <p className="max-w-md text-sm leading-relaxed text-muted-foreground">Sign in once to manage bundles, airtime, vouchers, and reseller operations.</p>
             </div>
-
-            {/* Carrier Latency Status */}
-            <div className="p-4 rounded-2xl bg-card border border-border shadow-2xs space-y-3">
-              <div className="flex items-center justify-between text-xs">
-                <span className="font-bold text-foreground">Active Carrier Bridges</span>
-                <SignalRail status="delivered" size="sm" label="EVD Live" />
-              </div>
-              <div className="space-y-2 text-xs">
-                <div className="flex items-center justify-between p-2 rounded-xl bg-muted/40">
-                  <div className="flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full bg-amber-400" />
-                    <span className="font-semibold text-foreground">MTN EVD Wholesale Gateway</span>
-                  </div>
-                  <span className="font-mono text-muted-foreground">38ms</span>
-                </div>
-                <div className="flex items-center justify-between p-2 rounded-xl bg-muted/40">
-                  <div className="flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full bg-red-600" />
-                    <span className="font-semibold text-foreground">Telecel Ghana Direct Core</span>
-                  </div>
-                  <span className="font-mono text-muted-foreground">42ms</span>
-                </div>
-                <div className="flex items-center justify-between p-2 rounded-xl bg-muted/40">
-                  <div className="flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full bg-blue-600" />
-                    <span className="font-semibold text-foreground">AT Ghana Automated Switch</span>
-                  </div>
-                  <span className="font-mono text-muted-foreground">51ms</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Value Props */}
-            <div className="space-y-2.5 text-xs text-muted-foreground">
-              <div className="flex items-center gap-2 text-foreground font-semibold">
-                <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
-                <span>Zero card transaction fees via Ghana MoMo QR & Wallets</span>
-              </div>
-              <div className="flex items-center gap-2 text-foreground font-semibold">
-                <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
-                <span>Automated instant refunds if upstream telecom carrier fails</span>
-              </div>
-              <div className="flex items-center gap-2 text-foreground font-semibold">
-                <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
-                <span>Full reseller store builder with customizable domain & margins</span>
-              </div>
-            </div>
+            <Card className="border-border bg-card/70 shadow-sm"><CardContent className="flex flex-col gap-4 p-5"><div className="flex items-center justify-between"><span className="text-xs font-bold text-foreground">Network status</span><SignalRail status="delivered" size="sm" label="All systems live" /></div><div className="grid grid-cols-3 gap-2 text-center"><div className="rounded-xl bg-muted/50 p-3"><p className="text-sm font-black">3</p><p className="text-[10px] text-muted-foreground">networks</p></div><div className="rounded-xl bg-muted/50 p-3"><p className="text-sm font-black">42s</p><p className="text-[10px] text-muted-foreground">delivery</p></div><div className="rounded-xl bg-muted/50 p-3"><p className="text-sm font-black">99.8%</p><p className="text-[10px] text-muted-foreground">uptime</p></div></div><div className="flex items-center gap-2 text-xs font-semibold text-muted-foreground"><CheckCircle2 className="size-4 text-emerald-500" />Protected by PIN and verified account access</div></CardContent></Card>
           </div>
 
           {/* Right Form Card */}
