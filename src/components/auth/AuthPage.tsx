@@ -541,6 +541,11 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                       </label>
                     </div>
 
+                    <div className="flex flex-col gap-3 pt-1">
+                      <div className="flex items-center gap-3"><span className="h-px flex-1 bg-border" /><span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">or continue with</span><span className="h-px flex-1 bg-border" /></div>
+                      <Button type="button" variant="outline" className="w-full font-bold" onClick={() => setLoginError('Google sign-in is ready to connect when OAuth is enabled.')}><span className="font-black text-primary">G</span> Continue with Google</Button>
+                    </div>
+
                     {/* Submit Button */}
                     <Button type="submit" variant="default" size="lg" className="w-full font-bold text-sm" disabled={isLoading}>
                       {isLoading ? (

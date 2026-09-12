@@ -298,9 +298,9 @@ export const PublicMarketingSite: React.FC<PublicMarketingSiteProps> = ({
                     <div className="flex items-center justify-between pb-3 border-b border-border">
                       <div className="flex items-center gap-2">
                         <Zap className="w-4 h-4 text-amber-500" />
-                        <h3 className="font-bold text-sm text-foreground">Quick Bundle Checkout</h3>
+                        <h3 className="font-bold text-sm text-foreground">DATA-HUB at a glance</h3>
                       </div>
-                      <SignalRail status="online" size="sm" label="Fast MoMo" />
+                      <SignalRail status="online" size="sm" label="Systems live" />
                     </div>
 
                     {/* Network Selector Tabs */}
@@ -398,7 +398,7 @@ export const PublicMarketingSite: React.FC<PublicMarketingSiteProps> = ({
                         onClick={() => handleStartPurchase(selectedBundleId, selectedNetwork)}
                         className="w-full py-3 rounded-xl bg-primary text-primary-foreground font-bold text-sm hover:bg-primary/90 transition-all flex items-center justify-center gap-2 shadow-md cursor-pointer"
                       >
-                        <span>Continue to Payment</span>
+                        <span>Explore services</span>
                         <ArrowRight className="w-4 h-4" />
                       </button>
                     </div>
