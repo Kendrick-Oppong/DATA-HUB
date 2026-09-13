@@ -607,3 +607,5 @@ export const FundWalletModal: React.FC<FundWalletModalProps> = ({
     </Dialog>
   );
 };
+
+export default FundWalletModal;
