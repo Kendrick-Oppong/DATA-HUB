@@ -327,10 +327,10 @@ export default function App() {
     loadFromStorage("sdh_commission_balance", 185.5),
   );
   const [orders, setOrders] = useState<Order[]>(() =>
-    loadFromStorage("sdh_orders", mockOrders),
+    loadFromStorage("sdh_orders_v4", mockOrders),
   );
   const [transactions, setTransactions] = useState<Transaction[]>(() =>
-    loadFromStorage("sdh_transactions", mockTransactions),
+    loadFromStorage("sdh_transactions_v2", mockTransactions),
   );
   const [afaApplications, setAfaApplications] = useState<AfaApplication[]>(() =>
     loadFromStorage("sdh_afa_apps", mockAfaApplications),
@@ -376,7 +376,7 @@ export default function App() {
   const handleOrderCreated = (newOrder: Order) => {
     const updatedOrders = [newOrder, ...orders];
     setOrders(updatedOrders);
-    saveToStorage("sdh_orders", updatedOrders);
+    saveToStorage("sdh_orders_v4", updatedOrders);
 
     if (newOrder.paymentMethod === "wallet") {
       const newBal = Math.max(0, walletBalance - newOrder.amount);
@@ -398,7 +398,7 @@ export default function App() {
       };
       const updatedTx = [newTx, ...transactions];
       setTransactions(updatedTx);
-      saveToStorage("sdh_transactions", updatedTx);
+      saveToStorage("sdh_transactions_v2", updatedTx);
     }
 
     if (newOrder.agentMargin && newOrder.agentMargin > 0) {
@@ -433,7 +433,7 @@ export default function App() {
     };
     const updatedTx = [newTx, ...transactions];
     setTransactions(updatedTx);
-    saveToStorage("sdh_transactions", updatedTx);
+    saveToStorage("sdh_transactions_v2", updatedTx);
   };
 
   // Agent Commission Withdrawal
@@ -457,7 +457,7 @@ export default function App() {
     };
     const updatedTx = [newTx, ...transactions];
     setTransactions(updatedTx);
-    saveToStorage("sdh_transactions", updatedTx);
+    saveToStorage("sdh_transactions_v2", updatedTx);
   };
 
   // AFA Submission
@@ -485,7 +485,7 @@ export default function App() {
     };
     const updatedTx = [newTx, ...transactions];
     setTransactions(updatedTx);
-    saveToStorage("sdh_transactions", updatedTx);
+    saveToStorage("sdh_transactions_v2", updatedTx);
   };
 
   // Gateway Simulation Toggle
@@ -526,7 +526,7 @@ export default function App() {
       return o;
     });
     setOrders(updated);
-    saveToStorage("sdh_orders", updated);
+    saveToStorage("sdh_orders_v4", updated);
   };
 
   // Order Refund (Admin)
@@ -545,7 +545,7 @@ export default function App() {
       return o;
     });
     setOrders(updated);
-    saveToStorage("sdh_orders", updated);
+    saveToStorage("sdh_orders_v4", updated);
 
     const refundTx: Transaction = {
       id: `tx-ref-${Date.now()}`,
@@ -562,7 +562,7 @@ export default function App() {
     };
     const updatedTx = [refundTx, ...transactions];
     setTransactions(updatedTx);
-    saveToStorage("sdh_transactions", updatedTx);
+    saveToStorage("sdh_transactions_v2", updatedTx);
   };
 
   // AFA Status Update (Admin)

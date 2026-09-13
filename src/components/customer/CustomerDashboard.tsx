@@ -1,21 +1,31 @@
 import React from "react";
 import {
-  Wallet,
   Wifi,
   PhoneCall,
   GraduationCap,
   ShieldCheck,
   Zap,
-  ArrowRight,
-  Clock,
   RotateCcw,
-  Sparkles,
-  AlertCircle,
-  CheckCircle2,
-  ExternalLink,
+  ArrowRight,
 } from "lucide-react";
-import { Order, Transaction, TelecomNetwork } from "../../types";
+import { Order, Transaction } from "../../types";
 import { SignalRail } from "../common/SignalRail";
+import { Button } from "../ui/button";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+} from "../ui/card";
+import {
+  Table,
+  TableHeader,
+  TableBody,
+  TableHead,
+  TableRow,
+  TableCell,
+} from "../ui/table";
 
 interface CustomerDashboardProps {
   walletBalance: number;
@@ -32,7 +42,6 @@ export const CustomerDashboard: React.FC<CustomerDashboardProps> = ({
   onOpenFundWallet,
   onNavigateTab,
   orders,
-  transactions,
   onOpenReceipt,
   onRepeatOrder,
 }) => {
@@ -42,236 +51,303 @@ export const CustomerDashboard: React.FC<CustomerDashboardProps> = ({
   return (
     <div className="space-y-6">
       {/* Welcome Banner */}
-      <div className="p-6 sm:p-8 rounded-3xl bg-gradient-to-r from-primary/10 via-card to-amber-500/10 border border-border shadow-xs flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+      <div className="flex flex-col items-start justify-between gap-4 rounded-3xl border border-border bg-gradient-to-r from-primary/10 via-card to-amber-500/10 p-6 shadow-xs sm:flex-row sm:items-center sm:p-8">
         <div className="space-y-1">
           <div className="flex items-center gap-2">
-            <span className="text-xs uppercase font-bold text-primary tracking-wider">
+            <span className="text-xs font-bold uppercase tracking-wider text-primary">
               Customer Portal
             </span>
+
             <SignalRail
               status="online"
               size="sm"
               label="Carrier Gateways 99.8%"
             />
           </div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-foreground tracking-tight">
+
+          <h1 className="text-2xl font-extrabold tracking-tight text-foreground sm:text-3xl">
             Akwaaba, Kojo!
           </h1>
-          <p className="text-xs sm:text-sm text-muted-foreground">
+
+          <p className="text-xs text-muted-foreground sm:text-sm">
             Buy data, airtime, and WAEC vouchers with confidence and instant
             delivery.
           </p>
         </div>
 
         {/* Wallet Balance Hero Card */}
-        <div className="p-4 rounded-2xl bg-card border border-border shadow-sm flex items-center gap-4 shrink-0">
+        <div className="flex shrink-0 items-center gap-4 rounded-2xl border border-border bg-card p-4 shadow-sm">
           <div>
-            <span className="text-[10px] uppercase font-bold tracking-wider text-muted-foreground block">
+            <p className="block text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
               Available Balance
-            </span>
-            <span className="text-2xl font-black text-foreground tabular-nums">
+            </p>
+
+            <p className="text-2xl font-black tabular-nums text-foreground">
               GH₵ {walletBalance.toFixed(2)}
-            </span>
+            </p>
           </div>
-          <button
-            onClick={onOpenFundWallet}
-            className="px-4 py-2 rounded-xl bg-primary text-primary-foreground font-bold text-xs hover:bg-primary/90 transition-all shadow-xs cursor-pointer"
-          >
+
+          <Button onClick={onOpenFundWallet} size="lg">
             + Top-up
-          </button>
+          </Button>
         </div>
       </div>
 
-      {/* Pending Dispatch Warning (if any) */}
+      {/* Pending Dispatch Warning */}
       {pendingOrders.length > 0 && (
-        <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-amber-950 dark:text-amber-200 flex items-center justify-between text-xs">
+        <div className="flex items-center justify-between rounded-2xl border border-amber-500/20 bg-amber-500/10 p-4 text-xs text-amber-950 dark:text-amber-200">
           <div className="flex items-center gap-3">
             <SignalRail status="processing" size="sm" />
+
             <div>
               <span className="font-semibold">Active Delivery: </span>
+
               <span>
                 Order {pendingOrders[0].reference} (
                 {pendingOrders[0].productName}) is in active upstream queue.
               </span>
             </div>
           </div>
-          <button
+
+          <Button
+            variant="link"
             onClick={() => onNavigateTab("orders")}
-            className="text-amber-800 dark:text-amber-300 font-bold hover:underline"
+            className="h-auto shrink-0 px-0 text-xs"
           >
-            Track →
-          </button>
+            Track
+            <ArrowRight className="size-3.5" />
+          </Button>
         </div>
       )}
 
       {/* Quick Action Shortcuts */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
-        <button
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-5">
+        <Button
+          variant="ghost"
           onClick={() => onNavigateTab("buy-data")}
-          className="p-4 rounded-2xl bg-card border border-border hover:border-primary/50 text-left transition-all group cursor-pointer shadow-2xs"
+          className="group h-auto w-full flex-col items-start justify-start rounded-2xl border border-border bg-card p-4 text-left shadow-2xs transition-all hover:border-primary/50 hover:bg-card"
         >
-          <div className="w-9 h-9 rounded-xl bg-primary/10 text-primary flex items-center justify-center mb-2 group-hover:scale-105 transition-transform">
-            <Wifi className="w-5 h-5" />
+          <div className="mb-2 flex size-9 items-center justify-center rounded-xl bg-primary/10 text-primary transition-transform group-hover:scale-105">
+            <Wifi className="size-5" />
           </div>
+
           <div className="font-bold text-xs text-foreground">Buy Data</div>
+
           <div className="text-[10px] text-muted-foreground">
             MTN, Telecel, AT
           </div>
-        </button>
+        </Button>
 
-        <button
+        <Button
+          variant="ghost"
           onClick={() => onNavigateTab("buy-airtime")}
-          className="p-4 rounded-2xl bg-card border border-border hover:border-primary/50 text-left transition-all group cursor-pointer shadow-2xs"
+          className="group h-auto w-full flex-col items-start justify-start rounded-2xl border border-border bg-card p-4 text-left shadow-2xs transition-all hover:border-primary/50 hover:bg-card"
         >
-          <div className="w-9 h-9 rounded-xl bg-amber-500/10 text-amber-600 flex items-center justify-center mb-2 group-hover:scale-105 transition-transform">
-            <PhoneCall className="w-5 h-5" />
+          <div className="mb-2 flex size-9 items-center justify-center rounded-xl bg-amber-500/10 text-amber-600 transition-transform group-hover:scale-105">
+            <PhoneCall className="size-5" />
           </div>
+
           <div className="font-bold text-xs text-foreground">Buy Airtime</div>
+
           <div className="text-[10px] text-muted-foreground">
             Instant E-Load
           </div>
-        </button>
+        </Button>
 
-        <button
+        <Button
+          variant="ghost"
           onClick={() => onNavigateTab("results-checker")}
-          className="p-4 rounded-2xl bg-card border border-border hover:border-primary/50 text-left transition-all group cursor-pointer shadow-2xs"
+          className="group h-auto w-full flex-col items-start justify-start rounded-2xl border border-border bg-card p-4 text-left shadow-2xs transition-all hover:border-primary/50 hover:bg-card"
         >
-          <div className="w-9 h-9 rounded-xl bg-purple-500/10 text-purple-600 flex items-center justify-center mb-2 group-hover:scale-105 transition-transform">
-            <GraduationCap className="w-5 h-5" />
+          <div className="mb-2 flex size-9 items-center justify-center rounded-xl bg-purple-500/10 text-purple-600 transition-transform group-hover:scale-105">
+            <GraduationCap className="size-5" />
           </div>
+
           <div className="font-bold text-xs text-foreground">
             Result Checkers
           </div>
+
           <div className="text-[10px] text-muted-foreground">
             WAEC & BECE PIN
           </div>
-        </button>
+        </Button>
 
-        <button
+        <Button
+          variant="ghost"
           onClick={() => onNavigateTab("afa")}
-          className="p-4 rounded-2xl bg-card border border-border hover:border-primary/50 text-left transition-all group cursor-pointer shadow-2xs"
+          className="group h-auto w-full flex-col items-start justify-start rounded-2xl border border-border bg-card p-4 text-left shadow-2xs transition-all hover:border-primary/50 hover:bg-card"
         >
-          <div className="w-9 h-9 rounded-xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center mb-2 group-hover:scale-105 transition-transform">
-            <ShieldCheck className="w-5 h-5" />
+          <div className="mb-2 flex size-9 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-600 transition-transform group-hover:scale-105">
+            <ShieldCheck className="size-5" />
           </div>
+
           <div className="font-bold text-xs text-foreground">
             AFA Registration
           </div>
+
           <div className="text-[10px] text-muted-foreground">
             Discount Tariffs
           </div>
-        </button>
+        </Button>
 
-        <button
+        <Button
+          variant="ghost"
           onClick={() => onNavigateTab("utilities")}
-          className="p-4 rounded-2xl bg-card border border-border hover:border-primary/50 text-left transition-all group cursor-pointer shadow-2xs"
+          className="group h-auto w-full flex-col items-start justify-start rounded-2xl border border-border bg-card p-4 text-left shadow-2xs transition-all hover:border-primary/50 hover:bg-card"
         >
-          <div className="w-9 h-9 rounded-xl bg-blue-500/10 text-blue-600 flex items-center justify-center mb-2 group-hover:scale-105 transition-transform">
-            <Zap className="w-5 h-5" />
+          <div className="mb-2 flex size-9 items-center justify-center rounded-xl bg-blue-500/10 text-blue-600 transition-transform group-hover:scale-105">
+            <Zap className="size-5" />
           </div>
+
           <div className="font-bold text-xs text-foreground">Pay Bills</div>
+
           <div className="text-[10px] text-muted-foreground">
             ECG, Water, TV
           </div>
-        </button>
+        </Button>
       </div>
 
-      {/* Recent Orders with Delivery Timeline */}
-      <div className="p-6 rounded-3xl bg-card border border-border shadow-xs space-y-4">
-        <div className="flex justify-between items-center pb-3 border-b border-border">
+      {/* Recent Orders Table */}
+      <Card className="border-border shadow-xs">
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 border-b border-border pb-3">
           <div>
-            <h2 className="font-extrabold text-base text-foreground">
-              Recent Orders
-            </h2>
-            <p className="text-xs text-muted-foreground">
+            <CardTitle className="text-base font-extrabold text-foreground">
+              Recent Orders (Top 6)
+            </CardTitle>
+
+            <CardDescription className="text-xs">
               Click any record to inspect the delivery signal or print receipt.
-            </p>
+            </CardDescription>
           </div>
-          <button
+
+          <Button
+            variant="link"
             onClick={() => onNavigateTab("orders")}
-            className="text-xs font-bold text-primary flex items-center gap-1 hover:underline cursor-pointer"
+            className="h-auto gap-1 px-0 text-xs font-bold text-primary"
           >
             <span>View All</span>
-            <ArrowRight className="w-3.5 h-3.5" />
-          </button>
-        </div>
+            <ArrowRight className="size-3.5" />
+          </Button>
+        </CardHeader>
 
-        <div className="divide-y divide-border/60">
-          {recentOrders.map((order) => (
-            <div
-              key={order.id}
-              className="py-3.5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 hover:bg-muted/30 px-2 rounded-xl transition-colors"
-            >
-              <div className="flex items-center gap-3 min-w-0">
-                <div
-                  className={`w-9 h-9 rounded-xl flex items-center justify-center font-bold text-xs shrink-0 ${
-                    order.network === "MTN"
-                      ? "bg-amber-400 text-amber-950"
-                      : order.network === "Telecel"
-                        ? "bg-red-600 text-white"
-                        : "bg-blue-600 text-white"
-                  }`}
-                >
-                  {order.network.slice(0, 3)}
-                </div>
-                <div className="min-w-0">
-                  <div className="font-bold text-xs text-foreground truncate">
-                    {order.productName}
-                  </div>
-                  <div className="text-[11px] text-muted-foreground flex items-center gap-2">
-                    <span className="font-mono">{order.recipientPhone}</span>
-                    <span>•</span>
-                    <span className="tabular-nums">{order.date}</span>
-                  </div>
-                </div>
-              </div>
+        <CardContent className="p-0">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Network</TableHead>
+                <TableHead>Order Reference</TableHead>
+                <TableHead>Product Package</TableHead>
+                <TableHead>Recipient Phone</TableHead>
+                <TableHead>Date</TableHead>
+                <TableHead className="text-right">Amount</TableHead>
+                <TableHead className="text-center">Status</TableHead>
+                <TableHead className="text-right">Actions</TableHead>
+              </TableRow>
+            </TableHeader>
 
-              <div className="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-end">
-                <div className="text-right">
-                  <div className="text-xs font-black text-foreground tabular-nums">
-                    GH₵ {order.amount.toFixed(2)}
-                  </div>
-                  <div className="flex items-center gap-1.5 justify-end">
-                    <span
-                      className={`text-[10px] font-bold px-1.5 py-0.2 rounded-full ${
-                        order.status === "delivered"
-                          ? "bg-emerald-500/15 text-emerald-700 dark:text-emerald-400"
-                          : "bg-amber-500/15 text-amber-900 dark:text-amber-300"
-                      }`}
-                    >
-                      {order.status.toUpperCase()}
-                    </span>
-                    <SignalRail
-                      status={
-                        order.status === "delivered"
-                          ? "delivered"
-                          : "processing"
-                      }
-                      size="sm"
-                    />
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-1">
-                  <button
-                    onClick={() => onOpenReceipt(order)}
-                    className="px-2.5 py-1.5 rounded-lg border border-border text-xs font-semibold hover:bg-muted cursor-pointer"
+            <TableBody>
+              {recentOrders.length === 0 ? (
+                <TableRow>
+                  <TableCell
+                    colSpan={8}
+                    className="py-8 text-center text-xs text-muted-foreground"
                   >
-                    Receipt
-                  </button>
-                  <button
-                    onClick={() => onRepeatOrder(order)}
-                    title="Repeat this purchase"
-                    className="p-1.5 rounded-lg border border-border text-muted-foreground hover:text-foreground hover:bg-muted cursor-pointer"
-                  >
-                    <RotateCcw className="w-3.5 h-3.5" />
-                  </button>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
+                    No recent orders found.
+                  </TableCell>
+                </TableRow>
+              ) : (
+                recentOrders.map((order) => (
+                  <TableRow key={order.id} className="hover:bg-muted/40">
+                    <TableCell>
+                      <span
+                        className={`rounded-md px-2 py-0.5 text-[10px] font-black uppercase ${
+                          order.network === "MTN"
+                            ? "bg-amber-400 text-amber-950"
+                            : order.network === "Telecel"
+                              ? "bg-red-600 text-white"
+                              : "bg-blue-600 text-white"
+                        }`}
+                      >
+                        {order.network.slice(0, 3)}
+                      </span>
+                    </TableCell>
+
+                    <TableCell className="text-xs font-bold text-foreground">
+                      {order.reference}
+                    </TableCell>
+
+                    <TableCell className="text-xs font-bold text-foreground">
+                      {order.productName}
+                    </TableCell>
+
+                    <TableCell className="text-xs">
+                      {order.recipientPhone}
+                    </TableCell>
+
+                    <TableCell className="text-xs tabular-nums">
+                      {order.date}
+                    </TableCell>
+
+                    <TableCell className="text-right text-xs font-black tabular-nums text-foreground">
+                      GH₵ {order.amount.toFixed(2)}
+                    </TableCell>
+
+                    <TableCell className="text-center">
+                      <div className="flex items-center justify-center gap-1.5">
+                        <span
+                          className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase ${
+                            order.status === "delivered"
+                              ? "bg-emerald-500/15 text-emerald-700 dark:text-emerald-400"
+                              : order.status === "processing"
+                                ? "bg-amber-500/15 text-amber-700 dark:text-amber-400"
+                                : "bg-red-500/15 text-red-600 dark:text-red-400"
+                          }`}
+                        >
+                          <span
+                            className={`size-1.5 rounded-full ${
+                              order.status === "delivered"
+                                ? "bg-emerald-500"
+                                : order.status === "processing"
+                                  ? "bg-amber-500"
+                                  : "bg-red-500"
+                            }`}
+                          />
+
+                          {order.status}
+                        </span>
+                      </div>
+                    </TableCell>
+
+                    <TableCell className="text-right">
+                      <div className="flex items-center justify-end gap-1.5">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => onOpenReceipt(order)}
+                          className="h-7 rounded-full px-2.5 text-xs font-semibold"
+                        >
+                          Receipt
+                        </Button>
+
+                        <Button
+                          variant="ghost"
+                          size="icon-xs"
+                          onClick={() => onRepeatOrder(order)}
+                          title="Repeat this purchase"
+                          aria-label="Repeat this purchase"
+                          className="text-muted-foreground hover:text-foreground"
+                        >
+                          <RotateCcw className="size-3.5" />
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
     </div>
   );
 };

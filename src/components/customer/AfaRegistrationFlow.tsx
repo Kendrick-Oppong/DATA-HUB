@@ -252,7 +252,7 @@ export const AfaRegistrationFlow: React.FC<AfaRegistrationFlowProps> = ({
   };
 
   return (
-    <div className="max-w-5xl mx-auto space-y-6">
+    <div className="space-y-6">
       {/* Header Bar */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-4 border-b border-border">
         <div>
@@ -266,13 +266,8 @@ export const AfaRegistrationFlow: React.FC<AfaRegistrationFlowProps> = ({
           </p>
         </div>
         <div className="flex items-center gap-3">
-          {" "}
-          <Button
-            onClick={handleOpenModal}
-            size="sm"
-            className="font-bold text-xs"
-          >
-            <Plus className="w-4 h-4 mr-1" />
+          <Button onClick={handleOpenModal} className="h-9">
+            <Plus className="w-4 h-4 stroke-3" />
             New AFA Registration
           </Button>
         </div>
@@ -372,16 +367,16 @@ export const AfaRegistrationFlow: React.FC<AfaRegistrationFlowProps> = ({
               ) : (
                 paginatedApps.map((app) => (
                   <TableRow key={app.id} className="hover:bg-muted/40">
-                    <TableCell className="font-mono font-bold text-xs text-foreground">
+                    <TableCell className=" font-bold text-xs text-foreground">
                       {app.reference}
                     </TableCell>
-                    <TableCell className="font-mono text-xs text-muted-foreground">
+                    <TableCell className=" text-xs ">
                       {app.phoneNumber}
                     </TableCell>
                     <TableCell className="font-bold text-xs text-foreground">
                       {app.occupation}
                     </TableCell>
-                    <TableCell className="font-mono text-xs text-muted-foreground">
+                    <TableCell className=" text-xs ">
                       {app.ghanaCardNumber}
                     </TableCell>
                     <TableCell className="text-right font-black text-foreground tabular-nums text-xs">
@@ -390,7 +385,7 @@ export const AfaRegistrationFlow: React.FC<AfaRegistrationFlowProps> = ({
                     <TableCell className="text-center">
                       {getStatusBadge(app.status)}
                     </TableCell>
-                    <TableCell className="text-right text-xs text-muted-foreground tabular-nums">
+                    <TableCell className="text-right text-xs  tabular-nums">
                       {formatDateTime(app.dateSubmitted)}
                     </TableCell>
                   </TableRow>

@@ -274,9 +274,9 @@ export const INITIAL_ORDERS: Order[] = [
   {
     id: 'ord-1003',
     reference: 'SDH-GH-2026-94814',
-    date: '2026-09-11 16:30',
+    date: '2026-09-13 17:50',
     customerName: 'Emmanuel Osei',
-    recipientPhone: '0249821034',
+    recipientPhone: '0244192834',
     network: 'MTN',
     serviceType: 'checker',
     productName: 'WASSCE Result Checker 2026',
@@ -286,8 +286,8 @@ export const INITIAL_ORDERS: Order[] = [
     voucherCode: '9841-2094-1849',
     voucherSerial: 'W26-849102',
     deliveryTimeline: [
-      { step: 'Order Placed', timestamp: '16:30:10', status: 'completed' },
-      { step: 'Voucher Generated', timestamp: '16:30:12', status: 'completed', note: 'Delivered to customer drawer' }
+      { step: 'Order Placed', timestamp: '17:50:10', status: 'completed' },
+      { step: 'Voucher Generated', timestamp: '17:50:12', status: 'completed', note: 'Delivered to customer drawer' }
     ]
   },
   {
@@ -330,7 +330,7 @@ export const INITIAL_ORDERS: Order[] = [
   {
     id: 'ord-1006',
     reference: 'SDH-GH-2026-94817',
-    date: '2026-09-11 17:15',
+    date: '2026-09-13 17:45',
     customerName: 'Kojo Mensah',
     recipientPhone: '0244192834',
     network: 'MTN',
@@ -338,31 +338,31 @@ export const INITIAL_ORDERS: Order[] = [
     productName: 'BECE Placement Checker 2026',
     amount: 15.00,
     paymentMethod: 'wallet',
-    status: 'delivered',
+    status: 'processing',
     voucherCode: '4810-5829-1092',
     voucherSerial: 'B26-102948'
   },
   {
     id: 'ord-1007',
     reference: 'SDH-GH-2026-94818',
-    date: '2026-09-11 18:05',
+    date: '2026-09-13 17:40',
     customerName: 'Akosua Serwaa',
-    recipientPhone: '0502847192',
+    recipientPhone: '0244192834',
     network: 'Telecel',
     serviceType: 'checker',
     productName: 'WASSCE Result Checker 2026',
     amount: 24.00,
     paymentMethod: 'momo_telecel',
-    status: 'delivered',
+    status: 'failed',
     voucherCode: '1029-4820-9581',
     voucherSerial: 'W26-992014'
   },
   {
     id: 'ord-1008',
     reference: 'SDH-GH-2026-94819',
-    date: '2026-09-10 09:22',
+    date: '2026-09-13 17:35',
     customerName: 'Yaw Boateng',
-    recipientPhone: '0553920194',
+    recipientPhone: '0244192834',
     network: 'MTN',
     serviceType: 'checker',
     productName: 'NOVDEC Result Checker 2026',
@@ -375,22 +375,22 @@ export const INITIAL_ORDERS: Order[] = [
   {
     id: 'ord-1009',
     reference: 'SDH-GH-2026-94820',
-    date: '2026-09-10 11:45',
+    date: '2026-09-13 17:30',
     customerName: 'Priscilla Addo',
-    recipientPhone: '0277382910',
+    recipientPhone: '0244192834',
     network: 'AirtelTigo',
     serviceType: 'checker',
     productName: 'BECE Placement Checker 2026',
     amount: 15.00,
     paymentMethod: 'wallet',
-    status: 'delivered',
+    status: 'processing',
     voucherCode: '8392-1049-5829',
     voucherSerial: 'B26-382910'
   },
   {
     id: 'ord-1010',
     reference: 'SDH-GH-2026-94821',
-    date: '2026-09-10 14:10',
+    date: '2026-09-13 17:25',
     customerName: 'Kojo Mensah',
     recipientPhone: '0244192834',
     network: 'MTN',
@@ -398,7 +398,7 @@ export const INITIAL_ORDERS: Order[] = [
     productName: 'WASSCE Result Checker 2026',
     amount: 24.00,
     paymentMethod: 'wallet',
-    status: 'delivered',
+    status: 'failed',
     voucherCode: '5829-1049-3920',
     voucherSerial: 'W26-102938'
   },
@@ -428,7 +428,7 @@ export const INITIAL_ORDERS: Order[] = [
     productName: 'BECE Placement Checker 2026',
     amount: 15.00,
     paymentMethod: 'momo_telecel',
-    status: 'delivered',
+    status: 'processing',
     voucherCode: '1049-5829-3920',
     voucherSerial: 'B26-582910'
   },
@@ -458,7 +458,7 @@ export const INITIAL_ORDERS: Order[] = [
     productName: 'NOVDEC Result Checker 2026',
     amount: 28.00,
     paymentMethod: 'wallet',
-    status: 'delivered',
+    status: 'failed',
     voucherCode: '2910-5829-3920',
     voucherSerial: 'N26-104958'
   },
@@ -558,12 +558,12 @@ export const INITIAL_TRANSACTIONS: Transaction[] = [
   {
     id: 'tx-501',
     reference: 'TX-SDH-84910',
-    date: '2026-09-11 14:10',
+    date: '2026-09-13 08:05',
     type: 'credit',
     category: 'wallet_funding',
-    amount: 150.00,
-    fee: 1.50,
-    balanceAfter: 245.50,
+    amount: 200.00,
+    fee: 2.00,
+    balanceAfter: 395.50,
     description: 'MTN MoMo Wallet Top-up (0244192834)',
     status: 'completed',
     channel: 'MTN Mobile Money'
@@ -571,12 +571,12 @@ export const INITIAL_TRANSACTIONS: Transaction[] = [
   {
     id: 'tx-502',
     reference: 'TX-SDH-84911',
-    date: '2026-09-11 15:42',
+    date: '2026-09-13 08:47',
     type: 'debit',
     category: 'purchase',
     amount: 22.50,
     fee: 0.00,
-    balanceAfter: 223.00,
+    balanceAfter: 373.00,
     description: 'Purchase MTN 5GB for 0244192834',
     status: 'completed',
     channel: 'SDH Wallet'
@@ -584,26 +584,234 @@ export const INITIAL_TRANSACTIONS: Transaction[] = [
   {
     id: 'tx-503',
     reference: 'TX-SDH-84912',
-    date: '2026-09-11 16:30',
+    date: '2026-09-13 09:15',
     type: 'debit',
     category: 'purchase',
     amount: 24.00,
     fee: 0.00,
-    balanceAfter: 199.00,
-    description: 'WASSCE Result Checker purchase',
+    balanceAfter: 349.00,
+    description: 'WASSCE Result Checker purchase (ord-1003)',
     status: 'completed',
     channel: 'SDH Wallet'
   },
   {
     id: 'tx-504',
     reference: 'TX-SDH-84913',
-    date: '2026-09-11 16:58',
+    date: '2026-09-13 09:48',
     type: 'debit',
     category: 'purchase',
     amount: 20.00,
     fee: 0.00,
-    balanceAfter: 179.00,
+    balanceAfter: 329.00,
     description: 'AT Airtime Top-up for 0277382910',
+    status: 'completed',
+    channel: 'SDH Wallet'
+  },
+  {
+    id: 'tx-505',
+    reference: 'TX-SDH-84914',
+    date: '2026-09-13 10:22',
+    type: 'debit',
+    category: 'purchase',
+    amount: 35.00,
+    fee: 0.00,
+    balanceAfter: 294.00,
+    description: 'Telecel 10GB Bundle for 0509837261',
+    status: 'completed',
+    channel: 'SDH Wallet'
+  },
+  {
+    id: 'tx-506',
+    reference: 'TX-SDH-84915',
+    date: '2026-09-13 10:55',
+    type: 'credit',
+    category: 'refund',
+    amount: 24.00,
+    fee: 0.00,
+    balanceAfter: 318.00,
+    description: 'Refund: BECE Checker order ord-1009 (failed)',
+    status: 'completed',
+    channel: 'SDH Wallet'
+  },
+  {
+    id: 'tx-507',
+    reference: 'TX-SDH-84916',
+    date: '2026-09-13 11:30',
+    type: 'debit',
+    category: 'purchase',
+    amount: 15.00,
+    fee: 0.00,
+    balanceAfter: 303.00,
+    description: 'MTN 2GB Daily Bundle for 0244192834',
+    status: 'completed',
+    channel: 'SDH Wallet'
+  },
+  {
+    id: 'tx-508',
+    reference: 'TX-SDH-84917',
+    date: '2026-09-13 12:10',
+    type: 'credit',
+    category: 'wallet_funding',
+    amount: 100.00,
+    fee: 1.00,
+    balanceAfter: 403.00,
+    description: 'Telecel Cash Wallet Top-up (0509837261)',
+    status: 'completed',
+    channel: 'Telecel Cash'
+  },
+  {
+    id: 'tx-509',
+    reference: 'TX-SDH-84918',
+    date: '2026-09-13 12:45',
+    type: 'debit',
+    category: 'purchase',
+    amount: 50.00,
+    fee: 0.00,
+    balanceAfter: 353.00,
+    description: 'AFA Registration Fee – Kwame Agyapong',
+    status: 'completed',
+    channel: 'SDH Wallet'
+  },
+  {
+    id: 'tx-510',
+    reference: 'TX-SDH-84919',
+    date: '2026-09-13 13:05',
+    type: 'debit',
+    category: 'purchase',
+    amount: 18.00,
+    fee: 0.00,
+    balanceAfter: 335.00,
+    description: 'AT 3GB Bundle for 0277382910',
+    status: 'completed',
+    channel: 'SDH Wallet'
+  },
+  {
+    id: 'tx-511',
+    reference: 'TX-SDH-84920',
+    date: '2026-09-13 13:38',
+    type: 'debit',
+    category: 'purchase',
+    amount: 45.00,
+    fee: 0.00,
+    balanceAfter: 290.00,
+    description: 'ECG Prepaid Electricity – Token for 4982',
+    status: 'completed',
+    channel: 'SDH Wallet'
+  },
+  {
+    id: 'tx-512',
+    reference: 'TX-SDH-84921',
+    date: '2026-09-13 14:10',
+    type: 'credit',
+    category: 'promo_credit',
+    amount: 5.00,
+    fee: 0.00,
+    balanceAfter: 295.00,
+    description: 'Promo credit: New customer bonus',
+    status: 'completed',
+    channel: 'SDH Wallet'
+  },
+  {
+    id: 'tx-513',
+    reference: 'TX-SDH-84922',
+    date: '2026-09-13 14:50',
+    type: 'debit',
+    category: 'purchase',
+    amount: 30.00,
+    fee: 0.00,
+    balanceAfter: 265.00,
+    description: 'MTN 7GB Weekend Bundle for 0244192834',
+    status: 'completed',
+    channel: 'SDH Wallet'
+  },
+  {
+    id: 'tx-514',
+    reference: 'TX-SDH-84923',
+    date: '2026-09-13 15:20',
+    type: 'debit',
+    category: 'purchase',
+    amount: 12.00,
+    fee: 0.00,
+    balanceAfter: 253.00,
+    description: 'Telecel 1GB Daily for 0509837261',
+    status: 'completed',
+    channel: 'SDH Wallet'
+  },
+  {
+    id: 'tx-515',
+    reference: 'TX-SDH-84924',
+    date: '2026-09-13 15:55',
+    type: 'credit',
+    category: 'wallet_funding',
+    amount: 75.00,
+    fee: 0.75,
+    balanceAfter: 328.00,
+    description: 'AT Money Wallet Top-up (0277382910)',
+    status: 'completed',
+    channel: 'AT Money'
+  },
+  {
+    id: 'tx-516',
+    reference: 'TX-SDH-84925',
+    date: '2026-09-13 16:10',
+    type: 'debit',
+    category: 'purchase',
+    amount: 24.00,
+    fee: 0.00,
+    balanceAfter: 304.00,
+    description: 'WASSCE Result Checker purchase (ord-1010)',
+    status: 'completed',
+    channel: 'SDH Wallet'
+  },
+  {
+    id: 'tx-517',
+    reference: 'TX-SDH-84926',
+    date: '2026-09-13 16:40',
+    type: 'debit',
+    category: 'purchase',
+    amount: 28.00,
+    fee: 0.00,
+    balanceAfter: 276.00,
+    description: 'MTN 8GB Data Bundle for 0244192834',
+    status: 'completed',
+    channel: 'SDH Wallet'
+  },
+  {
+    id: 'tx-518',
+    reference: 'TX-SDH-84927',
+    date: '2026-09-13 17:00',
+    type: 'debit',
+    category: 'purchase',
+    amount: 50.00,
+    fee: 0.00,
+    balanceAfter: 226.00,
+    description: 'AFA Registration Fee – Gifty Mensah',
+    status: 'completed',
+    channel: 'SDH Wallet'
+  },
+  {
+    id: 'tx-519',
+    reference: 'TX-SDH-84928',
+    date: '2026-09-13 17:20',
+    type: 'credit',
+    category: 'refund',
+    amount: 35.00,
+    fee: 0.00,
+    balanceAfter: 261.00,
+    description: 'Refund: Telecel 10GB failed delivery (ord-1008)',
+    status: 'completed',
+    channel: 'SDH Wallet'
+  },
+  {
+    id: 'tx-520',
+    reference: 'TX-SDH-84929',
+    date: '2026-09-13 17:50',
+    type: 'debit',
+    category: 'purchase',
+    amount: 40.00,
+    fee: 0.00,
+    balanceAfter: 221.00,
+    description: 'MTN 12GB Monthly Bundle for 0244192834',
     status: 'completed',
     channel: 'SDH Wallet'
   }
@@ -996,29 +1204,44 @@ export function detectGhanaNetwork(phone: string): TelecomNetwork {
 // Local Storage Helper with Fallback
 export function loadFromStorage<T>(key: string, fallback: T): T {
   try {
-    const item = localStorage.getItem(`sdh_${key}`);
+    const rawKey = key.startsWith("sdh_") ? key.slice(4) : key;
+    const storageKey = `sdh_${rawKey}`;
+    const item = localStorage.getItem(storageKey);
     if (!item) return fallback;
     const parsed = JSON.parse(item);
-    if (key === "orders" && Array.isArray(parsed)) {
-      const checkerCount = parsed.filter((o: any) => o?.serviceType === "checker").length;
-      if (checkerCount < 5 && Array.isArray(fallback)) {
-        const existingIds = new Set(parsed.map((o: any) => o.id));
-        const missingCheckers = (fallback as any[]).filter(
-          (o: any) => o.serviceType === "checker" && !existingIds.has(o.id)
-        );
-        const merged = [...parsed, ...missingCheckers];
-        saveToStorage(key, merged);
-        return merged as T;
-      }
+
+    if (rawKey.includes("orders") && Array.isArray(parsed)) {
+      const fallbackMap = new Map((fallback as any[]).map((o: any) => [o.id, o]));
+      const updatedParsed = parsed.map((o: any) => {
+        const fb = fallbackMap.get(o.id);
+        if (fb && fb.serviceType === "checker") {
+          return {
+            ...o,
+            status: fb.status,
+            date: fb.date,
+            recipientPhone: fb.recipientPhone ?? o.recipientPhone,
+          };
+        }
+        return o;
+      });
+
+      const existingIds = new Set(updatedParsed.map((o: any) => o.id));
+      const missingCheckers = (fallback as any[]).filter(
+        (o: any) => o.serviceType === "checker" && !existingIds.has(o.id)
+      );
+      const merged = [...updatedParsed, ...missingCheckers];
+      saveToStorage(rawKey, merged);
+      return merged as T;
     }
-    if (key === "afa_apps" && Array.isArray(parsed)) {
+
+    if (rawKey.includes("afa_apps") && Array.isArray(parsed)) {
       if (parsed.length < 5 && Array.isArray(fallback)) {
         const existingIds = new Set(parsed.map((a: any) => a.id));
         const missingApps = (fallback as any[]).filter(
           (a: any) => !existingIds.has(a.id)
         );
         const merged = [...parsed, ...missingApps];
-        saveToStorage(key, merged);
+        saveToStorage(rawKey, merged);
         return merged as T;
       }
     }
@@ -1030,7 +1253,9 @@ export function loadFromStorage<T>(key: string, fallback: T): T {
 
 export function saveToStorage<T>(key: string, value: T): void {
   try {
-    localStorage.setItem(`sdh_${key}`, JSON.stringify(value));
+    const rawKey = key.startsWith("sdh_") ? key.slice(4) : key;
+    const storageKey = `sdh_${rawKey}`;
+    localStorage.setItem(storageKey, JSON.stringify(value));
   } catch (e) {
     console.error('Storage error', e);
   }

@@ -16,7 +16,13 @@ import { SignalRail } from "../common/SignalRail";
 import { Button, buttonVariants } from "../ui/button";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
-import { Badge } from "../ui/badge";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
 import {
   Card,
   CardHeader,
@@ -61,7 +67,9 @@ interface ResultsCheckerFlowProps {
 // Date-time formatter for the "When" column (e.g. "2026-09-12 19:44")
 const formatDateTime = (dateStr: string): string => {
   if (!dateStr) return "";
-  const d = new Date(dateStr.includes("T") ? dateStr : dateStr.replace(" ", "T"));
+  const d = new Date(
+    dateStr.includes("T") ? dateStr : dateStr.replace(" ", "T"),
+  );
   if (isNaN(d.getTime())) return dateStr;
   const year = d.getFullYear();
   const month = String(d.getMonth() + 1).padStart(2, "0");
@@ -78,6 +86,23 @@ export const ResultsCheckerFlow: React.FC<ResultsCheckerFlowProps> = ({
   onOrderCreated,
   onOpenReceipt,
 }) => {
+  const checkerStatusConfig = {
+    delivered: {
+      label: "Delivered",
+      dot: "bg-emerald-500",
+      className: "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400",
+    },
+    processing: {
+      label: "Processing",
+      dot: "bg-amber-500",
+      className: "bg-amber-500/15 text-amber-700 dark:text-amber-400",
+    },
+    failed: {
+      label: "Failed",
+      dot: "bg-red-500",
+      className: "bg-red-500/15 text-red-600 dark:text-red-400",
+    },
+  } as const;
   const CHECKERS_PER_PAGE = 5;
 
   const [selectedCheckerId, setSelectedCheckerId] = useState<string>(
@@ -88,6 +113,8 @@ export const ResultsCheckerFlow: React.FC<ResultsCheckerFlowProps> = ({
   const [purchasedOrder, setPurchasedOrder] = useState<Order | null>(null);
   const [revealed, setRevealed] = useState<boolean>(false);
   const [copied, setCopied] = useState<boolean>(false);
+
+  const [checkerStatus, setCheckerStatus] = useState("all");
 
   // Checker Orders Table State
   const [checkerSearch, setCheckerSearch] = useState("");
@@ -110,20 +137,25 @@ export const ResultsCheckerFlow: React.FC<ResultsCheckerFlowProps> = ({
   // Reset pagination when search changes
   useEffect(() => {
     setCheckerPage(1);
-  }, [checkerSearch]);
+  }, [checkerSearch, checkerStatus]);
 
   // All checker orders (search-filtered, newest first)
   const allCheckerOrders = orders.filter((o) => o.serviceType === "checker");
   const checkerOrders = allCheckerOrders
     .filter((o) => {
       const q = checkerSearch.toLowerCase().trim();
-      return (
+
+      const matchesSearch =
         !q ||
         o.reference.toLowerCase().includes(q) ||
         o.productName.toLowerCase().includes(q) ||
         o.recipientPhone.includes(q) ||
-        (o.voucherSerial || "").toLowerCase().includes(q)
-      );
+        (o.voucherSerial || "").toLowerCase().includes(q);
+
+      const matchesStatus =
+        checkerStatus === "all" || o.status === checkerStatus;
+
+      return matchesSearch && matchesStatus;
     })
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
@@ -587,26 +619,45 @@ export const ResultsCheckerFlow: React.FC<ResultsCheckerFlowProps> = ({
       {/* ============ MY CHECKER ORDERS TABLE ============ */}
       <Card className="border-border shadow-xs">
         <CardHeader className="pb-3 border-b border-border">
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
             <div>
               <CardTitle className="text-base font-extrabold text-foreground flex items-center gap-2">
                 <span>My Checker Orders</span>
               </CardTitle>
+
               <CardDescription className="text-xs">
                 Authentic WAEC / BECE voucher purchases with serial & PIN
                 retrieval.
               </CardDescription>
             </div>
 
-            <div className="relative w-1/2">
-              <Search className="absolute left-2.5 top-3 w-3.5 h-3.5 text-muted-foreground" />
-              <Input
-                type="text"
-                placeholder="Search ref, product, phone..."
-                value={checkerSearch}
-                onChange={(e) => setCheckerSearch(e.target.value)}
-                className="pl-8 text-xs"
-              />
+            <div className="flex flex-col sm:flex-row gap-2 w-full lg:w-auto">
+              {/* Search */}
+              <div className="relative w-full sm:w-72">
+                <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 size-3.5 text-muted-foreground" />
+
+                <Input
+                  type="text"
+                  placeholder="Search ref, product, phone..."
+                  value={checkerSearch}
+                  onChange={(e) => setCheckerSearch(e.target.value)}
+                  className="h-9 pl-8 text-xs"
+                />
+              </div>
+
+              {/* Status filter */}
+              <Select value={checkerStatus} onValueChange={setCheckerStatus}>
+                <SelectTrigger className="!h-9 w-full sm:w-36 text-xs">
+                  <SelectValue placeholder="Filter status" />
+                </SelectTrigger>
+
+                <SelectContent>
+                  <SelectItem value="all">All statuses</SelectItem>
+                  <SelectItem value="delivered">Delivered</SelectItem>
+                  <SelectItem value="processing">Processing</SelectItem>
+                  <SelectItem value="failed">Failed</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           </div>
         </CardHeader>
@@ -687,22 +738,22 @@ export const ResultsCheckerFlow: React.FC<ResultsCheckerFlowProps> = ({
                       GH₵ {order.amount.toFixed(2)}
                     </TableCell>
                     <TableCell className="text-center">
-                      <span
-                        className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold ${
-                          order.status === "delivered"
-                            ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400"
-                            : "bg-amber-500/15 text-amber-700 dark:text-amber-400"
-                        }`}
-                      >
-                        <span
-                          className={`w-1.5 h-1.5 rounded-full ${
-                            order.status === "delivered"
-                              ? "bg-emerald-500"
-                              : "bg-amber-500"
-                          }`}
-                        />
-                        {order.status}
-                      </span>
+                      {(() => {
+                        const cfg =
+                          checkerStatusConfig[
+                            order.status as keyof typeof checkerStatusConfig
+                          ] ?? checkerStatusConfig.delivered;
+                        return (
+                          <span
+                            className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold ${cfg.className}`}
+                          >
+                            <span
+                              className={`w-1.5 h-1.5 rounded-full ${cfg.dot}`}
+                            />
+                            {cfg.label}
+                          </span>
+                        );
+                      })()}
                     </TableCell>
                     <TableCell className="text-right text-xs text-muted-foreground tabular-nums">
                       {formatDateTime(order.date)}
@@ -780,9 +831,7 @@ export const ResultsCheckerFlow: React.FC<ResultsCheckerFlowProps> = ({
               </div>
 
               <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 flex justify-between items-center gap-2">
-                <span className="text-primary font-semibold">
-                  Voucher PIN:
-                </span>
+                <span className="text-primary font-semibold">Voucher PIN:</span>
                 <div className="flex items-center gap-1.5">
                   <span className="font-mono font-extrabold text-primary tracking-wider tabular-nums">
                     {dialogRevealed
