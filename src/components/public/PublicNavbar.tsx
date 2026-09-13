@@ -1,13 +1,9 @@
 import React, { useState } from "react";
 import {
-  Sparkles,
   LogIn,
   KeyRound,
   Palette,
-  Check,
-  Shield,
   ArrowRight,
-  User,
   LogOut,
   Store,
   LayoutDashboard,
@@ -19,7 +15,6 @@ import {
   PhoneCall,
   Menu,
   X,
-  ExternalLink,
 } from "lucide-react";
 
 import { AppTheme, UserAccount, UserRole } from "../../types";
@@ -30,6 +25,7 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuGroup,
+  DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
@@ -120,17 +116,10 @@ export const PublicNavbar: React.FC<PublicNavbarProps> = ({
                 <span className="text-base font-black tracking-tight text-foreground transition-colors group-hover:text-primary">
                   Smart Data Hub
                 </span>
-
-                <Badge
-                  variant="outline"
-                  className="hidden px-1.5 py-0 font-mono text-[10px] sm:inline-flex"
-                >
-                  Ghana EVD
-                </Badge>
               </div>
 
               <p className="hidden text-[10px] text-muted-foreground md:block">
-                MTN • Telecel • AT Direct Carrier Bridge
+                Carrier Bridge
               </p>
             </div>
           </Button>
@@ -231,30 +220,100 @@ export const PublicNavbar: React.FC<PublicNavbarProps> = ({
             </DropdownMenuContent>
           </DropdownMenu>
 
-          {/* Authenticated User */}
+          {/* Authenticated User Profile Dropdown */}
           {user ? (
-            <div className="flex items-center gap-1">
-              <Button
-                variant="default"
-                size="sm"
-                onClick={() => onNavigateToDashboard(user.role)}
-                className="rounded-full text-xs font-bold shadow-2xs"
+            <DropdownMenu>
+              <DropdownMenuTrigger
+                render={
+                  <Button
+                    variant="ghost"
+                    className="relative flex size-9 items-center justify-center rounded-full border border-primary/30 bg-primary/10 p-0 text-primary font-black text-xs shadow-2xs transition-all hover:border-primary/60 hover:bg-primary/20 hover:scale-105 active:scale-95"
+                    title={user.name || user.phone}
+                    aria-label="User profile menu"
+                  />
+                }
               >
-                <LayoutDashboard className="size-3.5" />
-                <span>Go to {dashboardLabel}</span>
-              </Button>
+                <span className="font-black text-xs tracking-tight uppercase">
+                  {user.name
+                    ? user.name
+                        .split(" ")
+                        .map((n) => n[0])
+                        .slice(0, 2)
+                        .join("")
+                    : "U"}
+                </span>
+                <span className="absolute -bottom-0.5 -right-0.5 flex size-2.5">
+                  <span className="size-2.5 rounded-full bg-emerald-500 ring-2 ring-card" />
+                </span>
+              </DropdownMenuTrigger>
 
-              <Button
-                variant="ghost"
-                size="icon-sm"
-                onClick={onSignOut}
-                className="hidden rounded-full text-muted-foreground hover:text-foreground sm:flex"
-                title="Sign Out"
-                aria-label="Sign Out"
+              <DropdownMenuContent
+                align="end"
+                className="w-56 rounded-xl border-border p-2 shadow-xl"
               >
-                <LogOut className="size-3.5" />
-              </Button>
-            </div>
+                {/* User Info Header */}
+                <div className="flex items-center gap-2.5 p-2">
+                  <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-primary/15 font-black text-sm uppercase text-primary">
+                    {user.name
+                      ? user.name
+                          .split(" ")
+                          .map((n) => n[0])
+                          .slice(0, 2)
+                          .join("")
+                      : "U"}
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-xs font-bold leading-tight text-foreground">
+                      {user.name || "User"}
+                    </p>
+                    <p className="mt-0.5 truncate text-[10px] text-muted-foreground">
+                      {user.email}
+                    </p>
+                    <Badge
+                      variant="outline"
+                      className="mt-1 border-primary/30 text-[9px] font-bold uppercase tracking-wider text-primary"
+                    >
+                      {user.role} account
+                    </Badge>
+                  </div>
+                </div>
+
+                <DropdownMenuSeparator className="my-1" />
+
+                {/* Actions */}
+                <DropdownMenuGroup>
+                  <DropdownMenuItem
+                    onClick={() => onNavigateToDashboard(user.role)}
+                    className="cursor-pointer gap-2 rounded-xl py-2 text-xs font-semibold"
+                  >
+                    <LayoutDashboard className="size-4 text-primary" />
+                    <span>Go to {dashboardLabel}</span>
+                  </DropdownMenuItem>
+
+                  {onOpenSecurityPins && (
+                    <DropdownMenuItem
+                      onClick={onOpenSecurityPins}
+                      className="cursor-pointer gap-2 rounded-xl py-2 text-xs font-semibold"
+                    >
+                      <KeyRound className="size-4 text-amber-500" />
+                      <span>Security & PINs</span>
+                    </DropdownMenuItem>
+                  )}
+                </DropdownMenuGroup>
+
+                <DropdownMenuSeparator className="my-1" />
+
+                {/* Sign Out */}
+                <DropdownMenuItem
+                  onClick={onSignOut}
+                  variant="destructive"
+                  className="cursor-pointer gap-2 rounded-xl py-2 text-xs font-semibold text-destructive focus:bg-destructive/10"
+                >
+                  <LogOut className="size-4" />
+                  <span>Sign Out</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           ) : (
             <div className="flex items-center gap-1">
               <Button

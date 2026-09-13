@@ -10,7 +10,6 @@ import {
   TelecomGateway,
   AgentStoreConfig,
   Complaint,
-  TelecomNetwork,
 } from "./types";
 import {
   initialBundles,
@@ -31,7 +30,6 @@ import { Sidebar } from "./components/common/Sidebar";
 import { CommandMenu } from "./components/common/CommandMenu";
 import { FundWalletModal } from "./components/common/FundWalletModal";
 import { ReceiptModal } from "./components/common/ReceiptModal";
-import { SignalRail } from "./components/common/SignalRail";
 import { SecurityPinsModal } from "./components/common/SecurityPinsModal";
 
 // Dedicated Auth & Security Screens
