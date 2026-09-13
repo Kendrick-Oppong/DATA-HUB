@@ -6,6 +6,9 @@ import {
   PhoneCall,
   GraduationCap,
   ShieldCheck,
+  Sparkles,
+  Clock,
+  Check,
 } from "lucide-react";
 import { TelecomNetwork, DataBundle } from "../../../types";
 import { SignalRail } from "../../common/SignalRail";
@@ -204,60 +207,115 @@ export const PublicServicesSection: React.FC<PublicServicesSectionProps> = ({
           </div>
         </div>
 
-        <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
-          {filteredBundles.map((b, index) => (
-            <div
-              key={b.id}
-              className={`group relative overflow-hidden rounded-2xl border bg-card transition-all duration-300 hover:-translate-y-1.5 hover:shadow-2xl ${
-                index === 0
-                  ? `${accent.border} shadow-lg shadow-primary/10`
-                  : "border-border hover:border-primary/30"
-              }`}
-            >
-              <div className={`h-1 w-full ${accent.solid}`} />
-              <div className="p-6">
-                <div className="flex items-start justify-between gap-4">
+        {/* Redesigned Bundle Cards Grid */}
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
+          {filteredBundles.map((b, index) => {
+            const isPopular = index === 0;
+            return (
+              <div
+                key={b.id}
+                className="group relative flex flex-col justify-between overflow-hidden rounded-3xl border bg-card transition-all duration-300 hover:-translate-y-1.5 hover:shadow-2xl border-border/80 hover:border-primary/40"
+              >
+                {/* Top accent bar */}
+                <div className={`h-1.5 w-full ${accent.solid}`} />
+
+                <div className="flex flex-1 flex-col justify-between p-6 space-y-6">
+                  {/* Card Header: Network Pill & Popular/Validity Badge */}
                   <div>
-                    <p className="text-[10px] font-bold uppercase text-muted-foreground tracking-widest">
-                      {b.network} · data bundle
-                    </p>
-                    <h3 className="mt-2 text-4xl font-black tracking-tight text-foreground">
-                      {b.sizeLabel}
-                    </h3>
-                    <p className="mt-1 text-xs text-muted-foreground">
-                      {b.validity}
-                    </p>
+                    <div className="flex items-center justify-between gap-2 mb-4">
+                      <span
+                        className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[11px] font-bold ${accent.bg} ${accent.text}`}
+                      >
+                        <span
+                          className={`size-2 rounded-full ${accent.solid}`}
+                        />
+                        {b.network === "AirtelTigo"
+                          ? "AT Ghana"
+                          : `${b.network} Direct`}
+                      </span>
+
+                      {isPopular ? (
+                        <span className="inline-flex items-center gap-1 rounded-full bg-amber-500/15 px-3 py-1 text-[10px] font-extrabold uppercase tracking-wider text-amber-600 dark:text-amber-400">
+                          <Sparkles className="size-3 text-amber-500" />
+                          Popular
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-muted-foreground">
+                          <Clock className="size-3 text-muted-foreground/70" />
+                          {b.validity}
+                        </span>
+                      )}
+                    </div>
+
+                    {/* Data Size Header */}
+                    <div className="space-y-1">
+                      <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                        Instant High-Speed Bundle
+                      </p>
+                      <h3 className="text-4xl sm:text-5xl font-black tracking-tight text-foreground group-hover:text-primary transition-colors">
+                        {b.sizeLabel}
+                      </h3>
+                      {isPopular && (
+                        <p className="text-xs flex items-center gap-1 font-medium text-emerald-600">
+                          <Check className="size-3 stroke-[3px]" /> {b.validity}{" "}
+                          • 45s dispatch guarantee
+                        </p>
+                      )}
+                    </div>
                   </div>
-                </div>
-                <div className="mt-5 flex items-center gap-1.5 rounded-xl bg-muted/40 px-3 py-2.5">
-                  <div
-                    className={`flex size-7 items-center justify-center rounded-lg text-[9px] font-black text-white ${accent.solid}`}
-                  >
-                    {accent.short}
+
+                  {/* Route Pathway Visualizer */}
+                  <div className="rounded-2xl border border-border/60 bg-muted/30 p-3.5 space-y-2">
+                    <div className="flex items-center justify-between text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                      <span>Dispatch Rail</span>
+                      <span className="text-emerald-600 dark:text-emerald-400 font-extrabold flex items-center gap-1">
+                        Live
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div
+                        className={`flex size-7 items-center justify-center rounded-lg text-[9px] font-black text-white ${accent.solid}`}
+                      >
+                        {accent.short}
+                      </div>
+                      <div className="h-px flex-1 bg-primary/30 relative">
+                        <span className="absolute inset-0 bg-primary animate-pulse" />
+                      </div>
+                      <div className="flex size-7 items-center justify-center rounded-lg bg-primary text-[8px] font-black text-primary-foreground shadow-sm">
+                        SDH
+                      </div>
+                      <div className="h-px flex-1 bg-primary/30 relative">
+                        <span className="absolute inset-0 bg-primary animate-pulse" />
+                      </div>
+                      <div className="flex size-7 items-center justify-center rounded-lg bg-emerald-500/15 text-emerald-700 dark:text-emerald-400">
+                        <SignalRail status="online" size="xs" bars={4} />
+                      </div>
+                    </div>
                   </div>
-                  <div className="h-px flex-1 bg-border" />
-                  <div className="flex size-7 items-center justify-center rounded-lg bg-primary text-[8px] font-black text-primary-foreground">
-                    SDH
+
+                  {/* Bottom Bar: Price & Action */}
+                  <div className="pt-2 flex items-center justify-between gap-4 border-t border-border/60">
+                    <div>
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block">
+                        Retail Price
+                      </span>
+                      <p className="text-2xl sm:text-3xl font-black tabular-nums text-foreground">
+                        GH₵ {b.retailPrice.toFixed(2)}
+                      </p>
+                    </div>
+                    <Button
+                      size="lg"
+                      className="font-bold rounded-2xl px-5 shadow-sm group-hover:shadow-md group-hover:bg-primary transition-all"
+                      onClick={() => handleStartPurchase(b.id, b.network)}
+                    >
+                      Buy package
+                      <ArrowRight className="size-4 group-hover:translate-x-1 transition-transform" />
+                    </Button>
                   </div>
-                  <div className="h-px flex-1 bg-border" />
-                  <div className="flex size-7 items-center justify-center rounded-lg bg-emerald-500/15 text-emerald-700 dark:text-emerald-400">
-                    <SignalRail status="online" size="xs" bars={4} />
-                  </div>
-                </div>
-                <div className="mt-5 flex items-center justify-between gap-4">
-                  <p className="text-2xl font-black tabular-nums text-foreground">
-                    GH₵ {b.retailPrice.toFixed(2)}
-                  </p>
-                  <Button
-                    className="font-bold rounded-full"
-                    onClick={() => handleStartPurchase(b.id, b.network)}
-                  >
-                    Buy now <ArrowRight className="size-3.5" />
-                  </Button>
                 </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
         {/* Other services */}

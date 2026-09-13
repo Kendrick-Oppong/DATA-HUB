@@ -286,9 +286,7 @@ export const FOOTER_NOC = {
 };
 
 /** Bottom bar content */
-export const FOOTER_COPYRIGHT =
-  "© 2026 Smart Data Hub Ghana. All rights reserved.";
-export const FOOTER_COMPLIANCE = "BoG Regulated Partner Settlement Rails";
+export const FOOTER_COPYRIGHT = `© ${new Date().getFullYear()} Smart Data Hub Ghana. All rights reserved.`;
 export const FOOTER_PAYMENT_BADGES = [
   { label: "MTN MoMo", dotColor: "text-primary" },
   { label: "Telecel Cash", dotColor: "text-red-500" },

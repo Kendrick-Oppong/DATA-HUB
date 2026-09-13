@@ -16,7 +16,6 @@ import {
   FOOTER_COLUMNS,
   FOOTER_NOC,
   FOOTER_COPYRIGHT,
-  FOOTER_COMPLIANCE,
   FOOTER_PAYMENT_BADGES,
   type FooterAction,
 } from "../constants";
@@ -151,13 +150,8 @@ export const PublicFooter: React.FC<PublicFooterProps> = ({
 
         {/* Bottom Bar: Copyright, Compliance, MoMo Badges */}
         <div className="pt-6 border-t border-border/70 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-muted-foreground">
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
-            <span>{FOOTER_COPYRIGHT}</span>
-            <span className="hidden sm:inline text-border">•</span>
-            <span className="flex items-center gap-1 text-[11px]">
-              <Lock className="size-3 text-emerald-500" />
-              {FOOTER_COMPLIANCE}
-            </span>
+          <div>
+            <p>{FOOTER_COPYRIGHT}</p>
           </div>
 
           <div className="flex items-center gap-2 flex-wrap">
