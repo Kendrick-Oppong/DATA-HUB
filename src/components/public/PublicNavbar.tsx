@@ -21,10 +21,21 @@ import {
   X,
   ExternalLink,
 } from "lucide-react";
+
 import { AppTheme, UserAccount, UserRole } from "../../types";
 import { Button } from "../ui/button";
-import { themeOptions } from "../../lib/themes";
 import { Badge } from "../ui/badge";
+import { themeOptions } from "../../lib/themes";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuLabel,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "../ui/dropdown-menu";
 
 interface PublicNavbarProps {
   user: UserAccount | null;
@@ -56,7 +67,6 @@ export const PublicNavbar: React.FC<PublicNavbarProps> = ({
   onSetTheme,
   onOpenSecurityPins,
 }) => {
-  const [showThemeMenu, setShowThemeMenu] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const publicNavItems: {
@@ -67,177 +77,193 @@ export const PublicNavbar: React.FC<PublicNavbarProps> = ({
   }[] = [
     { id: "home", label: "Home", icon: Home },
     { id: "services", label: "Services", icon: Layers3 },
-    { id: "agent", label: "Agent Program", badge: "Earn MoMo", icon: Store },
+    {
+      id: "agent",
+      label: "Agent Program",
+      badge: "Earn MoMo",
+      icon: Store,
+    },
     { id: "track", label: "Track Order", icon: Search },
     { id: "faq", label: "FAQ", icon: HelpCircle },
     { id: "about", label: "About NOC", icon: Info },
     { id: "contact", label: "Contact", icon: PhoneCall },
-  ] as const;
+  ];
 
   const handleNavClick = (id: PublicNavbarProps["activeTab"]) => {
     onNavigateToPublic(id);
     setMobileMenuOpen(false);
   };
 
+  const dashboardLabel =
+    user?.role === "admin"
+      ? "Admin NOC"
+      : user?.role === "agent"
+        ? "Agent Hub"
+        : "Dashboard";
+
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/80 bg-card/90 backdrop-blur-md transition-colors">
-      <div className="mx-auto w-full max-w-[95%] px-4 sm:px-6 h-16 flex items-center justify-between gap-3 overflow-visible">
-        {/* Brand Logo */}
+      <div className="mx-auto flex h-16 w-full max-w-[95%] items-center justify-between gap-3 overflow-visible px-4 sm:px-6">
+        {/* Brand */}
         <div className="flex items-center gap-3">
-          <button
+          <Button
+            variant="ghost"
             onClick={() => handleNavClick("home")}
-            className="flex items-center gap-2.5 text-left cursor-pointer group"
+            className="group h-auto cursor-pointer gap-2.5 rounded-lg p-0 text-left hover:bg-transparent"
           >
-            <div className="w-9 h-9 rounded-xl bg-primary flex items-center justify-center text-primary-foreground font-black text-sm shadow-xs group-hover:scale-105 transition-transform">
+            <div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-primary text-sm font-black text-primary-foreground shadow-xs transition-transform group-hover:scale-105">
               SDH
             </div>
+
             <div>
               <div className="flex items-center gap-2">
-                <span className="font-black text-base tracking-tight text-foreground group-hover:text-primary transition-colors">
+                <span className="text-base font-black tracking-tight text-foreground transition-colors group-hover:text-primary">
                   Smart Data Hub
                 </span>
+
                 <Badge
                   variant="outline"
-                  className="text-[10px] px-1.5 py-0 font-mono hidden sm:inline-flex"
+                  className="hidden px-1.5 py-0 font-mono text-[10px] sm:inline-flex"
                 >
                   Ghana EVD
                 </Badge>
               </div>
-              <p className="text-[10px] text-muted-foreground hidden md:block">
+
+              <p className="hidden text-[10px] text-muted-foreground md:block">
                 MTN • Telecel • AT Direct Carrier Bridge
               </p>
             </div>
-          </button>
+          </Button>
         </div>
 
-        {/* Desktop Nav Items */}
+        {/* Desktop Navigation */}
         <nav
           aria-label="Public site navigation"
           className="hidden xl:flex items-center"
         >
           <div className="flex items-center gap-1 rounded-xl border border-border/70 bg-muted/40 p-1">
-            {publicNavItems.map((item) => (
-              <button
-                key={item.id}
-                onClick={() => handleNavClick(item.id)}
-                className={`px-2.5 py-1.5 rounded-lg text-[11px] font-semibold whitespace-nowrap transition-all cursor-pointer ${
-                  activeTab === item.id
-                    ? "bg-primary text-primary-foreground font-bold shadow-sm"
-                    : "text-muted-foreground hover:text-foreground hover:bg-muted"
-                }`}
-              >
-                <span className="inline-flex items-center gap-1">
-                  <item.icon className="size-3.5" />
-                  {item.label}
+            {publicNavItems.map((item) => {
+              const Icon = item.icon;
+              const isActive = activeTab === item.id;
+
+              return (
+                <Button
+                  key={item.id}
+                  variant={isActive ? "default" : "ghost"}
+                  size="sm"
+                  onClick={() => handleNavClick(item.id)}
+                  className={`h-auto rounded-full px-2.5 py-1.5 text-[11px] font-semibold ${
+                    isActive
+                      ? "font-bold shadow-sm"
+                      : "text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  <Icon className="size-3.5" />
+
+                  <span>{item.label}</span>
+
                   {item.badge && (
-                    <span className="hidden 2xl:inline text-[9px] px-1 py-0.5 rounded-full bg-amber-500/20 text-amber-900 dark:text-amber-300 font-bold">
+                    <span className="hidden rounded-full bg-amber-500/20 px-1 py-0.5 text-[9px] font-bold text-amber-900 2xl:inline dark:text-amber-300">
                       {item.badge}
                     </span>
                   )}
-                </span>
-              </button>
-            ))}
+                </Button>
+              );
+            })}
           </div>
         </nav>
 
-        {/* Right CTA / Auth Controls */}
-        <div className="flex items-center gap-1 rounded-xl border border-border/70 bg-muted/40 p-1">
-          {/* Credentials Cheat Sheet */}
+        {/* Right Controls */}
+        <div className="flex items-center gap-1 rounded-full border border-border/70 bg-muted/40 p-1">
+          {/* Security PINs */}
           {onOpenSecurityPins && (
             <Button
-              variant="outline"
+              variant="ghost"
               size="sm"
               onClick={onOpenSecurityPins}
-              className="text-xs font-semibold gap-1.5 hidden sm:flex border-transparent bg-transparent hover:bg-muted"
+              className="hidden rounded-full border-transparent bg-transparent text-xs font-semibold hover:bg-muted sm:flex"
               title="Click to view hardcoded demo PINs"
             >
-              <KeyRound className="w-3.5 h-3.5 text-primary" />
+              <KeyRound className="size-3.5 text-primary" />
               <span>PINs (0000)</span>
             </Button>
           )}
 
-          {/* Theme Dropdown */}
-          <div className="relative">
-            <Button
-              variant="outline"
-              size="icon-sm"
-              onClick={() => setShowThemeMenu(!showThemeMenu)}
-              className="text-xs text-muted-foreground hover:text-foreground hidden sm:flex border-transparent bg-transparent hover:bg-muted"
-              title="Change color theme"
+          {/* Theme */}
+          <DropdownMenu>
+            <DropdownMenuTrigger
+              render={
+                <Button
+                  variant="ghost"
+                  size="icon-sm"
+                  className="hidden rounded-full border-transparent bg-transparent text-muted-foreground hover:bg-muted hover:text-foreground sm:flex"
+                  title="Change color theme"
+                  aria-label="Change color theme"
+                />
+              }
             >
-              <Palette className="w-3.5 h-3.5" />
-            </Button>
+              <Palette className="size-3.5" />
+            </DropdownMenuTrigger>
 
-            {showThemeMenu && (
-              <div className="absolute right-0 mt-2 w-48 rounded-xl bg-card border border-border shadow-lg p-1.5 z-50 animate-in fade-in-50 zoom-in-95">
-                <div className="px-2.5 py-1.5 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+            <DropdownMenuContent align="end" className="w-48">
+              <DropdownMenuGroup>
+                <DropdownMenuLabel className="px-2.5 py-1.5 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
                   Select Theme
-                </div>
-                {themeOptions.map((t) => (
-                  <button
-                    key={t.id}
-                    onClick={() => {
-                      onSetTheme(t.id);
-                      setShowThemeMenu(false);
-                    }}
-                    className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg text-xs font-semibold transition-colors cursor-pointer ${
-                      theme === t.id
-                        ? "bg-primary/10 text-primary font-bold"
-                        : "hover:bg-muted text-foreground"
-                    }`}
-                  >
-                    <div className="flex items-center gap-2">
-                      <span className={`w-2.5 h-2.5 rounded-full ${t.dot}`} />
-                      <span>{t.name}</span>
-                    </div>
-                    {theme === t.id && (
-                      <Check className="w-3 h-3 text-primary" />
-                    )}
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
+                </DropdownMenuLabel>
 
-          {/* User Auth Buttons */}
+                <DropdownMenuRadioGroup
+                  value={theme}
+                  onValueChange={(value) => onSetTheme(value as AppTheme)}
+                >
+                  {themeOptions.map((t) => (
+                    <DropdownMenuRadioItem
+                      key={t.id}
+                      value={t.id}
+                      className="rounded-full text-xs font-semibold"
+                    >
+                      <span className={`size-2.5 rounded-full ${t.dot}`} />
+
+                      <span>{t.name}</span>
+                    </DropdownMenuRadioItem>
+                  ))}
+                </DropdownMenuRadioGroup>
+              </DropdownMenuGroup>
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+          {/* Authenticated User */}
           {user ? (
             <div className="flex items-center gap-1">
               <Button
                 variant="default"
                 size="sm"
                 onClick={() => onNavigateToDashboard(user.role)}
-                className="font-bold text-xs gap-1.5 shadow-2xs"
+                className="rounded-full text-xs font-bold shadow-2xs"
               >
-                <LayoutDashboard className="w-3.5 h-3.5" />
-                <span>
-                  Go to{" "}
-                  {user.role === "admin"
-                    ? "Admin NOC"
-                    : user.role === "agent"
-                      ? "Agent Hub"
-                      : "Dashboard"}
-                </span>
+                <LayoutDashboard className="size-3.5" />
+                <span>Go to {dashboardLabel}</span>
               </Button>
 
               <Button
                 variant="ghost"
-                size="sm"
+                size="icon-sm"
                 onClick={onSignOut}
-                className="text-xs text-muted-foreground hover:text-foreground hidden sm:flex"
+                className="hidden rounded-full text-muted-foreground hover:text-foreground sm:flex"
                 title="Sign Out"
+                aria-label="Sign Out"
               >
-                <LogOut className="w-3.5 h-3.5" />
+                <LogOut className="size-3.5" />
               </Button>
             </div>
           ) : (
             <div className="flex items-center gap-1">
               <Button
-                variant="outline"
+                variant="ghost"
                 size="sm"
                 onClick={() => onNavigateToAuth("login")}
-                className="text-xs font-bold gap-1.5 border-transparent bg-transparent hover:bg-muted"
+                className="rounded-full border-transparent bg-transparent text-xs font-bold hover:bg-muted"
               >
-                <LogIn className="w-3.5 h-3.5" />
+                <LogIn className="size-3.5" />
                 <span>Sign In</span>
               </Button>
 
@@ -245,72 +271,90 @@ export const PublicNavbar: React.FC<PublicNavbarProps> = ({
                 variant="default"
                 size="sm"
                 onClick={() => onNavigateToAuth("register")}
-                className="text-xs font-bold gap-1.5 shadow-2xs"
+                className="rounded-full text-xs font-bold shadow-2xs"
               >
                 <span>Get Started</span>
-                <ArrowRight className="w-3.5 h-3.5" />
+                <ArrowRight className="size-3.5" />
               </Button>
             </div>
           )}
 
-          {/* Mobile Hamburger Toggle */}
-          <button
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="p-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted xl:hidden cursor-pointer"
+          {/* Mobile Toggle */}
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            onClick={() => setMobileMenuOpen((open) => !open)}
+            className="rounded-full text-muted-foreground hover:bg-muted hover:text-foreground xl:hidden"
             aria-label="Toggle mobile menu"
+            aria-expanded={mobileMenuOpen}
           >
             {mobileMenuOpen ? (
-              <X className="w-5 h-5" />
+              <X className="size-5" />
             ) : (
-              <Menu className="w-5 h-5" />
+              <Menu className="size-5" />
             )}
-          </button>
+          </Button>
         </div>
       </div>
 
-      {/* Mobile Drawer Menu */}
+      {/* Mobile Menu */}
       {mobileMenuOpen && (
-        <div className="xl:hidden border-t border-border bg-card/95 backdrop-blur-md px-4 py-4 space-y-3 shadow-xl animate-in slide-in-from-top-2">
+        <div className="animate-in slide-in-from-top-2 border-t border-border bg-card/95 px-4 py-4 shadow-xl backdrop-blur-md xl:hidden">
           <div className="grid grid-cols-2 gap-1.5">
-            {publicNavItems.map((item) => (
-              <button
-                key={item.id}
-                onClick={() => handleNavClick(item.id)}
-                className={`flex items-center gap-2 p-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-                  activeTab === item.id
-                    ? "bg-primary text-primary-foreground shadow-xs"
-                    : "text-muted-foreground hover:text-foreground hover:bg-muted"
-                }`}
-              >
-                <item.icon className="w-4 h-4" />
-                <span>{item.label}</span>
-              </button>
-            ))}
+            {publicNavItems.map((item) => {
+              const Icon = item.icon;
+              const isActive = activeTab === item.id;
+
+              return (
+                <Button
+                  key={item.id}
+                  variant={isActive ? "default" : "ghost"}
+                  size="sm"
+                  onClick={() => handleNavClick(item.id)}
+                  className={`h-auto justify-start rounded-xl p-2.5 text-xs font-bold ${
+                    isActive
+                      ? "shadow-xs"
+                      : "text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  <Icon className="size-4" />
+                  <span>{item.label}</span>
+
+                  {item.badge && (
+                    <span className="ml-auto rounded-full bg-amber-500/20 px-1.5 py-0.5 text-[9px] font-bold text-amber-900 dark:text-amber-300">
+                      {item.badge}
+                    </span>
+                  )}
+                </Button>
+              );
+            })}
           </div>
 
-          <div className="pt-3 border-t border-border flex flex-col gap-2">
-            <button
+          <div className="mt-3 flex flex-col gap-2 border-t border-border pt-3">
+            <Button
+              variant="outline"
               onClick={() => {
                 onNavigateToDashboard("storefront");
                 setMobileMenuOpen(false);
               }}
-              className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl border border-primary/40 bg-primary/10 text-primary font-bold text-xs"
+              className="w-full rounded-xl border-primary/40 bg-primary/10 text-xs font-bold text-primary hover:bg-primary/15 hover:text-primary"
             >
-              <Store className="w-4 h-4" />
+              <Store className="size-4" />
               <span>Preview Agent Storefront</span>
-            </button>
+            </Button>
 
             {onOpenSecurityPins && (
-              <button
+              <Button
+                variant="secondary"
                 onClick={() => {
                   onOpenSecurityPins();
                   setMobileMenuOpen(false);
                 }}
-                className="w-full flex items-center justify-center gap-2 py-2 rounded-xl bg-muted text-foreground font-semibold text-xs"
+                className="w-full rounded-xl text-xs font-semibold"
               >
-                <KeyRound className="w-4 h-4 text-primary" />
+                <KeyRound className="size-4 text-primary" />
                 <span>View Demo PINs (0000)</span>
-              </button>
+              </Button>
             )}
           </div>
         </div>

@@ -1,31 +1,45 @@
-import React, { useState, useRef, useEffect } from "react";
+
+import React from "react";
 import {
-  Wallet,
   Bell,
-  Search,
-  Moon,
-  Sun,
-  Smartphone,
+  Check,
   ChevronDown,
-  User,
-  LogOut,
-  Sparkles,
-  ExternalLink,
-  Store,
-  ShieldAlert,
-  Layers,
-  Menu,
-  X,
-  Palette,
   KeyRound,
   Lock,
-  Check,
-  ShieldCheck,
   LogIn,
+  LogOut,
+  Menu,
+  Palette,
+  Search,
+  Smartphone,
+  X,
 } from "lucide-react";
+
 import { UserRole, AppTheme, UserAccount } from "../../types";
 import { SignalRail } from "./SignalRail";
 import { themeOptions, getThemeOption } from "../../lib/themes";
+
+import { Badge } from "../ui/badge";
+import { Button } from "../ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "../ui/dropdown-menu";
+import { Kbd } from "../ui/kbd";
+import { Separator } from "../ui/separator";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "../ui/tooltip";
 
 interface NavbarProps {
   currentRole: UserRole;
@@ -61,7 +75,6 @@ export const Navbar: React.FC<NavbarProps> = ({
   onOpenNotifications,
   unreadCount = 0,
   theme,
-  onToggleTheme,
   onSetTheme,
   isMobileShell = false,
   onToggleMobileShell,
@@ -74,364 +87,453 @@ export const Navbar: React.FC<NavbarProps> = ({
   isAdminUnlocked = false,
   onLockAdmin,
 }) => {
-  const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
-  const [themeDropdownOpen, setThemeDropdownOpen] = useState(false);
-
   const currentThemeObj = getThemeOption(theme);
 
   const handleOpenCommand = () => {
-    if (onOpenCommand) onOpenCommand();
-    else if (onOpenCommandMenu) onOpenCommandMenu();
+    if (onOpenCommand) {
+      onOpenCommand();
+    } else {
+      onOpenCommandMenu?.();
+    }
   };
 
+  const handleLogout = () => {
+    onLogout?.();
+    onRoleChange("public");
+  };
+
+  const profileInitials =
+    currentRole === "admin"
+      ? "AD"
+      : currentRole === "agent"
+        ? "KO"
+        : "KM";
+
+  const profileName =
+    user?.name ||
+    (currentRole === "admin"
+      ? "NOC Super Admin"
+      : currentRole === "agent"
+        ? "Kofi Owusu (Agent)"
+        : "Kojo Mensah");
+
   return (
-    <header className="sticky top-0 z-40 w-full border-b border-border bg-card/90 backdrop-blur-md transition-colors">
-      <div className="flex h-16 items-center justify-between px-3 sm:px-6 gap-2 sm:gap-3">
-        {/* Left: Brand Logo & Wordmark */}
-        <div className="flex items-center gap-3">
-          {/* Mobile menu toggle button */}
-          {onToggleMobileMenu &&
-            currentRole !== "public" &&
-            currentRole !== "storefront" && (
-              <button
-                onClick={onToggleMobileMenu}
-                className="md:hidden p-2 rounded-xl text-muted-foreground hover:text-foreground hover:bg-muted"
-                aria-label="Toggle Navigation"
-              >
-                {isMobileMenuOpen ? (
-                  <X className="w-5 h-5" />
-                ) : (
-                  <Menu className="w-5 h-5" />
-                )}
-              </button>
-            )}
+    <TooltipProvider>
+      <header className="sticky top-0 z-40 w-full border-b bg-card/90 backdrop-blur-md">
+        <div className="flex h-16 items-center justify-between gap-2 px-3 sm:gap-3 sm:px-6">
+          {/* Brand */}
+          <div className="flex items-center gap-3">
+            {onToggleMobileMenu &&
+              currentRole !== "public" &&
+              currentRole !== "storefront" && (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="rounded-full md:hidden"
+                  onClick={onToggleMobileMenu}
+                  aria-label="Toggle navigation"
+                >
+                  {isMobileMenuOpen ? (
+                    <X className="size-5" />
+                  ) : (
+                    <Menu className="size-5" />
+                  )}
+                </Button>
+              )}
 
-          <div
-            onClick={() => onRoleChange("public")}
-            className="flex items-center gap-2.5 cursor-pointer group"
-          >
-            <div className="w-9 h-9 rounded-xl bg-primary text-primary-foreground flex items-center justify-center font-extrabold text-sm shadow-sm group-hover:scale-105 transition-transform">
-              SDH
-            </div>
-            <div className="hidden sm:block">
-              <div className="flex items-center gap-1.5">
-                <span className="font-extrabold text-sm tracking-tight text-foreground">
-                  Smart Data Hub
-                </span>
-                <span className="text-[10px] uppercase font-bold px-1.5 py-0.2 rounded bg-amber-500/15 text-amber-900 dark:text-amber-300">
-                  GH₵
-                </span>
+            <button
+              type="button"
+              onClick={() => onRoleChange("public")}
+              className="group flex cursor-pointer items-center gap-2.5"
+            >
+              <div className="flex size-9 items-center justify-center rounded-full bg-primary text-sm font-extrabold text-primary-foreground shadow-sm transition-transform group-hover:scale-105">
+                SDH
               </div>
-              <p className="text-[10px] text-muted-foreground -mt-0.5">
-                Telecom & Digital Services
-              </p>
-            </div>
-          </div>
 
-          {/* Operational Signal Rail Badge */}
-          <div className="hidden lg:flex items-center pl-3 border-l border-border/80">
-            <SignalRail status="online" size="sm" label="Gateway 99.8%" />
-          </div>
-        </div>
-
-        {/* Right: Quick actions, Wallet balance, notifications, theme, profile */}
-        <div className="flex items-center gap-1.5 sm:gap-2">
-          {/* Power Search Cmd+K */}
-          <button
-            onClick={handleOpenCommand}
-            className="hidden xl:flex items-center gap-2 px-2.5 py-1.5 rounded-xl border border-border bg-muted/40 hover:bg-muted text-muted-foreground hover:text-foreground text-xs transition-colors cursor-pointer"
-            title="Search or jump to service (Cmd + K)"
-          >
-            <Search className="w-3.5 h-3.5" />
-            <span>Search...</span>
-            <kbd className="px-1.5 py-0.5 rounded bg-card border border-border text-[10px] font-mono">
-              ⌘K
-            </kbd>
-          </button>
-
-          {/* Security PINs Quick Ref Trigger */}
-          {onOpenSecurityPins && (
-            <button
-              onClick={onOpenSecurityPins}
-              className="hidden lg:flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl border border-border bg-card hover:bg-muted text-xs font-bold text-foreground transition-colors cursor-pointer"
-              title="View Hardcoded Access PINs & Credentials"
-            >
-              <KeyRound className="w-3.5 h-3.5 text-primary" />
-              <span>PINs (0000)</span>
-            </button>
-          )}
-
-          {/* Wallet Balance Pill */}
-          <div className="flex items-center rounded-xl border border-border bg-card shadow-2xs overflow-hidden">
-            <div className="px-2.5 py-1 text-xs">
-              <span className="text-[10px] uppercase text-muted-foreground block leading-tight font-medium">
-                Wallet
-              </span>
-              <span className="font-bold text-foreground tabular-nums text-xs sm:text-sm">
-                GH₵ {walletBalance.toFixed(2)}
-              </span>
-            </div>
-            <button
-              onClick={onOpenFundWallet}
-              className="h-full px-2 sm:px-2.5 py-2 bg-primary text-primary-foreground text-xs font-bold hover:bg-primary/90 transition-colors flex items-center gap-1 cursor-pointer"
-              title="Top up your wallet balance"
-            >
-              <span>+ Fund</span>
-            </button>
-          </div>
-
-          {/* Mobile Shell Showcase Toggle */}
-          {onToggleMobileShell && (
-            <button
-              onClick={onToggleMobileShell}
-              className={`p-2 rounded-xl border text-xs font-medium transition-colors hidden sm:flex items-center gap-1.5 cursor-pointer ${
-                isMobileShell
-                  ? "bg-primary text-primary-foreground border-primary shadow-xs"
-                  : "border-border bg-card text-muted-foreground hover:text-foreground hover:bg-muted"
-              }`}
-              title="Toggle Phone Frame Mobile Shell Mode"
-            >
-              <Smartphone className="w-4 h-4" />
-              <span className="hidden 2xl:inline text-[11px]">Phone Shell</span>
-            </button>
-          )}
-
-          {/* Notification Bell with Badge */}
-          <button
-            onClick={() => onOpenNotifications?.()}
-            className="relative p-2 rounded-xl border border-border bg-card text-muted-foreground hover:text-foreground hover:bg-muted transition-colors cursor-pointer"
-            aria-label="Notifications"
-          >
-            <Bell className="w-4 h-4" />
-            {unreadCount > 0 && (
-              <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-destructive text-destructive-foreground text-[10px] font-bold flex items-center justify-center">
-                {unreadCount}
-              </span>
-            )}
-          </button>
-
-          {/* 6-Theme Dropdown Selector */}
-          <div className="relative">
-            <button
-              onClick={() => {
-                setThemeDropdownOpen(!themeDropdownOpen);
-                setProfileDropdownOpen(false);
-              }}
-              className="flex items-center gap-1.5 p-2 rounded-xl border border-border bg-card text-muted-foreground hover:text-foreground hover:bg-muted transition-colors cursor-pointer"
-              title={`Active Theme: ${currentThemeObj.name}. Click to change theme.`}
-              aria-label="Theme Selector"
-            >
-              <span
-                className={`w-3.5 h-3.5 rounded-full ${currentThemeObj.dot}`}
-              />
-              <Palette className="w-3.5 h-3.5 hidden sm:inline" />
-              <ChevronDown className="w-3 h-3 text-muted-foreground hidden sm:inline" />
-            </button>
-
-            {themeDropdownOpen && (
-              <div
-                className="absolute right-0 mt-2 w-56 rounded-2xl bg-card border border-border shadow-2xl py-2 z-50 animate-in fade-in zoom-in-95 duration-150"
-                onClick={() => setThemeDropdownOpen(false)}
-              >
-                <div className="px-3.5 py-1.5 border-b border-border/80">
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
-                    Select Theme Archetype
+              <div className="hidden sm:block">
+                <div className="flex items-center gap-1.5">
+                  <span className="text-sm font-extrabold tracking-tight text-foreground">
+                    Smart Data Hub
                   </span>
-                </div>
-                <div className="px-1.5 py-1 text-xs space-y-0.5">
-                  {themeOptions.map((opt) => (
-                    <button
-                      key={opt.id}
-                      onClick={() => onSetTheme(opt.id)}
-                      className={`w-full text-left px-2.5 py-2 rounded-xl flex items-center justify-between transition-colors cursor-pointer ${
-                        theme === opt.id
-                          ? "bg-primary/10 text-primary font-bold"
-                          : "text-foreground hover:bg-muted"
-                      }`}
-                    >
-                      <div className="flex items-center gap-2">
-                        <span className={`w-3 h-3 rounded-full ${opt.dot}`} />
-                        <span className="text-xs">{opt.name}</span>
-                      </div>
-                      {theme === opt.id && (
-                        <Check className="w-3.5 h-3.5 text-primary" />
-                      )}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
 
-          {/* Profile / Demo Avatar Menu */}
-          <div className="relative">
-            <button
-              onClick={() => {
-                setProfileDropdownOpen(!profileDropdownOpen);
-                setThemeDropdownOpen(false);
-              }}
-              className="flex items-center gap-1.5 p-1 sm:p-1.5 rounded-xl border border-border bg-card hover:bg-muted transition-colors cursor-pointer"
-            >
-              <div className="w-7 h-7 rounded-lg bg-primary/10 text-primary font-bold text-xs flex items-center justify-center">
-                {currentRole === "admin"
-                  ? "AD"
-                  : currentRole === "agent"
-                    ? "KO"
-                    : "KM"}
+                  <Badge
+                    variant="secondary"
+                    className="h-5 rounded-md bg-amber-500/15 px-1.5 text-[10px] font-bold text-amber-900 dark:text-amber-300"
+                  >
+                    GH₵
+                  </Badge>
+                </div>
+
+                <p className="-mt-0.5 text-[10px] text-muted-foreground">
+                  Telecom & Digital Services
+                </p>
               </div>
-              <ChevronDown className="w-3.5 h-3.5 text-muted-foreground hidden sm:block" />
             </button>
 
-            {profileDropdownOpen && (
-              <div
-                className="absolute right-0 mt-2 w-64 rounded-2xl bg-card border border-border shadow-xl py-2 z-50 animate-in fade-in zoom-in-95 duration-150"
-                onClick={() => setProfileDropdownOpen(false)}
+            <Separator
+              orientation="vertical"
+              className="hidden h-6 lg:block"
+            />
+
+            <div className="hidden items-center lg:flex">
+              <SignalRail
+                status="online"
+                size="sm"
+                label="Gateway 99.8%"
+              />
+            </div>
+          </div>
+
+          {/* Actions */}
+          <div className="flex items-center gap-1.5 sm:gap-2">
+            {/* Command Search */}
+            <Tooltip>
+              <TooltipTrigger
+                render={
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleOpenCommand}
+                    className="hidden h-9 gap-2 rounded-full bg-muted/40 px-2.5 text-xs text-muted-foreground hover:text-foreground xl:flex"
+                  />
+                }
               >
-                <div className="px-3.5 py-2 border-b border-border/80 flex items-center justify-between">
-                  <div>
-                    <p className="text-xs font-bold text-foreground">
-                      {user?.name ||
-                        (currentRole === "admin"
-                          ? "NOC Super Admin"
-                          : currentRole === "agent"
-                            ? "Kofi Owusu (Agent)"
-                            : "Kojo Mensah")}
+                <Search className="size-3.5" />
+
+                <span>Search...</span>
+
+                <Kbd className="h-5 px-1.5 text-[10px]">
+                  ⌘K
+                </Kbd>
+              </TooltipTrigger>
+
+              <TooltipContent>
+                Search or jump to service
+              </TooltipContent>
+            </Tooltip>
+
+            {/* Security PINs */}
+            {onOpenSecurityPins && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={onOpenSecurityPins}
+                className="hidden h-9 rounded-full text-xs font-bold lg:flex"
+              >
+                <KeyRound className="size-3.5 text-primary" />
+                <span>PINs (0000)</span>
+              </Button>
+            )}
+
+            {/* Wallet */}
+            <div className="flex h-9 items-center overflow-hidden rounded-full border bg-card shadow-2xs">
+              <div className="px-2.5">
+                <p className="block text-[8px] font-bold uppercase leading-tight text-muted-foreground">
+                  Wallet
+                </p>
+
+                <p className="text-xs font-bold tabular-nums text-foreground">
+                  GH₵ {walletBalance.toFixed(2)}
+                </p>
+              </div>
+
+              <Button
+                size="sm"
+                onClick={onOpenFundWallet}
+                className="mr-0.5 h-7 rounded-full px-2 text-xs"
+              >
+                + Fund
+              </Button>
+            </div>
+
+            {/* Mobile Shell */}
+            {onToggleMobileShell && (
+              <Tooltip>
+                <TooltipTrigger
+                  render={
+                    <Button
+                      variant={isMobileShell ? "default" : "outline"}
+                      size="sm"
+                      onClick={onToggleMobileShell}
+                      className="hidden rounded-full sm:flex"
+                    />
+                  }
+                >
+                  <Smartphone className="size-4" />
+
+                  <span className="hidden text-[11px] 2xl:inline">
+                    Phone Shell
+                  </span>
+                </TooltipTrigger>
+
+                <TooltipContent>
+                  Toggle Phone Frame Mobile Shell Mode
+                </TooltipContent>
+              </Tooltip>
+            )}
+
+            {/* Notifications */}
+            <Tooltip>
+              <TooltipTrigger
+                render={
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    onClick={() => onOpenNotifications?.()}
+                    className="relative rounded-full"
+                    aria-label="Notifications"
+                  />
+                }
+              >
+                <Bell className="size-4" />
+
+                {unreadCount > 0 && (
+                  <Badge
+                    variant="destructive"
+                    className="absolute -right-1 -top-1 flex size-4 items-center justify-center rounded-full p-0 text-[9px]"
+                  >
+                    {unreadCount > 99 ? "99+" : unreadCount}
+                  </Badge>
+                )}
+              </TooltipTrigger>
+
+              <TooltipContent>
+                Notifications
+              </TooltipContent>
+            </Tooltip>
+
+            {/* Theme */}
+            <DropdownMenu>
+              <DropdownMenuTrigger
+                render={
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="flex items-center rounded-full sm:w-auto sm:px-2.5"
+                    aria-label="Theme selector"
+                  />
+                }
+              >
+                <span
+                  className={`size-3.5 rounded-full mr-2 ${currentThemeObj.dot}`}
+                />
+
+                <Palette className="hidden size-3.5 sm:block" />
+
+                <ChevronDown className="hidden size-3 sm:block" />
+              </DropdownMenuTrigger>
+
+              <DropdownMenuContent
+                align="end"
+                className="w-56"
+              >
+                <DropdownMenuGroup>
+                  <DropdownMenuLabel className="text-[10px] uppercase tracking-wider text-muted-foreground">
+                    Select Theme Archetype
+                  </DropdownMenuLabel>
+
+                  <DropdownMenuRadioGroup
+                    value={theme}
+                    onValueChange={(value) =>
+                      onSetTheme(value as AppTheme)
+                    }
+                  >
+                    {themeOptions.map((option) => (
+                      <DropdownMenuRadioItem
+                        key={option.id}
+                        value={option.id}
+                        className="text-xs"
+                      >
+                        <span
+                          className={`mr-2 size-3 rounded-full ${option.dot}`}
+                        />
+
+                        <span>{option.name}</span>
+                      </DropdownMenuRadioItem>
+                    ))}
+                  </DropdownMenuRadioGroup>
+                </DropdownMenuGroup>
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            {/* Profile */}
+            <DropdownMenu>
+              <DropdownMenuTrigger
+                render={
+                  <Button
+                    variant="outline"
+                    className="h-9 gap-1.5 rounded-full px-1.5"
+                  />
+                }
+              >
+                <div className="flex size-7 items-center justify-center rounded-full bg-primary/10 text-xs font-bold text-primary">
+                  {profileInitials}
+                </div>
+
+                <ChevronDown className="hidden size-3.5 text-muted-foreground sm:block" />
+              </DropdownMenuTrigger>
+
+              <DropdownMenuContent
+                align="end"
+                className="w-64"
+              >
+                {/* Profile Header */}
+                <div className="flex items-center justify-between gap-3 px-3 py-2">
+                  <div className="min-w-0">
+                    <p className="truncate text-xs font-bold">
+                      {profileName}
                     </p>
-                    <p className="text-[11px] text-muted-foreground">
+
+                    <p className="truncate text-[11px] text-muted-foreground">
                       {user?.phone || "024 419 2834"} • Verified
                     </p>
                   </div>
-                  <span className="text-[10px] font-bold uppercase px-2 py-0.5 rounded-full bg-primary/15 text-primary">
+
+                  <Badge
+                    variant="secondary"
+                    className="shrink-0 text-[10px] font-bold uppercase"
+                  >
                     {user?.role || currentRole}
-                  </span>
+                  </Badge>
                 </div>
 
-                <div className="px-1.5 py-1 text-xs">
-                  <div className="px-2 py-1 text-[10px] font-bold uppercase text-muted-foreground tracking-wider">
+                <DropdownMenuSeparator />
+
+                {/* Workspace */}
+                <DropdownMenuGroup>
+                  <DropdownMenuLabel className="text-[10px] uppercase tracking-wider text-muted-foreground">
                     Switch Workspace Mode
-                  </div>
-                  <button
-                    onClick={() => onRoleChange("customer")}
-                    className={`w-full text-left px-2.5 py-1.5 rounded-lg flex items-center justify-between ${
-                      currentRole === "customer"
-                        ? "bg-primary/10 text-primary font-bold"
-                        : "hover:bg-muted text-foreground"
-                    }`}
-                  >
-                    <span>Customer Dashboard</span>
-                    {currentRole === "customer" && (
-                      <span className="w-1.5 h-1.5 rounded-full bg-primary" />
-                    )}
-                  </button>
-                  <button
-                    onClick={() => onRoleChange("agent")}
-                    className={`w-full text-left px-2.5 py-1.5 rounded-lg flex items-center justify-between ${
-                      currentRole === "agent"
-                        ? "bg-primary/10 text-primary font-bold"
-                        : "hover:bg-muted text-foreground"
-                    }`}
-                  >
-                    <span>Agent Workspace</span>
-                    {currentRole === "agent" && (
-                      <span className="w-1.5 h-1.5 rounded-full bg-primary" />
-                    )}
-                  </button>
-                  <button
-                    onClick={() => onRoleChange("admin")}
-                    className={`w-full text-left px-2.5 py-1.5 rounded-lg flex items-center justify-between ${
-                      currentRole === "admin"
-                        ? "bg-primary/10 text-primary font-bold"
-                        : "hover:bg-muted text-foreground"
-                    }`}
-                  >
-                    <div className="flex items-center gap-1.5">
-                      <span>Admin NOC Console</span>
-                      {!isAdminUnlocked && (
-                        <Lock className="w-3 h-3 text-muted-foreground" />
-                      )}
-                    </div>
-                    {currentRole === "admin" && (
-                      <span className="w-1.5 h-1.5 rounded-full bg-primary" />
-                    )}
-                  </button>
-                  <button
-                    onClick={() => onRoleChange("storefront")}
-                    className={`w-full text-left px-2.5 py-1.5 rounded-lg flex items-center justify-between ${
-                      currentRole === "storefront"
-                        ? "bg-primary/10 text-primary font-bold"
-                        : "hover:bg-muted text-foreground"
-                    }`}
-                  >
-                    <span>Kofi Telecom Storefront</span>
-                    {currentRole === "storefront" && (
-                      <span className="w-1.5 h-1.5 rounded-full bg-primary" />
-                    )}
-                  </button>
-                  <button
-                    onClick={() => onRoleChange("public")}
-                    className={`w-full text-left px-2.5 py-1.5 rounded-lg flex items-center justify-between ${
-                      currentRole === "public"
-                        ? "bg-primary/10 text-primary font-bold"
-                        : "hover:bg-muted text-foreground"
-                    }`}
-                  >
-                    <span>Public Marketing Site</span>
-                    {currentRole === "public" && (
-                      <span className="w-1.5 h-1.5 rounded-full bg-primary" />
-                    )}
-                  </button>
-                </div>
+                  </DropdownMenuLabel>
 
-                {/* Auth actions & PIN reference */}
-                <div className="border-t border-border/80 pt-1.5 mt-1 px-1.5 space-y-1">
+                  <DropdownMenuItem
+                    onClick={() => onRoleChange("customer")}
+                    className={
+                      currentRole === "customer"
+                        ? "bg-primary/10 font-bold text-primary"
+                        : ""
+                    }
+                  >
+                    Customer Dashboard
+
+                    {currentRole === "customer" && (
+                      <Check className="ml-auto size-3.5" />
+                    )}
+                  </DropdownMenuItem>
+
+                  <DropdownMenuItem
+                    onClick={() => onRoleChange("agent")}
+                    className={
+                      currentRole === "agent"
+                        ? "bg-primary/10 font-bold text-primary"
+                        : ""
+                    }
+                  >
+                    Agent Workspace
+
+                    {currentRole === "agent" && (
+                      <Check className="ml-auto size-3.5" />
+                    )}
+                  </DropdownMenuItem>
+
+                  <DropdownMenuItem
+                    onClick={() => onRoleChange("admin")}
+                    className={
+                      currentRole === "admin"
+                        ? "bg-primary/10 font-bold text-primary"
+                        : ""
+                    }
+                  >
+                    <span className="flex items-center gap-1.5">
+                      Admin NOC Console
+
+                      {!isAdminUnlocked && (
+                        <Lock className="size-3 text-muted-foreground" />
+                      )}
+                    </span>
+
+                    {currentRole === "admin" && (
+                      <Check className="ml-auto size-3.5" />
+                    )}
+                  </DropdownMenuItem>
+
+                  <DropdownMenuItem
+                    onClick={() => onRoleChange("storefront")}
+                    className={
+                      currentRole === "storefront"
+                        ? "bg-primary/10 font-bold text-primary"
+                        : ""
+                    }
+                  >
+                    Kofi Telecom Storefront
+
+                    {currentRole === "storefront" && (
+                      <Check className="ml-auto size-3.5" />
+                    )}
+                  </DropdownMenuItem>
+
+                  <DropdownMenuItem
+                    onClick={() => onRoleChange("public")}
+                    className={
+                      currentRole === "public"
+                        ? "bg-primary/10 font-bold text-primary"
+                        : ""
+                    }
+                  >
+                    Public Marketing Site
+
+                    {currentRole === "public" && (
+                      <Check className="ml-auto size-3.5" />
+                    )}
+                  </DropdownMenuItem>
+                </DropdownMenuGroup>
+
+                <DropdownMenuSeparator />
+
+                {/* Account Actions */}
+                <DropdownMenuGroup>
                   {onOpenSecurityPins && (
-                    <button
+                    <DropdownMenuItem
                       onClick={onOpenSecurityPins}
-                      className="w-full text-left px-2.5 py-1.5 rounded-lg text-xs font-bold text-foreground hover:bg-muted flex items-center gap-2 cursor-pointer"
                     >
-                      <KeyRound className="w-3.5 h-3.5 text-primary" />
-                      <span>Security PINs Reference Sheet</span>
-                    </button>
+                      <KeyRound className="size-3.5 text-primary" />
+                      Security PINs Reference Sheet
+                    </DropdownMenuItem>
                   )}
 
                   {currentRole === "admin" &&
                     isAdminUnlocked &&
                     onLockAdmin && (
-                      <button
+                      <DropdownMenuItem
                         onClick={onLockAdmin}
-                        className="w-full text-left px-2.5 py-1.5 rounded-lg text-xs font-bold text-amber-600 dark:text-amber-400 hover:bg-amber-500/10 flex items-center gap-2 cursor-pointer"
+                        className="text-amber-600 focus:text-amber-600 dark:text-amber-400 dark:focus:text-amber-400"
                       >
-                        <Lock className="w-3.5 h-3.5" />
-                        <span>Lock Admin Console</span>
-                      </button>
+                        <Lock className="size-3.5" />
+                        Lock Admin Console
+                      </DropdownMenuItem>
                     )}
 
                   {onOpenAuth && (
-                    <button
+                    <DropdownMenuItem
                       onClick={() => onOpenAuth("signin")}
-                      className="w-full text-left px-2.5 py-1.5 rounded-lg text-xs font-bold text-primary hover:bg-primary/10 flex items-center gap-2 cursor-pointer"
                     >
-                      <LogIn className="w-3.5 h-3.5" />
-                      <span>Switch Account / Sign In</span>
-                    </button>
+                      <LogIn className="size-3.5" />
+                      Switch Account / Sign In
+                    </DropdownMenuItem>
                   )}
 
-                  <button
-                    onClick={() => {
-                      if (onLogout) onLogout();
-                      onRoleChange("public");
-                    }}
-                    className="w-full text-left px-2.5 py-1.5 rounded-lg text-xs text-destructive hover:bg-destructive/10 flex items-center gap-2 cursor-pointer"
+                  <DropdownMenuItem
+                    onClick={handleLogout}
+                    variant="destructive"
                   >
-                    <LogOut className="w-3.5 h-3.5" />
-                    <span>Sign Out & Return Home</span>
-                  </button>
-                </div>
-              </div>
-            )}
+                    <LogOut className="size-3.5" />
+                    Sign Out & Return Home
+                  </DropdownMenuItem>
+                </DropdownMenuGroup>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
-      </div>
-    </header>
+      </header>
+    </TooltipProvider>
   );
 };

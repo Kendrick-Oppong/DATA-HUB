@@ -1,7 +1,6 @@
 import React from "react";
-import { Printer, Share2, CheckCircle2, Copy, Check } from "lucide-react";
+import { Printer, CheckCircle2, Copy, Check } from "lucide-react";
 import { Order } from "../../types";
-import { SignalRail } from "./SignalRail";
 import {
   Dialog,
   DialogContent,
@@ -188,11 +187,7 @@ export const ReceiptModal: React.FC<ReceiptModalProps> = ({
 
         {/* Footer Actions */}
         <DialogFooter className="p-6 bg-muted/30 border-t border-border flex-col sm:flex-row gap-2 print:hidden">
-          <Button
-            variant="outline"
-            onClick={handlePrint}
-            size="sm"
-          >
+          <Button variant="outline" onClick={handlePrint} size="sm">
             <Printer className="w-4 h-4 mr-1.5" />
             Print Receipt
           </Button>
