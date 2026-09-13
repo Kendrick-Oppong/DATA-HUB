@@ -1,5 +1,5 @@
 import React from "react";
-import { Order, Transaction, Complaint, AppTheme } from "../../types";
+import { Order, Transaction, Complaint, AppTheme, UserAccount } from "../../types";
 import { CustomerWalletView } from "./views/CustomerWalletView";
 import { CustomerOrdersView } from "./views/CustomerOrdersView";
 import { CustomerComplaintsView } from "./views/CustomerComplaintsView";
@@ -27,6 +27,8 @@ interface CustomerWalletOrdersProps {
   onToggleTheme: () => void;
   onSetTheme?: (theme: AppTheme) => void;
   onOpenSecurityPins?: () => void;
+  user?: UserAccount | null;
+  onUpdateUser?: (user: UserAccount) => void;
 }
 
 export const CustomerWalletOrders: React.FC<CustomerWalletOrdersProps> = ({
@@ -40,8 +42,11 @@ export const CustomerWalletOrders: React.FC<CustomerWalletOrdersProps> = ({
   onAddComplaint,
   onReplyComplaint,
   theme,
+  onToggleTheme,
   onSetTheme,
   onOpenSecurityPins,
+  user,
+  onUpdateUser,
 }) => {
   return (
     <div className="space-y-6">
@@ -75,8 +80,14 @@ export const CustomerWalletOrders: React.FC<CustomerWalletOrdersProps> = ({
       {view === "profile" && (
         <CustomerProfileView
           theme={theme}
+          onToggleTheme={onToggleTheme}
           onSetTheme={onSetTheme}
           onOpenSecurityPins={onOpenSecurityPins}
+          user={user}
+          onUpdateUser={onUpdateUser}
+          walletBalance={walletBalance}
+          onOpenFundWallet={onOpenFundWallet}
+          totalOrdersCount={orders.length}
         />
       )}
     </div>

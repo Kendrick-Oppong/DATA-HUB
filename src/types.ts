@@ -87,7 +87,8 @@ export interface Transaction {
     | "purchase"
     | "commission"
     | "withdrawal"
-    | "refund";
+    | "refund"
+    | "promo_credit";
   amount: number;
   fee: number;
   balanceAfter: number;

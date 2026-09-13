@@ -316,8 +316,14 @@ export default function App() {
     localStorage.setItem("sdh_admin_unlocked", "false");
   };
 
-  // Sidebar collapse state
+  // Sidebar collapse & mobile drawer state
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
+
+  const handleUpdateUser = (updatedUser: UserAccount) => {
+    setUser(updatedUser);
+    localStorage.setItem("sdh_auth_user", JSON.stringify(updatedUser));
+  };
 
   // App Core State (persisted to localStorage)
   const [walletBalance, setWalletBalance] = useState<number>(() =>
@@ -854,6 +860,8 @@ export default function App() {
         onOpenSecurityPins={() => setIsSecurityPinsOpen(true)}
         isAdminUnlocked={isAdminUnlocked}
         onLockAdmin={handleLockAdmin}
+        onToggleMobileMenu={() => setIsMobileSidebarOpen((prev) => !prev)}
+        isMobileMenuOpen={isMobileSidebarOpen}
       />
 
       {/* Main Authenticated App Layout */}
@@ -872,11 +880,14 @@ export default function App() {
               (c) => c.status === "open" || c.status === "investigating",
             ).length
           }
+          user={user}
+          isMobileOpen={isMobileSidebarOpen}
+          onCloseMobile={() => setIsMobileSidebarOpen(false)}
         />
 
         {/* Dynamic Content Main Pane */}
         <main
-          className={`${sidebarCollapsed ? "ml-20" : "ml-64"} flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 max-w-[95%] mx-auto w-full transition-[margin] duration-200`}
+          className={`${sidebarCollapsed ? "md:ml-20" : "md:ml-64"} ml-0 flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 max-w-[95%] mx-auto w-full transition-[margin] duration-200`}
         >
           {/* CUSTOMER PORTAL */}
           {currentRole === "customer" && (
@@ -954,6 +965,10 @@ export default function App() {
                   onReplyComplaint={handleReplyComplaint}
                   theme={theme}
                   onToggleTheme={toggleTheme}
+                  onSetTheme={handleSetTheme}
+                  onOpenSecurityPins={() => setIsSecurityPinsOpen(true)}
+                  user={user}
+                  onUpdateUser={handleUpdateUser}
                 />
               )}
             </>
