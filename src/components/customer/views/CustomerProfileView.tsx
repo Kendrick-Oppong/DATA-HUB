@@ -369,7 +369,7 @@ export const CustomerProfileView: React.FC<CustomerProfileViewProps> = ({
           className="rounded-xl font-bold text-xs"
         >
           <Bell className="size-3.5" />
-         tifications & Statement
+         Notifications & Statement
         </Button>
       </div>
 
@@ -982,7 +982,7 @@ export const CustomerProfileView: React.FC<CustomerProfileViewProps> = ({
                   type="button"
                   onClick={() => setNotifySmsReceipts(!notifySmsReceipts)}
                   className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ${
-                   tifySmsReceipts ? "bg-primary" : "bg-muted"
+                    notifySmsReceipts ? "bg-primary" : "bg-muted"
                   }`}
                 >
                   <span className={`inline-block size-5 transform rounded-full bg-white transition duration-200 ${notifySmsReceipts ? "translate-x-5" : "translate-x-0"}`} />
@@ -1000,7 +1000,7 @@ export const CustomerProfileView: React.FC<CustomerProfileViewProps> = ({
                   type="button"
                   onClick={() => setNotifyWhatsApp(!notifyWhatsApp)}
                   className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ${
-                   tifyWhatsApp ? "bg-primary" : "bg-muted"
+                   notifyWhatsApp ? "bg-primary" : "bg-muted"
                   }`}
                 >
                   <span className={`inline-block size-5 transform rounded-full bg-white transition duration-200 ${notifyWhatsApp ? "translate-x-5" : "translate-x-0"}`} />
@@ -1018,7 +1018,7 @@ export const CustomerProfileView: React.FC<CustomerProfileViewProps> = ({
                   type="button"
                   onClick={() => setNotifyGatewayAlerts(!notifyGatewayAlerts)}
                   className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ${
-                   tifyGatewayAlerts ? "bg-primary" : "bg-muted"
+                   notifyGatewayAlerts ? "bg-primary" : "bg-muted"
                   }`}
                 >
                   <span className={`inline-block size-5 transform rounded-full bg-white transition duration-200 ${notifyGatewayAlerts ? "translate-x-5" : "translate-x-0"}`} />
@@ -1036,7 +1036,7 @@ export const CustomerProfileView: React.FC<CustomerProfileViewProps> = ({
                   type="button"
                   onClick={() => setNotifyPromoDeals(!notifyPromoDeals)}
                   className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ${
-                   tifyPromoDeals ? "bg-primary" : "bg-muted"
+                   notifyPromoDeals ? "bg-primary" : "bg-muted"
                   }`}
                 >
                   <span className={`inline-block size-5 transform rounded-full bg-white transition duration-200 ${notifyPromoDeals ? "translate-x-5" : "translate-x-0"}`} />
