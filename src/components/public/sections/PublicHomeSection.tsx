@@ -65,7 +65,7 @@ export const PublicHomeSection: React.FC<PublicHomeSectionProps> = ({
               </div>
               <div className="max-w-3xl space-y-5">
                 <h1 className="text-4xl font-black leading-[0.98] text-foreground sm:text-6xl lg:text-7xl">
-                  Everything you need, delivered instantly
+                  Tap. Pay. Done.{" "}
                 </h1>
                 <p className="max-w-xl text-base leading-relaxed text-muted-foreground sm:text-lg">
                   Buy data, airtime, exam vouchers, and digital services across
@@ -82,7 +82,7 @@ export const PublicHomeSection: React.FC<PublicHomeSectionProps> = ({
                   }
                 >
                   Buy data now
-                  <MoveRight  className="size-4" />
+                  <MoveRight className="size-4" />
                 </Button>
                 <Button
                   size="lg"
@@ -295,7 +295,7 @@ export const PublicHomeSection: React.FC<PublicHomeSectionProps> = ({
               onClick={() => onNavigatePublicTab("services")}
             >
               View All Services
-              <MoveRight  className="w-3.5 h-3.5" />
+              <MoveRight className="w-3.5 h-3.5" />
             </Button>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2  gap-4 items-start">
@@ -315,7 +315,7 @@ export const PublicHomeSection: React.FC<PublicHomeSectionProps> = ({
                   MTN, Telecel, AT bundles up to 100GB with non-expiry options.
                 </p>
                 <span className="flex items-center gap-1 mt-3 text-xs font-bold text-primary">
-                  Buy from GH₵4.80 <MoveRight  />
+                  Buy from GH₵4.80 <MoveRight />
                 </span>
               </CardContent>
             </Button>
@@ -336,7 +336,7 @@ export const PublicHomeSection: React.FC<PublicHomeSectionProps> = ({
                   GH₵500.
                 </p>
                 <span className="flex items-center gap-1 mt-3 text-xs font-bold text-amber-600">
-                  Recharge SIM <MoveRight  />
+                  Recharge SIM <MoveRight />
                 </span>
               </CardContent>
             </Button>
@@ -357,7 +357,7 @@ export const PublicHomeSection: React.FC<PublicHomeSectionProps> = ({
                   vouchers.
                 </p>
                 <span className="flex items-center gap-1 mt-3 text-xs font-bold text-purple-600">
-                  Get Serial & PIN <MoveRight  />
+                  Get Serial & PIN <MoveRight />
                 </span>
               </CardContent>
             </Button>
@@ -377,7 +377,7 @@ export const PublicHomeSection: React.FC<PublicHomeSectionProps> = ({
                   Farmer & Worker subsidized tariff enrollment with national ID.
                 </p>
                 <span className="flex items-center gap-1 mt-3 text-xs font-bold text-emerald-600">
-                  Register SIM <MoveRight  />
+                  Register SIM <MoveRight />
                 </span>
               </CardContent>
             </Button>

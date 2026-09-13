@@ -139,7 +139,7 @@ export const PublicFooter: React.FC<PublicFooterProps> = ({
               }
               variant="outline"
               size="sm"
-              className="w-full gap-2 font-bold text-xs border-emerald-500/30 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-500/10"
+              className="w-fit gap-2 font-bold text-xs border-emerald-500/30 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-500/10"
             >
               <MessageCircle className="size-3.5" />
               {FOOTER_NOC.whatsapp.label}
