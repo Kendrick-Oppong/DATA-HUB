@@ -18,6 +18,7 @@ import {
   Radio,
   Users,
   MapPin,
+  Check,
 } from "lucide-react";
 import { TelecomNetwork, DataBundle, Order, UserRole } from "../../types";
 import { SignalRail } from "../common/SignalRail";
@@ -42,7 +43,6 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "../ui/accordion";
-import { Alert, AlertDescription, AlertTitle } from "../ui/alert";
 
 interface PublicMarketingSiteProps {
   bundles: DataBundle[];
@@ -237,7 +237,7 @@ export const PublicMarketingSite: React.FC<PublicMarketingSiteProps> = ({
 
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col">
-      {/* ============ HOME (unchanged, exactly as provided) ============ */}
+      {/* ============ HOME ============ */}
       {activeTab === "home" && (
         <div>
           <section className="relative isolate overflow-hidden border-b border-border bg-background">
@@ -375,14 +375,6 @@ export const PublicMarketingSite: React.FC<PublicMarketingSiteProps> = ({
                         </div>
                       </div>
                       <div>
-                        {/* <div className="mb-2 flex items-center justify-between">
-                          <p className="text-xs font-bold text-foreground">
-                            Choose a network
-                          </p>
-                          <p className="text-[11px] text-muted-foreground">
-                            Popular: {currentBundle?.sizeLabel || "5 GB"}
-                          </p>
-                        </div> */}
                         <div className="grid grid-cols-3 gap-2">
                           {(
                             ["MTN", "Telecel", "AirtelTigo"] as TelecomNetwork[]
@@ -409,7 +401,6 @@ export const PublicMarketingSite: React.FC<PublicMarketingSiteProps> = ({
                           ))}
                         </div>
                       </div>
-
                     </div>
                   </div>
                 </div>
@@ -496,12 +487,14 @@ export const PublicMarketingSite: React.FC<PublicMarketingSiteProps> = ({
                   <ArrowRight className="w-3.5 h-3.5" />
                 </Button>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                <Card
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 items-start">
+                {/* Clickable service cards → accessible shadcn Buttons */}
+                <Button
+                  variant="outline"
                   onClick={() => onStartPurchase?.("mtn-5gb", "MTN")}
-                  className="hover:border-primary/50 transition-all cursor-pointer group"
+                  className="h-auto cursor-pointer group rounded-2xl p-0 text-left align-top bg-card shadow-xs transition-all hover:border-primary/50 hover:bg-card"
                 >
-                  <CardContent className="p-5">
+                  <CardContent className="p-5 w-full">
                     <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
                       <Wifi className="w-5 h-5" />
                     </div>
@@ -516,12 +509,13 @@ export const PublicMarketingSite: React.FC<PublicMarketingSiteProps> = ({
                       Buy from GH₵4.80 →
                     </span>
                   </CardContent>
-                </Card>
-                <Card
+                </Button>
+                <Button
+                  variant="outline"
                   onClick={() => onStartPurchase?.("airtime", "MTN")}
-                  className="hover:border-primary/50 transition-all cursor-pointer group"
+                  className="h-auto cursor-pointer group rounded-2xl p-0 text-left align-top bg-card shadow-xs transition-all hover:border-primary/50 hover:bg-card"
                 >
-                  <CardContent className="p-5">
+                  <CardContent className="p-5 w-full">
                     <div className="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-600 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
                       <PhoneCall className="w-5 h-5" />
                     </div>
@@ -536,12 +530,13 @@ export const PublicMarketingSite: React.FC<PublicMarketingSiteProps> = ({
                       Recharge SIM →
                     </span>
                   </CardContent>
-                </Card>
-                <Card
+                </Button>
+                <Button
+                  variant="outline"
                   onClick={() => onStartPurchase?.("waec-wassce", "MTN")}
-                  className="hover:border-primary/50 transition-all cursor-pointer group"
+                  className="h-auto cursor-pointer group rounded-2xl p-0 text-left align-top bg-card shadow-xs transition-all hover:border-primary/50 hover:bg-card"
                 >
-                  <CardContent className="p-5">
+                  <CardContent className="p-5 w-full">
                     <div className="w-10 h-10 rounded-xl bg-purple-500/10 text-purple-600 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
                       <GraduationCap className="w-5 h-5" />
                     </div>
@@ -556,12 +551,13 @@ export const PublicMarketingSite: React.FC<PublicMarketingSiteProps> = ({
                       Get Serial & PIN →
                     </span>
                   </CardContent>
-                </Card>
-                <Card
+                </Button>
+                <Button
+                  variant="outline"
                   onClick={() => onStartPurchase?.("afa", "MTN")}
-                  className="hover:border-primary/50 transition-all cursor-pointer group"
+                  className="h-auto cursor-pointer group rounded-2xl p-0 text-left align-top bg-card shadow-xs transition-all hover:border-primary/50 hover:bg-card"
                 >
-                  <CardContent className="p-5">
+                  <CardContent className="p-5 w-full">
                     <div className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
                       <ShieldCheck className="w-5 h-5" />
                     </div>
@@ -576,7 +572,7 @@ export const PublicMarketingSite: React.FC<PublicMarketingSiteProps> = ({
                       Register SIM →
                     </span>
                   </CardContent>
-                </Card>
+                </Button>
               </div>
             </div>
           </section>
@@ -643,7 +639,7 @@ export const PublicMarketingSite: React.FC<PublicMarketingSiteProps> = ({
         </div>
       )}
 
-      {/* ============ SERVICES — Premium redesign ============ */}
+      {/* ============ SERVICES ============ */}
       {activeTab === "services" && (
         <div className="flex flex-col">
           {/* Hero */}
@@ -785,25 +781,27 @@ export const PublicMarketingSite: React.FC<PublicMarketingSiteProps> = ({
                   {selectedNetwork} Ghana packages
                 </h2>
               </div>
-              <div className="flex items-center gap-1 rounded-2xl border border-border bg-muted/40 p-1.5">
+              {/* Segmented control → shadcn Buttons */}
+              <div className="flex items-center gap-1 rounded-full border border-border bg-muted/40 p-1.5">
                 {(["MTN", "Telecel", "AirtelTigo"] as TelecomNetwork[]).map(
                   (net) => {
                     const a = NETWORK_ACCENT[net];
                     const isActive = selectedNetwork === net;
                     return (
-                      <button
+                      <Button
                         key={net}
                         type="button"
-                        className={`flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-bold transition-all ${
+                        variant="ghost"
+                        onClick={() => setSelectedNetwork(net)}
+                        className={`rounded-full px-4 font-bold hover:bg-transparent ${
                           isActive
                             ? `${a.bg} ${a.text} shadow-sm`
                             : "text-muted-foreground hover:text-foreground"
                         }`}
-                        onClick={() => setSelectedNetwork(net)}
                       >
                         <span className={`size-2.5 rounded-full ${a.solid}`} />
                         {net === "AirtelTigo" ? "AT Ghana" : `${net} Ghana`}
-                      </button>
+                      </Button>
                     );
                   },
                 )}
@@ -855,7 +853,7 @@ export const PublicMarketingSite: React.FC<PublicMarketingSiteProps> = ({
                         GH₵ {b.retailPrice.toFixed(2)}
                       </p>
                       <Button
-                        className="font-bold rounded-xl"
+                        className="font-bold rounded-full"
                         onClick={() => handleStartPurchase(b.id, b.network)}
                       >
                         Buy now <ArrowRight className="size-3.5" />
@@ -866,12 +864,12 @@ export const PublicMarketingSite: React.FC<PublicMarketingSiteProps> = ({
               ))}
             </div>
 
-            {/* Other services */}
+            {/* Other services — clickable cards → shadcn Buttons */}
             <div className="pt-8 border-t border-border">
               <p className="text-xs font-bold uppercase text-muted-foreground tracking-wider mb-5">
                 Other services on Smart Data Hub
               </p>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 items-start">
                 {[
                   {
                     icon: PhoneCall,
@@ -898,17 +896,18 @@ export const PublicMarketingSite: React.FC<PublicMarketingSiteProps> = ({
                     cta: "Register SIM",
                   },
                 ].map((svc) => (
-                  <div
+                  <Button
                     key={svc.label}
-                    className="group flex items-center gap-4 rounded-2xl border border-border bg-card p-5 hover:border-primary/30 hover:shadow-lg transition-all cursor-pointer"
+                    variant="outline"
                     onClick={() => handleStartPurchase("mtn-5gb", "MTN")}
+                    className="h-auto cursor-pointer group items-start justify-start gap-4 rounded-2xl p-5 text-left bg-card hover:bg-card hover:border-primary/30 hover:shadow-lg transition-all"
                   >
                     <div
                       className={`flex size-12 items-center justify-center rounded-2xl ${svc.bg} shrink-0 group-hover:scale-110 transition-transform`}
                     >
                       <svc.icon className={`size-5 ${svc.color}`} />
                     </div>
-                    <div className="min-w-0">
+                    <div className="min-w-0 text-left">
                       <p className="font-bold text-sm text-foreground">
                         {svc.label}
                       </p>
@@ -921,7 +920,7 @@ export const PublicMarketingSite: React.FC<PublicMarketingSiteProps> = ({
                         {svc.cta} →
                       </span>
                     </div>
-                  </div>
+                  </Button>
                 ))}
               </div>
             </div>
@@ -929,7 +928,7 @@ export const PublicMarketingSite: React.FC<PublicMarketingSiteProps> = ({
         </div>
       )}
 
-      {/* ============ AGENT — Premium redesign ============ */}
+      {/* ============ AGENT ============ */}
       {activeTab === "agent" && (
         <div className="flex flex-col">
           {/* Hero */}
@@ -939,7 +938,6 @@ export const PublicMarketingSite: React.FC<PublicMarketingSiteProps> = ({
             <div className="max-w-[95%] mx-auto px-4 sm:px-6 py-16 sm:py-24">
               <div className="grid gap-12 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
                 <div className="space-y-7">
-                  {" "}
                   <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-4 py-1.5 text-xs font-bold text-primary uppercase tracking-wider">
                     <Sparkles className="size-3.5" />
                     Merchant program · Zero setup fee
@@ -1168,7 +1166,7 @@ export const PublicMarketingSite: React.FC<PublicMarketingSiteProps> = ({
         </div>
       )}
 
-      {/* ============ TRACK — Premium redesign ============ */}
+      {/* ============ TRACK ============ */}
       {activeTab === "track" && (
         <div className="flex flex-col">
           {/* Hero */}
@@ -1290,9 +1288,9 @@ export const PublicMarketingSite: React.FC<PublicMarketingSiteProps> = ({
                     </p>
                     <div className="mt-6 flex items-center gap-6 text-center">
                       {[
-                        { label: "Order Placed", icon: "①" },
-                        { label: "Dispatched", icon: "②" },
-                        { label: "Delivered", icon: "③" },
+                        { label: "Order Placed" },
+                        { label: "Dispatched" },
+                        { label: "Delivered" },
                       ].map((s, i) => (
                         <div
                           key={s.label}
@@ -1430,12 +1428,7 @@ export const PublicMarketingSite: React.FC<PublicMarketingSiteProps> = ({
                                 }`}
                               >
                                 {trackedOrder.status === "delivered" ? (
-                                  <svg
-                                    viewBox="0 0 16 16"
-                                    className="size-4 fill-current"
-                                  >
-                                    <path d="M13.5 2.5l-7 7-3-3-1.5 1.5 4.5 4.5 8.5-8.5z" />
-                                  </svg>
+                                  <Check className="size-4" />
                                 ) : (
                                   <SignalRail
                                     status="online"
@@ -1490,12 +1483,7 @@ export const PublicMarketingSite: React.FC<PublicMarketingSiteProps> = ({
                                           <span className="absolute inset-0 rounded-full animate-ping bg-primary/20" />
                                         )}
                                         {isCompleted ? (
-                                          <svg
-                                            viewBox="0 0 16 16"
-                                            className="size-3.5 fill-current"
-                                          >
-                                            <path d="M13.5 2.5l-7 7-3-3-1.5 1.5 4.5 4.5 8.5-8.5z" />
-                                          </svg>
+                                          <Check className="size-3.5" />
                                         ) : isCurrent ? (
                                           <span className="size-2 rounded-full bg-primary" />
                                         ) : isFailed ? (
@@ -1589,7 +1577,7 @@ export const PublicMarketingSite: React.FC<PublicMarketingSiteProps> = ({
         </div>
       )}
 
-      {/* ============ FAQ — Premium redesign ============ */}
+      {/* ============ FAQ ============ */}
       {activeTab === "faq" && (
         <div className="flex flex-col">
           {/* Hero */}
@@ -1624,7 +1612,7 @@ export const PublicMarketingSite: React.FC<PublicMarketingSiteProps> = ({
 
           {/* FAQ content */}
           <section className="max-w-3xl mx-auto px-4 sm:px-6 py-12 w-full space-y-4">
-            {/* Category pills */}
+            {/* Category pills → shadcn Buttons */}
             <div className="flex flex-wrap gap-2 pb-2">
               {[
                 "All",
@@ -1634,23 +1622,24 @@ export const PublicMarketingSite: React.FC<PublicMarketingSiteProps> = ({
                 "Agents",
                 "Vouchers",
                 "AFA",
-              ].map((tag) => (
-                <button
-                  key={tag}
-                  type="button"
-                  onClick={() =>
-                    setFaqQuery(tag === "All" ? "" : tag.toLowerCase())
-                  }
-                  className={`rounded-full px-4 py-1.5 text-xs font-bold border transition-all ${
-                    (tag === "All" && !faqQuery) ||
-                    faqQuery.toLowerCase() === tag.toLowerCase()
-                      ? "bg-primary text-primary-foreground border-primary shadow-sm"
-                      : "border-border text-muted-foreground hover:text-foreground hover:border-primary/40 bg-card"
-                  }`}
-                >
-                  {tag}
-                </button>
-              ))}
+              ].map((tag) => {
+                const isActive =
+                  (tag === "All" && !faqQuery) ||
+                  faqQuery.toLowerCase() === tag.toLowerCase();
+                return (
+                  <Button
+                    key={tag}
+                    type="button"
+                    variant={isActive ? "default" : "outline"}
+                    onClick={() =>
+                      setFaqQuery(tag === "All" ? "" : tag.toLowerCase())
+                    }
+                    className="rounded-full px-4 text-xs font-bold"
+                  >
+                    {tag}
+                  </Button>
+                );
+              })}
             </div>
 
             {filteredFaqs.length === 0 ? (
@@ -1658,13 +1647,14 @@ export const PublicMarketingSite: React.FC<PublicMarketingSiteProps> = ({
                 <MessageCircle className="size-12 text-muted-foreground/40 mx-auto mb-4" />
                 <p className="text-sm text-muted-foreground">
                   No results for "{faqQuery}" —{" "}
-                  <button
+                  <Button
                     type="button"
-                    className="text-primary font-bold hover:underline"
+                    variant="link"
+                    className="h-auto p-0 text-primary font-bold"
                     onClick={() => navigatePublicTab("contact")}
                   >
                     chat us on WhatsApp instead
-                  </button>
+                  </Button>
                 </p>
               </div>
             ) : (
@@ -1732,7 +1722,7 @@ export const PublicMarketingSite: React.FC<PublicMarketingSiteProps> = ({
         </div>
       )}
 
-      {/* ============ ABOUT — Premium redesign ============ */}
+      {/* ============ ABOUT ============ */}
       {activeTab === "about" && (
         <div className="flex flex-col">
           {/* Hero */}
@@ -1892,7 +1882,7 @@ export const PublicMarketingSite: React.FC<PublicMarketingSiteProps> = ({
         </div>
       )}
 
-      {/* ============ CONTACT — Premium redesign ============ */}
+      {/* ============ CONTACT ============ */}
       {activeTab === "contact" && (
         <div className="flex flex-col">
           {/* Hero */}
@@ -1919,33 +1909,36 @@ export const PublicMarketingSite: React.FC<PublicMarketingSiteProps> = ({
             <div className="grid gap-8 lg:grid-cols-[0.85fr_1.15fr]">
               {/* Left: contact channels */}
               <div className="space-y-4">
-                {/* WhatsApp CTA */}
-                <a
-                  href="https://wa.me/233244192834?text=Hello%20Smart%20Data%20Hub%20Support"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="block"
+                {/* WhatsApp CTA — Base UI render prop for anchor */}
+                <Button
+                  render={
+                    <a
+                      href="https://wa.me/233244192834?text=Hello%20Smart%20Data%20Hub%20Support"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    />
+                  }
+                  variant="outline"
+                  className="h-auto w-full cursor-pointer group rounded-2xl p-0 text-left bg-card hover:bg-card hover:-translate-y-0.5 hover:shadow-lg transition-all"
                 >
-                  <div className="group rounded-2xl overflow-hidden bg-card border border-border p-6 transition-all hover:-translate-y-0.5">
-                    <div className="flex items-center gap-4">
-                      <div className="flex size-14 items-center justify-center rounded-2xl bg-foreground/15">
-                        <MessageCircle className="size-7" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="font-black text-md leading-tight">
-                          WhatsApp Priority Desk
-                        </p>
-                        <p className="text-sm text-foreground/85 mt-0.5">
-                          +233 24 419 2834 · Live now
-                        </p>
-                        <p className="text-xs text-foreground/60 mt-1">
-                          Fastest response channel — real agent, always
-                        </p>
-                      </div>
-                      <ArrowRight className="size-5 shrink-0 group-hover:translate-x-1 transition-transform" />
+                  <div className="flex w-full items-center gap-4 p-6">
+                    <div className="flex size-14 items-center justify-center rounded-2xl bg-foreground/15">
+                      <MessageCircle className="size-7" />
                     </div>
+                    <div className="flex-1 min-w-0 text-left">
+                      <p className="font-black text-md leading-tight text-foreground">
+                        WhatsApp Priority Desk
+                      </p>
+                      <p className="text-sm text-foreground/85 mt-0.5">
+                        +233 24 419 2834 · Live now
+                      </p>
+                      <p className="text-xs text-foreground/60 mt-1">
+                        Fastest response channel — real agent, always
+                      </p>
+                    </div>
+                    <ArrowRight className="size-5 shrink-0 group-hover:translate-x-1 transition-transform" />
                   </div>
-                </a>
+                </Button>
 
                 {/* Operating hours */}
                 <div className="rounded-2xl border border-border bg-card p-5 flex items-start gap-4">
@@ -1984,7 +1977,7 @@ export const PublicMarketingSite: React.FC<PublicMarketingSiteProps> = ({
                   </div>
                 </div>
 
-                {/* Quick links */}
+                {/* Quick links → shadcn Buttons */}
                 <div className="rounded-2xl border border-border bg-card p-5">
                   <p className="text-xs font-bold uppercase text-muted-foreground tracking-wider mb-3">
                     Before you reach out
@@ -2000,15 +1993,16 @@ export const PublicMarketingSite: React.FC<PublicMarketingSiteProps> = ({
                         tab: "faq" as const,
                       },
                     ].map((link) => (
-                      <button
+                      <Button
                         key={link.tab}
                         type="button"
-                        className="w-full flex items-center justify-between text-sm text-muted-foreground hover:text-primary p-2 rounded-lg hover:bg-muted/50 transition-colors"
+                        variant="ghost"
                         onClick={() => navigatePublicTab(link.tab)}
+                        className="h-auto w-full justify-between rounded-lg p-2 text-sm font-normal text-muted-foreground hover:bg-muted/50 hover:text-primary"
                       >
                         <span>{link.label}</span>
                         <ArrowRight className="size-3.5" />
-                      </button>
+                      </Button>
                     ))}
                   </div>
                 </div>
@@ -2068,25 +2062,7 @@ export const PublicMarketingSite: React.FC<PublicMarketingSiteProps> = ({
                             <SelectValue placeholder="Select an issue category" />
                           </SelectTrigger>
                           <SelectContent>
-                            {[
-                              {
-                                value: "order-delivery-issue",
-                                label: "Order Delivery Delay",
-                              },
-                              {
-                                value: "momo-debited",
-                                label: "Mobile Money Debited but No Data",
-                              },
-                              {
-                                value: "voucher-failed",
-                                label: "Failed Result Checker Voucher",
-                              },
-                              {
-                                value: "agent-payout",
-                                label: "Agent Onboarding / Payout Question",
-                              },
-                              { value: "general", label: "General Feedback" },
-                            ].map((c) => (
+                            {contactCategories.map((c) => (
                               <SelectItem key={c.value} value={c.value}>
                                 {c.label}
                               </SelectItem>
@@ -2174,42 +2150,46 @@ export const PublicMarketingSite: React.FC<PublicMarketingSiteProps> = ({
               </h4>
               <ul className="space-y-1.5 text-xs text-muted-foreground">
                 <li>
-                  <button
+                  <Button
+                    variant="ghost"
                     onClick={() => handleStartPurchase("mtn-5gb", "MTN")}
-                    className="hover:text-primary cursor-pointer"
+                    className="h-auto justify-start p-0 text-xs font-normal text-muted-foreground hover:bg-transparent hover:text-primary"
                   >
                     Buy MTN Data
-                  </button>
+                  </Button>
                 </li>
                 <li>
-                  <button
+                  <Button
+                    variant="ghost"
                     onClick={() =>
                       handleStartPurchase("telecel-10gb", "Telecel")
                     }
-                    className="hover:text-primary cursor-pointer"
+                    className="h-auto justify-start p-0 text-xs font-normal text-muted-foreground hover:bg-transparent hover:text-primary"
                   >
                     Buy Telecel Data
-                  </button>
+                  </Button>
                 </li>
                 <li>
-                  <button
+                  <Button
+                    variant="ghost"
                     onClick={() => handleStartPurchase("at-5gb", "AirtelTigo")}
-                    className="hover:text-primary cursor-pointer"
+                    className="h-auto justify-start p-0 text-xs font-normal text-muted-foreground hover:bg-transparent hover:text-primary"
                   >
                     Buy AT Big Time Data
-                  </button>
+                  </Button>
                 </li>
                 <li>
-                  <button
+                  <Button
+                    variant="ghost"
                     onClick={() =>
                       onNavigate
                         ? onNavigate("customer", "results-checker")
                         : handleStartPurchase("waec-wassce", "MTN")
                     }
-                    className="hover:text-primary cursor-pointer"
+                    className="h-auto justify-start p-0 text-xs font-normal text-muted-foreground hover:bg-transparent hover:text-primary"
                   >
                     WASSCE / BECE Checkers
-                  </button>
+                  </Button>
                 </li>
               </ul>
             </div>
@@ -2220,36 +2200,40 @@ export const PublicMarketingSite: React.FC<PublicMarketingSiteProps> = ({
               </h4>
               <ul className="space-y-1.5 text-xs text-muted-foreground">
                 <li>
-                  <button
+                  <Button
+                    variant="ghost"
                     onClick={() => navigatePublicTab("about")}
-                    className="hover:text-primary"
+                    className="h-auto justify-start p-0 text-xs font-normal text-muted-foreground hover:bg-transparent hover:text-primary"
                   >
                     About Smart Data Hub
-                  </button>
+                  </Button>
                 </li>
                 <li>
-                  <button
+                  <Button
+                    variant="ghost"
                     onClick={() => navigatePublicTab("faq")}
-                    className="hover:text-primary"
+                    className="h-auto justify-start p-0 text-xs font-normal text-muted-foreground hover:bg-transparent hover:text-primary"
                   >
                     Frequently Asked Questions
-                  </button>
+                  </Button>
                 </li>
                 <li>
-                  <button
+                  <Button
+                    variant="ghost"
                     onClick={() => navigatePublicTab("track")}
-                    className="hover:text-primary"
+                    className="h-auto justify-start p-0 text-xs font-normal text-muted-foreground hover:bg-transparent hover:text-primary"
                   >
                     Order Status Tracker
-                  </button>
+                  </Button>
                 </li>
                 <li>
-                  <button
+                  <Button
+                    variant="ghost"
                     onClick={() => navigatePublicTab("contact")}
-                    className="hover:text-primary"
+                    className="h-auto justify-start p-0 text-xs font-normal text-muted-foreground hover:bg-transparent hover:text-primary"
                   >
                     Terms of Service & SLA
-                  </button>
+                  </Button>
                 </li>
               </ul>
             </div>
