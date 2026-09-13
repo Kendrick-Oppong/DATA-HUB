@@ -285,7 +285,7 @@ export const ResultsCheckerFlow: React.FC<ResultsCheckerFlowProps> = ({
   };
 
   return (
-    <div className="max-w-5xl mx-auto space-y-6">
+    <div className="space-y-6">
       <div className="flex items-center justify-between pb-4 border-b border-border">
         <div>
           <h1 className="text-2xl font-extrabold text-foreground tracking-tight flex items-center gap-2">
@@ -346,81 +346,139 @@ export const ResultsCheckerFlow: React.FC<ResultsCheckerFlowProps> = ({
             })}
           </div>
 
-          {/* Quantity & Phone Input */}
-          <div className="p-5 rounded-2xl bg-card border border-border shadow-xs space-y-4">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                  Number of Vouchers
-                </Label>
-                <div className="flex items-center gap-2">
+          {/* Purchase Details */}
+          <div className="rounded-2xl border border-border bg-card shadow-xs overflow-hidden">
+            {/* Header */}
+            <div className="px-5 py-4 border-b border-border bg-muted/30">
+              <div className="flex items-center justify-between gap-3">
+                <div>
+                  <h3 className="text-sm font-bold text-foreground">
+                    Voucher details
+                  </h3>
+                  <p className="text-xs text-muted-foreground mt-0.5">
+                    Choose how many vouchers you need and where to send them.
+                  </p>
+                </div>
+
+                <div className="text-xs font-semibold text-muted-foreground tabular-nums">
+                  GH₵ {currentChecker.price.toFixed(2)} each
+                </div>
+              </div>
+            </div>
+
+            <div className="p-5 space-y-6">
+              {/* Quantity */}
+              <div className="space-y-3">
+                <div className="flex items-center justify-between gap-3">
+                  <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                    Number of vouchers
+                  </Label>
+
+                  <span className="text-xs font-semibold text-primary tabular-nums">
+                    {quantity} voucher{quantity !== 1 ? "s" : ""}
+                  </span>
+                </div>
+
+                {/* Quick quantity presets */}
+                <div className="grid grid-cols-4 gap-2">
                   {[1, 2, 5, 10].map((qty) => (
                     <Button
                       key={qty}
                       type="button"
                       variant={quantity === qty ? "default" : "outline"}
-                      size="sm"
                       onClick={() => setQuantityInput(String(qty))}
-                      className="flex-1 text-xs font-bold"
+                      className="h-10 rounded-xl font-bold text-xs"
                     >
-                      {qty}x
+                      {qty}
                     </Button>
                   ))}
-                  {/* Manual quantity input */}
+                </div>
+
+                {/* Custom quantity */}
+                <div className="space-y-2">
+                  <Label
+                    htmlFor="custom-quantity"
+                    className="text-[11px] font-semibold text-muted-foreground"
+                  >
+                    Or enter a custom quantity
+                  </Label>
+
                   <Input
+                    id="custom-quantity"
                     type="number"
                     min={1}
                     max={99}
                     value={quantityInput}
                     onChange={(e) => setQuantityInput(e.target.value)}
-                    placeholder="Qty"
-                    aria-label="Manual voucher quantity"
-                    className="w-20 h-9 text-xs font-bold tabular-nums text-center"
+                    placeholder="Enter quantity"
+                    className="h-10 rounded-xl text-sm font-medium tabular-nums"
                   />
                 </div>
-                <p className="text-[11px] text-muted-foreground">
-                  Pick a quick quantity or type any number up to 99. Unit price
-                  GH₵ {currentChecker.price.toFixed(2)} each.
+
+                <p className="text-[11px] leading-relaxed text-muted-foreground">
+                  Choose a preset above or enter any quantity from 1 to 99.
                 </p>
               </div>
 
-              <div className="space-y-2">
-                <Label
-                  htmlFor="checker-phone"
-                  className="text-xs font-bold uppercase tracking-wider text-muted-foreground"
-                >
-                  Phone for Instant SMS Copy
-                </Label>
+              {/* Phone */}
+              <div className="space-y-3">
+                <div className="flex items-center justify-between gap-3">
+                  <Label
+                    htmlFor="checker-phone"
+                    className="text-xs font-bold uppercase tracking-wider text-muted-foreground"
+                  >
+                    Delivery phone number
+                  </Label>
+
+                  <span className="text-[10px] font-medium text-muted-foreground">
+                    SMS delivery
+                  </span>
+                </div>
+
                 <Input
                   id="checker-phone"
                   type="tel"
                   required
                   value={recipientPhone}
                   onChange={(e) => setRecipientPhone(e.target.value)}
-                  className="tabular-nums"
-                  placeholder="e.g. 0244192834"
+                  placeholder="024 419 2834"
+                  className="h-11 rounded-xl text-sm font-medium tabular-nums"
                 />
+
+                <p className="text-[11px] leading-relaxed text-muted-foreground">
+                  Your voucher details will be sent to this number after
+                  payment.
+                </p>
               </div>
             </div>
 
-            {/* Total and Buy Action */}
-            <div className="pt-3 border-t border-border flex flex-col sm:flex-row justify-between items-center gap-3">
-              <div>
-                <span className="text-xs text-muted-foreground">
-                  Total Voucher Price ({quantity}x):
-                </span>
-                <div className="text-2xl font-black text-foreground tabular-nums">
-                  GH₵ {totalPrice.toFixed(2)}
-                </div>
-              </div>
+            {/* Summary */}
+            <div className="border-t border-border bg-muted/20 px-5 py-4">
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                  <p className="text-xs font-medium text-muted-foreground">
+                    Total amount
+                  </p>
 
-              <Button
-                type="submit"
-                className="w-full h-8 sm:w-auto font-semibold text-sm shadow-md"
-              >
-                <span>Pay & Reveal Voucher</span>
-                <ArrowRight className="w-4 h-4" />
-              </Button>
+                  <div className="mt-0.5 flex items-baseline gap-2">
+                    <span className="text-2xl font-black text-foreground tabular-nums">
+                      GH₵ {totalPrice.toFixed(2)}
+                    </span>
+
+                    <span className="text-xs font-medium text-muted-foreground">
+                      for {quantity} voucher{quantity !== 1 ? "s" : ""}
+                    </span>
+                  </div>
+                </div>
+
+                <Button
+                  type="submit"
+                  className="h-9 w-full sm:w-auto px-4 font-bold shadow-sm"
+                >
+                  Pay & Reveal Voucher
+                  <ArrowRight className="size-4" />
+                </Button>
+              </div>
             </div>
           </div>
         </form>
@@ -722,11 +780,11 @@ export const ResultsCheckerFlow: React.FC<ResultsCheckerFlowProps> = ({
               </div>
 
               <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 flex justify-between items-center gap-2">
-                <span className="text-amber-900 dark:text-amber-300 font-semibold">
+                <span className="text-primary font-semibold">
                   Voucher PIN:
                 </span>
                 <div className="flex items-center gap-1.5">
-                  <span className="font-mono font-extrabold text-amber-900 dark:text-amber-300 tracking-wider tabular-nums">
+                  <span className="font-mono font-extrabold text-primary tracking-wider tabular-nums">
                     {dialogRevealed
                       ? voucherViewOrder.voucherCode
                       : "•••• - •••• - ••••"}
@@ -735,7 +793,7 @@ export const ResultsCheckerFlow: React.FC<ResultsCheckerFlowProps> = ({
                     variant="ghost"
                     size="sm"
                     onClick={() => setDialogRevealed(!dialogRevealed)}
-                    className="h-7 w-7 p-0 text-amber-900 dark:text-amber-300"
+                    className="h-7 w-7 p-0 text-primary"
                     title={dialogRevealed ? "Mask PIN" : "Reveal PIN"}
                   >
                     {dialogRevealed ? (
