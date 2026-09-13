@@ -300,7 +300,7 @@ export const PublicHomeSection: React.FC<PublicHomeSectionProps> = ({
               <ArrowRight className="w-3.5 h-3.5" />
             </Button>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 items-start">
+          <div className="grid grid-cols-1 sm:grid-cols-2  gap-4 items-start">
             <Button
               variant="outline"
               onClick={() => handleStartPurchase("mtn-5gb", "MTN")}
