@@ -36,6 +36,7 @@ import { Label } from "../../ui/label";
 import { Badge } from "../../ui/badge";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "../../ui/card";
 import { Separator } from "../../ui/separator";
+import { Switch } from "../../ui/switch";
 
 export interface CustomerProfileViewProps {
   theme: AppTheme;
@@ -295,13 +296,14 @@ export const CustomerProfileView: React.FC<CustomerProfileViewProps> = ({
                 </p>
               </div>
               {onOpenFundWallet && (
-                <button
-                  type="button"
+                <Button
+                  variant="link"
+                  size="sm"
                   onClick={onOpenFundWallet}
-                  className="mt-1 text-[11px] font-bold text-primary hover:underline cursor-pointer flex items-center gap-0.5"
+                  className="h-auto p-0 mt-1 text-[11px] font-bold text-primary hover:underline justify-start"
                 >
                   + Fund Wallet
-                </button>
+                </Button>
               )}
             </div>
 
@@ -472,14 +474,16 @@ export const CustomerProfileView: React.FC<CustomerProfileViewProps> = ({
                   <Label htmlFor="input-ghana-card" className="text-xs font-bold">
                     Ghana Card PIN (NIA)
                   </Label>
-                  <button
+                  <Button
                     type="button"
+                    variant="ghost"
+                    size="xs"
                     onClick={() => copyToClipboard(ghanaCard, "ghanaCard")}
-                    className="text-[11px] text-primary hover:underline flex items-center gap-1 font-semibold cursor-pointer"
+                    className="h-6 px-2 text-[11px] text-primary hover:text-primary font-semibold gap-1"
                   >
                     <Copy className="size-3" />
                     {copiedField === "ghanaCard" ? "Copied!" : "Copy"}
-                  </button>
+                  </Button>
                 </div>
                 <div className="relative">
                   <Input
@@ -587,13 +591,16 @@ export const CustomerProfileView: React.FC<CustomerProfileViewProps> = ({
                     <Label htmlFor="current-pin" className="text-xs font-bold">
                       Current 4-Digit PIN
                     </Label>
-                    <button
+                    <Button
                       type="button"
+                      variant="ghost"
+                      size="icon-xs"
                       onClick={() => setShowCurrentPin(!showCurrentPin)}
-                      className="text-[11px] text-muted-foreground hover:text-foreground cursor-pointer"
+                      aria-label={showCurrentPin ? "Hide current PIN" : "Show current PIN"}
+                      className="size-6 text-muted-foreground hover:text-foreground"
                     >
                       {showCurrentPin ? <EyeOff className="size-3.5" /> : <Eye className="size-3.5" />}
-                    </button>
+                    </Button>
                   </div>
                   <Input
                     id="current-pin"
@@ -613,13 +620,16 @@ export const CustomerProfileView: React.FC<CustomerProfileViewProps> = ({
                     <Label htmlFor="new-pin" className="text-xs font-bold">
                       New 4-Digit PIN
                     </Label>
-                    <button
+                    <Button
                       type="button"
+                      variant="ghost"
+                      size="icon-xs"
                       onClick={() => setShowNewPin(!showNewPin)}
-                      className="text-[11px] text-muted-foreground hover:text-foreground cursor-pointer"
+                      aria-label={showNewPin ? "Hide new PIN" : "Show new PIN"}
+                      className="size-6 text-muted-foreground hover:text-foreground"
                     >
                       {showNewPin ? <EyeOff className="size-3.5" /> : <Eye className="size-3.5" />}
-                    </button>
+                    </Button>
                   </div>
                   <Input
                     id="new-pin"
@@ -673,29 +683,19 @@ export const CustomerProfileView: React.FC<CustomerProfileViewProps> = ({
                 </p>
               </div>
 
-              <button
-                type="button"
-                onClick={() => {
-                  setTwoFactorEnabled(!twoFactorEnabled);
+              <Switch
+                checked={twoFactorEnabled}
+                onCheckedChange={(checked) => {
+                  setTwoFactorEnabled(checked);
                   setSaveSuccessMessage(
-                    twoFactorEnabled
-                      ? "Two-factor authentication disabled."
-                      : "Two-factor authentication enabled via SMS OTP."
+                    checked
+                      ? "Two-factor authentication enabled via SMS OTP."
+                      : "Two-factor authentication disabled."
                   );
                   setTimeout(() => setSaveSuccessMessage(null), 3000);
                 }}
-                className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-hidden ${
-                  twoFactorEnabled ? "bg-primary" : "bg-muted"
-                }`}
-                role="switch"
-                aria-checked={twoFactorEnabled}
-              >
-                <span
-                  className={`pointer-events-none inline-block size-5 transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out ${
-                    twoFactorEnabled ? "translate-x-5" : "translate-x-0"
-                  }`}
-                />
-              </button>
+                aria-label="Two-factor authentication"
+              />
             </div>
           </div>
 
@@ -799,13 +799,14 @@ export const CustomerProfileView: React.FC<CustomerProfileViewProps> = ({
               {themeOptions.map((opt) => {
                 const isSelected = theme === opt.id;
                 return (
-                  <button
+                  <Button
                     key={opt.id}
                     type="button"
+                    variant="outline"
                     onClick={() => onSetTheme?.(opt.id)}
-                    className={`group relative flex flex-col items-start rounded-2xl border p-3.5 text-left transition-all cursor-pointer ${
+                    className={`group relative flex flex-col h-auto items-start rounded-2xl p-3.5 text-left transition-all justify-start whitespace-normal ${
                       isSelected
-                        ? "border-primary bg-primary/10 shadow-xs ring-2 ring-primary/20"
+                        ? "border-primary bg-primary/10 shadow-xs ring-2 ring-primary/20 hover:bg-primary/15"
                         : "border-border/80 hover:border-border hover:bg-muted/50"
                     }`}
                   >
@@ -816,10 +817,10 @@ export const CustomerProfileView: React.FC<CustomerProfileViewProps> = ({
                     <span className="text-xs font-bold text-foreground line-clamp-1">
                       {opt.name}
                     </span>
-                    <span className="text-[10px]  text-muted-foreground capitalize">
+                    <span className="text-[10px] text-muted-foreground capitalize">
                       {opt.id}
                     </span>
-                  </button>
+                  </Button>
                 );
               })}
             </div>
@@ -845,22 +846,23 @@ export const CustomerProfileView: React.FC<CustomerProfileViewProps> = ({
                   {(["MTN", "Telecel", "AirtelTigo"] as TelecomNetwork[]).map((net) => {
                     const isSelected = defaultNetwork === net;
                     return (
-                      <button
+                      <Button
                         key={net}
                         type="button"
+                        variant="outline"
                         onClick={() => {
                           setDefaultNetwork(net);
                           setSaveSuccessMessage(`Default carrier set to ${net}.`);
                           setTimeout(() => setSaveSuccessMessage(null), 2500);
                         }}
-                        className={`flex items-center gap-3 rounded-2xl border p-3 text-left transition-all cursor-pointer ${
+                        className={`flex items-center justify-start h-auto gap-3 rounded-2xl p-3 text-left transition-all whitespace-normal ${
                           isSelected
-                            ? "border-primary bg-primary/10 ring-2 ring-primary/20"
+                            ? "border-primary bg-primary/10 ring-2 ring-primary/20 hover:bg-primary/15"
                             : "border-border/80 hover:bg-muted/50"
                         }`}
                       >
                         <div
-                          className={`size-8 rounded-xl flex items-center justify-center font-black text-xs ${
+                          className={`size-8 rounded-xl flex items-center justify-center font-black text-xs shrink-0 ${
                             net === "MTN"
                               ? "bg-amber-400 text-amber-950"
                               : net === "Telecel"
@@ -877,7 +879,7 @@ export const CustomerProfileView: React.FC<CustomerProfileViewProps> = ({
                           </p>
                         </div>
                         {isSelected && <Check className="size-4 text-primary shrink-0" />}
-                      </button>
+                      </Button>
                     );
                   })}
                 </div>
@@ -933,32 +935,22 @@ export const CustomerProfileView: React.FC<CustomerProfileViewProps> = ({
                 </p>
               </div>
 
-              <button
-                type="button"
-                onClick={() => setAutoRetryGateways(!autoRetryGateways)}
-                className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-hidden ${
-                  autoRetryGateways ? "bg-primary" : "bg-muted"
-                }`}
-                role="switch"
-                aria-checked={autoRetryGateways}
-              >
-                <span
-                  className={`pointer-events-none inline-block size-5 transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out ${
-                    autoRetryGateways ? "translate-x-5" : "translate-x-0"
-                  }`}
-                />
-              </button>
+              <Switch
+                checked={autoRetryGateways}
+                onCheckedChange={(checked) => setAutoRetryGateways(checked)}
+                aria-label="Carrier Gateway Auto-Failover"
+              />
             </div>
           </div>
         </div>
       )}
 
       {/* ============================================================ */}
-      {/* TAB 4:TIFICATIONS & STATEMENT                             */}
+      {/* TAB 4: NOTIFICATIONS & STATEMENT                             */}
       {/* ============================================================ */}
       {activeSubTab === "notifications" && (
         <div className="space-y-6">
-          {/*tification Preferences */}
+          {/* Notification Preferences */}
           <div className="rounded-3xl border border-border bg-card p-6 shadow-xs space-y-5">
             <div className="border-b border-border/80 pb-4">
               <h3 className="flex items-center gap-2 text-sm font-extrabold text-foreground">
@@ -978,15 +970,11 @@ export const CustomerProfileView: React.FC<CustomerProfileViewProps> = ({
                     Instant SMS message with reference code upon successful data or airtime top-up.
                   </p>
                 </div>
-                <button
-                  type="button"
-                  onClick={() => setNotifySmsReceipts(!notifySmsReceipts)}
-                  className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ${
-                    notifySmsReceipts ? "bg-primary" : "bg-muted"
-                  }`}
-                >
-                  <span className={`inline-block size-5 transform rounded-full bg-white transition duration-200 ${notifySmsReceipts ? "translate-x-5" : "translate-x-0"}`} />
-                </button>
+                <Switch
+                  checked={notifySmsReceipts}
+                  onCheckedChange={(checked) => setNotifySmsReceipts(checked)}
+                  aria-label="SMS Transaction Receipts"
+                />
               </div>
 
               <div className="flex items-center justify-between py-3.5">
@@ -996,33 +984,25 @@ export const CustomerProfileView: React.FC<CustomerProfileViewProps> = ({
                     Delivers WAEC scratch card PINs and receipt links directly to your WhatsApp.
                   </p>
                 </div>
-                <button
-                  type="button"
-                  onClick={() => setNotifyWhatsApp(!notifyWhatsApp)}
-                  className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ${
-                   notifyWhatsApp ? "bg-primary" : "bg-muted"
-                  }`}
-                >
-                  <span className={`inline-block size-5 transform rounded-full bg-white transition duration-200 ${notifyWhatsApp ? "translate-x-5" : "translate-x-0"}`} />
-                </button>
+                <Switch
+                  checked={notifyWhatsApp}
+                  onCheckedChange={(checked) => setNotifyWhatsApp(checked)}
+                  aria-label="WhatsApp Order & PIN Delivery"
+                />
               </div>
 
               <div className="flex items-center justify-between py-3.5">
                 <div className="space-y-0.5">
                   <span className="text-xs font-bold text-foreground">Carrier Maintenance & Downtime Alerts</span>
                   <p className="text-[11px] text-muted-foreground">
-                   tifies you when MTN, Telecel, or ECG upstream gateways report planned maintenance.
+                    Notifies you when MTN, Telecel, or ECG upstream gateways report planned maintenance.
                   </p>
                 </div>
-                <button
-                  type="button"
-                  onClick={() => setNotifyGatewayAlerts(!notifyGatewayAlerts)}
-                  className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ${
-                   notifyGatewayAlerts ? "bg-primary" : "bg-muted"
-                  }`}
-                >
-                  <span className={`inline-block size-5 transform rounded-full bg-white transition duration-200 ${notifyGatewayAlerts ? "translate-x-5" : "translate-x-0"}`} />
-                </button>
+                <Switch
+                  checked={notifyGatewayAlerts}
+                  onCheckedChange={(checked) => setNotifyGatewayAlerts(checked)}
+                  aria-label="Carrier Maintenance & Downtime Alerts"
+                />
               </div>
 
               <div className="flex items-center justify-between py-3.5">
@@ -1032,15 +1012,11 @@ export const CustomerProfileView: React.FC<CustomerProfileViewProps> = ({
                     Receive announcements when wholesale data bundle rates decrease or bonus credits are awarded.
                   </p>
                 </div>
-                <button
-                  type="button"
-                  onClick={() => setNotifyPromoDeals(!notifyPromoDeals)}
-                  className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ${
-                   notifyPromoDeals ? "bg-primary" : "bg-muted"
-                  }`}
-                >
-                  <span className={`inline-block size-5 transform rounded-full bg-white transition duration-200 ${notifyPromoDeals ? "translate-x-5" : "translate-x-0"}`} />
-                </button>
+                <Switch
+                  checked={notifyPromoDeals}
+                  onCheckedChange={(checked) => setNotifyPromoDeals(checked)}
+                  aria-label="Wholesale Rate Drops & Promo Credits"
+                />
               </div>
             </div>
           </div>
