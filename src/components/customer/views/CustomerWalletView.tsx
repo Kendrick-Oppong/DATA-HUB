@@ -11,7 +11,6 @@ import { Transaction } from "../../../types";
 import { Button } from "../../ui/button";
 import { Input } from "../../ui/input";
 import { Label } from "../../ui/label";
-import { Badge } from "../../ui/badge";
 import {
   Card,
   CardHeader,
@@ -385,12 +384,30 @@ export const CustomerWalletView: React.FC<CustomerWalletViewProps> = ({
                     </TableCell>
 
                     <TableCell>
-                      <Badge
-                        variant="outline"
-                        className="text-[10px]"
+                      <span
+                        className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase ${
+                          tx.channel.includes("MTN")
+                            ? "bg-amber-400/15 text-amber-700 dark:text-amber-400"
+                            : tx.channel.includes("Telecel")
+                              ? "bg-red-500/15 text-red-700 dark:text-red-400"
+                              : tx.channel.includes("AT")
+                                ? "bg-blue-500/15 text-blue-700 dark:text-blue-400"
+                                : "bg-emerald-500/15 text-emerald-700 dark:text-emerald-400"
+                        }`}
                       >
+                        <span
+                          className={`size-1.5 rounded-full ${
+                            tx.channel.includes("MTN")
+                              ? "bg-amber-500"
+                              : tx.channel.includes("Telecel")
+                                ? "bg-red-500"
+                                : tx.channel.includes("AT")
+                                  ? "bg-blue-500"
+                                  : "bg-emerald-500"
+                          }`}
+                        />
                         {tx.channel}
-                      </Badge>
+                      </span>
                     </TableCell>
 
                     <TableCell

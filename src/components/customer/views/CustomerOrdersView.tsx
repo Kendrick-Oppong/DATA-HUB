@@ -4,7 +4,6 @@ import { Order } from "../../../types";
 import { Button } from "../../ui/button";
 import { Input } from "../../ui/input";
 import { Label } from "../../ui/label";
-import { Badge } from "../../ui/badge";
 import {
   Card,
   CardHeader,
@@ -429,7 +428,7 @@ export const CustomerOrdersView: React.FC<CustomerOrdersViewProps> = ({
                       </span>
                     </TableCell>
 
-                    <TableCell className="font-mono text-xs font-bold text-foreground">
+                    <TableCell className=" text-xs font-bold text-foreground">
                       {order.reference}
                     </TableCell>
 
@@ -437,11 +436,11 @@ export const CustomerOrdersView: React.FC<CustomerOrdersViewProps> = ({
                       {order.productName}
                     </TableCell>
 
-                    <TableCell className="font-mono text-xs text-muted-foreground">
+                    <TableCell className=" text-xs">
                       {order.recipientPhone}
                     </TableCell>
 
-                    <TableCell className="text-xs tabular-nums text-muted-foreground">
+                    <TableCell className="text-xs tabular-nums">
                       {order.date}
                     </TableCell>
 
@@ -450,16 +449,26 @@ export const CustomerOrdersView: React.FC<CustomerOrdersViewProps> = ({
                     </TableCell>
 
                     <TableCell className="text-center">
-                      <Badge
-                        variant={
+                      <span
+                        className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase ${
                           order.status === "delivered"
-                            ? "default"
-                            : "secondary"
-                        }
-                        className="text-[10px] font-bold uppercase"
+                            ? "bg-emerald-500/15 text-emerald-700 dark:text-emerald-400"
+                            : order.status === "processing"
+                              ? "bg-amber-500/15 text-amber-700 dark:text-amber-400"
+                              : "bg-red-500/15 text-red-600 dark:text-red-400"
+                        }`}
                       >
+                        <span
+                          className={`size-1.5 rounded-full ${
+                            order.status === "delivered"
+                              ? "bg-emerald-500"
+                              : order.status === "processing"
+                                ? "bg-amber-500"
+                                : "bg-red-500"
+                          }`}
+                        />
                         {order.status}
-                      </Badge>
+                      </span>
                     </TableCell>
 
                     <TableCell className="text-right">
