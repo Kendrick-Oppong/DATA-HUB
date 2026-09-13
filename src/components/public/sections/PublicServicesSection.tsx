@@ -33,6 +33,8 @@ export const PublicServicesSection: React.FC<PublicServicesSectionProps> = ({
   const filteredBundles = bundles.filter((b) => b.network === selectedNetwork);
   const accent = NETWORK_ACCENT[selectedNetwork];
 
+  const networks: TelecomNetwork[] = ["MTN", "Telecel", "AirtelTigo"];
+
   const handleStartPurchase = (bundleId: string, network: TelecomNetwork) => {
     if (onStartPurchase) {
       onStartPurchase(bundleId, network);
@@ -77,8 +79,7 @@ export const PublicServicesSection: React.FC<PublicServicesSectionProps> = ({
                   className="font-semibold"
                   onClick={() => onNavigatePublicTab("agent")}
                 >
-                  <Store className="size-4 text-amber-500" /> Become an
-                  agent
+                  <Store className="size-4 text-amber-500" /> Become an agent
                 </Button>
               </div>
             </div>
@@ -116,8 +117,7 @@ export const PublicServicesSection: React.FC<PublicServicesSectionProps> = ({
                     },
                     {
                       network: "AirtelTigo",
-                      color:
-                        "bg-blue-500/10 text-blue-600 dark:text-blue-400",
+                      color: "bg-blue-500/10 text-blue-600 dark:text-blue-400",
                       dot: "bg-blue-500",
                       ping: "51s",
                       status: "Operational",
@@ -181,28 +181,26 @@ export const PublicServicesSection: React.FC<PublicServicesSectionProps> = ({
             </h2>
           </div>
           <div className="flex items-center gap-1 rounded-full border border-border bg-muted/40 p-1.5">
-            {(["MTN", "Telecel", "AirtelTigo"] as TelecomNetwork[]).map(
-              (net) => {
-                const a = NETWORK_ACCENT[net];
-                const isActive = selectedNetwork === net;
-                return (
-                  <Button
-                    key={net}
-                    type="button"
-                    variant="ghost"
-                    onClick={() => onSelectNetwork(net)}
-                    className={`rounded-full px-4 font-bold hover:bg-transparent ${
-                      isActive
-                        ? `${a.bg} ${a.text} shadow-sm`
-                        : "text-muted-foreground hover:text-foreground"
-                    }`}
-                  >
-                    <span className={`size-2.5 rounded-full ${a.solid}`} />
-                    {net === "AirtelTigo" ? "AT Ghana" : `${net} Ghana`}
-                  </Button>
-                );
-              },
-            )}
+            {networks.map((net) => {
+              const a = NETWORK_ACCENT[net];
+              const isActive = selectedNetwork === net;
+              return (
+                <Button
+                  key={net}
+                  type="button"
+                  variant="ghost"
+                  onClick={() => onSelectNetwork(net)}
+                  className={`rounded-full px-4 font-bold hover:bg-transparent ${
+                    isActive
+                      ? `${a.bg} ${a.text} shadow-sm`
+                      : "text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  <span className={`size-2.5 rounded-full ${a.solid}`} />
+                  {net === "AirtelTigo" ? "AT Ghana" : `${net} Ghana`}
+                </Button>
+              );
+            })}
           </div>
         </div>
 

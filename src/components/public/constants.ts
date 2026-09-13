@@ -34,7 +34,7 @@ export const NETWORK_ACCENT: Record<
 };
 
 /* =====================================================================
- * FAQS
+ * FAQS - Comprehensive Coverage of All Platform Features
  * ===================================================================== */
 export const FAQS = [
   {
@@ -43,29 +43,74 @@ export const FAQS = [
     tag: "Delivery",
   },
   {
-    q: "Does Smart Data Hub support all Ghanaian networks?",
-    a: "Yes. We support MTN Ghana (including Turbonet & Non-Expiry), Telecel Ghana (Extra & Bossu), and AirtelTigo (Big Time & Sika Data) with instant automated delivery.",
+    q: "Does Smart Data Hub support all Ghanaian telecom networks?",
+    a: "Yes. We support MTN Ghana (including Turbonet & Non-Expiry), Telecel Ghana (Extra & Bossu), and AirtelTigo / AT Ghana (Big Time & Sika Data) with instant automated delivery.",
     tag: "Networks",
   },
   {
-    q: "What happens if my Mobile Money is deducted but data is delayed?",
-    a: "Our smart reconciliation engine verifies every transaction. If upstream network delays exceed 5 minutes, our system either retries via an alternate priority route or automatically refunds the full amount to your wallet.",
+    q: "Do data bundles purchased on Smart Data Hub expire?",
+    a: "We offer both non-expiry options (such as MTN Non-Expiry and AT Big Time) and standard 30-day validity packages. Specific validity details are clearly listed next to each bundle rate.",
+    tag: "Networks",
+  },
+  {
+    q: "What happens if my Mobile Money is debited but data is delayed?",
+    a: "Our smart reconciliation engine automatically checks every order. If network delays exceed 5 minutes, our system either retries through a backup priority route or immediately issues a full automated refund to your SDH wallet.",
     tag: "Payments",
   },
   {
-    q: "How can I become an Agent and start my own data business?",
-    a: "Open the Agent Program page. You get wholesale pricing, your own customizable public storefront (e.g. smartdatahub.com/store/your-name), real-time commission tracking, and instant MoMo withdrawals.",
+    q: "Which Mobile Money networks and payment methods can I use?",
+    a: "You can pay using MTN Mobile Money, Telecel Cash, AT Money, or your preloaded Smart Data Hub wallet balance for seamless zero-prompt checkout.",
+    tag: "Payments",
+  },
+  {
+    q: "How do I become an Agent and start selling data for daily income?",
+    a: "Simply click 'Become an Agent' to register. You get instant access to wholesale rates, your own customizable public storefront (e.g. smartdatahub.com/store/your-name), real-time margin tracking, and instant MoMo payouts.",
     tag: "Agents",
   },
   {
-    q: "How do Result Checkers work?",
-    a: "You can purchase authentic WAEC WASSCE, BECE Placement, and Nov/Dec vouchers. The serial and PIN are revealed immediately on screen and sent to your phone via SMS, ready to check on waecdirect.org.",
+    q: "Are there any setup or monthly fees to join the Agent Program?",
+    a: "No! Joining the Agent Program is completely free. There are zero registration fees, zero monthly maintenance fees, and no minimum order quotas.",
+    tag: "Agents",
+  },
+  {
+    q: "How and when can agents withdraw their earned profit commissions?",
+    a: "Agents can request commission payouts anytime directly from their merchant dashboard. Funds are transferred instantly to your registered Mobile Money number with no minimum threshold.",
+    tag: "Agents",
+  },
+  {
+    q: "How do WAEC WASSCE and BECE Result Checkers work?",
+    a: "After payment, your authentic voucher Serial Number and PIN are instantly displayed on your screen, saved to your digital receipt, and sent via SMS to your phone — ready to use on waecdirect.org.",
     tag: "Vouchers",
   },
   {
-    q: "What is AFA Registration?",
-    a: "AFA (Agricultural Workers Association) registration qualifies individuals for subsidized telecom data tariffs (e.g. 10GB for ~GH₵35). We process national ID verification and tariff enrollment.",
+    q: "What is AFA Registration and how do I qualify for subsidized tariffs?",
+    a: "AFA (Agricultural Workers & Farmers Association) registration grants access to discounted data rates (e.g., 10GB for ~GH₵35). You provide your Ghana Card details and mobile number for official tariff enrollment.",
     tag: "AFA",
+  },
+  {
+    q: "Can I recharge airtime directly to any phone number?",
+    a: "Yes. Our Airtime Top-up service supports instant electronic recharge for MTN, Telecel, and AirtelTigo from GH₵1.00 to GH₵500.00 directly to any active Ghana SIM.",
+    tag: "Airtime",
+  },
+  {
+    q: "Can I pay ECG electricity and Ghana Water utility bills here?",
+    a: "Yes. Smart Data Hub provides unified bill payment for ECG Prepaid meters, Postpaid electricity, and Ghana Water Company bills with instant digital receipts.",
+    tag: "Utilities",
+  },
+  {
+    q: "How can I track my order if I forgot or misplaced my reference code?",
+    a: "Visit the 'Track Order' page. You can search by entering either your order reference code (e.g., SDH-GH-2026-94812) or the beneficiary mobile phone number used during checkout.",
+    tag: "Tracking",
+  },
+  {
+    q: "Is Smart Data Hub secure and regulated?",
+    a: "Yes. All financial transactions flow through Bank of Ghana (BoG) regulated Mobile Money settlement rails protected by 256-bit SSL encryption.",
+    tag: "Payments",
+  },
+  {
+    q: "How do I contact customer support if I need urgent help?",
+    a: "Our NOC Support Desk is live 24/7. You can click the 'WhatsApp Priority Line' button to speak with a support engineer in real time, or submit a support ticket with your phone number.",
+    tag: "Delivery",
   },
 ];
 

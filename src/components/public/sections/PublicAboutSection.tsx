@@ -44,16 +44,15 @@ export const PublicAboutSection: React.FC<PublicAboutSectionProps> = ({
           </div>
           <h1 className="text-5xl font-black leading-[0.95] tracking-tight text-foreground sm:text-6xl">
             Ghana's
+            <span> digital service</span>
             <br />
-            <span className="text-primary">digital service</span>
-            <br />
-            backbone.
+            <span className="text-primary"> backbone</span>
           </h1>
           <p className="mt-4 text-base text-muted-foreground max-w-xl mx-auto leading-relaxed">
-            Smart Data Hub (SDH) is Ghana's mission-driven digital commerce
-            and telecom distribution network — powering connectivity for
-            thousands of students, professionals, and merchants across all
-            16 regions with direct carrier-level access.
+            Smart Data Hub (SDH) is Ghana's mission-driven digital commerce and
+            telecom distribution network — powering connectivity for thousands
+            of students, professionals, and merchants across all 16 regions with
+            direct carrier-level access.
           </p>
         </div>
       </section>
@@ -70,9 +69,7 @@ export const PublicAboutSection: React.FC<PublicAboutSectionProps> = ({
             ].map((s) => (
               <div key={s.label}>
                 <s.icon className="size-5 mx-auto mb-2" />
-                <p className="text-3xl font-black tabular-nums">
-                  {s.value}
-                </p>
+                <p className="text-3xl font-black tabular-nums">{s.value}</p>
                 <p className="text-xs mt-1">{s.label}</p>
               </div>
             ))}
@@ -92,17 +89,16 @@ export const PublicAboutSection: React.FC<PublicAboutSectionProps> = ({
               every Ghanaian.
             </h2>
             <p className="text-sm text-muted-foreground leading-relaxed">
-              We built SDH because buying data in Ghana felt unnecessarily
-              hard. Long waits, failed transactions, and no transparency. We
-              connected directly to carrier EVD and MoMo gateways to fix
-              that — 42 seconds from payment to delivery, with automated
-              refund protection on every order.
+              We built SDH because buying data in Ghana felt unnecessarily hard.
+              Long waits, failed transactions, and no transparency. We connected
+              directly to carrier EVD and MoMo gateways to fix that — 42 seconds
+              from payment to delivery, with automated refund protection on
+              every order.
             </p>
             <p className="text-sm text-muted-foreground leading-relaxed">
               For agents and resellers, we built a full merchant platform:
-              branded storefronts, live commission dashboards, and instant
-              MoMo payouts — turning everyday connections into a real income
-              stream.
+              branded storefronts, live commission dashboards, and instant MoMo
+              payouts — turning everyday connections into a real income stream.
             </p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -163,8 +159,8 @@ export const PublicAboutSection: React.FC<PublicAboutSectionProps> = ({
               Ready to get started?
             </h3>
             <p className="text-sm text-muted-foreground">
-              Buy data in seconds, or open your own branded data store —
-              both are one click away.
+              Buy data in seconds, or open your own branded data store — both
+              are one click away.
             </p>
           </div>
           <div className="flex flex-col sm:flex-row gap-3 shrink-0">
