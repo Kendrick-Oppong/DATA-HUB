@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect } from "react";
 import {
   Home,
   Wifi,
@@ -23,13 +23,18 @@ import {
   PanelLeftOpen,
   X,
   User,
-} from 'lucide-react';
-import { AnimatePresence, motion } from 'motion/react';
-import { UserRole, UserAccount } from '../../types';
-import { Button } from '../ui/button';
-import { Badge } from '../ui/badge';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip';
-import { ScrollArea } from '../ui/scroll-area';
+} from "lucide-react";
+import { AnimatePresence, motion } from "motion/react";
+import { UserRole, UserAccount } from "../../types";
+import { Button } from "../ui/button";
+import { Badge } from "../ui/badge";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "../ui/tooltip";
+import { ScrollArea } from "../ui/scroll-area";
 
 export interface SidebarProps {
   currentRole: UserRole;
@@ -70,7 +75,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   onCloseMobile,
 }) => {
   // Hide on public and storefront
-  if (currentRole === 'public' || currentRole === 'storefront') return null;
+  if (currentRole === "public" || currentRole === "storefront") return null;
 
   const select = (id: string) => {
     onSelectTab?.(id);
@@ -83,114 +88,191 @@ export const Sidebar: React.FC<SidebarProps> = ({
   // Close mobile drawer on Escape key
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && isMobileOpen && onCloseMobile) {
+      if (e.key === "Escape" && isMobileOpen && onCloseMobile) {
         onCloseMobile();
       }
     };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
   }, [isMobileOpen, onCloseMobile]);
 
   // Compute initials
   const getInitials = (name?: string, role?: UserRole) => {
     if (name) {
       const parts = name.trim().split(/\s+/);
-      if (parts.length >= 2) return `${parts[0][0]}${parts[1][0]}`.toUpperCase();
-      if (parts.length === 1 && parts[0].length > 0) return parts[0].substring(0, 2).toUpperCase();
+      if (parts.length >= 2)
+        return `${parts[0][0]}${parts[1][0]}`.toUpperCase();
+      if (parts.length === 1 && parts[0].length > 0)
+        return parts[0].substring(0, 2).toUpperCase();
     }
-    if (role === 'admin') return 'AD';
-    if (role === 'agent') return 'KO';
-    return 'KM';
+    if (role === "admin") return "AD";
+    if (role === "agent") return "KO";
+    return "KM";
   };
 
   const profileInitials = getInitials(user?.name, currentRole);
   const profileName =
     user?.name ||
-    (currentRole === 'admin'
-      ? 'NOC Super Admin'
-      : currentRole === 'agent'
-        ? 'Kofi Owusu'
-        : 'Kojo Mensah');
+    (currentRole === "admin"
+      ? "NOC Super Admin"
+      : currentRole === "agent"
+        ? "Kofi Owusu"
+        : "Kojo Mensah");
   const profileEmail =
     user?.email ||
-    (currentRole === 'admin'
-      ? 'noc.admin@smartdatahub.gh'
-      : currentRole === 'agent'
-        ? 'kofitelecom@gmail.com'
-        : 'kojomensah94@gmail.com');
+    (currentRole === "admin"
+      ? "noc.admin@smartdatahub.gh"
+      : currentRole === "agent"
+        ? "kofitelecom@gmail.com"
+        : "kojomensah94@gmail.com");
 
   // Groups per role: Note that Profile & Security is removed from the middle list
   // and placed at the bottom profile footer!
   const groups: { group: string; items: NavItem[] }[] =
-    currentRole === 'customer'
+    currentRole === "customer"
       ? [
           {
-            group: 'Telecom & Services',
+            group: "Telecom & Services",
             items: [
-              { id: 'overview', altIds: ['dashboard'], label: 'Dashboard', icon: Home },
-              { id: 'buy-data', label: 'Buy Data', icon: Wifi, badge: 'Instant' },
-              { id: 'buy-airtime', label: 'Buy Airtime', icon: PhoneCall },
-              { id: 'results-checker', label: 'Results Checker', icon: GraduationCap },
-              { id: 'afa', label: 'AFA Registration', icon: ShieldCheck, badge: 'Subsidized' },
-              { id: 'utilities', label: 'Utilities & Bills', icon: Zap },
+              {
+                id: "overview",
+                altIds: ["dashboard"],
+                label: "Dashboard",
+                icon: Home,
+              },
+              {
+                id: "buy-data",
+                label: "Buy Data",
+                icon: Wifi,
+                badge: "Instant",
+              },
+              { id: "buy-airtime", label: "Buy Airtime", icon: PhoneCall },
+              {
+                id: "results-checker",
+                label: "Results Checker",
+                icon: GraduationCap,
+              },
+              {
+                id: "afa",
+                label: "AFA Registration",
+                icon: ShieldCheck,
+                badge: "Subsidized",
+              },
+              { id: "utilities", label: "Utilities & Bills", icon: Zap },
             ],
           },
           {
-            group: 'Finance & History',
+            group: "Finance & History",
             items: [
-              { id: 'wallet', label: 'Wallet & Ledger', icon: Wallet },
-              { id: 'orders', label: 'My Orders', icon: Clock },
+              { id: "wallet", label: "Wallet & Ledger", icon: Wallet },
+              { id: "orders", label: "My Orders", icon: Clock },
             ],
           },
           {
-            group: 'Support & Help',
+            group: "Support & Help",
             items: [
-              { id: 'notifications', label: 'Notifications', icon: Bell, count: unreadNotifications },
-              { id: 'complaints', label: 'Complaints & Help', icon: MessageSquareWarning, count: openComplaintsCount },
-              { id: 'guides', label: 'How-to Guides', icon: BookOpen },
+              {
+                id: "notifications",
+                label: "Notifications",
+                icon: Bell,
+                count: unreadNotifications,
+              },
+              {
+                id: "complaints",
+                label: "Complaints & Help",
+                icon: MessageSquareWarning,
+                count: openComplaintsCount,
+              },
+              { id: "guides", label: "How-to Guides", icon: BookOpen },
             ],
           },
         ]
-      : currentRole === 'agent'
+      : currentRole === "agent"
         ? [
             {
-              group: 'Overview',
+              group: "Overview",
               items: [
-                { id: 'overview', altIds: ['dashboard'], label: 'Agent Dashboard', icon: Home },
-                { id: 'my-store', label: 'My Store Builder', icon: ShoppingBag, badge: 'Live' },
+                {
+                  id: "overview",
+                  altIds: ["dashboard"],
+                  label: "Agent Dashboard",
+                  icon: Home,
+                },
+                {
+                  id: "my-store",
+                  label: "My Store Builder",
+                  icon: ShoppingBag,
+                  badge: "Live",
+                },
               ],
             },
             {
-              group: 'Commerce & Sales',
+              group: "Commerce & Sales",
               items: [
-                { id: 'store-orders', label: 'Store Orders', icon: Clock },
-                { id: 'pricing', label: 'Pricing & Margins', icon: Sliders },
-                { id: 'analytics', label: 'Sales Analytics', icon: BarChart2 },
-                { id: 'bulk-sms', label: 'Bulk SMS Campaign', icon: Send },
-                { id: 'withdraw', label: 'Withdraw Commissions', icon: DollarSign, badge: 'MoMo' },
+                { id: "store-orders", label: "Store Orders", icon: Clock },
+                { id: "pricing", label: "Pricing & Margins", icon: Sliders },
+                { id: "analytics", label: "Sales Analytics", icon: BarChart2 },
+                { id: "bulk-sms", label: "Bulk SMS Campaign", icon: Send },
+                {
+                  id: "withdraw",
+                  label: "Withdraw Commissions",
+                  icon: DollarSign,
+                  badge: "MoMo",
+                },
               ],
             },
           ]
         : [
             {
-              group: 'Operations & Gateways',
+              group: "Operations & Gateways",
               items: [
-                { id: 'gateways', altIds: ['dashboard'], label: 'Carrier Gateways & Latency', icon: Server, badge: 'Live' },
-                { id: 'orders-audit', altIds: ['order-monitor'], label: 'Orders Audit & Dispatch', icon: Clock },
-                { id: 'settlement', altIds: ['payouts'], label: 'Settlement & Balances', icon: DollarSign, count: pendingPayoutsCount },
+                {
+                  id: "gateways",
+                  altIds: ["dashboard"],
+                  label: "Carrier Gateways & Latency",
+                  icon: Server,
+                  badge: "Live",
+                },
+                {
+                  id: "orders-audit",
+                  altIds: ["order-monitor"],
+                  label: "Orders Audit & Dispatch",
+                  icon: Clock,
+                },
+                {
+                  id: "settlement",
+                  altIds: ["payouts"],
+                  label: "Settlement & Balances",
+                  icon: DollarSign,
+                  count: pendingPayoutsCount,
+                },
               ],
             },
             {
-              group: 'Services Administration',
+              group: "Services Administration",
               items: [
-                { id: 'afa-verification', altIds: ['afa-admin'], label: 'AFA Approvals', icon: ShieldCheck },
-                { id: 'vouchers-stock', altIds: ['checkers-admin'], label: 'Voucher Stock (WAEC/BECE)', icon: GraduationCap },
+                {
+                  id: "afa-verification",
+                  altIds: ["afa-admin"],
+                  label: "AFA Approvals",
+                  icon: ShieldCheck,
+                },
+                {
+                  id: "vouchers-stock",
+                  altIds: ["checkers-admin"],
+                  label: "Voucher Stock (WAEC/BECE)",
+                  icon: GraduationCap,
+                },
               ],
             },
           ];
 
   const roleLabel =
-    currentRole === 'admin' ? 'NOC Admin' : currentRole === 'agent' ? 'Agent Portal' : 'Customer Account';
+    currentRole === "admin"
+      ? "NOC Admin"
+      : currentRole === "agent"
+        ? "Agent Portal"
+        : "Customer Account";
 
   // Shared Navigation list renderer
   const renderNavItems = (collapsed = false) => (
@@ -199,14 +281,15 @@ export const Sidebar: React.FC<SidebarProps> = ({
         <section key={group.group} className="flex flex-col gap-1">
           <h2
             className={`${
-              collapsed ? 'sr-only' : ''
+              collapsed ? "sr-only" : ""
             } px-3 text-[10px] font-bold uppercase tracking-wider text-muted-foreground`}
           >
             {group.group}
           </h2>
           {group.items.map((item) => {
             const Icon = item.icon;
-            const active = activeTab === item.id || item.altIds?.includes(activeTab);
+            const active =
+              activeTab === item.id || item.altIds?.includes(activeTab);
 
             if (collapsed) {
               return (
@@ -214,13 +297,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   <TooltipTrigger
                     render={
                       <Button
-                        variant={active ? 'default' : 'ghost'}
+                        variant={active ? "default" : "ghost"}
                         size="sm"
                         onClick={() => select(item.id)}
                         aria-label={item.label}
                         className="w-full justify-center px-0 h-10"
                       >
-                        <Icon className="size-4" />
+                        <Icon className="size-4 text-white" />
                       </Button>
                     }
                   />
@@ -246,21 +329,27 @@ export const Sidebar: React.FC<SidebarProps> = ({
             return (
               <Button
                 key={item.id}
-                variant={active ? 'default' : 'ghost'}
+                variant={active ? "default" : "ghost"}
                 size="sm"
                 onClick={() => select(item.id)}
                 aria-label={item.label}
                 className="w-full justify-start h-9 font-medium"
               >
-                <Icon data-icon="inline-start" className="size-4 shrink-0" />
-                <span className="truncate">{item.label}</span>
+                <Icon data-icon="inline-start" className="size-4 shrink-0 text-white" />
+                <span className="truncate text-white">{item.label}</span>
                 {item.badge && (
-                  <Badge variant="secondary" className="ml-auto text-[10px] px-1.5 py-0">
+                  <Badge
+                    variant="secondary"
+                    className="ml-auto text-[10px] px-1.5 py-0"
+                  >
                     {item.badge}
                   </Badge>
                 )}
                 {item.count ? (
-                  <Badge variant="destructive" className="ml-auto text-[10px] px-1.5 py-0">
+                  <Badge
+                    variant="destructive"
+                    className="ml-auto text-[10px] px-1.5 py-0"
+                  >
                     {item.count}
                   </Badge>
                 ) : null}
@@ -274,7 +363,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
   // Profile Footer Button Component
   const renderProfileFooter = (collapsed = false) => {
-    const isProfileActive = activeTab === 'profile';
+    const isProfileActive = activeTab === "profile";
 
     if (collapsed) {
       return (
@@ -285,12 +374,12 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 <Button
                   variant="ghost"
                   size="icon"
-                  onClick={() => select('profile')}
+                  onClick={() => select("profile")}
                   aria-label="Profile, Security & Preferences"
                   className={`relative flex size-10 items-center justify-center rounded-full transition-all cursor-pointer ${
                     isProfileActive
-                      ? 'bg-primary text-primary-foreground ring-2 ring-primary ring-offset-2 ring-offset-background font-bold shadow-sm'
-                      : 'bg-primary/10 text-primary hover:bg-primary/20 font-bold border border-primary/20'
+                      ? "bg-primary text-primary-foreground ring-2 ring-primary ring-offset-2 ring-offset-background font-bold shadow-sm"
+                      : "bg-primary/10 text-primary hover:bg-primary/20 font-bold border border-primary/20"
                   }`}
                 >
                   <span className="text-xs font-black">{profileInitials}</span>
@@ -300,9 +389,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
             />
             <TooltipContent side="right">
               <div className="space-y-0.5">
-                <p className="text-xs font-bold text-foreground">{profileName}</p>
-                <p className="text-[10px] text-muted-foreground">{profileEmail}</p>
-                <p className="text-[9px] font-semibold text-primary pt-0.5">Click for Profile & Security</p>
+                <p className="text-xs font-bold text-foreground">
+                  {profileName}
+                </p>
+                <p className="text-[10px] text-foreground">{profileEmail}</p>
               </div>
             </TooltipContent>
           </Tooltip>
@@ -314,11 +404,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
       <div className="border-t border-border/70 p-2.5 bg-muted/20 shrink-0">
         <Button
           variant="ghost"
-          onClick={() => select('profile')}
+          onClick={() => select("profile")}
           className={`group flex w-full h-auto items-center justify-start gap-3 rounded-2xl border p-2 text-left transition-all duration-150 cursor-pointer ${
             isProfileActive
-              ? 'border-primary/40 bg-primary/10 text-primary shadow-xs ring-1 ring-primary/20'
-              : 'border-transparent hover:border-border/80 hover:bg-card/90 text-foreground'
+              ? "border-primary/40 bg-primary/10 text-primary shadow-xs ring-1 ring-primary/20"
+              : "border-transparent hover:border-border/80 hover:bg-card/90 text-foreground"
           }`}
         >
           {/* Avatar with initials & online status badge */}
@@ -342,7 +432,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 </span>
               )}
             </div>
-            <p className="truncate text-[11px] text-muted-foreground leading-tight">
+            <p className="truncate text-[11px] text-foreground leading-tight">
               {profileEmail}
             </p>
           </div>
@@ -351,8 +441,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
           <ChevronRight
             className={`size-4 shrink-0 transition-transform duration-200 ${
               isProfileActive
-                ? 'text-primary translate-x-0.5'
-                : 'text-muted-foreground/60 group-hover:text-foreground group-hover:translate-x-0.5'
+                ? "text-primary translate-x-0.5"
+                : "text-muted-foreground/60 group-hover:text-foreground group-hover:translate-x-0.5"
             }`}
           />
         </Button>
@@ -367,20 +457,20 @@ export const Sidebar: React.FC<SidebarProps> = ({
       {/* ============================================================ */}
       <aside
         className={`hidden md:flex fixed top-16 bottom-0 left-0 z-30 flex-col border-r border-border bg-card/95 backdrop-blur-xs transition-[width] duration-300 ease-in-out ${
-          isCollapsed ? 'w-20' : 'w-64'
+          isCollapsed ? "w-20" : "w-64"
         }`}
       >
         {/* Top Role Header */}
         <div
           className={`flex h-14 items-center border-b border-border/70 px-4 shrink-0 ${
-            isCollapsed ? 'justify-center' : 'justify-between'
+            isCollapsed ? "justify-center" : "justify-between"
           }`}
         >
           <div className="flex items-center gap-2">
             <span className="size-2.5 rounded-full bg-primary animate-pulse" />
             <span
               className={`${
-                isCollapsed ? 'sr-only' : ''
+                isCollapsed ? "sr-only" : ""
               } text-xs font-extrabold uppercase tracking-wider text-muted-foreground`}
             >
               {roleLabel}
@@ -392,10 +482,14 @@ export const Sidebar: React.FC<SidebarProps> = ({
               variant="ghost"
               size="icon-sm"
               onClick={onToggleCollapse}
-              aria-label={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+              aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
               className="text-muted-foreground hover:text-foreground"
             >
-              {isCollapsed ? <PanelLeftOpen className="size-4" /> : <PanelLeftClose className="size-4" />}
+              {isCollapsed ? (
+                <PanelLeftOpen className="size-4" />
+              ) : (
+                <PanelLeftClose className="size-4" />
+              )}
             </Button>
           )}
         </div>
@@ -406,7 +500,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
             {renderNavItems(isCollapsed)}
 
             {/* Reseller Callout for Customers */}
-            {!isCollapsed && currentRole === 'customer' && (
+            {!isCollapsed && currentRole === "customer" && (
               <div className="mt-2 flex flex-col gap-2 rounded-2xl border border-primary/20 bg-primary/5 p-3">
                 <div className="flex items-center gap-1.5 text-xs font-bold text-foreground">
                   <Sparkles className="size-3.5 text-primary shrink-0" />
@@ -419,7 +513,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   variant="link"
                   size="sm"
                   className="justify-start px-0 text-xs font-semibold text-primary h-auto hover:no-underline"
-                  onClick={() => select('guides')}
+                  onClick={() => select("guides")}
                 >
                   Learn more
                   <ChevronRight className="size-3 ml-0.5" />
@@ -452,10 +546,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
             {/* Slide-over sheet panel */}
             <motion.aside
-              initial={{ x: '-100%' }}
+              initial={{ x: "-100%" }}
               animate={{ x: 0 }}
-              exit={{ x: '-100%' }}
-              transition={{ type: 'spring', damping: 27, stiffness: 300 }}
+              exit={{ x: "-100%" }}
+              transition={{ type: "spring", damping: 27, stiffness: 300 }}
               className="relative z-50 flex h-full w-72 max-w-[85vw] flex-col border-r border-border bg-card shadow-2xl"
             >
               {/* Sheet Header */}
@@ -491,20 +585,21 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   {renderNavItems(false)}
 
                   {/* Reseller Callout for Customers */}
-                  {currentRole === 'customer' && (
+                  {currentRole === "customer" && (
                     <div className="mt-2 flex flex-col gap-2 rounded-2xl border border-primary/20 bg-primary/5 p-3">
                       <div className="flex items-center gap-1.5 text-xs font-bold text-foreground">
                         <Sparkles className="size-3.5 text-primary shrink-0" />
                         <span>Sell data in Ghana</span>
                       </div>
                       <p className="text-[11px] leading-snug text-muted-foreground">
-                        Launch a branded store & earn commissions on every delivery.
+                        Launch a branded store & earn commissions on every
+                        delivery.
                       </p>
                       <Button
                         variant="link"
                         size="sm"
                         className="justify-start px-0 text-xs font-semibold text-primary h-auto hover:no-underline"
-                        onClick={() => select('guides')}
+                        onClick={() => select("guides")}
                       >
                         Learn more
                         <ChevronRight className="size-3 ml-0.5" />
