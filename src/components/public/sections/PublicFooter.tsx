@@ -1,7 +1,25 @@
-import React from "react";
+import React, { useCallback } from "react";
+import {
+  CheckCircle2,
+  MessageCircle,
+  Zap,
+  Lock,
+  ArrowUpRight,
+} from "lucide-react";
 import { TelecomNetwork, UserRole } from "../../../types";
+import { SignalRail } from "../../common/SignalRail";
 import { Button } from "../../ui/button";
-import { PublicTabType } from "./PublicHomeSection";
+import { Badge } from "../../ui/badge";
+import type { PublicTabType } from "./PublicHomeSection";
+import {
+  FOOTER_BRAND,
+  FOOTER_COLUMNS,
+  FOOTER_NOC,
+  FOOTER_COPYRIGHT,
+  FOOTER_COMPLIANCE,
+  FOOTER_PAYMENT_BADGES,
+  type FooterAction,
+} from "../constants";
 
 interface PublicFooterProps {
   onStartPurchase?: (bundleId: string, network: TelecomNetwork) => void;
@@ -14,154 +32,145 @@ export const PublicFooter: React.FC<PublicFooterProps> = ({
   onNavigatePublicTab,
   onNavigate,
 }) => {
-  const handleStartPurchase = (bundleId: string, network: TelecomNetwork) => {
-    if (onStartPurchase) {
-      onStartPurchase(bundleId, network);
-    }
-  };
+  const resolveClick = useCallback(
+    (action: FooterAction) => () => {
+      switch (action.type) {
+        case "purchase":
+          onStartPurchase?.(action.bundleId, action.network);
+          return;
+        case "public":
+          onNavigatePublicTab(action.tab);
+          return;
+        case "role":
+          if (onNavigate) {
+            onNavigate(action.role, action.tab);
+            return;
+          }
+          if (action.fallbackPublic) {
+            onNavigatePublicTab(action.fallbackPublic);
+            return;
+          }
+          if (action.fallbackPurchase) {
+            onStartPurchase?.(
+              action.fallbackPurchase.bundleId,
+              action.fallbackPurchase.network,
+            );
+          }
+          return;
+      }
+    },
+    [onStartPurchase, onNavigatePublicTab, onNavigate],
+  );
 
   return (
-    <footer className="mt-auto border-t border-border bg-card/60 py-10">
-      <div className="max-w-[95%] mx-auto px-4 sm:px-6">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
-          <div className="space-y-3">
+    <footer className="mt-auto border-t border-border bg-card/60 py-12">
+      <div className="max-w-[95%] mx-auto px-4 sm:px-6 space-y-10">
+        {/* Top grid with 5 columns */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
+          {/* Col 1: Brand & Live Status */}
+          <div className="space-y-4 lg:col-span-1">
             <div className="flex items-center gap-2">
-              <div className="w-7 h-7 rounded-lg bg-primary text-primary-foreground font-extrabold text-xs flex items-center justify-center">
-                SDH
+              <div className="w-8 h-8 rounded-xl bg-primary text-primary-foreground font-extrabold text-sm flex items-center justify-center shadow-md">
+                {FOOTER_BRAND.short}
               </div>
-              <span className="font-extrabold text-sm text-foreground">
-                Smart Data Hub
+              <span className="font-black text-base text-foreground tracking-tight">
+                {FOOTER_BRAND.name}
               </span>
             </div>
             <p className="text-xs text-muted-foreground leading-relaxed">
-              Ghana's trusted consumer fintech and telecom resale
-              infrastructure. Instant automated delivery on all networks.
+              {FOOTER_BRAND.tagline}
             </p>
+
+            <div className="inline-flex items-center gap-2 rounded-xl border border-emerald-500/20 bg-emerald-500/10 px-3 py-1.5 text-xs font-bold text-emerald-700 dark:text-emerald-400">
+              <SignalRail status="online" size="xs" />
+              <span>{FOOTER_BRAND.uptimeBadge}</span>
+            </div>
           </div>
 
-          <div>
-            <h4 className="text-xs font-bold uppercase tracking-wider text-foreground mb-3">
-              Quick Services
-            </h4>
-            <ul className="space-y-1.5 text-xs text-muted-foreground">
-              <li>
-                <Button
-                  variant="ghost"
-                  onClick={() => handleStartPurchase("mtn-5gb", "MTN")}
-                  className="h-auto justify-start p-0 text-xs font-normal text-muted-foreground hover:bg-transparent hover:text-primary"
-                >
-                  Buy MTN Data
-                </Button>
-              </li>
-              <li>
-                <Button
-                  variant="ghost"
-                  onClick={() =>
-                    handleStartPurchase("telecel-10gb", "Telecel")
-                  }
-                  className="h-auto justify-start p-0 text-xs font-normal text-muted-foreground hover:bg-transparent hover:text-primary"
-                >
-                  Buy Telecel Data
-                </Button>
-              </li>
-              <li>
-                <Button
-                  variant="ghost"
-                  onClick={() => handleStartPurchase("at-5gb", "AirtelTigo")}
-                  className="h-auto justify-start p-0 text-xs font-normal text-muted-foreground hover:bg-transparent hover:text-primary"
-                >
-                  Buy AT Big Time Data
-                </Button>
-              </li>
-              <li>
-                <Button
-                  variant="ghost"
-                  onClick={() =>
-                    onNavigate
-                      ? onNavigate("customer", "results-checker")
-                      : handleStartPurchase("waec-wassce", "MTN")
-                  }
-                  className="h-auto justify-start p-0 text-xs font-normal text-muted-foreground hover:bg-transparent hover:text-primary"
-                >
-                  WASSCE / BECE Checkers
-                </Button>
-              </li>
-            </ul>
-          </div>
+          {/* Cols 2–4: Loop over FOOTER_COLUMNS */}
+          {FOOTER_COLUMNS.map((col) => {
+            const Icon = col.icon;
+            return (
+              <div key={col.key}>
+                <h4 className="text-xs font-bold uppercase tracking-wider text-foreground mb-3 flex items-center gap-1.5">
+                  <Icon className={`size-3.5 ${col.iconColor}`} />
+                  {col.title}
+                </h4>
+                <ul className="space-y-1.5 text-xs">
+                  {col.items.map((item) => (
+                    <li key={item.label}>
+                      <Button
+                        variant="link"
+                        onClick={resolveClick(item.action)}
+                        className="h-auto justify-start p-0 text-xs font-normal text-muted-foreground hover:bg-transparent hover:text-primary"
+                      >
+                        {item.label}
+                      </Button>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            );
+          })}
 
-          <div>
-            <h4 className="text-xs font-bold uppercase tracking-wider text-foreground mb-3">
-              Company & Legal
-            </h4>
-            <ul className="space-y-1.5 text-xs text-muted-foreground">
-              <li>
-                <Button
-                  variant="ghost"
-                  onClick={() => onNavigatePublicTab("about")}
-                  className="h-auto justify-start p-0 text-xs font-normal text-muted-foreground hover:bg-transparent hover:text-primary"
-                >
-                  About Smart Data Hub
-                </Button>
-              </li>
-              <li>
-                <Button
-                  variant="ghost"
-                  onClick={() => onNavigatePublicTab("faq")}
-                  className="h-auto justify-start p-0 text-xs font-normal text-muted-foreground hover:bg-transparent hover:text-primary"
-                >
-                  Frequently Asked Questions
-                </Button>
-              </li>
-              <li>
-                <Button
-                  variant="ghost"
-                  onClick={() => onNavigatePublicTab("track")}
-                  className="h-auto justify-start p-0 text-xs font-normal text-muted-foreground hover:bg-transparent hover:text-primary"
-                >
-                  Order Status Tracker
-                </Button>
-              </li>
-              <li>
-                <Button
-                  variant="ghost"
-                  onClick={() => onNavigatePublicTab("contact")}
-                  className="h-auto justify-start p-0 text-xs font-normal text-muted-foreground hover:bg-transparent hover:text-primary"
-                >
-                  Terms of Service & SLA
-                </Button>
-              </li>
-            </ul>
-          </div>
-
-          <div>
-            <h4 className="text-xs font-bold uppercase tracking-wider text-foreground mb-3">
-              Accra NOC Desk
+          {/* Col 5: NOC Desk & Direct Contact */}
+          <div className="space-y-3">
+            <h4 className="text-xs font-bold uppercase tracking-wider text-foreground flex items-center gap-1.5">
+              <Zap className="size-3.5 text-primary" />
+              {FOOTER_NOC.title}
             </h4>
             <p className="text-xs text-muted-foreground leading-relaxed">
-              Airport Residential Area, Accra, Ghana.
+              {FOOTER_NOC.address}
               <br />
               Support:{" "}
               <span className="font-mono text-foreground font-semibold">
-                +233 24 419 2834
+                {FOOTER_NOC.phone}
               </span>
               <br />
-              Email:{" "}
-              <span className="text-foreground">
-                support@smartdatahub.com
-              </span>
+              Email: <span className="text-foreground">{FOOTER_NOC.email}</span>
             </p>
+
+            <Button
+              render={
+                <a
+                  href={FOOTER_NOC.whatsapp.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                />
+              }
+              variant="outline"
+              size="sm"
+              className="w-full gap-2 font-bold text-xs border-emerald-500/30 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-500/10"
+            >
+              <MessageCircle className="size-3.5" />
+              {FOOTER_NOC.whatsapp.label}
+              <ArrowUpRight className="size-3 ml-auto" />
+            </Button>
           </div>
         </div>
 
-        <div className="pt-6 border-t border-border/60 flex flex-col sm:flex-row justify-between items-center text-xs text-muted-foreground gap-2">
-          <div>
-            © 2026 Smart Data Hub Ghana. All rights reserved. Primary
-            currency: GH₵.
+        {/* Bottom Bar: Copyright, Compliance, MoMo Badges */}
+        <div className="pt-6 border-t border-border/70 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-muted-foreground">
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
+            <span>{FOOTER_COPYRIGHT}</span>
+            <span className="hidden sm:inline text-border">•</span>
+            <span className="flex items-center gap-1 text-[11px]">
+              <Lock className="size-3 text-emerald-500" />
+              {FOOTER_COMPLIANCE}
+            </span>
           </div>
-          <div className="flex items-center gap-4">
-            <span>MTN MoMo</span>
-            <span>Telecel Cash</span>
-            <span>AT Money</span>
+
+          <div className="flex items-center gap-2 flex-wrap">
+            {FOOTER_PAYMENT_BADGES.map((badge) => (
+              <Badge
+                key={badge.label}
+                variant="outline"
+                className="text-[10px] font-bold bg-muted/40"
+              >
+                <CheckCircle2 className={`size-3 ${badge.dotColor} mr-1`} />
+                {badge.label}
+              </Badge>
+            ))}
           </div>
         </div>
       </div>
