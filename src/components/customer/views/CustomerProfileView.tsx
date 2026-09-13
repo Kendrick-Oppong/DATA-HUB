@@ -46,7 +46,8 @@ export const CustomerProfileView: React.FC<CustomerProfileViewProps> = ({
         </h1>
 
         <p className="mt-0.5 text-xs text-muted-foreground">
-          Manage personal identity, Ghana Card KYC, transaction security PINs, and theme styles.
+          Manage personal identity, Ghana Card KYC, transaction security PINs,
+          and theme styles.
         </p>
       </div>
 
@@ -55,7 +56,8 @@ export const CustomerProfileView: React.FC<CustomerProfileViewProps> = ({
           <CheckCircle2 className="size-4" />
 
           <span>
-            Profile information successfully saved and synced with SDH identity services.
+            Profile information successfully saved and synced with SDH identity
+            services.
           </span>
         </div>
       )}
@@ -93,7 +95,7 @@ export const CustomerProfileView: React.FC<CustomerProfileViewProps> = ({
               id="profile-mobile"
               type="tel"
               defaultValue="0244192834"
-              className="font-mono font-medium tabular-nums"
+              className="font-medium tabular-nums"
             />
           </div>
 
@@ -109,16 +111,14 @@ export const CustomerProfileView: React.FC<CustomerProfileViewProps> = ({
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="profile-ghana-card">
-              Ghana Card Number (NIA)
-            </Label>
+            <Label htmlFor="profile-ghana-card">Ghana Card Number (NIA)</Label>
 
             <Input
               id="profile-ghana-card"
               type="text"
               defaultValue="GHA-721948192-3"
               disabled
-              className="cursor-not-allowed font-mono font-bold"
+              className="cursor-not-allowed font-medium"
             />
           </div>
         </div>
@@ -134,111 +134,6 @@ export const CustomerProfileView: React.FC<CustomerProfileViewProps> = ({
           >
             Save Account Changes
           </Button>
-        </div>
-      </div>
-
-      {/* Application Theme */}
-      <div className="space-y-4 rounded-3xl border border-border bg-card p-6 text-xs shadow-xs">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <div>
-            <h3 className="flex items-center gap-2 text-sm font-extrabold text-foreground">
-              <Palette className="size-4 text-primary" />
-              <span>Application Theme & Color Archetype</span>
-            </h3>
-
-            <p className="mt-0.5 text-[11px] text-muted-foreground">
-              Select from 6 bespoke color archetypes crafted for high contrast, day & night readability.
-            </p>
-          </div>
-
-          {onSetTheme && (
-            <Select
-              value={theme}
-              onValueChange={(value) => onSetTheme(value as AppTheme)}
-            >
-              <SelectTrigger className="w-56">
-                <SelectValue placeholder="Select theme" />
-              </SelectTrigger>
-
-              <SelectContent>
-                <SelectItem value="light">☀️ Daylight Clean</SelectItem>
-
-                <SelectItem value="dark">🌙 Midnight Obsidian</SelectItem>
-
-                <SelectItem value="sunset-amber">
-                  🌅 Sunset Amber
-                </SelectItem>
-
-                <SelectItem value="emerald-matrix">
-                  🌲 Emerald Matrix
-                </SelectItem>
-
-                <SelectItem value="royal-indigo">
-                  ⚡ Royal Indigo
-                </SelectItem>
-
-                <SelectItem value="ruby-red">💎 Ruby Red</SelectItem>
-              </SelectContent>
-            </Select>
-          )}
-        </div>
-
-        <div className="grid grid-cols-2 gap-3 pt-2 sm:grid-cols-3">
-          {[
-            {
-              id: "light",
-              name: "Daylight Clean",
-              dot: "bg-blue-600",
-            },
-            {
-              id: "dark",
-              name: "Midnight Obsidian",
-              dot: "border border-slate-700 bg-slate-900",
-            },
-            {
-              id: "ghana-gold",
-              name: "Sunset Amber",
-              dot: "bg-amber-500",
-            },
-            {
-              id: "emerald-matrix",
-              name: "Emerald Matrix",
-              dot: "bg-emerald-600",
-            },
-            {
-              id: "royal-indigo",
-              name: "Royal Indigo",
-              dot: "bg-indigo-600",
-            },
-            {
-              id: "ruby-red",
-              name: "Crimson Telecel",
-              dot: "bg-red-600",
-            },
-          ].map((themeOption) => (
-            <button
-              key={themeOption.id}
-              type="button"
-              onClick={() => onSetTheme?.(themeOption.id as AppTheme)}
-              className={`flex cursor-pointer items-center justify-between rounded-2xl border p-3 text-left transition-all ${
-                theme === themeOption.id
-                  ? "border-primary bg-primary/10 font-bold text-foreground shadow-2xs"
-                  : "border-border bg-muted/30 text-muted-foreground hover:bg-muted"
-              }`}
-            >
-              <div className="flex items-center gap-2">
-                <span
-                  className={`size-3.5 rounded-full ${themeOption.dot}`}
-                />
-
-                <span className="text-xs">{themeOption.name}</span>
-              </div>
-
-              {theme === themeOption.id && (
-                <Check className="size-3.5 text-primary" />
-              )}
-            </button>
-          ))}
         </div>
       </div>
 
@@ -266,7 +161,7 @@ export const CustomerProfileView: React.FC<CustomerProfileViewProps> = ({
               type="password"
               value={currentPinInput}
               onChange={(e) => setCurrentPinInput(e.target.value)}
-              className="text-center font-mono text-sm font-bold tabular-nums"
+              className="text-center text-sm font-bold tabular-nums"
             />
           </div>
 
@@ -279,7 +174,7 @@ export const CustomerProfileView: React.FC<CustomerProfileViewProps> = ({
               placeholder="Enter new 4 digits"
               value={newPinInput}
               onChange={(e) => setNewPinInput(e.target.value)}
-              className="text-center font-mono text-sm font-bold tabular-nums"
+              className="text-center text-sm font-bold tabular-nums"
             />
           </div>
         </div>
