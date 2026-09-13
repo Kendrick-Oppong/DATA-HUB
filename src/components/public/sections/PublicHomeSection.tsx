@@ -2,7 +2,7 @@ import React from "react";
 import {
   Wifi,
   Zap,
-  ArrowRight,
+  MoveRight ,
   Store,
   PhoneCall,
   GraduationCap,
@@ -68,9 +68,9 @@ export const PublicHomeSection: React.FC<PublicHomeSectionProps> = ({
                   Everything you need, delivered instantly
                 </h1>
                 <p className="max-w-xl text-base leading-relaxed text-muted-foreground sm:text-lg">
-                  Buy data, airtime, exam vouchers, and digital services
-                  across Ghana's networks. One trusted rail, live tracking,
-                  and delivery in seconds.
+                  Buy data, airtime, exam vouchers, and digital services across
+                  Ghana's networks. One trusted rail, live tracking, and
+                  delivery in seconds.
                 </p>
               </div>
               <div className="flex flex-wrap items-center gap-3">
@@ -82,7 +82,7 @@ export const PublicHomeSection: React.FC<PublicHomeSectionProps> = ({
                   }
                 >
                   Buy data now
-                  <ArrowRight className="size-4" />
+                  <MoveRight  className="size-4" />
                 </Button>
                 <Button
                   size="lg"
@@ -196,9 +196,7 @@ export const PublicHomeSection: React.FC<PublicHomeSectionProps> = ({
                         <Button
                           key={network}
                           variant={
-                            selectedNetwork === network
-                              ? "default"
-                              : "outline"
+                            selectedNetwork === network ? "default" : "outline"
                           }
                           className="font-semibold h-10"
                           onClick={() => {
@@ -242,8 +240,8 @@ export const PublicHomeSection: React.FC<PublicHomeSectionProps> = ({
                   Select Package & Phone
                 </h3>
                 <p className="text-xs text-muted-foreground leading-relaxed">
-                  Pick your preferred telecom network and bundle size. Enter
-                  any active Ghana SIM number.
+                  Pick your preferred telecom network and bundle size. Enter any
+                  active Ghana SIM number.
                 </p>
               </CardContent>
             </Card>
@@ -256,8 +254,8 @@ export const PublicHomeSection: React.FC<PublicHomeSectionProps> = ({
                   Approve MoMo Prompt
                 </h3>
                 <p className="text-xs text-muted-foreground leading-relaxed">
-                  Pay securely using MTN MoMo, Telecel Cash, AT Money, or
-                  your preloaded SDH Wallet balance.
+                  Pay securely using MTN MoMo, Telecel Cash, AT Money, or your
+                  preloaded SDH Wallet balance.
                 </p>
               </CardContent>
             </Card>
@@ -270,8 +268,8 @@ export const PublicHomeSection: React.FC<PublicHomeSectionProps> = ({
                   Instant Data Credited
                 </h3>
                 <p className="text-xs text-muted-foreground leading-relaxed">
-                  Our direct carrier gateway credits the beneficiary handset
-                  in seconds with official receipt and SMS.
+                  Our direct carrier gateway credits the beneficiary handset in
+                  seconds with official receipt and SMS.
                 </p>
               </CardContent>
             </Card>
@@ -287,8 +285,8 @@ export const PublicHomeSection: React.FC<PublicHomeSectionProps> = ({
                 Explore Digital Services
               </h2>
               <p className="text-sm text-muted-foreground">
-                Everything you need on one platform with unified tracking
-                and payment.
+                Everything you need on one platform with unified tracking and
+                payment.
               </p>
             </div>
             <Button
@@ -297,7 +295,7 @@ export const PublicHomeSection: React.FC<PublicHomeSectionProps> = ({
               onClick={() => onNavigatePublicTab("services")}
             >
               View All Services
-              <ArrowRight className="w-3.5 h-3.5" />
+              <MoveRight  className="w-3.5 h-3.5" />
             </Button>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2  gap-4 items-start">
@@ -314,11 +312,10 @@ export const PublicHomeSection: React.FC<PublicHomeSectionProps> = ({
                   Data Bundles
                 </h3>
                 <p className="text-xs text-muted-foreground mt-1">
-                  MTN, Telecel, AT bundles up to 100GB with non-expiry
-                  options.
+                  MTN, Telecel, AT bundles up to 100GB with non-expiry options.
                 </p>
-                <span className="inline-block mt-3 text-xs font-bold text-primary">
-                  Buy from GH₵4.80 →
+                <span className="flex items-center gap-1 mt-3 text-xs font-bold text-primary">
+                  Buy from GH₵4.80 <MoveRight  />
                 </span>
               </CardContent>
             </Button>
@@ -338,8 +335,8 @@ export const PublicHomeSection: React.FC<PublicHomeSectionProps> = ({
                   Instant electronic top-up for all networks from GH₵1 to
                   GH₵500.
                 </p>
-                <span className="inline-block mt-3 text-xs font-bold text-amber-600">
-                  Recharge SIM →
+                <span className="flex items-center gap-1 mt-3 text-xs font-bold text-amber-600">
+                  Recharge SIM <MoveRight  />
                 </span>
               </CardContent>
             </Button>
@@ -359,8 +356,8 @@ export const PublicHomeSection: React.FC<PublicHomeSectionProps> = ({
                   WAEC WASSCE, BECE Placement, and University admission
                   vouchers.
                 </p>
-                <span className="inline-block mt-3 text-xs font-bold text-purple-600">
-                  Get Serial & PIN →
+                <span className="flex items-center gap-1 mt-3 text-xs font-bold text-purple-600">
+                  Get Serial & PIN <MoveRight  />
                 </span>
               </CardContent>
             </Button>
@@ -377,11 +374,10 @@ export const PublicHomeSection: React.FC<PublicHomeSectionProps> = ({
                   AFA Registration
                 </h3>
                 <p className="text-xs text-muted-foreground mt-1">
-                  Farmer & Worker subsidized tariff enrollment with national
-                  ID.
+                  Farmer & Worker subsidized tariff enrollment with national ID.
                 </p>
-                <span className="inline-block mt-3 text-xs font-bold text-emerald-600">
-                  Register SIM →
+                <span className="flex items-center gap-1 mt-3 text-xs font-bold text-emerald-600">
+                  Register SIM <MoveRight  />
                 </span>
               </CardContent>
             </Button>
@@ -409,8 +405,8 @@ export const PublicHomeSection: React.FC<PublicHomeSectionProps> = ({
                   <span className="font-mono text-primary">
                     smartdatahub.com/store/your-name
                   </span>
-                  ), set your own selling margins, and withdraw profits
-                  directly to your Mobile Money wallet anytime.
+                  ), set your own selling margins, and withdraw profits directly
+                  to your Mobile Money wallet anytime.
                 </p>
                 <div className="flex flex-wrap gap-4 text-xs font-semibold text-foreground pt-2">
                   <div className="flex items-center gap-1.5">
