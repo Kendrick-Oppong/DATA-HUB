@@ -28,7 +28,6 @@ import {
 import { Navbar } from "./components/common/Navbar";
 import { Sidebar } from "./components/common/Sidebar";
 import { CommandMenu } from "./components/common/CommandMenu";
-import { FundWalletModal } from "./components/common/FundWalletModal";
 import { ReceiptModal } from "./components/common/ReceiptModal";
 import { SecurityPinsModal } from "./components/common/SecurityPinsModal";
 
@@ -60,6 +59,7 @@ import { AdminOperations } from "./components/admin/AdminOperations";
 
 // Public Storefront
 import { PublicStorefront } from "./components/storefront/PublicStorefront";
+import FundWalletModal from "./components/common/FundWalletModal";
 
 export type AppRoute =
   | { type: "public"; tab: string }

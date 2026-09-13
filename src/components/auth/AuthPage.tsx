@@ -938,7 +938,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
 
               <CardFooter className="flex justify-between items-center border-t border-border pt-4 text-xs text-muted-foreground">
                 <span>Ghana Data Protection Act Compliant</span>
-                <span className="">SSL 256-bit</span>
+                <span className=""> Secure & Encrypted</span>
               </CardFooter>
             </Card>
           </div>

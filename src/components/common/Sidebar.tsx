@@ -335,8 +335,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 aria-label={item.label}
                 className="w-full justify-start h-9 font-medium"
               >
-                <Icon data-icon="inline-start" className="size-4 shrink-0 text-white" />
-                <span className="truncate text-white">{item.label}</span>
+                <Icon
+                  data-icon="inline-start"
+                  className={`size-4 shrink-0 ${active ? "text-white" : ""}`}
+                />
+                <span className={`truncate ${active ? "text-white" : ""}`}>
+                  {item.label}
+                </span>
                 {item.badge && (
                   <Badge
                     variant="secondary"

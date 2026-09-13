@@ -53,35 +53,40 @@ export const FundWalletModal: React.FC<FundWalletModalProps> = ({
   const [generatedRef, setGeneratedRef] = useState<string>("");
 
   const quickAmounts = [20, 50, 100, 200, 500];
+
   const finalAmount = customAmount ? parseFloat(customAmount) || 0 : amount;
+
   const feeRate = paymentMethod === "card" ? 0.015 : 0.008;
   const feeRateLabel = paymentMethod === "card" ? "1.5%" : "0.8%";
+
   const fee = Number((finalAmount * feeRate).toFixed(2));
   const totalDeduction = Number((finalAmount + fee).toFixed(2));
 
-  const handleStartPayment = (e: React.FormEvent) => {
+  const handleStartPayment = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (finalAmount <= 0) return;
+
+    if (finalAmount < 5) return;
+
     setIsSubmitting(true);
     setStep("prompt");
 
     const newRef = `SDH-WF-${Math.floor(100000 + Math.random() * 900000)}`;
+
     setGeneratedRef(newRef);
 
     // Simulate MoMo USSD prompt push to subscriber handset
-    const timer = setTimeout(() => {
+    setTimeout(() => {
       setIsSubmitting(false);
       setStep("success");
+
       onSuccess(
         finalAmount,
         paymentMethod === "card"
           ? "Debit Card (Paystack/Visa)"
           : `${paymentMethod.toUpperCase()} Mobile Money (${momoNumber})`,
-        fee
+        fee,
       );
     }, 2800);
-
-    return () => clearTimeout(timer);
   };
 
   const handleReset = () => {
@@ -89,15 +94,20 @@ export const FundWalletModal: React.FC<FundWalletModalProps> = ({
     setCustomAmount("");
     setIsSubmitting(false);
     setCopiedRef(false);
+    setGeneratedRef("");
     onClose();
   };
 
   const handleCopyRef = async () => {
     if (!generatedRef) return;
+
     try {
       await navigator.clipboard.writeText(generatedRef);
       setCopiedRef(true);
-      setTimeout(() => setCopiedRef(false), 2000);
+
+      setTimeout(() => {
+        setCopiedRef(false);
+      }, 2000);
     } catch {
       setCopiedRef(false);
     }
@@ -162,8 +172,8 @@ export const FundWalletModal: React.FC<FundWalletModalProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && handleReset()}>
-      <DialogContent className="flex max-h-[90vh] sm:max-w-lg flex-col gap-0 overflow-hidden p-0 rounded-3xl border border-border bg-card shadow-2xl">
-        {/* Header with gradient branding matching ReceiptModal */}
+      <DialogContent className="flex h-[90vh] max-h-[90vh] sm:max-w-lg flex-col gap-0 overflow-hidden rounded-3xl border border-border bg-card p-0 shadow-2xl">
+        {/* Header */}
         <DialogHeader className="relative shrink-0 overflow-hidden border-b border-border bg-gradient-to-br from-primary/10 via-card to-amber-500/10 p-5 sm:p-6">
           <div className="absolute -right-12 -top-12 size-32 rounded-full bg-primary/5" />
           <div className="absolute -bottom-16 left-1/3 size-40 rounded-full bg-amber-500/5" />
@@ -179,9 +189,10 @@ export const FundWalletModal: React.FC<FundWalletModalProps> = ({
                   <DialogTitle className="text-left text-base font-extrabold tracking-tight">
                     Fund SDH Wallet
                   </DialogTitle>
+
                   <Badge
                     variant="secondary"
-                    className="bg-primary/15 text-primary border-primary/20 text-[10px] font-bold px-2 py-0"
+                    className="border-primary/20 bg-primary/15 px-2 py-0 text-[10px] font-bold text-primary"
                   >
                     Instant Credit
                   </Badge>
@@ -189,7 +200,7 @@ export const FundWalletModal: React.FC<FundWalletModalProps> = ({
 
                 <DialogDescription className="mt-0.5 text-left text-xs">
                   Available Balance:{" "}
-                  <strong className="text-foreground font-bold tabular-nums">
+                  <strong className="font-bold tabular-nums text-foreground">
                     GH₵ {currentBalance.toFixed(2)}
                   </strong>
                 </DialogDescription>
@@ -203,24 +214,34 @@ export const FundWalletModal: React.FC<FundWalletModalProps> = ({
           <div className="p-5 sm:p-6">
             {/* STEP 1: FORM */}
             {step === "form" && (
-              <form onSubmit={handleStartPayment} className="space-y-5">
+              <form
+                id="fund-wallet-form"
+                onSubmit={handleStartPayment}
+                className="space-y-5"
+              >
                 {/* Balance Overview Card */}
                 <div className="flex items-center justify-between rounded-2xl border border-border/70 bg-muted/30 p-3.5">
                   <div className="flex items-center gap-2.5">
                     <div className="flex size-8 items-center justify-center rounded-xl bg-primary/10 text-primary">
                       <Sparkles className="size-4" />
                     </div>
+
                     <div>
                       <p className="text-[11px] font-medium text-muted-foreground">
                         Current Float & Balance
                       </p>
-                      <p className="text-sm font-extrabold text-foreground tabular-nums">
+
+                      <p className="text-sm font-extrabold tabular-nums text-foreground">
                         GH₵ {currentBalance.toFixed(2)}
                       </p>
                     </div>
                   </div>
+
                   <div className="text-right">
-                    <Badge variant="outline" className="text-[10px] font-semibold text-emerald-600 dark:text-emerald-400 border-emerald-500/30 bg-emerald-500/10">
+                    <Badge
+                      variant="outline"
+                      className="border-emerald-500/30 bg-emerald-500/10 text-[10px] font-semibold text-emerald-600 dark:text-emerald-400"
+                    >
                       Gateway Ready
                     </Badge>
                   </div>
@@ -232,6 +253,7 @@ export const FundWalletModal: React.FC<FundWalletModalProps> = ({
                     <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
                       Select Top-Up Amount (GH₵)
                     </Label>
+
                     <span className="text-[11px] text-muted-foreground">
                       Min: GH₵ 5.00
                     </span>
@@ -240,6 +262,7 @@ export const FundWalletModal: React.FC<FundWalletModalProps> = ({
                   <div className="grid grid-cols-5 gap-2">
                     {quickAmounts.map((amt) => {
                       const isSelected = amount === amt && !customAmount;
+
                       return (
                         <Button
                           key={amt}
@@ -266,6 +289,7 @@ export const FundWalletModal: React.FC<FundWalletModalProps> = ({
                     <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-xs font-bold text-muted-foreground">
                       GH₵
                     </div>
+
                     <Input
                       type="number"
                       min="5"
@@ -273,7 +297,7 @@ export const FundWalletModal: React.FC<FundWalletModalProps> = ({
                       placeholder="Or enter custom amount (e.g. 75)..."
                       value={customAmount}
                       onChange={(e) => setCustomAmount(e.target.value)}
-                      className="pl-12 h-11 text-sm font-semibold tabular-nums"
+                      className="h-11 pl-12 text-sm font-semibold tabular-nums"
                     />
                   </div>
                 </div>
@@ -284,18 +308,19 @@ export const FundWalletModal: React.FC<FundWalletModalProps> = ({
                     Payment Method
                   </Label>
 
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                  <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-4">
                     {paymentChannels.map((channel) => {
                       const isSelected = paymentMethod === channel.id;
+
                       return (
                         <Button
                           key={channel.id}
                           type="button"
                           variant="outline"
                           onClick={() => setPaymentMethod(channel.id)}
-                          className={`flex h-auto flex-col items-center justify-center p-3 text-center transition-all whitespace-normal ${
+                          className={`flex h-auto flex-col items-center justify-center rounded-lg p-3 text-center whitespace-normal transition-all ${
                             isSelected
-                              ? `${channel.activeBorder} ${channel.activeBg} ring-2 ${channel.activeRing} font-bold shadow-xs hover:${channel.activeBg}`
+                              ? `${channel.activeBorder} ${channel.activeBg} ring-2 ${channel.activeRing} font-bold shadow-xs`
                               : "border-border/80 hover:bg-muted/50"
                           }`}
                         >
@@ -305,14 +330,16 @@ export const FundWalletModal: React.FC<FundWalletModalProps> = ({
                             </div>
                           ) : (
                             <div
-                              className={`flex size-7 items-center justify-center rounded-full font-black text-[11px] shadow-xs ${channel.logoBg} ${channel.logoColor}`}
+                              className={`flex size-7 items-center justify-center rounded-full text-[11px] font-black shadow-xs ${channel.logoBg} ${channel.logoColor}`}
                             >
                               {channel.logoText}
                             </div>
                           )}
-                          <span className="mt-1.5 text-xs font-bold text-foreground line-clamp-1">
+
+                          <span className="mt-1.5 line-clamp-1 text-xs font-bold text-foreground">
                             {channel.name}
                           </span>
+
                           <span className="text-[10px] text-muted-foreground">
                             {channel.sub}
                           </span>
@@ -325,13 +352,18 @@ export const FundWalletModal: React.FC<FundWalletModalProps> = ({
                 {/* Mobile Money Handset Number */}
                 {paymentMethod !== "card" ? (
                   <div className="space-y-1.5">
-                    <Label htmlFor="momo-input" className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                    <Label
+                      htmlFor="momo-input"
+                      className="text-xs font-bold uppercase tracking-wider text-muted-foreground"
+                    >
                       Mobile Money Wallet Number
                     </Label>
+
                     <div className="relative">
                       <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-muted-foreground">
                         <Smartphone className="size-4" />
                       </div>
+
                       <Input
                         id="momo-input"
                         type="tel"
@@ -339,66 +371,66 @@ export const FundWalletModal: React.FC<FundWalletModalProps> = ({
                         value={momoNumber}
                         onChange={(e) => setMomoNumber(e.target.value)}
                         placeholder="e.g. 0244123456"
-                        className="pl-10 h-11 text-sm font-semibold tabular-nums"
+                        className="h-11 pl-10 text-sm font-semibold tabular-nums"
                       />
                     </div>
+
                     <p className="text-[11px] text-muted-foreground">
-                      A USSD payment prompt will be pushed directly to this subscriber handset for 4-digit PIN confirmation.
+                      A USSD payment prompt will be pushed directly to this
+                      subscriber handset for 4-digit PIN confirmation.
                     </p>
                   </div>
                 ) : (
-                  <div className="rounded-2xl border border-border/80 bg-muted/20 p-3.5 text-xs space-y-1">
+                  <div className="space-y-1 rounded-2xl border border-border/80 bg-muted/20 p-3.5 text-xs">
                     <div className="flex items-center gap-2 font-bold text-foreground">
                       <CreditCard className="size-4 text-primary" />
                       <span>Card Checkout (Paystack / Visa / Mastercard)</span>
                     </div>
-                    <p className="text-[11px] text-muted-foreground leading-relaxed">
-                      You will be securely redirected to complete 3D-Secure authentication with your Ghana local or international bank card.
+
+                    <p className="text-[11px] leading-relaxed text-muted-foreground">
+                      You will be securely redirected to complete 3D-Secure
+                      authentication with your Ghana local or international bank
+                      card.
                     </p>
                   </div>
                 )}
 
                 {/* Fee & Calculation Summary Card */}
-                <div className="rounded-2xl border border-border bg-muted/30 p-4 space-y-2 text-xs">
+                <div className="space-y-2 rounded-2xl border border-border bg-muted/30 p-4 text-xs">
                   <div className="flex justify-between text-muted-foreground">
                     <span>Top-up Credit Amount</span>
-                    <span className="font-semibold text-foreground tabular-nums">
+
+                    <span className="font-semibold tabular-nums text-foreground">
                       GH₵ {finalAmount.toFixed(2)}
                     </span>
                   </div>
+
                   <div className="flex justify-between text-muted-foreground">
                     <span>Processing Fee ({feeRateLabel})</span>
-                    <span className="font-medium text-muted-foreground tabular-nums">
+
+                    <span className="font-medium tabular-nums text-muted-foreground">
                       GH₵ {fee.toFixed(2)}
                     </span>
                   </div>
+
                   <Separator className="my-1.5" />
-                  <div className="flex justify-between items-baseline font-bold text-sm text-foreground">
+
+                  <div className="flex items-baseline justify-between text-sm font-bold text-foreground">
                     <span>Total Deducted</span>
-                    <span className="text-base font-extrabold text-primary tabular-nums">
+
+                    <span className="text-base font-extrabold tabular-nums text-primary">
                       GH₵ {totalDeduction.toFixed(2)}
                     </span>
                   </div>
                 </div>
-
-                {/* Submit Button */}
-                <Button
-                  type="submit"
-                  disabled={finalAmount <= 0 || isSubmitting}
-                  size="lg"
-                  className="w-full gap-2 text-sm font-bold shadow-md cursor-pointer h-12 rounded-xl"
-                >
-                  <span>Authorize GH₵ {totalDeduction.toFixed(2)}</span>
-                  <ArrowRight className="size-4" />
-                </Button>
               </form>
             )}
 
             {/* STEP 2: USSD PROMPT PUSH */}
             {step === "prompt" && (
-              <div className="py-6 px-2 text-center space-y-5">
+              <div className="space-y-5 px-2 py-6 text-center">
                 <div className="relative mx-auto flex size-20 items-center justify-center rounded-full bg-primary/10 text-primary">
-                  <div className="absolute inset-0 rounded-full border-2 border-primary/20 animate-ping opacity-30" />
+                  <div className="absolute inset-0 animate-ping rounded-full border-2 border-primary/20 opacity-30" />
                   <Loader2 className="size-9 animate-spin text-primary" />
                 </div>
 
@@ -406,20 +438,27 @@ export const FundWalletModal: React.FC<FundWalletModalProps> = ({
                   <h4 className="text-lg font-extrabold text-foreground">
                     USSD Prompt Pushed to Handset
                   </h4>
-                  <p className="text-xs text-muted-foreground max-w-sm mx-auto leading-relaxed">
+
+                  <p className="mx-auto max-w-sm text-xs leading-relaxed text-muted-foreground">
                     Please check your phone screen on{" "}
-                    <strong className="text-foreground">{momoNumber}</strong> and enter your 4-digit PIN to authorize payment of{" "}
-                    <strong className="text-primary font-bold">GH₵ {totalDeduction.toFixed(2)}</strong>.
+                    <strong className="text-foreground">{momoNumber}</strong>{" "}
+                    and enter your 4-digit PIN to authorize payment of{" "}
+                    <strong className="font-bold text-primary">
+                      GH₵ {totalDeduction.toFixed(2)}
+                    </strong>
+                    .
                   </p>
                 </div>
 
-                <div className="rounded-2xl border border-amber-500/25 bg-amber-500/10 p-3.5 text-xs text-amber-900 dark:text-amber-300 space-y-1 max-w-sm mx-auto">
+                <div className="mx-auto max-w-sm space-y-1 rounded-2xl border border-amber-500/25 bg-amber-500/10 p-3.5 text-xs text-amber-900 dark:text-amber-300">
                   <div className="flex items-center justify-center gap-1.5 font-bold">
                     <RefreshCw className="size-3.5 animate-spin" />
                     <span>Awaiting Bank & Carrier Confirmation</span>
                   </div>
+
                   <p className="text-[11px] opacity-90">
-                    Listening for webhook callback from {paymentMethod.toUpperCase()} gateway...
+                    Listening for webhook callback from{" "}
+                    {paymentMethod.toUpperCase()} gateway...
                   </p>
                 </div>
 
@@ -428,7 +467,10 @@ export const FundWalletModal: React.FC<FundWalletModalProps> = ({
                     type="button"
                     variant="outline"
                     size="sm"
-                    onClick={() => setStep("form")}
+                    onClick={() => {
+                      setIsSubmitting(false);
+                      setStep("form");
+                    }}
                     className="text-xs text-muted-foreground hover:text-foreground"
                   >
                     Cancel & Change Details
@@ -439,7 +481,7 @@ export const FundWalletModal: React.FC<FundWalletModalProps> = ({
 
             {/* STEP 3: SUCCESS CONFIRMATION */}
             {step === "success" && (
-              <div className="py-5 px-2 text-center space-y-5">
+              <div className="space-y-5 px-2 py-5 text-center">
                 <div className="mx-auto flex size-20 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
                   <CheckCircle2 className="size-10 text-emerald-500" />
                 </div>
@@ -448,8 +490,9 @@ export const FundWalletModal: React.FC<FundWalletModalProps> = ({
                   <h4 className="text-xl font-extrabold text-foreground">
                     Wallet Funded Successfully!
                   </h4>
+
                   <p className="text-xs text-muted-foreground">
-                    <strong className="text-emerald-600 dark:text-emerald-400 font-bold">
+                    <strong className="font-bold text-emerald-600 dark:text-emerald-400">
                       GH₵ {finalAmount.toFixed(2)}
                     </strong>{" "}
                     has been instantly credited to your available balance.
@@ -457,18 +500,22 @@ export const FundWalletModal: React.FC<FundWalletModalProps> = ({
                 </div>
 
                 {/* Summary Card */}
-                <div className="rounded-2xl border border-border bg-muted/40 p-4 text-xs space-y-2.5 text-left max-w-md mx-auto">
-                  <div className="flex justify-between items-center">
-                    <span className="text-muted-foreground">New Available Balance:</span>
-                    <span className="font-extrabold text-sm text-emerald-600 dark:text-emerald-400 tabular-nums">
+                <div className="mx-auto max-w-md space-y-2.5 rounded-2xl border border-border bg-muted/40 p-4 text-left text-xs">
+                  <div className="flex items-center justify-between">
+                    <span className="text-muted-foreground">
+                      New Available Balance:
+                    </span>
+
+                    <span className="text-sm font-extrabold tabular-nums text-emerald-600 dark:text-emerald-400">
                       GH₵ {(currentBalance + finalAmount).toFixed(2)}
                     </span>
                   </div>
 
                   <Separator />
 
-                  <div className="flex justify-between items-center">
+                  <div className="flex items-center justify-between">
                     <span className="text-muted-foreground">Channel:</span>
+
                     <span className="font-semibold text-foreground">
                       {paymentMethod === "card"
                         ? "Debit Card (Visa/Paystack)"
@@ -476,17 +523,20 @@ export const FundWalletModal: React.FC<FundWalletModalProps> = ({
                     </span>
                   </div>
 
-                  <div className="flex justify-between items-center">
+                  <div className="flex items-center justify-between">
                     <span className="text-muted-foreground">Fee Paid:</span>
-                    <span className="font-semibold text-foreground tabular-nums">
+
+                    <span className="font-semibold tabular-nums text-foreground">
                       GH₵ {fee.toFixed(2)}
                     </span>
                   </div>
 
-                  <div className="flex justify-between items-center">
+                  <div className="flex items-center justify-between">
                     <span className="text-muted-foreground">Reference:</span>
-                    <div className="flex items-center gap-1.5 font-mono text-foreground font-bold">
+
+                    <div className="flex items-center gap-1.5 font-mono font-bold text-foreground">
                       <span>{generatedRef}</span>
+
                       <Button
                         type="button"
                         variant="ghost"
@@ -509,7 +559,7 @@ export const FundWalletModal: React.FC<FundWalletModalProps> = ({
                   type="button"
                   onClick={handleReset}
                   size="lg"
-                  className="w-full text-sm font-bold rounded-xl h-12 shadow-sm cursor-pointer"
+                  className="h-12 w-full cursor-pointer rounded-xl text-sm font-bold shadow-sm"
                 >
                   Done & Return to Dashboard
                 </Button>
@@ -518,10 +568,36 @@ export const FundWalletModal: React.FC<FundWalletModalProps> = ({
           </div>
         </ScrollArea>
 
-        {/* Modal Footer with Bank of Ghana regulated security badge */}
-        <DialogFooter className="m-0 rounded-none border-t border-border bg-muted/30 px-5 py-3 sm:justify-center">
-          <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground font-medium">
-            <ShieldCheck className="size-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
+        {/* Fixed Action Button */}
+        {step === "form" && (
+          <div className="shrink-0 border-t border-border bg-card p-4 sm:px-6">
+            <Button
+              type="submit"
+              form="fund-wallet-form"
+              disabled={finalAmount < 5 || isSubmitting}
+              size="lg"
+              className="h-12 w-full gap-2 rounded-xl text-sm font-bold shadow-md"
+            >
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="size-4 animate-spin" />
+                  Processing...
+                </>
+              ) : (
+                <>
+                  <span>Authorize GH₵ {totalDeduction.toFixed(2)}</span>
+                  <ArrowRight className="size-4" />
+                </>
+              )}
+            </Button>
+          </div>
+        )}
+
+        {/* Modal Footer */}
+        <DialogFooter className="m-0 shrink-0 rounded-none border-t border-border bg-muted/30 px-5 py-3 sm:justify-center">
+          <div className="flex items-center justify-center gap-2 text-xs font-medium text-muted-foreground">
+            <ShieldCheck className="size-4 shrink-0 text-emerald-600 dark:text-emerald-400" />
+
             <span className="text-[11px]">
               Secured by Bank of Ghana Regulated Telecom Payment Switch
             </span>
