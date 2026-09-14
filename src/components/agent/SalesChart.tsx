@@ -37,7 +37,7 @@ export const SalesChart: React.FC<SalesChartProps> = ({
                 key={i}
                 className="flex-1 flex flex-col items-center gap-1.5 h-full justify-end"
               >
-                <span className="text-[10px] font-mono text-muted-foreground tabular-nums">
+                <span className="text-[10px] font-semibold text-muted-foreground tabular-nums">
                   GH₵{point.value}
                 </span>
                 <div

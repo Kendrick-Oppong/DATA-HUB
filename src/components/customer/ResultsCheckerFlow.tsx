@@ -353,9 +353,6 @@ export const ResultsCheckerFlow: React.FC<ResultsCheckerFlowProps> = ({
                       <span className="text-[10px] uppercase font-bold px-2 py-0.5 rounded bg-muted text-foreground">
                         {item.examBody}
                       </span>
-                      <span className="text-xs font-semibold text-emerald-600 dark:text-emerald-400">
-                        {item.stockCount} in stock
-                      </span>
                     </div>
                     <h3 className="font-bold text-sm text-foreground">
                       {item.title}
@@ -366,7 +363,7 @@ export const ResultsCheckerFlow: React.FC<ResultsCheckerFlowProps> = ({
                   </div>
 
                   <div className="pt-3 mt-3 border-t border-border flex justify-between items-center">
-                    <span className="text-xs text-muted-foreground">
+                    <span className="text-xs font-semibold text-muted-foreground">
                       Unit Price:
                     </span>
                     <span className="text-base font-black text-foreground tabular-nums">

@@ -146,12 +146,9 @@ export const CustomerDashboard: React.FC<CustomerDashboardProps> = ({
           <SignalRail status="delivered" size="sm" />
 
           <div>
-            <span className="font-semibold text-emerald-700 dark:text-emerald-400">
-              Latest MTN Order:{" "}
-            </span>
-
-            <span className="text-muted-foreground">
-              Delivered in 1h 11m. Validation completed.
+            <span className="font-semibold">Latest MTN Order: </span>
+            <span>
+              Delivered in 1h 11m. Validation completed
             </span>
           </div>
         </div>

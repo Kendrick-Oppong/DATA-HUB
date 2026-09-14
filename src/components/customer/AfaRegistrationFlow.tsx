@@ -342,12 +342,12 @@ export const AfaRegistrationFlow: React.FC<AfaRegistrationFlowProps> = ({
       <div className="flex flex-col items-start justify-between gap-4 border-b border-border pb-5 sm:flex-row sm:items-center">
         <div className="min-w-0">
           <div className="flex items-center gap-2">
-            <div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+            <div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-emerald-500/10  dark:text-emerald-400">
               <ShieldCheck className="size-5" />
             </div>
 
             <div>
-              <p className="text-[10px] font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">
+              <p className="text-[10px] font-bold uppercase tracking-wider  dark:text-emerald-400">
                 AFA Services
               </p>
 
@@ -373,12 +373,12 @@ export const AfaRegistrationFlow: React.FC<AfaRegistrationFlowProps> = ({
           ELIGIBILITY BANNER
           ======================================================== */}
 
-      <div className="relative overflow-hidden rounded-2xl border border-emerald-500/20 bg-emerald-500/10 p-5">
+      <div className="relative overflow-hidden rounded-2xl border border-emerald-500/20 bg-emerald-500/8 p-5">
         <div className="absolute -right-10 -top-10 size-32 rounded-full bg-emerald-500/5" />
 
         <div className="relative">
           <div className="flex items-start gap-3">
-            <div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+            <div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-emerald-500/10  dark:text-emerald-400">
               <ShieldCheck className="size-4" />
             </div>
 
@@ -388,39 +388,31 @@ export const AfaRegistrationFlow: React.FC<AfaRegistrationFlowProps> = ({
               </h3>
 
               <p className="mt-1.5 max-w-4xl text-xs leading-relaxed text-emerald-950 dark:text-emerald-200">
-                Ghanaian citizens engaged in farming, agricultural commerce,
-                food trading, farm logistics, or rural trades can register their
-                Ghana SIM card. Once approved, eligible subscribers can access
-                special discounted telecom tariffs.
+                MTN AFA bundle offers heavily discounted voice & SMS for
+                farmers, traders, drivers & professionals. Register → Verify
+                (3-7 days) → Buy discounted packages. Dial *1848# to purchase.
               </p>
 
               <div className="mt-3 flex flex-wrap items-center gap-2">
                 <Badge
                   variant="outline"
-                  className="border-emerald-500/20 bg-background/50 text-[10px] font-semibold text-emerald-700 dark:text-emerald-300"
+                  className="border-emerald-500/20 bg-background text-[10px] font-semibold text-emerald-700 dark:text-emerald-300"
                 >
-                  Farming
+                  GH¢10 — 220min + 50SMS
                 </Badge>
 
                 <Badge
                   variant="outline"
-                  className="border-emerald-500/20 bg-background/50 text-[10px] font-semibold text-emerald-700 dark:text-emerald-300"
+                  className="border-emerald-500/20 bg-background text-[10px] font-semibold text-emerald-700 dark:text-emerald-300"
                 >
-                  Agricultural commerce
+                  GH¢10 — 160min + 50SMS + 150MB
                 </Badge>
 
                 <Badge
                   variant="outline"
-                  className="border-emerald-500/20 bg-background/50 text-[10px] font-semibold text-emerald-700 dark:text-emerald-300"
+                  className="border-emerald-500/20 bg-background text-[10px] font-semibold text-emerald-700 dark:text-emerald-300"
                 >
-                  Food trading
-                </Badge>
-
-                <Badge
-                  variant="outline"
-                  className="border-emerald-500/20 bg-background/50 text-[10px] font-semibold text-emerald-700 dark:text-emerald-300"
-                >
-                  Farm logistics
+                  Free — Unlimited AFA calls
                 </Badge>
               </div>
             </div>
@@ -614,7 +606,7 @@ export const AfaRegistrationFlow: React.FC<AfaRegistrationFlowProps> = ({
                         {app.reference}
                       </TableCell>
 
-                      <TableCell className="text-xs">
+                      <TableCell className="text-xs text-foreground">
                         {app.phoneNumber}
                       </TableCell>
 
@@ -622,7 +614,7 @@ export const AfaRegistrationFlow: React.FC<AfaRegistrationFlowProps> = ({
                         {app.occupation}
                       </TableCell>
 
-                      <TableCell className="text-xs text-muted-foreground">
+                      <TableCell className="text-xs text-foreground">
                         {app.ghanaCardNumber}
                       </TableCell>
 
@@ -634,7 +626,7 @@ export const AfaRegistrationFlow: React.FC<AfaRegistrationFlowProps> = ({
                         {getStatusPill(app.status)}
                       </TableCell>
 
-                      <TableCell className="text-right text-xs tabular-nums text-muted-foreground">
+                      <TableCell className="text-right text-xs tabular-nums text-foreground">
                         {formatDateTime(app.dateSubmitted)}
                       </TableCell>
                     </TableRow>
@@ -777,11 +769,11 @@ export const AfaRegistrationFlow: React.FC<AfaRegistrationFlowProps> = ({
                     <div className="absolute -right-12 -top-12 size-32 rounded-full bg-emerald-500/5" />
 
                     <div className="relative">
-                      <div className="mx-auto flex size-14 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+                      <div className="mx-auto flex size-14 items-center justify-center rounded-full bg-emerald-500/10  dark:text-emerald-400">
                         <CheckCircle2 className="size-8" />
                       </div>
 
-                      <p className="mt-4 text-[10px] font-bold uppercase tracking-[0.16em] text-emerald-600 dark:text-emerald-400">
+                      <p className="mt-4 text-[10px] font-bold uppercase tracking-[0.16em]  dark:text-emerald-400">
                         Application received
                       </p>
 
@@ -1132,7 +1124,7 @@ export const AfaRegistrationFlow: React.FC<AfaRegistrationFlowProps> = ({
 
                   <section>
                     <div className="mb-4 flex items-start gap-3">
-                      <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+                      <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-emerald-500/10  dark:text-emerald-400">
                         <Briefcase className="size-4" />
                       </div>
 
@@ -1204,7 +1196,7 @@ export const AfaRegistrationFlow: React.FC<AfaRegistrationFlowProps> = ({
                         <p
                           className={`mt-0.5 text-[9px] font-semibold ${
                             hasSufficientBalance
-                              ? "text-emerald-600 dark:text-emerald-400"
+                              ? " dark:text-emerald-400"
                               : "text-rose-600 dark:text-rose-400"
                           }`}
                         >
@@ -1282,7 +1274,7 @@ export const AfaRegistrationFlow: React.FC<AfaRegistrationFlowProps> = ({
 
           <DialogFooter className="m-0 shrink-0 rounded-none border-t border-border bg-muted/30 px-5 py-3 sm:justify-center">
             <div className="flex items-center justify-center gap-2 text-xs font-medium text-muted-foreground">
-              <ShieldCheck className="size-4 shrink-0 text-emerald-600 dark:text-emerald-400" />
+              <ShieldCheck className="size-4 shrink-0  dark:text-emerald-400" />
 
               <span className="text-[11px]">
                 Secured by NIA & MoFA Verified Identity System

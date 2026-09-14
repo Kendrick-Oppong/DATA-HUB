@@ -165,7 +165,7 @@ export const BuyDataFlow: React.FC<BuyDataFlowProps> = ({
       </div>
 
       {/* Step Indicator */}
-      {step !== 'processing' && step !== 'success' && (
+      {step !== "processing" && step !== "success" && (
         <Card className="border-border shadow-xs">
           <CardContent className="p-4">
             <div className="flex items-center justify-between gap-2">
@@ -179,10 +179,10 @@ export const BuyDataFlow: React.FC<BuyDataFlowProps> = ({
                       <div
                         className={`w-10 h-10 rounded-full flex items-center justify-center transition-all ${
                           isActive
-                            ? 'bg-primary text-primary-foreground ring-2 ring-primary/30'
+                            ? "bg-primary text-primary-foreground ring-2 ring-primary/30"
                             : isCompleted
-                            ? 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400'
-                            : 'bg-muted text-muted-foreground'
+                              ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400"
+                              : "bg-muted text-muted-foreground"
                         }`}
                       >
                         {isCompleted ? (
@@ -191,16 +191,24 @@ export const BuyDataFlow: React.FC<BuyDataFlowProps> = ({
                           <Icon className="w-5 h-5" />
                         )}
                       </div>
-                      <span className={`text-[10px] font-bold uppercase tracking-wider ${
-                        isActive ? 'text-primary' : isCompleted ? 'text-emerald-600 dark:text-emerald-400' : 'text-muted-foreground'
-                      }`}>
+                      <span
+                        className={`text-[10px] font-bold uppercase tracking-wider ${
+                          isActive
+                            ? "text-primary"
+                            : isCompleted
+                              ? "text-emerald-600 dark:text-emerald-400"
+                              : "text-muted-foreground"
+                        }`}
+                      >
                         {s.label}
                       </span>
                     </div>
                     {idx < steps.length - 1 && (
-                      <div className={`h-0.5 flex-1 mb-6 ${
-                        isCompleted ? 'bg-emerald-500' : 'bg-border'
-                      }`} />
+                      <div
+                        className={`h-0.5 flex-1 mb-6 ${
+                          isCompleted ? "bg-emerald-500" : "bg-border"
+                        }`}
+                      />
                     )}
                   </div>
                 );
@@ -211,7 +219,7 @@ export const BuyDataFlow: React.FC<BuyDataFlowProps> = ({
       )}
 
       {/* Step Content */}
-      {step === 'network' && (
+      {step === "network" && (
         <Card className="border-border shadow-xs">
           <CardContent className="p-6 space-y-4">
             <div>
@@ -224,38 +232,42 @@ export const BuyDataFlow: React.FC<BuyDataFlowProps> = ({
             </div>
 
             <div className="grid grid-cols-3 gap-3">
-              {(['MTN', 'Telecel', 'AirtelTigo'] as TelecomNetwork[]).map((net) => {
-                const isSelected = selectedNetwork === net;
-                return (
-                  <button
-                    key={net}
-                    type="button"
-                    onClick={() => {
-                      setSelectedNetwork(net);
-                      const first = bundles.find((b) => b.network === net);
-                      if (first) setSelectedBundleId(first.id);
-                    }}
-                    className={`py-4 px-3 rounded-xl border text-center transition-all cursor-pointer ${
-                      isSelected
-                        ? net === 'MTN'
-                          ? 'bg-amber-400 text-amber-950 border-amber-500 ring-2 ring-amber-500/30 font-bold'
-                          : net === 'Telecel'
-                          ? 'bg-red-600 text-white border-red-700 ring-2 ring-red-500/30 font-bold'
-                          : 'bg-blue-600 text-white border-blue-700 ring-2 ring-blue-500/30 font-bold'
-                        : 'border-border bg-muted/40 hover:bg-muted text-foreground'
-                    }`}
-                  >
-                    <div className="text-sm font-extrabold">{net}</div>
-                    <div className="text-[10px] mt-1 opacity-85">Instant EVD</div>
-                  </button>
-                );
-              })}
+              {(["MTN", "Telecel", "AirtelTigo"] as TelecomNetwork[]).map(
+                (net) => {
+                  const isSelected = selectedNetwork === net;
+                  return (
+                    <button
+                      key={net}
+                      type="button"
+                      onClick={() => {
+                        setSelectedNetwork(net);
+                        const first = bundles.find((b) => b.network === net);
+                        if (first) setSelectedBundleId(first.id);
+                      }}
+                      className={`py-4 px-3 rounded-xl border text-center transition-all cursor-pointer ${
+                        isSelected
+                          ? net === "MTN"
+                            ? "bg-amber-400 text-amber-950 border-amber-500 ring-2 ring-amber-500/30 font-bold"
+                            : net === "Telecel"
+                              ? "bg-red-600 text-white border-red-700 ring-2 ring-red-500/30 font-bold"
+                              : "bg-blue-600 text-white border-blue-700 ring-2 ring-blue-500/30 font-bold"
+                          : "border-border bg-muted/40 hover:bg-muted text-foreground"
+                      }`}
+                    >
+                      <div className="text-sm font-extrabold">{net}</div>
+                      <div className="text-[10px] mt-1 opacity-85">
+                        Instant EVD
+                      </div>
+                    </button>
+                  );
+                },
+              )}
             </div>
           </CardContent>
         </Card>
       )}
 
-      {step === 'bundle' && (
+      {step === "bundle" && (
         <Card className="border-border shadow-xs">
           <CardContent className="p-6 space-y-4">
             <div className="flex justify-between items-center">
@@ -267,40 +279,46 @@ export const BuyDataFlow: React.FC<BuyDataFlowProps> = ({
                   Select a data package for {selectedNetwork}.
                 </p>
               </div>
-              <Badge variant="outline" className="text-xs">
+              <Badge variant="outline" className="text-xs !bg-background">
                 {filteredBundles.length} packages
               </Badge>
             </div>
 
             {/* Input Mode Switcher */}
-            <div className="flex items-center p-1 rounded-xl bg-muted border border-border text-xs font-semibold w-fit">
+            <div className="flex items-center p-1 rounded-full bg-muted border border-border text-xs font-semibold w-fit">
               <button
-                onClick={() => setInputMode('cards')}
-                className={`px-3 py-1.5 rounded-lg transition-colors cursor-pointer ${
-                  inputMode === 'cards' ? 'bg-card text-foreground shadow-2xs' : 'text-muted-foreground hover:text-foreground'
+                onClick={() => setInputMode("cards")}
+                className={`px-3 py-1.5 rounded-full transition-colors cursor-pointer ${
+                  inputMode === "cards"
+                    ? "bg-card text-foreground shadow-2xs"
+                    : "text-muted-foreground hover:text-foreground"
                 }`}
               >
                 Card View
               </button>
               <button
-                onClick={() => setInputMode('text')}
-                className={`px-3 py-1.5 rounded-lg transition-colors cursor-pointer ${
-                  inputMode === 'text' ? 'bg-card text-foreground shadow-2xs' : 'text-muted-foreground hover:text-foreground'
+                onClick={() => setInputMode("text")}
+                className={`px-3 py-1.5 rounded-full transition-colors cursor-pointer ${
+                  inputMode === "text"
+                    ? "bg-card text-foreground shadow-2xs"
+                    : "text-muted-foreground hover:text-foreground"
                 }`}
               >
                 Quick Text
               </button>
               <button
-                onClick={() => setInputMode('bulk')}
-                className={`px-3 py-1.5 rounded-lg transition-colors cursor-pointer ${
-                  inputMode === 'bulk' ? 'bg-card text-foreground shadow-2xs' : 'text-muted-foreground hover:text-foreground'
+                onClick={() => setInputMode("bulk")}
+                className={`px-3 py-1.5 rounded-full transition-colors cursor-pointer ${
+                  inputMode === "bulk"
+                    ? "bg-card text-foreground shadow-2xs"
+                    : "text-muted-foreground hover:text-foreground"
                 }`}
               >
                 Bulk
               </button>
             </div>
 
-            {inputMode === 'cards' ? (
+            {inputMode === "cards" ? (
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
                 {filteredBundles.map((b) => {
                   const isSelected = selectedBundleId === b.id;
@@ -311,8 +329,8 @@ export const BuyDataFlow: React.FC<BuyDataFlowProps> = ({
                       onClick={() => setSelectedBundleId(b.id)}
                       className={`p-3.5 rounded-xl border text-left transition-all relative flex flex-col justify-between cursor-pointer ${
                         isSelected
-                          ? 'border-primary bg-primary/10 ring-2 ring-primary/30 shadow-xs'
-                          : 'border-border bg-background hover:bg-muted/60'
+                          ? "border-primary bg-primary/10 ring-2 ring-primary/30 shadow-xs"
+                          : "border-border bg-background hover:bg-muted/60"
                       }`}
                     >
                       {b.isPopular && (
@@ -321,8 +339,12 @@ export const BuyDataFlow: React.FC<BuyDataFlowProps> = ({
                         </span>
                       )}
                       <div>
-                        <div className="text-base font-extrabold text-foreground">{b.sizeLabel}</div>
-                        <div className="text-[11px] text-muted-foreground">{b.validity}</div>
+                        <div className="text-base font-extrabold text-foreground">
+                          {b.sizeLabel}
+                        </div>
+                        <div className="text-[11px] text-muted-foreground">
+                          {b.validity}
+                        </div>
                       </div>
                       <div className="pt-3 mt-2 border-t border-border/80 flex justify-between items-baseline">
                         <span className="text-xs font-black text-primary tabular-nums">
@@ -333,9 +355,11 @@ export const BuyDataFlow: React.FC<BuyDataFlowProps> = ({
                   );
                 })}
               </div>
-            ) : inputMode === 'text' ? (
+            ) : inputMode === "text" ? (
               <div className="space-y-2">
-                <p className="text-xs text-muted-foreground">Quick select by bundle size:</p>
+                <p className="text-xs text-muted-foreground">
+                  Quick select by bundle size:
+                </p>
                 <div className="flex flex-wrap gap-2">
                   {filteredBundles.map((b) => (
                     <button
@@ -343,7 +367,9 @@ export const BuyDataFlow: React.FC<BuyDataFlowProps> = ({
                       type="button"
                       onClick={() => setSelectedBundleId(b.id)}
                       className={`px-3 py-1.5 rounded-lg border text-xs font-bold ${
-                        selectedBundleId === b.id ? 'bg-primary text-primary-foreground' : 'bg-muted text-foreground'
+                        selectedBundleId === b.id
+                          ? "bg-primary text-primary-foreground"
+                          : "bg-muted text-foreground"
                       }`}
                     >
                       {b.sizeLabel} - GH₵{b.retailPrice.toFixed(2)}
@@ -353,7 +379,9 @@ export const BuyDataFlow: React.FC<BuyDataFlowProps> = ({
               </div>
             ) : (
               <div className="space-y-3">
-                <Label htmlFor="bulk-numbers">Paste multiple phone numbers (comma or newline separated):</Label>
+                <Label htmlFor="bulk-numbers">
+                  Paste multiple phone numbers (comma or newline separated):
+                </Label>
                 <Textarea
                   id="bulk-numbers"
                   rows={3}
@@ -367,7 +395,7 @@ export const BuyDataFlow: React.FC<BuyDataFlowProps> = ({
         </Card>
       )}
 
-      {step === 'recipient' && (
+      {step === "recipient" && (
         <Card className="border-border shadow-xs">
           <CardContent className="p-6 space-y-5">
             <div>
@@ -395,46 +423,65 @@ export const BuyDataFlow: React.FC<BuyDataFlowProps> = ({
               </div>
               {recipientPhone.length >= 3 && (
                 <p className="text-[11px] text-muted-foreground">
-                  Detected Network: <Badge variant="outline" className="ml-1">{selectedNetwork}</Badge>
+                  Detected Network:{" "}
+                  <Badge variant="outline" className="ml-1 !bg-background">
+                    {selectedNetwork}
+                  </Badge>
                 </p>
               )}
             </div>
 
             <div className="space-y-3">
-              <Label className="text-xs font-bold">Payment Method</Label>
+              <Label className="text-xs font-bold">
+                Payment Method: <span>{paymentMethod}</span>
+              </Label>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 <button
                   type="button"
-                  onClick={() => setPaymentMethod('wallet')}
+                  onClick={() => setPaymentMethod("wallet")}
                   className={`p-3 rounded-xl border text-left flex items-center justify-between transition-all cursor-pointer ${
-                    paymentMethod === 'wallet'
-                      ? 'border-primary bg-primary/10 ring-2 ring-primary/30'
-                      : 'border-border bg-background hover:bg-muted'
+                    paymentMethod === "wallet"
+                      ? "bg-primary/60 text-primary-foreground border-primary shadow-xs"
+                      : "border-border bg-background hover:bg-muted text-foreground"
                   }`}
                 >
                   <div>
-                    <div className="text-xs font-bold text-foreground">SDH Wallet Balance</div>
-                    <div className="text-[11px] text-muted-foreground tabular-nums">
+                    <div className="text-xs font-bold text-foreground">
+                      SDH Wallet Balance
+                    </div>
+                    <div className="text-[11px] text-foreground tabular-nums">
                       Available: GH₵ {walletBalance.toFixed(2)}
                     </div>
                   </div>
-                  <span className="text-xs font-bold text-primary">Instant</span>
+                  <span className="text-xs font-bold">Instant</span>
                 </button>
 
                 <button
                   type="button"
-                  onClick={() => setPaymentMethod(selectedNetwork === 'MTN' ? 'momo_mtn' : selectedNetwork === 'Telecel' ? 'momo_telecel' : 'momo_at')}
+                  onClick={() =>
+                    setPaymentMethod(
+                      selectedNetwork === "MTN"
+                        ? "momo_mtn"
+                        : selectedNetwork === "Telecel"
+                          ? "momo_telecel"
+                          : "momo_at",
+                    )
+                  }
                   className={`p-3 rounded-xl border text-left flex items-center justify-between transition-all cursor-pointer ${
-                    paymentMethod !== 'wallet'
-                      ? 'border-amber-500 bg-amber-500/10 ring-2 ring-amber-500/30'
-                      : 'border-border bg-background hover:bg-muted'
+                    paymentMethod !== "wallet"
+                      ? "bg-primary/60 text-primary-foreground border-primary shadow-xs"
+                      : "border-border bg-background hover:bg-muted text-foreground"
                   }`}
                 >
                   <div>
-                    <div className="text-xs font-bold text-foreground">Direct Mobile Money</div>
-                    <div className="text-[11px] text-muted-foreground">USSD PIN Prompt</div>
+                    <div className="text-xs font-bold text-foreground">
+                      Direct Mobile Money
+                    </div>
+                    <div className="text-[11px] text-foreground">
+                      USSD PIN Prompt
+                    </div>
                   </div>
-                  <span className="text-xs font-bold text-amber-600">Push</span>
+                  <span className="text-xs font-bold">Push</span>
                 </button>
               </div>
             </div>
@@ -442,7 +489,7 @@ export const BuyDataFlow: React.FC<BuyDataFlowProps> = ({
         </Card>
       )}
 
-      {step === 'review' && (
+      {step === "review" && (
         <Card className="border-border shadow-xs">
           <CardContent className="p-6 space-y-5">
             <div>
@@ -456,58 +503,80 @@ export const BuyDataFlow: React.FC<BuyDataFlowProps> = ({
 
             <div className="p-4 rounded-xl bg-muted/40 border border-border space-y-3 text-xs">
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Network:</span>
-                <span className="font-bold text-foreground">{selectedNetwork} Ghana</span>
+                <span className="text-muted-foreground font-semibold">Network:</span>
+                <span className="font-bold text-foreground">
+                  {selectedNetwork} Ghana
+                </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Bundle:</span>
-                <span className="font-bold text-foreground">{currentBundle.name}</span>
+                <span className="text-muted-foreground font-semibold">Bundle:</span>
+                <span className="font-bold text-foreground">
+                  {currentBundle.name}
+                </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Validity:</span>
-                <span className="font-bold text-foreground">{currentBundle.validity}</span>
+                <span className="text-muted-foreground font-semibold">Validity:</span>
+                <span className="font-bold text-foreground">
+                  {currentBundle.validity}
+                </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Recipient:</span>
-                <span className=" font-bold text-foreground">{recipientPhone}</span>
+                <span className="text-muted-foreground font-semibold">Recipient:</span>
+                <span className=" font-bold text-foreground">
+                  {recipientPhone}
+                </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Payment:</span>
-                <span className="font-bold text-foreground capitalize">{paymentMethod.replace('_', ' ')}</span>
+                <span className="text-muted-foreground font-semibold">Payment:</span>
+                <span className="font-bold text-foreground capitalize">
+                  {paymentMethod.replace("_", " ")}
+                </span>
               </div>
               <div className="flex justify-between pt-2 border-t border-border font-extrabold text-sm">
                 <span>Total:</span>
-                <span className="text-primary tabular-nums">GH₵ {currentBundle.retailPrice.toFixed(2)}</span>
+                <span className="text-primary tabular-nums">
+                  GH₵ {currentBundle.retailPrice.toFixed(2)}
+                </span>
               </div>
             </div>
 
-            {paymentMethod === 'wallet' && walletBalance < currentBundle.retailPrice && (
-              <div className="p-3 rounded-xl bg-destructive/10 border border-destructive/30 text-destructive text-xs font-semibold">
-                Insufficient wallet balance. Please choose Mobile Money or fund your wallet.
-              </div>
-            )}
+            {paymentMethod === "wallet" &&
+              walletBalance < currentBundle.retailPrice && (
+                <div className="p-3 rounded-xl bg-destructive/10 border border-destructive/30 text-destructive text-xs font-semibold">
+                  Insufficient wallet balance. Please choose Mobile Money or
+                  fund your wallet.
+                </div>
+              )}
           </CardContent>
         </Card>
       )}
 
-      {step === 'processing' && (
+      {step === "processing" && (
         <Card className="border-border shadow-lg">
           <CardContent className="p-8 text-center space-y-4">
             <div className="w-16 h-16 rounded-full bg-primary/10 text-primary mx-auto flex items-center justify-center">
               <Loader2 className="w-8 h-8 animate-spin text-primary" />
             </div>
             <div>
-              <h3 className="text-lg font-bold text-foreground">Connecting to {selectedNetwork} Core Switch...</h3>
+              <h3 className="text-lg font-bold text-foreground">
+                Connecting to {selectedNetwork} Core Switch...
+              </h3>
               <p className="text-xs text-muted-foreground mt-1">
-                Dispatching {currentBundle.name} to <strong>{recipientPhone}</strong>.
+                Dispatching {currentBundle.name} to{" "}
+                <strong>{recipientPhone}</strong>.
               </p>
             </div>
-            <SignalRail status="processing" size="md" className="justify-center" label="EVD Dispatching" />
+            <SignalRail
+              status="processing"
+              size="md"
+              className="justify-center"
+              label="EVD Dispatching"
+            />
           </CardContent>
         </Card>
       )}
 
-      {step === 'success' && createdOrder && (
+      {step === "success" && createdOrder && (
         <Card className="border-border shadow-xl">
           <CardContent className="p-6 sm:p-8 space-y-6 text-center">
             <div className="w-16 h-16 rounded-full bg-emerald-500/10 text-emerald-500 mx-auto flex items-center justify-center">
@@ -515,9 +584,15 @@ export const BuyDataFlow: React.FC<BuyDataFlowProps> = ({
             </div>
 
             <div>
-              <h3 className="text-xl font-bold text-foreground">Data Delivered Successfully!</h3>
+              <h3 className="text-xl font-bold text-foreground">
+                Data Delivered Successfully!
+              </h3>
               <p className="text-xs text-muted-foreground mt-1">
-                <strong>{createdOrder.productName}</strong> has been credited to <span className=" text-foreground font-semibold">{createdOrder.recipientPhone}</span>.
+                <strong>{createdOrder.productName}</strong> has been credited to{" "}
+                <span className=" text-foreground font-semibold">
+                  {createdOrder.recipientPhone}
+                </span>
+                .
               </p>
             </div>
 
@@ -525,22 +600,32 @@ export const BuyDataFlow: React.FC<BuyDataFlowProps> = ({
               <div className="flex justify-between items-center">
                 <span className="text-muted-foreground">Order Reference:</span>
                 <div className="flex items-center gap-1.5">
-                  <span className=" font-bold text-foreground">{createdOrder.reference}</span>
+                  <span className=" font-bold text-foreground">
+                    {createdOrder.reference}
+                  </span>
                   <button
                     onClick={handleCopyRef}
                     className="p-1 hover:bg-muted rounded text-muted-foreground"
                   >
-                    {copiedRef ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5" />}
+                    {copiedRef ? (
+                      <Check className="w-3.5 h-3.5 text-emerald-500" />
+                    ) : (
+                      <Copy className="w-3.5 h-3.5" />
+                    )}
                   </button>
                 </div>
               </div>
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Amount:</span>
-                <span className="font-bold text-foreground tabular-nums">GH₵ {createdOrder.amount.toFixed(2)}</span>
+                <span className="font-bold text-foreground tabular-nums">
+                  GH₵ {createdOrder.amount.toFixed(2)}
+                </span>
               </div>
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Network Status:</span>
-                <span className="text-emerald-600 dark:text-emerald-400 font-semibold">Credited & SMS Sent</span>
+                <span className="text-emerald-600 dark:text-emerald-400 font-semibold">
+                  Credited & SMS Sent
+                </span>
               </div>
             </div>
 
@@ -554,7 +639,7 @@ export const BuyDataFlow: React.FC<BuyDataFlowProps> = ({
               </Button>
               <Button
                 onClick={() => {
-                  setStep('network');
+                  setStep("network");
                   setCreatedOrder(null);
                 }}
                 className="flex-1"
@@ -567,31 +652,21 @@ export const BuyDataFlow: React.FC<BuyDataFlowProps> = ({
       )}
 
       {/* Navigation Buttons */}
-      {step !== 'processing' && step !== 'success' && (
+      {step !== "processing" && step !== "success" && (
         <div className="flex gap-3">
-          {step !== 'network' && (
-            <Button
-              variant="outline"
-              onClick={handleBack}
-              className="flex-1"
-            >
+          {step !== "network" && (
+            <Button variant="outline" onClick={handleBack} className="flex-1">
               <ArrowLeft className="w-4 h-4 mr-2" />
               Back
             </Button>
           )}
-          {step !== 'review' ? (
-            <Button
-              onClick={handleNext}
-              className="flex-1"
-            >
+          {step !== "review" ? (
+            <Button onClick={handleNext} className="flex-1">
               Next
               <ArrowRight className="w-4 h-4 ml-2" />
             </Button>
           ) : (
-            <Button
-              onClick={handleSubmit}
-              className="flex-1"
-            >
+            <Button onClick={handleSubmit} className="flex-1">
               Complete Purchase
               <CheckCircle2 className="w-4 h-4 ml-2" />
             </Button>
