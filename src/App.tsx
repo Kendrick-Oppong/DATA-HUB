@@ -859,12 +859,14 @@ export default function App() {
           onNavigateToPrivacy={() => navigateToLegal("privacy")}
           onNavigateToLegal={navigateToLegal}
           onNavigatePublicTab={navigateToPublic}
-          onNavigateToAuth={(mode) => navigateToAuth(mode || "sign-in")}
+          onNavigateToAuth={(mode) =>
+            navigateToAuth((mode || "sign-in") as any)
+          }
           onNavigateToDashboard={(role) => {
             if (role === "storefront") {
               navigateTo({ type: "storefront" });
             } else if (role !== "public") {
-              navigateToDashboard(role);
+              navigateToDashboard(role as any);
             }
           }}
           onSignOut={handleSignOut}
@@ -881,12 +883,12 @@ export default function App() {
         onNavigateToTerms={() => navigateToLegal("terms")}
         onNavigateToLegal={navigateToLegal}
         onNavigatePublicTab={navigateToPublic}
-        onNavigateToAuth={(mode) => navigateToAuth(mode || "sign-in")}
+        onNavigateToAuth={(mode) => navigateToAuth((mode || "sign-in") as any)}
         onNavigateToDashboard={(role) => {
           if (role === "storefront") {
             navigateTo({ type: "storefront" });
           } else if (role !== "public") {
-            navigateToDashboard(role);
+            navigateToDashboard(role as any);
           }
         }}
         onSignOut={handleSignOut}
@@ -908,9 +910,6 @@ export default function App() {
           onAuthSuccess={handleAuthSuccess}
           onBackToPublic={() => navigateToPublic("home")}
           onNavigateToAuth={navigateToAuth}
-          theme={theme}
-          onSetTheme={handleSetTheme}
-          onOpenSecurityPins={() => setIsSecurityPinsOpen(true)}
         />
         <SecurityPinsModal
           isOpen={isSecurityPinsOpen}
@@ -976,7 +975,7 @@ export default function App() {
           unreadNotifications={0}
           openComplaintsCount={
             complaints.filter(
-              (c) => c.status === "open" || c.status === "pending",
+              (c) => c.status === "open" || c.status === "investigating",
             ).length
           }
           user={user}

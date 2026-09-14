@@ -321,16 +321,6 @@ export const PublicNavbar: React.FC<PublicNavbarProps> = ({
                     <LayoutDashboard className="size-4 text-primary" />
                     <span>Go to {dashboardLabel}</span>
                   </DropdownMenuItem>
-
-                  {onOpenSecurityPins && (
-                    <DropdownMenuItem
-                      onClick={onOpenSecurityPins}
-                      className="cursor-pointer gap-2 rounded-xl py-2 text-xs font-semibold"
-                    >
-                      <KeyRound className="size-4 text-amber-500" />
-                      <span>Security & PINs</span>
-                    </DropdownMenuItem>
-                  )}
                 </DropdownMenuGroup>
 
                 <DropdownMenuSeparator className="my-1" />
