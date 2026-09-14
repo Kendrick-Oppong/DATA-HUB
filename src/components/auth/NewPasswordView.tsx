@@ -32,9 +32,11 @@ export function NewPasswordView({
       <AuthError message={error} />
 
       <div className="space-y-2">
-        <label htmlFor="new-password" className="text-sm font-medium">
-          New password
-        </label>
+        <div>
+          <label htmlFor="new-password" className="text-sm font-medium">
+            New password
+          </label>
+        </div>
 
         <Input
           id="new-password"
@@ -48,9 +50,11 @@ export function NewPasswordView({
       </div>
 
       <div className="space-y-2">
-        <label htmlFor="confirm-new-password" className="text-sm font-medium">
-          Confirm new password
-        </label>
+        <div>
+          <label htmlFor="confirm-new-password" className="text-sm font-medium">
+            Confirm new password
+          </label>
+        </div>
 
         <Input
           id="confirm-new-password"

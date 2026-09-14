@@ -57,13 +57,18 @@ export function OtpView({
         value={otp}
         onChange={onOtpChange}
         containerClassName="justify-center"
-      >
-        <InputOTPGroup className="space-x-2">
-          {Array.from({ length: 6 }, (_, index) => (
-            <InputOTPSlot key={index} className="rounded-md border-l size-12" />
-          ))}
-        </InputOTPGroup>
-      </InputOTP>
+        render={({ slots }) => (
+          <InputOTPGroup className="space-x-2">
+            {slots.map((slot, index) => (
+              <InputOTPSlot
+                key={index}
+                {...slot}
+                className="rounded-md border-l size-12"
+              />
+            ))}
+          </InputOTPGroup>
+        )}
+      />
 
       <Button
         type="submit"

@@ -127,7 +127,7 @@ export function SignUpView({
             )}
           </div>
 
-          <p className="mt-3 text-xs leading-relaxed text-muted-foreground">
+          <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
             Personal data bundles, airtime, and WAEC vouchers.
           </p>
         </Button>
@@ -164,7 +164,7 @@ export function SignUpView({
             )}
           </div>
 
-          <p className="mt-3 text-xs leading-relaxed text-muted-foreground">
+          <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
             Wholesale margin, custom web store, and commissions.
           </p>
         </Button>
@@ -426,17 +426,17 @@ export function SignUpView({
       </Button>
 
       {/* Terms of Service Checkbox */}
-      <div className="flex items-start gap-2 pt-1 text-xs text-muted-foreground">
+      <div className="flex items-center gap-2 pt-1 text-xs text-muted-foreground">
         <Checkbox
           id="terms-check"
           checked={agreeToTerms}
           onCheckedChange={(checked) => onAgreeToTermsChange(checked === true)}
-          className="mt-0.5"
+          className="mt-0.5 size-5"
         />
 
         <Label
           htmlFor="terms-check"
-          className="cursor-pointer text-[11px] font-normal leading-relaxed text-muted-foreground"
+          className="cursor-pointer text-[12px] font-normal leading-relaxed text-foreground"
         >
           I agree to the Smart Data Hub{" "}
           <Button
