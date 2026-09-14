@@ -235,9 +235,30 @@ export const PublicStorefront: React.FC<PublicStorefrontProps> = ({
       </div>
 
       {/* Hero Storefront Banner */}
-      <div className="relative overflow-hidden rounded-3xl border border-border/80 bg-card shadow-lg">
-        {/* Subtle Ambient Background */}
-        <div className="absolute top-0 inset-x-0 h-28 bg-gradient-to-r from-primary/20 via-amber-500/15 to-primary/10" />
+      <div
+        className="relative overflow-hidden rounded-3xl border border-border/80 bg-card shadow-lg"
+        style={storeConfig.themeColor ? {
+          borderColor: `${storeConfig.themeColor}35`,
+          boxShadow: `0 12px 36px -12px ${storeConfig.themeColor}20`,
+        } : undefined}
+      >
+        {/* Subtle Ambient Background Gradient */}
+        <div
+          className="absolute top-0 inset-x-0 h-32 pointer-events-none transition-all"
+          style={{
+            background: storeConfig.themeColor
+              ? `linear-gradient(135deg, ${storeConfig.themeColor}35 0%, rgba(245, 158, 11, 0.22) 50%, ${storeConfig.themeColor}18 100%)`
+              : "linear-gradient(135deg, rgba(37, 99, 235, 0.25) 0%, rgba(245, 158, 11, 0.20) 50%, rgba(37, 99, 235, 0.15) 100%)",
+          }}
+        />
+        <div className="absolute -top-12 -right-12 size-40 rounded-full bg-amber-500/15 blur-2xl pointer-events-none" />
+        <div
+          className="absolute -bottom-10 -left-10 size-36 rounded-full pointer-events-none"
+          style={{
+            background: storeConfig.themeColor ? `${storeConfig.themeColor}15` : "rgba(37, 99, 235, 0.12)",
+            filter: "blur(28px)",
+          }}
+        />
         
         <div className="relative p-6 sm:p-8 pt-10 sm:pt-12 space-y-4">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">

@@ -148,7 +148,7 @@ export const StoreInsights: React.FC<StoreInsightsProps> = ({ orders, bundles })
         <div className="space-y-2">
           {hourlyData.map((h, i) => (
             <div key={i} className="flex items-center gap-3">
-              <span className="w-12 text-[10px] font-mono text-muted-foreground">{h.hour}</span>
+              <span className="w-12 text-[10px] font-semibold text-muted-foreground tabular-nums">{h.hour}</span>
               <div className="flex-1 h-6 bg-muted/30 rounded-lg overflow-hidden">
                 <div 
                   className="h-full bg-primary/80 rounded-lg transition-all"

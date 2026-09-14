@@ -1,14 +1,43 @@
 import React, { useState } from "react";
-import { Tag, Copy, Trash2, Plus, ToggleLeft, ToggleRight } from "lucide-react";
+import {
+  Tag,
+  Copy,
+  Trash2,
+  Plus,
+  ToggleLeft,
+  ToggleRight,
+  Sparkles,
+  Percent,
+  Check,
+  ShieldCheck,
+  ArrowRight,
+} from "lucide-react";
 import { PromoCode } from "../../../types";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "../../ui/dialog";
+import { Button } from "../../ui/button";
+import { Badge } from "../../ui/badge";
+import { Input } from "../../ui/input";
+import { Label } from "../../ui/label";
+import { ScrollArea } from "../../ui/scroll-area";
 
 interface PromoCodeListProps {
   promoCodes: PromoCode[];
   onUpdate: (promoCodes: PromoCode[]) => void;
 }
 
-export const PromoCodeList: React.FC<PromoCodeListProps> = ({ promoCodes, onUpdate }) => {
+export const PromoCodeList: React.FC<PromoCodeListProps> = ({
+  promoCodes,
+  onUpdate,
+}) => {
   const [createModalOpen, setCreateModalOpen] = useState(false);
+  const [copiedCode, setCopiedCode] = useState<string | null>(null);
 
   const handleToggle = (code: string) => {
     onUpdate(
@@ -24,94 +53,136 @@ export const PromoCodeList: React.FC<PromoCodeListProps> = ({ promoCodes, onUpda
 
   const handleCopy = (code: string) => {
     navigator.clipboard.writeText(code);
+    setCopiedCode(code);
+    setTimeout(() => setCopiedCode(null), 2000);
   };
 
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h3 className="text-sm font-extrabold text-foreground">Discount codes</h3>
-        <button
+        <div>
+          <h3 className="text-sm font-extrabold text-foreground">Discount Codes</h3>
+          <p className="text-xs text-muted-foreground">
+            Incentivize buyers with promotional coupons at checkout
+          </p>
+        </div>
+        <Button
           type="button"
+          size="sm"
           onClick={() => setCreateModalOpen(true)}
-          className="px-3 py-1.5 rounded-lg bg-primary text-primary-foreground text-[10px] font-bold flex items-center gap-1 cursor-pointer"
+          className="h-8 gap-1.5 rounded-xl font-bold text-xs cursor-pointer shadow-xs"
         >
-          <Plus className="w-3 h-3" />
-          <span>New code</span>
-        </button>
+          <Plus className="size-3.5" />
+          <span>New Discount Code</span>
+        </Button>
       </div>
 
       {promoCodes.length === 0 ? (
-        <div className="p-8 rounded-2xl bg-muted/30 border border-border text-center">
-          <Tag className="w-8 h-8 mx-auto text-muted-foreground mb-2" />
-          <p className="text-xs text-muted-foreground">No discount codes yet</p>
-          <button
+        <div className="p-8 rounded-2xl bg-muted/30 border border-border text-center space-y-3">
+          <div className="size-12 rounded-2xl bg-amber-500/10 text-amber-600 flex items-center justify-center mx-auto">
+            <Tag className="size-6" />
+          </div>
+          <div>
+            <h4 className="text-sm font-bold text-foreground">No Discount Codes Created</h4>
+            <p className="text-xs text-muted-foreground max-w-sm mx-auto mt-0.5">
+              Offer limited-time discounts or seasonal campaigns like 10% off MTN or Telecel bundles.
+            </p>
+          </div>
+          <Button
             type="button"
+            variant="outline"
+            size="sm"
             onClick={() => setCreateModalOpen(true)}
-            className="mt-3 text-xs font-bold text-primary hover:underline cursor-pointer"
+            className="rounded-xl text-xs font-bold gap-1.5 cursor-pointer"
           >
-            Create your first code
-          </button>
+            <Plus className="size-3.5" />
+            <span>Create First Promo Code</span>
+          </Button>
         </div>
       ) : (
         <div className="space-y-2">
           {promoCodes.map((promo) => (
             <div
               key={promo.code}
-              className="p-3 rounded-xl border border-border bg-card flex items-center justify-between gap-3"
+              className="p-3.5 rounded-2xl border border-border bg-card flex items-center justify-between gap-3 shadow-2xs hover:border-primary/40 transition-colors"
             >
               <div className="flex items-center gap-3 flex-1 min-w-0">
                 <button
                   type="button"
                   onClick={() => handleToggle(promo.code)}
-                  className="shrink-0 cursor-pointer"
+                  className="shrink-0 cursor-pointer text-muted-foreground hover:text-foreground transition-colors"
+                  title={promo.active ? "Deactivate code" : "Activate code"}
                 >
                   {promo.active ? (
-                    <ToggleRight className="w-5 h-5 text-primary" />
+                    <ToggleRight className="size-6 text-emerald-600 dark:text-emerald-400" />
                   ) : (
-                    <ToggleLeft className="w-5 h-5 text-muted-foreground" />
+                    <ToggleLeft className="size-6 text-muted-foreground" />
                   )}
                 </button>
+
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
-                    <span className="font-bold text-foreground font-mono text-xs">
+                    <span className="font-extrabold text-foreground text-xs tracking-wider">
                       {promo.code}
                     </span>
-                    <span className={`px-1.5 py-0.5 rounded text-[9px] font-bold ${
-                      promo.type === 'percent' ? 'bg-amber-500/15 text-amber-700 dark:text-amber-300' : 'bg-blue-500/15 text-blue-700 dark:text-blue-300'
-                    }`}>
-                      {promo.type === 'percent' ? `${promo.value}%` : `GH₵${promo.value}`}
-                    </span>
+                    <Badge
+                      variant="secondary"
+                      className={`text-[10px] font-bold px-2 py-0 border ${
+                        promo.type === "percent"
+                          ? "bg-amber-500/15 text-amber-700 dark:text-amber-300 border-amber-500/30"
+                          : "bg-blue-500/15 text-blue-700 dark:text-blue-300 border-blue-500/30"
+                      }`}
+                    >
+                      {promo.type === "percent"
+                        ? `${promo.value}% Off`
+                        : `GH₵${promo.value} Off`}
+                    </Badge>
+                    {!promo.active && (
+                      <span className="text-[10px] font-bold text-muted-foreground">
+                        (Paused)
+                      </span>
+                    )}
                   </div>
-                  <div className="text-[10px] text-muted-foreground truncate">
-                    {promo.scope === 'all' ? 'All products' : promo.scope}
-                    {promo.max && ` • Max ${promo.max} uses`}
+                  <div className="text-[11px] text-muted-foreground truncate mt-0.5">
+                    Applies to: {promo.scope === "all" ? "All Bundles" : promo.scope.toUpperCase()}
+                    {promo.max && ` · Max ${promo.max} uses`}
+                    {promo.uses !== undefined && ` · Used ${promo.uses} times`}
                   </div>
                 </div>
               </div>
 
-              <div className="flex items-center gap-1 shrink-0">
-                <button
+              <div className="flex items-center gap-1.5 shrink-0">
+                <Button
                   type="button"
+                  variant="ghost"
+                  size="sm"
                   onClick={() => handleCopy(promo.code)}
-                  className="p-1.5 rounded-lg hover:bg-muted text-muted-foreground cursor-pointer"
+                  className="size-8 p-0 rounded-lg text-muted-foreground hover:text-foreground cursor-pointer"
                   title="Copy code"
                 >
-                  <Copy className="w-3.5 h-3.5" />
-                </button>
-                <button
+                  {copiedCode === promo.code ? (
+                    <Check className="size-4 text-emerald-600" />
+                  ) : (
+                    <Copy className="size-4" />
+                  )}
+                </Button>
+                <Button
                   type="button"
+                  variant="ghost"
+                  size="sm"
                   onClick={() => handleDelete(promo.code)}
-                  className="p-1.5 rounded-lg hover:bg-destructive/10 text-muted-foreground hover:text-destructive cursor-pointer"
-                  title="Delete"
+                  className="size-8 p-0 rounded-lg text-muted-foreground hover:text-destructive cursor-pointer"
+                  title="Delete code"
                 >
-                  <Trash2 className="w-3.5 h-3.5" />
-                </button>
+                  <Trash2 className="size-4" />
+                </Button>
               </div>
             </div>
           ))}
         </div>
       )}
 
+      {/* Create Promo Modal - WithdrawModal Fidelity Match */}
       {createModalOpen && (
         <CreatePromoModal
           onClose={() => setCreateModalOpen(false)}
@@ -130,7 +201,10 @@ interface CreatePromoModalProps {
   onCreate: (promo: PromoCode) => void;
 }
 
-const CreatePromoModal: React.FC<CreatePromoModalProps> = ({ onClose, onCreate }) => {
+const CreatePromoModal: React.FC<CreatePromoModalProps> = ({
+  onClose,
+  onCreate,
+}) => {
   const [code, setCode] = useState("");
   const [type, setType] = useState<"percent" | "fixed">("percent");
   const [value, setValue] = useState("10");
@@ -139,12 +213,12 @@ const CreatePromoModal: React.FC<CreatePromoModalProps> = ({ onClose, onCreate }
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!code || !value) return;
+    if (!code.trim() || !value) return;
 
     onCreate({
-      code: code.toUpperCase(),
+      code: code.toUpperCase().trim(),
       type,
-      value: Number.parseFloat(value),
+      value: Number.parseFloat(value) || 0,
       scope,
       uses: 0,
       max: max ? Number(max) : undefined,
@@ -153,109 +227,186 @@ const CreatePromoModal: React.FC<CreatePromoModalProps> = ({ onClose, onCreate }
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className="w-full max-w-md rounded-2xl bg-card border border-border shadow-xl p-6">
-        <h3 className="text-sm font-extrabold text-foreground mb-4">Create discount code</h3>
-        
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="text-[10px] uppercase font-bold text-muted-foreground mb-1.5 block">Code</label>
-            <input
-              type="text"
-              value={code}
-              onChange={(e) => setCode(e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, ""))}
-              placeholder="e.g. WELCOME10"
-              className="w-full px-3 py-2 rounded-lg border border-input bg-background text-foreground text-xs font-mono uppercase"
-              maxLength={12}
-            />
-          </div>
+    <Dialog open={true} onOpenChange={(open) => !open && onClose()}>
+      <DialogContent className="flex h-[90vh] max-h-[90vh] sm:max-w-lg flex-col gap-0 overflow-hidden rounded-3xl border border-border bg-card p-0 shadow-2xl">
+        {/* Header - Identical to WithdrawModal */}
+        <DialogHeader className="relative shrink-0 overflow-hidden border-b border-border bg-gradient-to-br from-primary/10 via-card to-amber-500/10 p-5 sm:p-6">
+          <div className="absolute -right-12 -top-12 size-32 rounded-full bg-primary/5" />
+          <div className="absolute -bottom-16 left-1/3 size-40 rounded-full bg-amber-500/5" />
 
-          <div>
-            <label className="text-[10px] uppercase font-bold text-muted-foreground mb-1.5 block">Discount type</label>
-            <div className="flex gap-2">
-              <button
-                type="button"
-                onClick={() => setType("percent")}
-                className={`flex-1 px-3 py-2 rounded-lg border text-xs font-bold ${
-                  type === "percent"
-                    ? "border-primary bg-primary/10 text-primary"
-                    : "border-border bg-card text-muted-foreground"
-                }`}
-              >
-                Percentage
-              </button>
-              <button
-                type="button"
-                onClick={() => setType("fixed")}
-                className={`flex-1 px-3 py-2 rounded-lg border text-xs font-bold ${
-                  type === "fixed"
-                    ? "border-primary bg-primary/10 text-primary"
-                    : "border-border bg-card text-muted-foreground"
-                }`}
-              >
-                Fixed amount
-              </button>
+          <div className="relative flex items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <div className="flex size-11 shrink-0 items-center justify-center rounded-2xl bg-amber-500 text-amber-950 shadow-sm">
+                <Tag className="size-5" />
+              </div>
+
+              <div className="min-w-0">
+                <div className="flex items-center gap-2">
+                  <DialogTitle className="text-left text-base font-extrabold tracking-tight">
+                    Create Discount Code
+                  </DialogTitle>
+
+                  <Badge
+                    variant="secondary"
+                    className="border-amber-500/20 bg-amber-500/15 px-2 py-0 text-[10px] font-bold text-amber-700 dark:text-amber-400"
+                  >
+                    Merchant Promo
+                  </Badge>
+                </div>
+
+                <DialogDescription className="mt-0.5 text-left text-xs">
+                  Generate customer discount coupons with usage caps and carrier filters
+                </DialogDescription>
+              </div>
             </div>
           </div>
+        </DialogHeader>
 
-          <div>
-            <label className="text-[10px] uppercase font-bold text-muted-foreground mb-1.5 block">
-              {type === "percent" ? "Discount percentage" : "Discount amount (GH₵)"}
-            </label>
-            <input
-              type="number"
-              value={value}
-              onChange={(e) => setValue(e.target.value)}
-              min="0"
-              max={type === "percent" ? "100" : undefined}
-              className="w-full px-3 py-2 rounded-lg border border-input bg-background text-foreground text-xs font-mono"
-            />
-          </div>
+        {/* Scrollable Modal Body */}
+        <ScrollArea className="min-h-0 flex-1 overflow-hidden">
+          <form id="promo-form" onSubmit={handleSubmit} className="p-5 sm:p-6 space-y-5">
+            {/* Promo Code Input */}
+            <div className="space-y-1.5">
+              <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                Coupon Code
+              </Label>
+              <Input
+                type="text"
+                value={code}
+                onChange={(e) =>
+                  setCode(e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, ""))
+                }
+                placeholder="e.g. FLASH10 or MTNPROMO"
+                className="h-11 rounded-xl text-xs font-extrabold uppercase tracking-wider"
+                maxLength={14}
+                required
+              />
+              <p className="text-[11px] text-muted-foreground">
+                Letters and numbers only. Case insensitive at storefront checkout.
+              </p>
+            </div>
 
-          <div>
-            <label className="text-[10px] uppercase font-bold text-muted-foreground mb-1.5 block">Applies to</label>
-            <select
-              value={scope}
-              onChange={(e) => setScope(e.target.value)}
-              className="w-full px-3 py-2 rounded-lg border border-input bg-background text-foreground text-xs"
-            >
-              <option value="all">All products</option>
-              <option value="mtn">MTN only</option>
-              <option value="telecel">Telecel only</option>
-              <option value="atigo">AirtelTigo only</option>
-              <option value="airtime">Airtime only</option>
-            </select>
-          </div>
+            {/* Discount Type Selector */}
+            <div className="space-y-1.5">
+              <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                Discount Type
+              </Label>
+              <div className="grid grid-cols-2 gap-2">
+                <Button
+                  type="button"
+                  variant={type === "percent" ? "default" : "outline"}
+                  onClick={() => setType("percent")}
+                  className={`h-11 rounded-xl text-xs font-bold gap-1.5 ${
+                    type === "percent"
+                      ? "shadow-sm ring-2 ring-primary/20"
+                      : "hover:bg-muted/70"
+                  }`}
+                >
+                  <Percent className="size-3.5" />
+                  <span>Percentage (%)</span>
+                </Button>
 
-          <div>
-            <label className="text-[10px] uppercase font-bold text-muted-foreground mb-1.5 block">Usage limit (optional)</label>
-            <input
-              type="number"
-              value={max}
-              onChange={(e) => setMax(e.target.value)}
-              min="1"
-              placeholder="Leave blank for unlimited"
-              className="w-full px-3 py-2 rounded-lg border border-input bg-background text-foreground text-xs font-mono"
-            />
-          </div>
+                <Button
+                  type="button"
+                  variant={type === "fixed" ? "default" : "outline"}
+                  onClick={() => setType("fixed")}
+                  className={`h-11 rounded-xl text-xs font-bold gap-1.5 ${
+                    type === "fixed"
+                      ? "shadow-sm ring-2 ring-primary/20"
+                      : "hover:bg-muted/70"
+                  }`}
+                >
+                  <span>Fixed Cash (GH₵)</span>
+                </Button>
+              </div>
+            </div>
 
-          <div className="flex gap-2 pt-2">
-            <button
+            {/* Value Input */}
+            <div className="space-y-1.5">
+              <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                {type === "percent" ? "Discount Percentage (%)" : "Discount Amount (GH₵)"}
+              </Label>
+              <Input
+                type="number"
+                value={value}
+                onChange={(e) => setValue(e.target.value)}
+                min="0.5"
+                max={type === "percent" ? "100" : undefined}
+                step={type === "percent" ? "1" : "0.5"}
+                className="h-11 rounded-xl text-xs font-extrabold tabular-nums"
+                required
+              />
+            </div>
+
+            {/* Applicable Scope */}
+            <div className="space-y-1.5">
+              <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                Eligible Products
+              </Label>
+              <select
+                value={scope}
+                onChange={(e) => setScope(e.target.value)}
+                className="w-full h-11 px-3.5 rounded-xl border border-input bg-background text-foreground text-xs font-bold shadow-xs focus:outline-none focus:ring-2 focus:ring-ring"
+              >
+                <option value="all">All Carrier Bundles (MTN, Telecel, AirtelTigo)</option>
+                <option value="mtn">MTN Bundles Only</option>
+                <option value="telecel">Telecel Bundles Only</option>
+                <option value="atigo">AirtelTigo Bundles Only</option>
+              </select>
+            </div>
+
+            {/* Usage Limit Cap */}
+            <div className="space-y-1.5">
+              <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                Total Redemptions Cap (Optional)
+              </Label>
+              <Input
+                type="number"
+                value={max}
+                onChange={(e) => setMax(e.target.value)}
+                min="1"
+                placeholder="Leave blank for unlimited customer uses"
+                className="h-11 rounded-xl text-xs font-medium tabular-nums"
+              />
+            </div>
+          </form>
+        </ScrollArea>
+
+        {/* Fixed Action Button - Matches WithdrawModal */}
+        <div className="shrink-0 border-t border-border bg-card p-4 sm:px-6">
+          <div className="flex gap-2.5">
+            <Button
               type="button"
+              variant="outline"
               onClick={onClose}
-              className="flex-1 px-4 py-2 rounded-lg border border-border bg-card text-foreground text-xs font-bold cursor-pointer"
+              className="h-12 flex-1 rounded-xl text-xs font-bold cursor-pointer"
             >
               Cancel
-            </button>
-            <button
+            </Button>
+            <Button
               type="submit"
-              className="flex-1 px-4 py-2 rounded-lg bg-primary text-primary-foreground text-xs font-bold cursor-pointer"
+              form="promo-form"
+              disabled={!code.trim() || !value}
+              className="h-12 flex-1 gap-2 rounded-xl text-xs font-bold shadow-md cursor-pointer"
             >
-              Create code
-            </button>
+              <span>Save & Activate Code</span>
+              <ArrowRight className="size-4" />
+            </Button>
           </div>
-        </form>
-      </div>
-    </div>
+        </div>
+
+        {/* Modal Footer - Identical to WithdrawModal */}
+        <DialogFooter className="m-0 shrink-0 rounded-none border-t border-border bg-muted/30 px-5 py-3 sm:justify-center">
+          <div className="flex items-center justify-center gap-2 text-xs font-medium text-muted-foreground">
+            <ShieldCheck className="size-4 shrink-0 text-emerald-600 dark:text-emerald-400" />
+            <span className="text-[11px]">
+              Discounts are deducted directly from your retail margin at storefront checkout
+            </span>
+          </div>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 };
+
+export default PromoCodeList;

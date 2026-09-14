@@ -1092,6 +1092,7 @@ export default function App() {
                   onUpdateStoreConfig={handleUpdateStoreConfig}
                   onOpenStorefront={() => navigateTo({ type: "storefront" })}
                   bundles={initialBundles}
+                  orders={orders}
                 />
               )}
 

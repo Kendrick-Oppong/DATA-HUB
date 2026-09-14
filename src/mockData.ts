@@ -1139,9 +1139,17 @@ export const INITIAL_STORE_CONFIG: AgentStoreConfig = {
     "at-10gb": 35.0,
   },
   allowGuestCheckout: true,
+  storeLogo: null,
+  whatsappChannelUrl: "https://whatsapp.com/channel/0029Va9KofiTelecomGhana",
+  enabledNetworks: ["MTN", "Telecel", "AirtelTigo"],
+  enabledServices: {
+    airtime: true,
+    checker: true,
+    afa: false,
+  },
   promoCodes: [
-    { code: "KOFI10", discountPercent: 5, active: true },
-    { code: "STUDENT", discountPercent: 3, active: true },
+    { code: "KOFI10", type: "percent", value: 5, discountPercent: 5, scope: "all", uses: 14, active: true },
+    { code: "STUDENT", type: "percent", value: 3, discountPercent: 3, scope: "all", uses: 6, active: true },
   ],
 };
 

@@ -128,6 +128,7 @@ export interface AfaApplication {
   phoneNumber: string;
   ghanaCardNumber: string;
   location: string;
+  region?: string;
   dateOfBirth: string;
   occupation: string;
   dateSubmitted: string;
@@ -160,6 +161,17 @@ export interface Complaint {
   }[];
 }
 
+export interface PromoCode {
+  code: string;
+  type: "percent" | "fixed";
+  value: number;
+  scope: string;
+  uses?: number;
+  max?: number;
+  active: boolean;
+  discountPercent?: number;
+}
+
 export interface AgentStoreConfig {
   agentName: string;
   storeName: string;
@@ -176,7 +188,15 @@ export interface AgentStoreConfig {
   marginMarkupPercent: number; // e.g. 8%
   customPrices: Record<string, number>; // bundleId -> custom retail price
   allowGuestCheckout: boolean;
-  promoCodes: { code: string; discountPercent: number; active: boolean }[];
+  promoCodes: PromoCode[];
+  storeLogo?: string | null;
+  whatsappChannelUrl?: string;
+  enabledNetworks?: (TelecomNetwork | "MTN_XPRESS" | "AT_BIGTIME" | "AT_ISHARE")[];
+  enabledServices?: {
+    airtime?: boolean;
+    checker?: boolean;
+    afa?: boolean;
+  };
 }
 
 export interface PayoutRequest {

@@ -47,7 +47,7 @@ export const StorePrice: React.FC<StorePriceProps> = ({ value, onChange, floor }
         value={textValue}
         onChange={handleChange}
         onBlur={handleBlur}
-        className="w-12 bg-transparent border-none outline-none text-xs font-bold font-mono tabular-nums"
+        className="w-14 bg-transparent border-none outline-none text-xs font-bold tabular-nums"
         style={{
           color: below ? "hsl(var(--destructive))" : "hsl(var(--foreground))",
         }}
