@@ -74,7 +74,7 @@ export const PublicFooter: React.FC<PublicFooterProps> = ({
 
   return (
     <footer className="mt-auto border-t border-border bg-card/60 py-12">
-      <div className="max-w-[95%] mx-auto px-4 sm:px-6 space-y-10">
+      <div className="sm:max-w-[95%] mx-auto px-4 sm:px-6 space-y-10">
         {/* Top grid with 5 columns */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
           {/* Col 1: Brand & Live Status */}

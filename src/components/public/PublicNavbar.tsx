@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   LogIn,
   KeyRound,
@@ -64,6 +64,38 @@ export const PublicNavbar: React.FC<PublicNavbarProps> = ({
   onOpenSecurityPins,
 }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const mobileMenuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as HTMLElement;
+      const button = document.querySelector(
+        '[aria-label="Toggle mobile menu"]',
+      );
+
+      if (
+        mobileMenuRef.current &&
+        !mobileMenuRef.current.contains(target) &&
+        !button?.contains(target)
+      ) {
+        setMobileMenuOpen(false);
+      }
+    };
+
+    if (mobileMenuOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+      document.body.style.overflow = "hidden";
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.body.style.overflow = "";
+    };
+  }, [mobileMenuOpen]);
+
+  const toggleMobileMenu = () => {
+    setMobileMenuOpen((open) => !open);
+  };
 
   const publicNavItems: {
     id: PublicNavbarProps["activeTab"];
@@ -99,7 +131,7 @@ export const PublicNavbar: React.FC<PublicNavbarProps> = ({
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/80 bg-card/90 backdrop-blur-md transition-colors">
-      <div className="mx-auto flex h-16 w-full max-w-[95%] items-center justify-between gap-3 overflow-visible px-4 sm:px-6">
+      <div className="mx-auto flex h-16 w-full sm:max-w-[95%] items-center justify-between gap-3 overflow-visible px-4">
         {/* Brand */}
         <div className="flex items-center gap-3">
           <Button
@@ -332,7 +364,7 @@ export const PublicNavbar: React.FC<PublicNavbarProps> = ({
           <Button
             variant="ghost"
             size="icon-sm"
-            onClick={() => setMobileMenuOpen((open) => !open)}
+            onClick={toggleMobileMenu}
             className="rounded-full text-muted-foreground hover:bg-muted hover:text-foreground xl:hidden"
             aria-label="Toggle mobile menu"
             aria-expanded={mobileMenuOpen}
@@ -347,9 +379,16 @@ export const PublicNavbar: React.FC<PublicNavbarProps> = ({
       </div>
 
       {/* Mobile Menu */}
-      {mobileMenuOpen && (
-        <div className="animate-in slide-in-from-top-2 border-t border-border bg-card/95 px-4 py-4 shadow-xl backdrop-blur-md xl:hidden">
-          <div className="grid grid-cols-2 gap-1.5">
+      <div
+        className={`absolute left-0 right-0 top-full z-50 overflow-hidden transition-all duration-300 ease-in-out xl:hidden ${
+          mobileMenuOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
+        }`}
+      >
+        <div
+          ref={mobileMenuRef}
+          className="border-t border-border bg-card px-4 py-4 shadow-xl backdrop-blur-lg"
+        >
+          <div className="flex flex-col gap-1.5">
             {publicNavItems.map((item) => {
               const Icon = item.icon;
               const isActive = activeTab === item.id;
@@ -378,36 +417,8 @@ export const PublicNavbar: React.FC<PublicNavbarProps> = ({
               );
             })}
           </div>
-
-          <div className="mt-3 flex flex-col gap-2 border-t border-border pt-3">
-            <Button
-              variant="outline"
-              onClick={() => {
-                onNavigateToDashboard("storefront");
-                setMobileMenuOpen(false);
-              }}
-              className="w-full rounded-xl border-primary/40 bg-primary/10 text-xs font-bold text-primary hover:bg-primary/15 hover:text-primary"
-            >
-              <Store className="size-4" />
-              <span>Preview Agent Storefront</span>
-            </Button>
-
-            {onOpenSecurityPins && (
-              <Button
-                variant="secondary"
-                onClick={() => {
-                  onOpenSecurityPins();
-                  setMobileMenuOpen(false);
-                }}
-                className="w-full rounded-xl text-xs font-semibold"
-              >
-                <KeyRound className="size-4 text-primary" />
-                <span>View Demo PINs (0000)</span>
-              </Button>
-            )}
-          </div>
         </div>
-      )}
+      </div>
     </header>
   );
 };
