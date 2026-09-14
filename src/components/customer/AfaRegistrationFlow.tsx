@@ -1153,14 +1153,14 @@ export const AfaRegistrationFlow: React.FC<AfaRegistrationFlowProps> = ({
                         htmlFor="afa-occupation"
                         className="text-[11px] font-semibold"
                       >
-                        Primary trade / farming activity
+                        Occupation
                       </Label>
 
                       <Input
                         id="afa-occupation"
                         type="text"
                         required
-                        placeholder="e.g. Cocoa farming, maize farming, farm logistics"
+                        placeholder="Enter your occupation"
                         value={occupation}
                         onChange={(e) => setOccupation(e.target.value)}
                         className="h-10 text-xs"
