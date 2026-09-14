@@ -226,7 +226,7 @@ export function TermsOfService({
             {/* 01: About Smart Data Hub */}
             <section id="about" className="space-y-4 scroll-mt-24">
               <div className="flex items-baseline gap-3 border-b border-border pb-3">
-                <span className="text-2xl font-black text-primary font-mono">
+                <span className="text-2xl font-black text-primary">
                   01
                 </span>
                 <h2 className="text-2xl font-black tracking-tight text-foreground">
@@ -261,7 +261,7 @@ export function TermsOfService({
             {/* 02: Services We Provide */}
             <section id="services" className="space-y-4 scroll-mt-24">
               <div className="flex items-baseline gap-3 border-b border-border pb-3">
-                <span className="text-2xl font-black text-primary font-mono">
+                <span className="text-2xl font-black text-primary">
                   02
                 </span>
                 <h2 className="text-2xl font-black tracking-tight text-foreground">
@@ -325,7 +325,7 @@ export function TermsOfService({
             {/* 03: Eligibility & Account Registration */}
             <section id="eligibility" className="space-y-4 scroll-mt-24">
               <div className="flex items-baseline gap-3 border-b border-border pb-3">
-                <span className="text-2xl font-black text-primary font-mono">
+                <span className="text-2xl font-black text-primary">
                   03
                 </span>
                 <h2 className="text-2xl font-black tracking-tight text-foreground">
@@ -367,7 +367,7 @@ export function TermsOfService({
             {/* 04: Ordering, Pricing & Payment */}
             <section id="ordering" className="space-y-4 scroll-mt-24">
               <div className="flex items-baseline gap-3 border-b border-border pb-3">
-                <span className="text-2xl font-black text-primary font-mono">
+                <span className="text-2xl font-black text-primary">
                   04
                 </span>
                 <h2 className="text-2xl font-black tracking-tight text-foreground">
@@ -405,7 +405,7 @@ export function TermsOfService({
             {/* 05: Delivery & Fulfillment SLA */}
             <section id="delivery" className="space-y-4 scroll-mt-24">
               <div className="flex items-baseline gap-3 border-b border-border pb-3">
-                <span className="text-2xl font-black text-primary font-mono">
+                <span className="text-2xl font-black text-primary">
                   05
                 </span>
                 <h2 className="text-2xl font-black tracking-tight text-foreground">
@@ -453,11 +453,10 @@ export function TermsOfService({
             {/* 06: No Refund & Cancellation Policy */}
             <section id="no-refund" className="space-y-4 scroll-mt-24">
               <div className="flex items-baseline gap-3 border-b border-border pb-3">
-                <span className="text-2xl font-black text-destructive font-mono">
+                <span className="text-2xl font-black text-destructive">
                   06
                 </span>
                 <h2 className="text-2xl font-black tracking-tight text-destructive flex items-center gap-2">
-                  <AlertTriangle className="size-6" />
                   No Refund & Cancellation Policy
                 </h2>
               </div>
@@ -534,7 +533,7 @@ export function TermsOfService({
             {/* 07: Agent & Reseller Program Terms */}
             <section id="agent-terms" className="space-y-4 scroll-mt-24">
               <div className="flex items-baseline gap-3 border-b border-border pb-3">
-                <span className="text-2xl font-black text-primary font-mono">
+                <span className="text-2xl font-black text-primary">
                   07
                 </span>
                 <h2 className="text-2xl font-black tracking-tight text-foreground">
@@ -582,7 +581,7 @@ export function TermsOfService({
             {/* 08: User Conduct & Acceptable Use */}
             <section id="user-conduct" className="space-y-4 scroll-mt-24">
               <div className="flex items-baseline gap-3 border-b border-border pb-3">
-                <span className="text-2xl font-black text-primary font-mono">
+                <span className="text-2xl font-black text-primary">
                   08
                 </span>
                 <h2 className="text-2xl font-black tracking-tight text-foreground">
@@ -620,7 +619,7 @@ export function TermsOfService({
             {/* 09: Limitation of Liability & Warranties */}
             <section id="liability" className="space-y-4 scroll-mt-24">
               <div className="flex items-baseline gap-3 border-b border-border pb-3">
-                <span className="text-2xl font-black text-primary font-mono">
+                <span className="text-2xl font-black text-primary">
                   09
                 </span>
                 <h2 className="text-2xl font-black tracking-tight text-foreground">
@@ -655,7 +654,7 @@ export function TermsOfService({
             {/* 10: Governing Law, Disputes & Contact */}
             <section id="governing-law" className="space-y-4 scroll-mt-24">
               <div className="flex items-baseline gap-3 border-b border-border pb-3">
-                <span className="text-2xl font-black text-primary font-mono">
+                <span className="text-2xl font-black text-primary">
                   10
                 </span>
                 <h2 className="text-2xl font-black tracking-tight text-foreground">

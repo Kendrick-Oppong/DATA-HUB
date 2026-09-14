@@ -120,7 +120,7 @@ export function PrivacyPolicy({
         <div className="max-w-[95%] mx-auto px-4 sm:px-6 py-14 sm:py-20 text-center">
           <div className="inline-flex items-center gap-2 rounded-full border border-emerald-500/20 bg-emerald-500/5 px-4 py-1.5 text-sm font-bold text-emerald-700 dark:text-emerald-400 uppercase tracking-wider mb-6">
             <ShieldCheck className="size-3.5" />
-            <span>Ghana Data Protection Act, 2012 (Act 843) Compliant</span>
+            <span>Ghana Data Protection Act</span>
           </div>
           <h1 className="text-5xl font-black leading-[0.95] tracking-tight text-foreground sm:text-6xl">
             Your data,
@@ -178,7 +178,7 @@ export function PrivacyPolicy({
                     }`}
                   >
                     <span
-                      className={`font-mono text-[11px] ${activeSection === sec.id ? "text-primary-foreground/80" : "text-primary font-bold"}`}
+                      className={` text-[11px] ${activeSection === sec.id ? "text-primary-foreground/80" : "text-primary font-bold"}`}
                     >
                       {sec.number}
                     </span>
@@ -222,7 +222,7 @@ export function PrivacyPolicy({
             {/* 01: Overview & Scope */}
             <section id="overview" className="space-y-4 scroll-mt-24">
               <div className="flex items-baseline gap-3 border-b border-border pb-3">
-                <span className="text-2xl font-black text-primary font-mono">
+                <span className="text-2xl font-black text-primary ">
                   01
                 </span>
                 <h2 className="text-2xl font-black tracking-tight text-foreground">
@@ -253,7 +253,7 @@ export function PrivacyPolicy({
             {/* 02: Information We Collect */}
             <section id="data-we-collect" className="space-y-4 scroll-mt-24">
               <div className="flex items-baseline gap-3 border-b border-border pb-3">
-                <span className="text-2xl font-black text-primary font-mono">
+                <span className="text-2xl font-black text-primary ">
                   02
                 </span>
                 <h2 className="text-2xl font-black tracking-tight text-foreground">
@@ -320,7 +320,7 @@ export function PrivacyPolicy({
             {/* 03: How We Use Your Data */}
             <section id="how-we-use" className="space-y-4 scroll-mt-24">
               <div className="flex items-baseline gap-3 border-b border-border pb-3">
-                <span className="text-2xl font-black text-primary font-mono">
+                <span className="text-2xl font-black text-primary ">
                   03
                 </span>
                 <h2 className="text-2xl font-black tracking-tight text-foreground">
@@ -378,7 +378,7 @@ export function PrivacyPolicy({
             {/* 04: Compliance with Act 843 (Ghana) */}
             <section id="legal-basis" className="space-y-4 scroll-mt-24">
               <div className="flex items-baseline gap-3 border-b border-border pb-3">
-                <span className="text-2xl font-black text-primary font-mono">
+                <span className="text-2xl font-black text-primary ">
                   04
                 </span>
                 <h2 className="text-2xl font-black tracking-tight text-foreground">
@@ -420,7 +420,7 @@ export function PrivacyPolicy({
             {/* 05: Data Sharing & Carrier Disclosures */}
             <section id="data-sharing" className="space-y-4 scroll-mt-24">
               <div className="flex items-baseline gap-3 border-b border-border pb-3">
-                <span className="text-2xl font-black text-primary font-mono">
+                <span className="text-2xl font-black text-primary ">
                   05
                 </span>
                 <h2 className="text-2xl font-black tracking-tight text-foreground">
@@ -466,7 +466,7 @@ export function PrivacyPolicy({
             {/* 06: Security Measures & Encryption */}
             <section id="security" className="space-y-4 scroll-mt-24">
               <div className="flex items-baseline gap-3 border-b border-border pb-3">
-                <span className="text-2xl font-black text-primary font-mono">
+                <span className="text-2xl font-black text-primary ">
                   06
                 </span>
                 <h2 className="text-2xl font-black tracking-tight text-foreground">
@@ -512,7 +512,7 @@ export function PrivacyPolicy({
             {/* 07: Data Retention & Storage */}
             <section id="retention" className="space-y-4 scroll-mt-24">
               <div className="flex items-baseline gap-3 border-b border-border pb-3">
-                <span className="text-2xl font-black text-primary font-mono">
+                <span className="text-2xl font-black text-primary ">
                   07
                 </span>
                 <h2 className="text-2xl font-black tracking-tight text-foreground">
@@ -553,7 +553,7 @@ export function PrivacyPolicy({
             {/* 08: Your Privacy Rights & Choices */}
             <section id="your-rights" className="space-y-4 scroll-mt-24">
               <div className="flex items-baseline gap-3 border-b border-border pb-3">
-                <span className="text-2xl font-black text-primary font-mono">
+                <span className="text-2xl font-black text-primary ">
                   08
                 </span>
                 <h2 className="text-2xl font-black tracking-tight text-foreground">
@@ -609,7 +609,7 @@ export function PrivacyPolicy({
             {/* 09: Cookies & Tracking */}
             <section id="cookies" className="space-y-4 scroll-mt-24">
               <div className="flex items-baseline gap-3 border-b border-border pb-3">
-                <span className="text-2xl font-black text-primary font-mono">
+                <span className="text-2xl font-black text-primary ">
                   09
                 </span>
                 <h2 className="text-2xl font-black tracking-tight text-foreground">
@@ -630,7 +630,7 @@ export function PrivacyPolicy({
             {/* 10: Data Protection Officer & Contact */}
             <section id="contact-dpo" className="space-y-4 scroll-mt-24">
               <div className="flex items-baseline gap-3 border-b border-border pb-3">
-                <span className="text-2xl font-black text-primary font-mono">
+                <span className="text-2xl font-black text-primary ">
                   10
                 </span>
                 <h2 className="text-2xl font-black tracking-tight text-foreground">
