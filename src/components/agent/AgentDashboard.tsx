@@ -104,7 +104,7 @@ export const AgentDashboard: React.FC<AgentDashboardProps> = ({
 
           {/* Store URL & Share Bar */}
           <div className="flex flex-wrap items-center gap-2 pt-1">
-            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-background border border-border text-xs font-mono">
+            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-background border border-border text-xs">
               <span className="text-muted-foreground">URL:</span>
               <span className="font-semibold text-foreground">{storeUrl}</span>
             </div>

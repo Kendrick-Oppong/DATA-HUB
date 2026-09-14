@@ -42,8 +42,8 @@ export const PromoCodeList: React.FC<PromoCodeListProps> = ({
   const handleToggle = (code: string) => {
     onUpdate(
       promoCodes.map((p) =>
-        p.code === code ? { ...p, active: !p.active } : p
-      )
+        p.code === code ? { ...p, active: !p.active } : p,
+      ),
     );
   };
 
@@ -61,7 +61,9 @@ export const PromoCodeList: React.FC<PromoCodeListProps> = ({
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-sm font-extrabold text-foreground">Discount Codes</h3>
+          <h3 className="text-sm font-extrabold text-foreground">
+            Discount Codes
+          </h3>
           <p className="text-xs text-muted-foreground">
             Incentivize buyers with promotional coupons at checkout
           </p>
@@ -83,9 +85,12 @@ export const PromoCodeList: React.FC<PromoCodeListProps> = ({
             <Tag className="size-6" />
           </div>
           <div>
-            <h4 className="text-sm font-bold text-foreground">No Discount Codes Created</h4>
+            <h4 className="text-sm font-bold text-foreground">
+              No Discount Codes Created
+            </h4>
             <p className="text-xs text-muted-foreground max-w-sm mx-auto mt-0.5">
-              Offer limited-time discounts or seasonal campaigns like 10% off MTN or Telecel bundles.
+              Offer limited-time discounts or seasonal campaigns like 10% off
+              MTN or Telecel bundles.
             </p>
           </div>
           <Button
@@ -144,7 +149,10 @@ export const PromoCodeList: React.FC<PromoCodeListProps> = ({
                     )}
                   </div>
                   <div className="text-[11px] text-muted-foreground truncate mt-0.5">
-                    Applies to: {promo.scope === "all" ? "All Bundles" : promo.scope.toUpperCase()}
+                    Applies to:{" "}
+                    {promo.scope === "all"
+                      ? "All Bundles"
+                      : (promo.scope || "all").toUpperCase()}
                     {promo.max && ` · Max ${promo.max} uses`}
                     {promo.uses !== undefined && ` · Used ${promo.uses} times`}
                   </div>
@@ -255,7 +263,8 @@ const CreatePromoModal: React.FC<CreatePromoModalProps> = ({
                 </div>
 
                 <DialogDescription className="mt-0.5 text-left text-xs">
-                  Generate customer discount coupons with usage caps and carrier filters
+                  Generate customer discount coupons with usage caps and carrier
+                  filters
                 </DialogDescription>
               </div>
             </div>
@@ -264,7 +273,11 @@ const CreatePromoModal: React.FC<CreatePromoModalProps> = ({
 
         {/* Scrollable Modal Body */}
         <ScrollArea className="min-h-0 flex-1 overflow-hidden">
-          <form id="promo-form" onSubmit={handleSubmit} className="p-5 sm:p-6 space-y-5">
+          <form
+            id="promo-form"
+            onSubmit={handleSubmit}
+            className="p-5 sm:p-6 space-y-5"
+          >
             {/* Promo Code Input */}
             <div className="space-y-1.5">
               <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
@@ -274,7 +287,9 @@ const CreatePromoModal: React.FC<CreatePromoModalProps> = ({
                 type="text"
                 value={code}
                 onChange={(e) =>
-                  setCode(e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, ""))
+                  setCode(
+                    e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, ""),
+                  )
                 }
                 placeholder="e.g. FLASH10 or MTNPROMO"
                 className="h-11 rounded-xl text-xs font-extrabold uppercase tracking-wider"
@@ -282,7 +297,8 @@ const CreatePromoModal: React.FC<CreatePromoModalProps> = ({
                 required
               />
               <p className="text-[11px] text-muted-foreground">
-                Letters and numbers only. Case insensitive at storefront checkout.
+                Letters and numbers only. Case insensitive at storefront
+                checkout.
               </p>
             </div>
 
@@ -324,7 +340,9 @@ const CreatePromoModal: React.FC<CreatePromoModalProps> = ({
             {/* Value Input */}
             <div className="space-y-1.5">
               <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                {type === "percent" ? "Discount Percentage (%)" : "Discount Amount (GH₵)"}
+                {type === "percent"
+                  ? "Discount Percentage (%)"
+                  : "Discount Amount (GH₵)"}
               </Label>
               <Input
                 type="number"
@@ -348,7 +366,9 @@ const CreatePromoModal: React.FC<CreatePromoModalProps> = ({
                 onChange={(e) => setScope(e.target.value)}
                 className="w-full h-11 px-3.5 rounded-xl border border-input bg-background text-foreground text-xs font-bold shadow-xs focus:outline-none focus:ring-2 focus:ring-ring"
               >
-                <option value="all">All Carrier Bundles (MTN, Telecel, AirtelTigo)</option>
+                <option value="all">
+                  All Carrier Bundles (MTN, Telecel, AirtelTigo)
+                </option>
                 <option value="mtn">MTN Bundles Only</option>
                 <option value="telecel">Telecel Bundles Only</option>
                 <option value="atigo">AirtelTigo Bundles Only</option>
@@ -400,7 +420,8 @@ const CreatePromoModal: React.FC<CreatePromoModalProps> = ({
           <div className="flex items-center justify-center gap-2 text-xs font-medium text-muted-foreground">
             <ShieldCheck className="size-4 shrink-0 text-emerald-600 dark:text-emerald-400" />
             <span className="text-[11px]">
-              Discounts are deducted directly from your retail margin at storefront checkout
+              Discounts are deducted directly from your retail margin at
+              storefront checkout
             </span>
           </div>
         </DialogFooter>

@@ -66,6 +66,7 @@ import { Badge } from "../ui/badge";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { Switch } from "../ui/switch";
+import { Slider } from "../ui/slider";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "../ui/tabs";
 import { ScrollArea, ScrollBar } from "../ui/scroll-area";
 import {
@@ -112,7 +113,11 @@ export const MyStoreBuilder: React.FC<MyStoreBuilderProps> = ({
 }) => {
   const [config, setConfig] = useState<AgentStoreConfig>({
     ...storeConfig,
-    enabledNetworks: storeConfig.enabledNetworks || ["MTN", "Telecel", "AirtelTigo"],
+    enabledNetworks: storeConfig.enabledNetworks || [
+      "MTN",
+      "Telecel",
+      "AirtelTigo",
+    ],
     enabledServices: storeConfig.enabledServices || {
       airtime: true,
       checker: true,
@@ -131,7 +136,8 @@ export const MyStoreBuilder: React.FC<MyStoreBuilderProps> = ({
 
   // Pricing Table State
   const [pricingFilter, setPricingFilter] = useState<string>("ALL");
-  const [pricingCategoryFilter, setPricingCategoryFilter] = useState<string>("all");
+  const [pricingCategoryFilter, setPricingCategoryFilter] =
+    useState<string>("all");
   const [pricingSearch, setPricingSearch] = useState<string>("");
   const [pricingPage, setPricingPage] = useState(1);
   const PRICING_PER_PAGE = 7;
@@ -205,7 +211,9 @@ export const MyStoreBuilder: React.FC<MyStoreBuilderProps> = ({
   };
 
   // Toggle Network on/off
-  const toggleNetwork = (network: TelecomNetwork | "MTN_XPRESS" | "AT_BIGTIME" | "AT_ISHARE") => {
+  const toggleNetwork = (
+    network: TelecomNetwork | "MTN_XPRESS" | "AT_BIGTIME" | "AT_ISHARE",
+  ) => {
     const current = config.enabledNetworks || ["MTN", "Telecel", "AirtelTigo"];
     const exists = current.includes(network);
     const updated = exists
@@ -216,7 +224,11 @@ export const MyStoreBuilder: React.FC<MyStoreBuilderProps> = ({
 
   // Toggle Service on/off
   const toggleService = (service: "airtime" | "checker" | "afa") => {
-    const current = config.enabledServices || { airtime: true, checker: true, afa: true };
+    const current = config.enabledServices || {
+      airtime: true,
+      checker: true,
+      afa: true,
+    };
     const updated = { ...current, [service]: !current[service] };
     updateConfig({ enabledServices: updated });
   };
@@ -235,21 +247,26 @@ export const MyStoreBuilder: React.FC<MyStoreBuilderProps> = ({
 
   // Filtered orders for store
   const storeOrders = useMemo(() => {
-    return orders.filter((o) => o.agentMargin !== undefined || o.serviceType === "data");
+    return orders.filter(
+      (o) => o.agentMargin !== undefined || o.serviceType === "data",
+    );
   }, [orders]);
 
   // Store Analytics metrics
   const storeMetrics = useMemo(() => {
     const totalOrders = storeOrders.length;
     const uniqueCustomers = new Set(
-      storeOrders.map((o) => String(o.recipientPhone).replace(/\D/g, ""))
+      storeOrders.map((o) => String(o.recipientPhone).replace(/\D/g, "")),
     ).size;
     const totalRevenue = storeOrders.reduce((sum, o) => sum + o.amount, 0);
     const totalCommission = storeOrders
       .filter((o) => o.status === "delivered")
-      .reduce((sum, o) => sum + (o.agentMargin || (o.amount * 0.08)), 0);
-    const deliveredCount = storeOrders.filter((o) => o.status === "delivered").length;
-    const successRate = totalOrders > 0 ? (deliveredCount / totalOrders) * 100 : 99.4;
+      .reduce((sum, o) => sum + (o.agentMargin || o.amount * 0.08), 0);
+    const deliveredCount = storeOrders.filter(
+      (o) => o.status === "delivered",
+    ).length;
+    const successRate =
+      totalOrders > 0 ? (deliveredCount / totalOrders) * 100 : 99.4;
 
     return {
       totalOrders: totalOrders || 42,
@@ -263,7 +280,8 @@ export const MyStoreBuilder: React.FC<MyStoreBuilderProps> = ({
   // Filtered bundles for pricing table
   const filteredBundles = useMemo(() => {
     return bundles.filter((b) => {
-      const matchNetwork = pricingFilter === "ALL" || b.network === pricingFilter;
+      const matchNetwork =
+        pricingFilter === "ALL" || b.network === pricingFilter;
       const query = pricingSearch.toLowerCase().trim();
       const matchSearch =
         !query ||
@@ -275,16 +293,21 @@ export const MyStoreBuilder: React.FC<MyStoreBuilderProps> = ({
         pricingCategoryFilter === "all" ||
         (pricingCategoryFilter === "high_volume" && b.sizeGb >= 10) ||
         (pricingCategoryFilter === "starter" && b.sizeGb < 5) ||
-        (pricingCategoryFilter === "standard" && b.sizeGb >= 5 && b.sizeGb < 10);
+        (pricingCategoryFilter === "standard" &&
+          b.sizeGb >= 5 &&
+          b.sizeGb < 10);
 
       return matchNetwork && matchSearch && matchCategory;
     });
   }, [bundles, pricingFilter, pricingSearch, pricingCategoryFilter]);
 
-  const totalPricingPages = Math.max(1, Math.ceil(filteredBundles.length / PRICING_PER_PAGE));
+  const totalPricingPages = Math.max(
+    1,
+    Math.ceil(filteredBundles.length / PRICING_PER_PAGE),
+  );
   const paginatedBundles = filteredBundles.slice(
     (pricingPage - 1) * PRICING_PER_PAGE,
-    pricingPage * PRICING_PER_PAGE
+    pricingPage * PRICING_PER_PAGE,
   );
 
   const resetPricingFilters = () => {
@@ -315,10 +338,13 @@ export const MyStoreBuilder: React.FC<MyStoreBuilderProps> = ({
     });
   }, [storeOrders, ordersStatusFilter, ordersNetworkFilter, ordersSearch]);
 
-  const totalOrdersPages = Math.max(1, Math.ceil(displayedOrders.length / ORDERS_PER_PAGE));
+  const totalOrdersPages = Math.max(
+    1,
+    Math.ceil(displayedOrders.length / ORDERS_PER_PAGE),
+  );
   const paginatedOrders = displayedOrders.slice(
     (ordersPage - 1) * ORDERS_PER_PAGE,
-    ordersPage * ORDERS_PER_PAGE
+    ordersPage * ORDERS_PER_PAGE,
   );
 
   const resetOrderFilters = () => {
@@ -379,7 +405,7 @@ export const MyStoreBuilder: React.FC<MyStoreBuilderProps> = ({
             {config.storeName || "My Storefront"}
           </h1>
 
-          <p className="text-xs sm:text-sm text-muted-foreground">
+          <p className="text-[12px] text-muted-foreground">
             Your storefront is{" "}
             <strong
               className={
@@ -485,7 +511,8 @@ export const MyStoreBuilder: React.FC<MyStoreBuilderProps> = ({
                 Your Storefront is Currently Paused
               </h4>
               <p className="text-xs text-amber-900/80 dark:text-amber-300/80">
-                Visitors will see an offline maintenance notice. Customers cannot checkout until enabled.
+                Visitors will see an offline maintenance notice. Customers
+                cannot checkout until enabled.
               </p>
             </div>
           </div>
@@ -510,7 +537,10 @@ export const MyStoreBuilder: React.FC<MyStoreBuilderProps> = ({
             <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
               Today's Store Profit
             </span>
-            <Delta now={storeMetrics.totalCommission} prev={Math.round(storeMetrics.totalCommission * 0.8)} />
+            <Delta
+              now={storeMetrics.totalCommission}
+              prev={Math.round(storeMetrics.totalCommission * 0.8)}
+            />
           </div>
           <div className="text-2xl font-black text-emerald-600 dark:text-emerald-400 tabular-nums mt-1">
             +GH₵ {storeMetrics.totalCommission.toFixed(2)}
@@ -525,7 +555,10 @@ export const MyStoreBuilder: React.FC<MyStoreBuilderProps> = ({
             <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
               Total Revenue GMV
             </span>
-            <Delta now={storeMetrics.totalRevenue} prev={Math.round(storeMetrics.totalRevenue * 0.82)} />
+            <Delta
+              now={storeMetrics.totalRevenue}
+              prev={Math.round(storeMetrics.totalRevenue * 0.82)}
+            />
           </div>
           <div className="text-2xl font-black text-foreground tabular-nums mt-1">
             GH₵ {storeMetrics.totalRevenue.toFixed(2)}
@@ -540,7 +573,10 @@ export const MyStoreBuilder: React.FC<MyStoreBuilderProps> = ({
             <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
               Store Customers
             </span>
-            <Delta now={storeMetrics.uniqueCustomers} prev={Math.round(storeMetrics.uniqueCustomers * 0.75)} />
+            <Delta
+              now={storeMetrics.uniqueCustomers}
+              prev={Math.round(storeMetrics.uniqueCustomers * 0.75)}
+            />
           </div>
           <div className="text-2xl font-black text-foreground tabular-nums mt-1">
             {storeMetrics.uniqueCustomers}
@@ -569,60 +605,55 @@ export const MyStoreBuilder: React.FC<MyStoreBuilderProps> = ({
       {/* ========================================================================= */}
       {/* 3. NAVIGATION TABS (Increased Height with Horizontal ScrollArea) */}
       {/* ========================================================================= */}
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+      <Tabs
+        value={activeTab}
+        onValueChange={setActiveTab}
+        className="space-y-6"
+      >
         <ScrollArea className="w-full whitespace-nowrap pb-2">
-          <div className="flex w-max p-1">
-            <TabsList className="inline-flex h-14 items-center justify-start rounded-2xl bg-muted/70 p-1.5 text-muted-foreground border border-border/80 shadow-2xs gap-1.5">
+          <div className="w-full p-1">
+            <TabsList className="inline-flex w-full h-14 items-center justify-start rounded-2xl bg-muted/70 p-1.5 text-muted-foreground border border-border/80 shadow-2xs gap-1.5">
               <TabsTrigger
                 value="branding"
-                className="h-11 rounded-xl px-4 py-2 text-xs sm:text-sm font-extrabold flex items-center gap-2 transition-all data-active:bg-background data-active:text-foreground data-active:shadow-sm"
+                className="h-6 rounded-xl px-4 py-2 text-[12px]  flex items-center gap-2 transition-all data-active:!bg-background data-active:text-foreground data-active:shadow-sm"
               >
                 <Store className="w-4 h-4 text-primary" />
                 <span>Branding & Identity</span>
               </TabsTrigger>
               <TabsTrigger
                 value="pricing"
-                className="h-11 rounded-xl px-4 py-2 text-xs sm:text-sm font-extrabold flex items-center gap-2 transition-all data-active:bg-background data-active:text-foreground data-active:shadow-sm"
+                className="h-6 rounded-xl px-4 py-2 text-[12px]  flex items-center gap-2 transition-all data-active:!bg-background data-active:text-foreground data-active:shadow-sm"
               >
                 <Sliders className="w-4 h-4 text-amber-500" />
                 <span>Products & Pricing</span>
-                <Badge variant="secondary" className="text-[11px] font-bold py-0.5 px-2 ml-0.5 tabular-nums border border-border/50">
-                  {filteredBundles.length}
-                </Badge>
               </TabsTrigger>
               <TabsTrigger
                 value="insights"
-                className="h-11 rounded-xl px-4 py-2 text-xs sm:text-sm font-extrabold flex items-center gap-2 transition-all data-active:bg-background data-active:text-foreground data-active:shadow-sm"
+                className="h-6 rounded-xl px-4 py-2 text-[12px]  flex items-center gap-2 transition-all data-active:!bg-background data-active:text-foreground data-active:shadow-sm"
               >
                 <BarChart3 className="w-4 h-4 text-emerald-500" />
                 <span>Store Insights</span>
               </TabsTrigger>
               <TabsTrigger
                 value="discounts"
-                className="h-11 rounded-xl px-4 py-2 text-xs sm:text-sm font-extrabold flex items-center gap-2 transition-all data-active:bg-background data-active:text-foreground data-active:shadow-sm"
+                className="h-6 rounded-xl px-4 py-2 text-[12px]  flex items-center gap-2 transition-all data-active:!bg-background data-active:text-foreground data-active:shadow-sm"
               >
                 <Tag className="w-4 h-4 text-blue-500" />
                 <span>Discount Codes</span>
-                <Badge variant="secondary" className="text-[11px] font-bold py-0.5 px-2 ml-0.5 tabular-nums border border-border/50">
-                  {config.promoCodes?.length || 0}
-                </Badge>
               </TabsTrigger>
               <TabsTrigger
                 value="sharing"
-                className="h-11 rounded-xl px-4 py-2 text-xs sm:text-sm font-extrabold flex items-center gap-2 transition-all data-active:bg-background data-active:text-foreground data-active:shadow-sm"
+                className="h-6 rounded-xl px-4 py-2 text-[12px]  flex items-center gap-2 transition-all data-active:!bg-background data-active:text-foreground data-active:shadow-sm"
               >
                 <Share2 className="w-4 h-4 text-purple-500" />
                 <span>Links & Sharing</span>
               </TabsTrigger>
               <TabsTrigger
                 value="orders"
-                className="h-11 rounded-xl px-4 py-2 text-xs sm:text-sm font-extrabold flex items-center gap-2 transition-all data-active:bg-background data-active:text-foreground data-active:shadow-sm"
+                className="h-6 rounded-xl px-4 py-2 text-[12px]  flex items-center gap-2 transition-all data-active:!bg-background data-active:text-foreground data-active:shadow-sm"
               >
                 <Clock className="w-4 h-4 text-rose-500" />
                 <span>Recent Store Orders</span>
-                <Badge variant="secondary" className="text-[11px] font-bold py-0.5 px-2 ml-0.5 tabular-nums border border-border/50">
-                  {storeOrders.length}
-                </Badge>
               </TabsTrigger>
             </TabsList>
           </div>
@@ -632,7 +663,10 @@ export const MyStoreBuilder: React.FC<MyStoreBuilderProps> = ({
         {/* ========================================================================= */}
         {/* TAB 1: BRANDING & IDENTITY */}
         {/* ========================================================================= */}
-        <TabsContent value="branding" className="space-y-6 animate-in fade-in-50">
+        <TabsContent
+          value="branding"
+          className="space-y-6 animate-in fade-in-50"
+        >
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
             {/* Left Col: Live Preview Chip & Visual Branding */}
             <div className="lg:col-span-5 space-y-4">
@@ -654,7 +688,8 @@ export const MyStoreBuilder: React.FC<MyStoreBuilderProps> = ({
                     </Button>
                   </div>
                   <CardDescription className="text-xs">
-                    Interactive miniature preview of your public store header matching PublicStorefront.
+                    Interactive miniature preview of your public store header
+                    matching PublicStorefront.
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="p-5 space-y-4">
@@ -677,7 +712,9 @@ export const MyStoreBuilder: React.FC<MyStoreBuilderProps> = ({
                     </label>
                     <div className="grid grid-cols-4 sm:grid-cols-8 gap-2">
                       {COLOR_PRESETS.map((p) => {
-                        const isSelected = config.themeColor.toLowerCase() === p.hex.toLowerCase();
+                        const isSelected =
+                          config.themeColor.toLowerCase() ===
+                          p.hex.toLowerCase();
                         return (
                           <button
                             key={p.hex}
@@ -691,7 +728,12 @@ export const MyStoreBuilder: React.FC<MyStoreBuilderProps> = ({
                             }`}
                             style={{ background: p.hex }}
                           >
-                            {isSelected && <Check className="w-4 h-4 text-white" strokeWidth={3} />}
+                            {isSelected && (
+                              <Check
+                                className="w-4 h-4 text-white"
+                                strokeWidth={3}
+                              />
+                            )}
                           </button>
                         );
                       })}
@@ -706,7 +748,9 @@ export const MyStoreBuilder: React.FC<MyStoreBuilderProps> = ({
                       <Input
                         type="text"
                         value={config.themeColor}
-                        onChange={(e) => updateConfig({ themeColor: e.target.value })}
+                        onChange={(e) =>
+                          updateConfig({ themeColor: e.target.value })
+                        }
                         placeholder="#2563eb"
                         className="text-xs h-8 font-semibold uppercase tracking-wider"
                       />
@@ -728,62 +772,74 @@ export const MyStoreBuilder: React.FC<MyStoreBuilderProps> = ({
                     <span>Storefront Identity & Contact Information</span>
                   </CardTitle>
                   <CardDescription className="text-xs">
-                    Configure your business name, public URL slug, customer tagline, and WhatsApp support desk.
+                    Configure your business name, public URL slug, customer
+                    tagline, and WhatsApp support desk.
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="p-5 space-y-4">
                   {/* Store Display Name */}
                   <div className="space-y-1.5">
-                    <Label htmlFor="store-name-input" className="text-xs font-bold text-foreground">
+                    <Label
+                      htmlFor="store-name-input"
+                      className="text-xs font-bold text-foreground"
+                    >
                       Store Display Name
                     </Label>
                     <Input
                       id="store-name-input"
                       type="text"
                       value={config.storeName}
-                      onChange={(e) => updateConfig({ storeName: e.target.value })}
+                      onChange={(e) =>
+                        updateConfig({ storeName: e.target.value })
+                      }
                       placeholder="e.g. Kofi Telecom Express"
                       className="font-semibold text-xs"
                     />
-                    <p className="text-[10px] text-muted-foreground">
-                      Displayed on your storefront header, invoices, and share flyers.
-                    </p>
                   </div>
 
                   {/* Store Handle / Slug */}
                   <div className="space-y-1.5">
-                    <Label htmlFor="store-slug-input" className="text-xs font-bold text-foreground">
+                    <Label
+                      htmlFor="store-slug-input"
+                      className="text-xs font-bold text-foreground"
+                    >
                       Store Handle (URL Slug)
                     </Label>
-                    <div className="flex items-center rounded-xl border border-input bg-background px-3 py-2 text-xs text-muted-foreground focus-within:ring-2 focus-within:ring-primary/20">
-                      <span className="font-semibold text-muted-foreground">smartdatahub.com/store/</span>
+                    <div className="flex items-center rounded-lg h-10 border border-input bg-background px-3 py-2 text-xs text-muted-foreground focus-within:ring-2 focus-within:ring-primary/20">
+                      <span className="font-semibold text-muted-foreground">
+                        smartdatahub.com/store/
+                      </span>
                       <input
                         id="store-slug-input"
                         type="text"
                         value={config.handle}
                         onChange={(e) =>
                           updateConfig({
-                            handle: e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "-"),
+                            handle: e.target.value
+                              .toLowerCase()
+                              .replace(/[^a-z0-9-]/g, "-"),
                           })
                         }
                         className="w-full bg-transparent text-foreground font-bold focus:outline-hidden pl-1"
                       />
                     </div>
-                    <p className="text-[10px] text-muted-foreground">
-                      Unique alphanumeric web link for your customers.
-                    </p>
                   </div>
 
                   {/* Tagline */}
                   <div className="space-y-1.5">
-                    <Label htmlFor="store-tagline-input" className="text-xs font-bold text-foreground">
+                    <Label
+                      htmlFor="store-tagline-input"
+                      className="text-xs font-bold text-foreground"
+                    >
                       Business Tagline
                     </Label>
                     <Input
                       id="store-tagline-input"
                       type="text"
                       value={config.tagline}
-                      onChange={(e) => updateConfig({ tagline: e.target.value })}
+                      onChange={(e) =>
+                        updateConfig({ tagline: e.target.value })
+                      }
                       placeholder="e.g. Instant Non-Expiry Data & Exam Vouchers in Ghana"
                       className="text-xs font-medium"
                     />
@@ -791,26 +847,31 @@ export const MyStoreBuilder: React.FC<MyStoreBuilderProps> = ({
 
                   {/* Broadcast Announcement Banner */}
                   <div className="space-y-1.5">
-                    <Label htmlFor="store-announcement-input" className="text-xs font-bold text-foreground">
+                    <Label
+                      htmlFor="store-announcement-input"
+                      className="text-xs font-bold text-foreground"
+                    >
                       Broadcast Announcement Banner
                     </Label>
                     <Input
                       id="store-announcement-input"
                       type="text"
                       value={config.announcement}
-                      onChange={(e) => updateConfig({ announcement: e.target.value })}
-                      placeholder="e.g. 🔥 Fast delivery within 60 seconds! 24/7 WhatsApp support."
+                      onChange={(e) =>
+                        updateConfig({ announcement: e.target.value })
+                      }
+                      placeholder="e.g. Fast delivery within 60 seconds! 24/7 WhatsApp support."
                       className="text-xs font-medium"
                     />
-                    <p className="text-[10px] text-muted-foreground">
-                      Prominently highlighted at the very top of your public storefront.
-                    </p>
                   </div>
 
                   {/* Contact Info */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
                     <div className="space-y-1.5">
-                      <Label htmlFor="store-whatsapp-phone" className="text-xs font-bold text-foreground flex items-center gap-1.5">
+                      <Label
+                        htmlFor="store-whatsapp-phone"
+                        className="text-xs font-bold text-foreground flex items-center gap-1.5"
+                      >
                         <MessageCircle className="w-3.5 h-3.5 text-emerald-600" />
                         <span>WhatsApp Support Desk</span>
                       </Label>
@@ -818,8 +879,10 @@ export const MyStoreBuilder: React.FC<MyStoreBuilderProps> = ({
                         id="store-whatsapp-phone"
                         type="tel"
                         value={config.whatsappNumber}
-                        onChange={(e) => updateConfig({ whatsappNumber: e.target.value })}
-                        placeholder="0244192834"
+                        onChange={(e) =>
+                          updateConfig({ whatsappNumber: e.target.value })
+                        }
+                        placeholder="Enter Phone Number"
                         className="text-xs font-semibold tabular-nums"
                       />
                       <p className="text-[10px] text-muted-foreground">
@@ -828,7 +891,10 @@ export const MyStoreBuilder: React.FC<MyStoreBuilderProps> = ({
                     </div>
 
                     <div className="space-y-1.5">
-                      <Label htmlFor="store-channel-url" className="text-xs font-bold text-foreground flex items-center gap-1.5">
+                      <Label
+                        htmlFor="store-channel-url"
+                        className="text-xs font-bold text-foreground flex items-center gap-1.5"
+                      >
                         <Radio className="w-3.5 h-3.5 text-blue-500" />
                         <span>WhatsApp Channel Link</span>
                       </Label>
@@ -836,7 +902,9 @@ export const MyStoreBuilder: React.FC<MyStoreBuilderProps> = ({
                         id="store-channel-url"
                         type="url"
                         value={config.whatsappChannelUrl || ""}
-                        onChange={(e) => updateConfig({ whatsappChannelUrl: e.target.value })}
+                        onChange={(e) =>
+                          updateConfig({ whatsappChannelUrl: e.target.value })
+                        }
                         placeholder="https://whatsapp.com/channel/..."
                         className="text-xs font-semibold"
                       />
@@ -854,7 +922,10 @@ export const MyStoreBuilder: React.FC<MyStoreBuilderProps> = ({
         {/* ========================================================================= */}
         {/* TAB 2: PRODUCTS & PRICING (Table matching CustomerWalletView pattern) */}
         {/* ========================================================================= */}
-        <TabsContent value="pricing" className="space-y-6 animate-in fade-in-50">
+        <TabsContent
+          value="pricing"
+          className="space-y-6 animate-in fade-in-50"
+        >
           {/* Network and Service Toggles */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Network Toggles */}
@@ -865,29 +936,60 @@ export const MyStoreBuilder: React.FC<MyStoreBuilderProps> = ({
                   <span>Network Catalog Toggles</span>
                 </CardTitle>
                 <CardDescription className="text-xs">
-                  Choose which telecom networks are active and visible in your storefront.
+                  Choose which telecom networks are active and visible in your
+                  storefront.
                 </CardDescription>
               </CardHeader>
               <CardContent className="p-4 space-y-3">
                 {[
-                  { id: "MTN", label: "MTN Ghana Data", color: "bg-amber-400 text-amber-950" },
-                  { id: "Telecel", label: "Telecel Ghana Data", color: "bg-red-500 text-white" },
-                  { id: "AirtelTigo", label: "AT (AirtelTigo) Data", color: "bg-blue-600 text-white" },
-                  { id: "AT_ISHARE", label: "AT iShare Corporate Bundles", color: "bg-blue-500 text-white" },
-                  { id: "AT_BIGTIME", label: "AT BigTime Bundles", color: "bg-indigo-600 text-white" },
-                  { id: "MTN_XPRESS", label: "MTN Xpress Priority Bundles", color: "bg-yellow-500 text-black" },
+                  {
+                    id: "MTN",
+                    label: "MTN Ghana Data",
+                    color: "bg-amber-400 text-amber-950",
+                  },
+                  {
+                    id: "Telecel",
+                    label: "Telecel Ghana Data",
+                    color: "bg-red-500 text-white",
+                  },
+                  {
+                    id: "AirtelTigo",
+                    label: "AT (AirtelTigo) Data",
+                    color: "bg-blue-600 text-white",
+                  },
+                  {
+                    id: "AT_ISHARE",
+                    label: "AT iShare Corporate Bundles",
+                    color: "bg-blue-500 text-white",
+                  },
+                  {
+                    id: "AT_BIGTIME",
+                    label: "AT BigTime Bundles",
+                    color: "bg-indigo-600 text-white",
+                  },
+                  {
+                    id: "MTN_XPRESS",
+                    label: "MTN Xpress Priority Bundles",
+                    color: "bg-yellow-500 text-black",
+                  },
                 ].map((net) => {
-                  const isEnabled = (config.enabledNetworks || []).includes(net.id as any);
+                  const isEnabled = (config.enabledNetworks || []).includes(
+                    net.id as any,
+                  );
                   return (
                     <div
                       key={net.id}
                       className="flex items-center justify-between p-2.5 rounded-xl border border-border bg-muted/20"
                     >
                       <div className="flex items-center gap-2.5">
-                        <span className={`px-2 py-0.5 rounded-md text-[10px] font-black ${net.color}`}>
+                        <span
+                          className={`px-2 py-0.5 rounded-md text-[10px] font-black ${net.color}`}
+                        >
                           {net.id.split("_")[0]}
                         </span>
-                        <span className="text-xs font-bold text-foreground">{net.label}</span>
+                        <span className="text-xs font-bold text-foreground">
+                          {net.label}
+                        </span>
                       </div>
                       <Switch
                         checked={isEnabled}
@@ -907,7 +1009,8 @@ export const MyStoreBuilder: React.FC<MyStoreBuilderProps> = ({
                   <span>Additional Services Toggles</span>
                 </CardTitle>
                 <CardDescription className="text-xs">
-                  Sell exams result checkers, airtime top-ups, and farmer association registrations.
+                  Sell exams result checkers, airtime top-ups, and farmer
+                  association registrations.
                 </CardDescription>
               </CardHeader>
               <CardContent className="p-4 space-y-3">
@@ -935,8 +1038,12 @@ export const MyStoreBuilder: React.FC<MyStoreBuilderProps> = ({
                       className="flex items-center justify-between p-3 rounded-xl border border-border bg-muted/20"
                     >
                       <div>
-                        <div className="text-xs font-bold text-foreground">{srv.title}</div>
-                        <div className="text-[10px] text-muted-foreground">{srv.desc}</div>
+                        <div className="text-xs font-bold text-foreground">
+                          {srv.title}
+                        </div>
+                        <div className="text-[10px] text-muted-foreground">
+                          {srv.desc}
+                        </div>
                       </div>
                       <Switch
                         checked={active}
@@ -949,14 +1056,18 @@ export const MyStoreBuilder: React.FC<MyStoreBuilderProps> = ({
                 {/* Guest Checkout Toggle */}
                 <div className="pt-3 border-t border-border flex items-center justify-between p-2">
                   <div>
-                    <div className="text-xs font-bold text-foreground">Guest Checkout</div>
+                    <div className="text-xs font-bold text-foreground">
+                      Guest Checkout
+                    </div>
                     <div className="text-[10px] text-muted-foreground">
                       Allow customers to buy without creating an account
                     </div>
                   </div>
                   <Switch
                     checked={config.allowGuestCheckout}
-                    onCheckedChange={(checked) => updateConfig({ allowGuestCheckout: checked })}
+                    onCheckedChange={(checked) =>
+                      updateConfig({ allowGuestCheckout: checked })
+                    }
                   />
                 </div>
               </CardContent>
@@ -973,7 +1084,8 @@ export const MyStoreBuilder: React.FC<MyStoreBuilderProps> = ({
                     <span>Global Retail Markup Margin</span>
                   </h3>
                   <p className="text-xs text-muted-foreground">
-                    Automatically computes your retail selling prices above carrier wholesale cost.
+                    Automatically computes your retail selling prices above
+                    carrier wholesale cost.
                   </p>
                 </div>
                 <div className="px-3 py-1.5 rounded-xl bg-primary/10 border border-primary/20 text-primary font-black text-sm tabular-nums">
@@ -983,14 +1095,15 @@ export const MyStoreBuilder: React.FC<MyStoreBuilderProps> = ({
 
               {/* Slider & Quick presets */}
               <div className="space-y-3">
-                <input
-                  type="range"
-                  min="2"
-                  max="25"
-                  step="1"
-                  value={config.marginMarkupPercent}
-                  onChange={(e) => updateConfig({ marginMarkupPercent: Number(e.target.value) })}
-                  className="w-full h-2 bg-muted rounded-lg appearance-none cursor-pointer accent-primary"
+                <Slider
+                  value={[config.marginMarkupPercent]}
+                  onValueChange={(values) =>
+                    updateConfig({ marginMarkupPercent: values[0] })
+                  }
+                  min={2}
+                  max={25}
+                  step={1}
+                  className="w-full"
                 />
 
                 <div className="flex flex-wrap items-center justify-between gap-2 pt-1">
@@ -1001,7 +1114,11 @@ export const MyStoreBuilder: React.FC<MyStoreBuilderProps> = ({
                     {[5, 8, 10, 12, 15, 20].map((p) => (
                       <Button
                         key={p}
-                        variant={config.marginMarkupPercent === p ? "default" : "outline"}
+                        variant={
+                          config.marginMarkupPercent === p
+                            ? "default"
+                            : "outline"
+                        }
                         size="sm"
                         onClick={() => applyMarkupPercent(p)}
                         className="h-7 px-2.5 text-[11px] font-bold cursor-pointer tabular-nums"
@@ -1033,7 +1150,8 @@ export const MyStoreBuilder: React.FC<MyStoreBuilderProps> = ({
                   Product Catalog & Wholesale Pricing
                 </CardTitle>
                 <CardDescription className="mt-1 text-xs">
-                  Wholesale carrier rates synced with SDH gateway. Selling prices are floor-protected against cost.
+                  Wholesale carrier rates synced with SDH gateway. Selling
+                  prices are floor-protected against cost.
                 </CardDescription>
               </div>
             </CardHeader>
@@ -1091,10 +1209,14 @@ export const MyStoreBuilder: React.FC<MyStoreBuilderProps> = ({
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="ALL">All telecom carriers</SelectItem>
+                          <SelectItem value="ALL">
+                            All telecom carriers
+                          </SelectItem>
                           <SelectItem value="MTN">MTN Ghana</SelectItem>
                           <SelectItem value="Telecel">Telecel Ghana</SelectItem>
-                          <SelectItem value="AirtelTigo">AT (AirtelTigo)</SelectItem>
+                          <SelectItem value="AirtelTigo">
+                            AT (AirtelTigo)
+                          </SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
@@ -1119,9 +1241,15 @@ export const MyStoreBuilder: React.FC<MyStoreBuilderProps> = ({
                         </SelectTrigger>
                         <SelectContent>
                           <SelectItem value="all">All data sizes</SelectItem>
-                          <SelectItem value="high_volume">Heavy Volume (10GB+)</SelectItem>
-                          <SelectItem value="standard">Standard (5GB - 10GB)</SelectItem>
-                          <SelectItem value="starter">Starter (Under 5GB)</SelectItem>
+                          <SelectItem value="high_volume">
+                            Heavy Volume (10GB+)
+                          </SelectItem>
+                          <SelectItem value="standard">
+                            Standard (5GB - 10GB)
+                          </SelectItem>
+                          <SelectItem value="starter">
+                            Starter (Under 5GB)
+                          </SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
@@ -1165,16 +1293,27 @@ export const MyStoreBuilder: React.FC<MyStoreBuilderProps> = ({
                   <TableRow>
                     <TableHead>Bundle / Package</TableHead>
                     <TableHead>Carrier</TableHead>
-                    <TableHead className="text-right">Wholesale Cost (GH₵)</TableHead>
-                    <TableHead className="text-center">Your Retail Price (GH₵)</TableHead>
-                    <TableHead className="text-right">Profit / Sale (GH₵)</TableHead>
-                    <TableHead className="text-right">Reseller Margin</TableHead>
+                    <TableHead className="text-right">
+                      Wholesale Cost (GH₵)
+                    </TableHead>
+                    <TableHead className="text-center">
+                      Your Retail Price (GH₵)
+                    </TableHead>
+                    <TableHead className="text-right">
+                      Profit / Sale (GH₵)
+                    </TableHead>
+                    <TableHead className="text-right">
+                      Reseller Margin
+                    </TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {paginatedBundles.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={6} className="py-10 text-center text-muted-foreground">
+                      <TableCell
+                        colSpan={6}
+                        className="py-10 text-center text-muted-foreground"
+                      >
                         <div className="flex flex-col items-center justify-center space-y-2">
                           <AlertCircle className="size-5 text-muted-foreground/60" />
                           <p className="text-xs font-semibold">
@@ -1197,9 +1336,20 @@ export const MyStoreBuilder: React.FC<MyStoreBuilderProps> = ({
                       const effectivePrice =
                         customPrice !== undefined
                           ? customPrice
-                          : Number((b.wholesalePrice * (1 + config.marginMarkupPercent / 100)).toFixed(2));
-                      const profit = Math.max(0, effectivePrice - b.wholesalePrice);
-                      const marginPct = ((profit / b.wholesalePrice) * 100).toFixed(1);
+                          : Number(
+                              (
+                                b.wholesalePrice *
+                                (1 + config.marginMarkupPercent / 100)
+                              ).toFixed(2),
+                            );
+                      const profit = Math.max(
+                        0,
+                        effectivePrice - b.wholesalePrice,
+                      );
+                      const marginPct = (
+                        (profit / b.wholesalePrice) *
+                        100
+                      ).toFixed(1);
 
                       return (
                         <TableRow key={b.id} className="hover:bg-muted/40">
@@ -1216,8 +1366,8 @@ export const MyStoreBuilder: React.FC<MyStoreBuilderProps> = ({
                                 b.network === "MTN"
                                   ? "bg-amber-400/15 text-amber-700 dark:text-amber-400"
                                   : b.network === "Telecel"
-                                  ? "bg-red-500/15 text-red-700 dark:text-red-400"
-                                  : "bg-blue-500/15 text-blue-700 dark:text-blue-400"
+                                    ? "bg-red-500/15 text-red-700 dark:text-red-400"
+                                    : "bg-blue-500/15 text-blue-700 dark:text-blue-400"
                               }`}
                             >
                               <span
@@ -1225,8 +1375,8 @@ export const MyStoreBuilder: React.FC<MyStoreBuilderProps> = ({
                                   b.network === "MTN"
                                     ? "bg-amber-500"
                                     : b.network === "Telecel"
-                                    ? "bg-red-500"
-                                    : "bg-blue-500"
+                                      ? "bg-red-500"
+                                      : "bg-blue-500"
                                 }`}
                               />
                               {b.network}
@@ -1243,7 +1393,10 @@ export const MyStoreBuilder: React.FC<MyStoreBuilderProps> = ({
                               value={effectivePrice}
                               floor={b.wholesalePrice}
                               onChange={(newVal) => {
-                                const updated = { ...(config.customPrices || {}), [b.id]: newVal };
+                                const updated = {
+                                  ...(config.customPrices || {}),
+                                  [b.id]: newVal,
+                                };
                                 updateConfig({ customPrices: updated });
                               }}
                             />
@@ -1270,7 +1423,10 @@ export const MyStoreBuilder: React.FC<MyStoreBuilderProps> = ({
                   <span className="font-bold text-foreground tabular-nums">
                     {filteredBundles.length === 0
                       ? 0
-                      : Math.min(pricingPage * PRICING_PER_PAGE, filteredBundles.length)}
+                      : Math.min(
+                          pricingPage * PRICING_PER_PAGE,
+                          filteredBundles.length,
+                        )}
                   </span>{" "}
                   of{" "}
                   <span className="font-bold text-foreground tabular-nums">
@@ -1296,14 +1452,20 @@ export const MyStoreBuilder: React.FC<MyStoreBuilderProps> = ({
         {/* ========================================================================= */}
         {/* TAB 3: STORE INSIGHTS */}
         {/* ========================================================================= */}
-        <TabsContent value="insights" className="space-y-6 animate-in fade-in-50">
+        <TabsContent
+          value="insights"
+          className="space-y-6 animate-in fade-in-50"
+        >
           <StoreInsights orders={storeOrders} bundles={bundles} />
         </TabsContent>
 
         {/* ========================================================================= */}
         {/* TAB 4: DISCOUNT CODES */}
         {/* ========================================================================= */}
-        <TabsContent value="discounts" className="space-y-6 animate-in fade-in-50">
+        <TabsContent
+          value="discounts"
+          className="space-y-6 animate-in fade-in-50"
+        >
           <Card className="rounded-2xl border border-border bg-card shadow-xs">
             <CardContent className="p-6">
               <PromoCodeList
@@ -1320,7 +1482,10 @@ export const MyStoreBuilder: React.FC<MyStoreBuilderProps> = ({
         {/* ========================================================================= */}
         {/* TAB 5: LINKS & SHARING */}
         {/* ========================================================================= */}
-        <TabsContent value="sharing" className="space-y-6 animate-in fade-in-50">
+        <TabsContent
+          value="sharing"
+          className="space-y-6 animate-in fade-in-50"
+        >
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Store Link & QR Code Card */}
             <Card className="rounded-2xl border border-border bg-card shadow-xs">
@@ -1330,7 +1495,8 @@ export const MyStoreBuilder: React.FC<MyStoreBuilderProps> = ({
                   <span>Public Storefront Link & Instant QR</span>
                 </CardTitle>
                 <CardDescription className="text-xs">
-                  Share this link with customers on social media, WhatsApp groups, and business cards.
+                  Share this link with customers on social media, WhatsApp
+                  groups, and business cards.
                 </CardDescription>
               </CardHeader>
               <CardContent className="p-5 space-y-4">
@@ -1344,7 +1510,11 @@ export const MyStoreBuilder: React.FC<MyStoreBuilderProps> = ({
                     onClick={handleCopyStoreLink}
                     className="shrink-0 text-xs font-bold"
                   >
-                    {copiedLink ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5" />}
+                    {copiedLink ? (
+                      <Check className="w-3.5 h-3.5 text-emerald-500" />
+                    ) : (
+                      <Copy className="w-3.5 h-3.5" />
+                    )}
                     <span>{copiedLink ? "Copied" : "Copy"}</span>
                   </Button>
                 </div>
@@ -1355,9 +1525,12 @@ export const MyStoreBuilder: React.FC<MyStoreBuilderProps> = ({
                     <PseudoQR seed={config.handle} size={110} />
                   </div>
                   <div className="space-y-2 text-center sm:text-left">
-                    <div className="font-bold text-xs text-foreground">Instant Mobile Order QR</div>
+                    <div className="font-bold text-xs text-foreground">
+                      Instant Mobile Order QR
+                    </div>
                     <p className="text-[11px] text-muted-foreground">
-                      Point phone camera to open storefront with zero typing. Great for print flyers and retail posters.
+                      Point phone camera to open storefront with zero typing.
+                      Great for print flyers and retail posters.
                     </p>
                     <Button
                       variant="outline"
@@ -1381,7 +1554,8 @@ export const MyStoreBuilder: React.FC<MyStoreBuilderProps> = ({
                   <span>WhatsApp Channel & Social Broadcast</span>
                 </CardTitle>
                 <CardDescription className="text-xs">
-                  Connect your reseller channel and broadcast daily non-expiry data deals directly.
+                  Connect your reseller channel and broadcast daily non-expiry
+                  data deals directly.
                 </CardDescription>
               </CardHeader>
               <CardContent className="p-5 space-y-4">
@@ -1392,7 +1566,8 @@ export const MyStoreBuilder: React.FC<MyStoreBuilderProps> = ({
                   </div>
                   <div className="flex items-center justify-between gap-2">
                     <div className="text-xs truncate text-foreground font-semibold">
-                      {config.whatsappChannelUrl || "No channel link configured"}
+                      {config.whatsappChannelUrl ||
+                        "No channel link configured"}
                     </div>
                     {config.whatsappChannelUrl && (
                       <Button
@@ -1401,7 +1576,11 @@ export const MyStoreBuilder: React.FC<MyStoreBuilderProps> = ({
                         onClick={handleCopyChannelLink}
                         className="shrink-0 text-xs font-bold"
                       >
-                        {copiedChannel ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5" />}
+                        {copiedChannel ? (
+                          <Check className="w-3.5 h-3.5 text-emerald-500" />
+                        ) : (
+                          <Copy className="w-3.5 h-3.5" />
+                        )}
                         <span>{copiedChannel ? "Copied" : "Copy"}</span>
                       </Button>
                     )}
@@ -1419,7 +1598,7 @@ export const MyStoreBuilder: React.FC<MyStoreBuilderProps> = ({
                       size="sm"
                       onClick={() => {
                         const text = encodeURIComponent(
-                          `🔥 Fast, non-expiry data on ${config.storeName}! MTN, Telecel, AT.\n\nBuy now: ${fullStoreUrl}`
+                          `🔥 Fast, non-expiry data on ${config.storeName}! MTN, Telecel, AT.\n\nBuy now: ${fullStoreUrl}`,
                         );
                         window.open(`https://wa.me/?text=${text}`, "_blank");
                       }}
@@ -1434,7 +1613,10 @@ export const MyStoreBuilder: React.FC<MyStoreBuilderProps> = ({
                       size="sm"
                       onClick={() => {
                         const url = encodeURIComponent(fullStoreUrl);
-                        window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`, "_blank");
+                        window.open(
+                          `https://www.facebook.com/sharer/sharer.php?u=${url}`,
+                          "_blank",
+                        );
                       }}
                       className="text-xs font-bold flex items-center justify-center gap-1.5"
                     >
@@ -1447,9 +1629,12 @@ export const MyStoreBuilder: React.FC<MyStoreBuilderProps> = ({
                       size="sm"
                       onClick={() => {
                         const text = encodeURIComponent(
-                          `Buy instant non-expiry data on ${config.storeName}: ${fullStoreUrl}`
+                          `Buy instant non-expiry data on ${config.storeName}: ${fullStoreUrl}`,
                         );
-                        window.open(`https://t.me/share/url?url=${encodeURIComponent(fullStoreUrl)}&text=${text}`, "_blank");
+                        window.open(
+                          `https://t.me/share/url?url=${encodeURIComponent(fullStoreUrl)}&text=${text}`,
+                          "_blank",
+                        );
                       }}
                       className="text-xs font-bold flex items-center justify-center gap-1.5"
                     >
@@ -1462,9 +1647,12 @@ export const MyStoreBuilder: React.FC<MyStoreBuilderProps> = ({
                       size="sm"
                       onClick={() => {
                         const text = encodeURIComponent(
-                          `Buy instant non-expiry data on ${config.storeName} with instant MoMo delivery!`
+                          `Buy instant non-expiry data on ${config.storeName} with instant MoMo delivery!`,
                         );
-                        window.open(`https://twitter.com/intent/tweet?text=${text}&url=${encodeURIComponent(fullStoreUrl)}`, "_blank");
+                        window.open(
+                          `https://twitter.com/intent/tweet?text=${text}&url=${encodeURIComponent(fullStoreUrl)}`,
+                          "_blank",
+                        );
                       }}
                       className="text-xs font-bold flex items-center justify-center gap-1.5"
                     >
@@ -1489,7 +1677,8 @@ export const MyStoreBuilder: React.FC<MyStoreBuilderProps> = ({
                   Recent Store Orders & EVD Ledger
                 </CardTitle>
                 <CardDescription className="mt-1 text-xs">
-                  Audit trail of buyer orders auto-routed through your branded storefront with profit margins.
+                  Audit trail of buyer orders auto-routed through your branded
+                  storefront with profit margins.
                 </CardDescription>
               </div>
             </CardHeader>
@@ -1547,10 +1736,18 @@ export const MyStoreBuilder: React.FC<MyStoreBuilderProps> = ({
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="all">All delivery statuses</SelectItem>
-                          <SelectItem value="delivered">Delivered / Completed</SelectItem>
-                          <SelectItem value="processing">Processing / In Transit</SelectItem>
-                          <SelectItem value="failed">Failed / Refunded</SelectItem>
+                          <SelectItem value="all">
+                            All delivery statuses
+                          </SelectItem>
+                          <SelectItem value="delivered">
+                            Delivered / Completed
+                          </SelectItem>
+                          <SelectItem value="processing">
+                            Processing / In Transit
+                          </SelectItem>
+                          <SelectItem value="failed">
+                            Failed / Refunded
+                          </SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
@@ -1574,10 +1771,14 @@ export const MyStoreBuilder: React.FC<MyStoreBuilderProps> = ({
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="all">All carrier networks</SelectItem>
+                          <SelectItem value="all">
+                            All carrier networks
+                          </SelectItem>
                           <SelectItem value="MTN">MTN Ghana</SelectItem>
                           <SelectItem value="Telecel">Telecel Ghana</SelectItem>
-                          <SelectItem value="AirtelTigo">AT (AirtelTigo)</SelectItem>
+                          <SelectItem value="AirtelTigo">
+                            AT (AirtelTigo)
+                          </SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
@@ -1624,15 +1825,22 @@ export const MyStoreBuilder: React.FC<MyStoreBuilderProps> = ({
                     <TableHead>Customer Phone</TableHead>
                     <TableHead>Package</TableHead>
                     <TableHead>Carrier</TableHead>
-                    <TableHead className="text-right">Price Paid (GH₵)</TableHead>
-                    <TableHead className="text-right">Your Margin (GH₵)</TableHead>
+                    <TableHead className="text-right">
+                      Price Paid (GH₵)
+                    </TableHead>
+                    <TableHead className="text-right">
+                      Your Margin (GH₵)
+                    </TableHead>
                     <TableHead className="text-right">Status</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {paginatedOrders.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={8} className="py-10 text-center text-muted-foreground">
+                      <TableCell
+                        colSpan={8}
+                        className="py-10 text-center text-muted-foreground"
+                      >
                         <div className="flex flex-col items-center justify-center space-y-2">
                           <AlertCircle className="size-5 text-muted-foreground/60" />
                           <p className="text-xs font-semibold">
@@ -1652,8 +1860,10 @@ export const MyStoreBuilder: React.FC<MyStoreBuilderProps> = ({
                   ) : (
                     paginatedOrders.map((o) => {
                       const isDelivered = o.status === "delivered";
-                      const isPending = o.status === "processing" || o.status === "pending_payment";
-                      const margin = o.agentMargin || (o.amount * 0.08);
+                      const isPending =
+                        o.status === "processing" ||
+                        o.status === "pending_payment";
+                      const margin = o.agentMargin || o.amount * 0.08;
 
                       return (
                         <TableRow key={o.id} className="hover:bg-muted/40">
@@ -1679,8 +1889,8 @@ export const MyStoreBuilder: React.FC<MyStoreBuilderProps> = ({
                                 o.network.includes("MTN")
                                   ? "bg-amber-400/15 text-amber-700 dark:text-amber-400"
                                   : o.network.includes("Telecel")
-                                  ? "bg-red-500/15 text-red-700 dark:text-red-400"
-                                  : "bg-blue-500/15 text-blue-700 dark:text-blue-400"
+                                    ? "bg-red-500/15 text-red-700 dark:text-red-400"
+                                    : "bg-blue-500/15 text-blue-700 dark:text-blue-400"
                               }`}
                             >
                               <span
@@ -1688,8 +1898,8 @@ export const MyStoreBuilder: React.FC<MyStoreBuilderProps> = ({
                                   o.network.includes("MTN")
                                     ? "bg-amber-500"
                                     : o.network.includes("Telecel")
-                                    ? "bg-red-500"
-                                    : "bg-blue-500"
+                                      ? "bg-red-500"
+                                      : "bg-blue-500"
                                 }`}
                               />
                               {o.network}
@@ -1710,8 +1920,8 @@ export const MyStoreBuilder: React.FC<MyStoreBuilderProps> = ({
                                 isDelivered
                                   ? "bg-emerald-500/15 text-emerald-700 dark:text-emerald-400"
                                   : isPending
-                                  ? "bg-amber-500/15 text-amber-700 dark:text-amber-400"
-                                  : "bg-destructive/15 text-destructive"
+                                    ? "bg-amber-500/15 text-amber-700 dark:text-amber-400"
+                                    : "bg-destructive/15 text-destructive"
                               }`}
                             >
                               <span
@@ -1719,8 +1929,8 @@ export const MyStoreBuilder: React.FC<MyStoreBuilderProps> = ({
                                   isDelivered
                                     ? "bg-emerald-500"
                                     : isPending
-                                    ? "bg-amber-500"
-                                    : "bg-destructive"
+                                      ? "bg-amber-500"
+                                      : "bg-destructive"
                                 }`}
                               />
                               {o.status}
@@ -1740,7 +1950,10 @@ export const MyStoreBuilder: React.FC<MyStoreBuilderProps> = ({
                   <span className="font-bold text-foreground tabular-nums">
                     {displayedOrders.length === 0
                       ? 0
-                      : Math.min(ordersPage * ORDERS_PER_PAGE, displayedOrders.length)}
+                      : Math.min(
+                          ordersPage * ORDERS_PER_PAGE,
+                          displayedOrders.length,
+                        )}
                   </span>{" "}
                   of{" "}
                   <span className="font-bold text-foreground tabular-nums">

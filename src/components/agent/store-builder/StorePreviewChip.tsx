@@ -1,12 +1,20 @@
 import React from "react";
-import { BadgeCheck, Star, Sparkles, MessageCircle, ShieldCheck } from "lucide-react";
+import {
+  BadgeCheck,
+  Star,
+  Sparkles,
+  MessageCircle,
+  ShieldCheck,
+} from "lucide-react";
 import { AgentStoreConfig } from "../../../types";
 
 interface StorePreviewChipProps {
   store: AgentStoreConfig;
 }
 
-export const StorePreviewChip: React.FC<StorePreviewChipProps> = ({ store }) => {
+export const StorePreviewChip: React.FC<StorePreviewChipProps> = ({
+  store,
+}) => {
   const initials = store.storeName
     ? store.storeName
         .split(" ")
@@ -19,13 +27,7 @@ export const StorePreviewChip: React.FC<StorePreviewChipProps> = ({ store }) => 
   const themeColor = store.themeColor || "#2563eb";
 
   return (
-    <div
-      className="store-preview relative overflow-hidden rounded-3xl border border-border/80 bg-card shadow-md transition-all p-5 sm:p-6 space-y-4"
-      style={{
-        borderColor: `${themeColor}40`,
-        boxShadow: `0 10px 30px -10px ${themeColor}25`,
-      }}
-    >
+    <div className="store-preview relative overflow-hidden rounded-3xl border border-border/80 bg-card shadow-md transition-all p-5 sm:p-6 space-y-4">
       {/* Radiant Ambient Gradient Matching Storefront Header */}
       <div
         className="absolute top-0 inset-x-0 h-28 pointer-events-none transition-all"
@@ -83,7 +85,8 @@ export const StorePreviewChip: React.FC<StorePreviewChipProps> = ({ store }) => 
               </h3>
             </div>
             <p className="text-xs text-muted-foreground line-clamp-1 mt-0.5">
-              {store.tagline || "Authorized telecom data reseller in Ghana. Non-expiry bundles."}
+              {store.tagline ||
+                "Authorized telecom data reseller in Ghana. Non-expiry bundles."}
             </p>
             <div className="flex items-center gap-2.5 text-[11px] text-muted-foreground font-semibold mt-1">
               <span className="flex items-center gap-1 text-amber-500">
@@ -119,15 +122,25 @@ export const StorePreviewChip: React.FC<StorePreviewChipProps> = ({ store }) => 
       <div className="relative grid grid-cols-3 gap-2 pt-2 border-t border-border/60 text-center">
         <div className="p-2 rounded-xl bg-muted/40 border border-border/40">
           <div className="text-xs font-black text-foreground">Non-Expiry</div>
-          <div className="text-[10px] text-muted-foreground">Lifetime Validity</div>
+          <div className="text-[10px] text-muted-foreground">
+            Lifetime Validity
+          </div>
         </div>
         <div className="p-2 rounded-xl bg-muted/40 border border-border/40">
-          <div className="text-xs font-black text-foreground">Direct Carrier EVD</div>
-          <div className="text-[10px] text-muted-foreground">Automated Switch</div>
+          <div className="text-xs font-black text-foreground">
+            Direct Carrier EVD
+          </div>
+          <div className="text-[10px] text-muted-foreground">
+            Automated Switch
+          </div>
         </div>
         <div className="p-2 rounded-xl bg-muted/40 border border-border/40">
-          <div className="text-xs font-black text-foreground">100% Guaranteed</div>
-          <div className="text-[10px] text-muted-foreground">Instant MoMo Rails</div>
+          <div className="text-xs font-black text-foreground">
+            100% Guaranteed
+          </div>
+          <div className="text-[10px] text-muted-foreground">
+            Instant MoMo Rails
+          </div>
         </div>
       </div>
     </div>
