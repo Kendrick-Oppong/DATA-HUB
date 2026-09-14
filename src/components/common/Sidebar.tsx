@@ -1,29 +1,12 @@
 import React, { useEffect } from "react";
 import {
-  Home,
-  Wifi,
-  PhoneCall,
-  GraduationCap,
-  ShieldCheck,
-  Zap,
-  Wallet,
-  Clock,
-  Bell,
-  MessageSquareWarning,
-  BookOpen,
-  ShoppingBag,
-  BarChart2,
-  Send,
-  Sliders,
-  DollarSign,
-  Server,
   Sparkles,
   ChevronRight,
   PanelLeftClose,
   PanelLeftOpen,
   X,
-  User,
   LogOut,
+  ShieldCheck,
 } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { UserRole, UserAccount } from "../../types";
@@ -36,6 +19,13 @@ import {
   TooltipTrigger,
 } from "../ui/tooltip";
 import { ScrollArea } from "../ui/scroll-area";
+import {
+  CUSTOMER_NAV,
+  AGENT_NAV,
+  ADMIN_NAV,
+  type NavItem,
+  type NavGroup,
+} from "./sidebar-nav";
 
 export interface SidebarProps {
   currentRole: UserRole;
@@ -52,15 +42,6 @@ export interface SidebarProps {
   onCloseMobile?: () => void;
   onSignOut?: () => void;
 }
-
-type NavItem = {
-  id: string;
-  altIds?: string[];
-  label: string;
-  icon: React.ElementType;
-  badge?: string;
-  count?: number;
-};
 
 export const Sidebar: React.FC<SidebarProps> = ({
   currentRole,
@@ -129,146 +110,30 @@ export const Sidebar: React.FC<SidebarProps> = ({
         ? "kofitelecom@gmail.com"
         : "kojomensah94@gmail.com");
 
-  // Groups per role: Note that Profile & Security is removed from the middle list
-  // and placed at the bottom profile footer!
-  const groups: { group: string; items: NavItem[] }[] =
+  // Get navigation groups based on role
+  const groups: NavGroup[] =
     currentRole === "customer"
-      ? [
-          {
-            group: "Telecom & Services",
-            items: [
-              {
-                id: "overview",
-                altIds: ["dashboard"],
-                label: "Dashboard",
-                icon: Home,
-              },
-              {
-                id: "buy-data",
-                label: "Buy Data",
-                icon: Wifi,
-                badge: "Instant",
-              },
-              { id: "buy-airtime", label: "Buy Airtime", icon: PhoneCall },
-              {
-                id: "results-checker",
-                label: "Results Checker",
-                icon: GraduationCap,
-              },
-              {
-                id: "afa",
-                label: "AFA Registration",
-                icon: ShieldCheck,
-                badge: "Subsidized",
-              },
-              { id: "utilities", label: "Utilities & Bills", icon: Zap },
-            ],
-          },
-          {
-            group: "Finance & History",
-            items: [
-              { id: "wallet", label: "Wallet & Ledger", icon: Wallet },
-              { id: "orders", label: "My Orders", icon: Clock },
-            ],
-          },
-          {
-            group: "Support & Help",
-            items: [
-              {
-                id: "notifications",
-                label: "Notifications",
-                icon: Bell,
-                count: unreadNotifications,
-              },
-              {
-                id: "complaints",
-                label: "Complaints & Help",
-                icon: MessageSquareWarning,
-                count: openComplaintsCount,
-              },
-              { id: "guides", label: "How-to Guides", icon: BookOpen },
-            ],
-          },
-        ]
+      ? CUSTOMER_NAV
       : currentRole === "agent"
-        ? [
-            {
-              group: "Overview",
-              items: [
-                {
-                  id: "overview",
-                  altIds: ["dashboard"],
-                  label: "Agent Dashboard",
-                  icon: Home,
-                },
-                {
-                  id: "my-store",
-                  label: "My Store Builder",
-                  icon: ShoppingBag,
-                  badge: "Live",
-                },
-              ],
-            },
-            {
-              group: "Commerce & Sales",
-              items: [
-                { id: "store-orders", label: "Store Orders", icon: Clock },
-                { id: "pricing", label: "Pricing & Margins", icon: Sliders },
-                { id: "analytics", label: "Sales Analytics", icon: BarChart2 },
-                { id: "bulk-sms", label: "Bulk SMS Campaign", icon: Send },
-                {
-                  id: "withdraw",
-                  label: "Withdraw Commissions",
-                  icon: DollarSign,
-                  badge: "MoMo",
-                },
-              ],
-            },
-          ]
-        : [
-            {
-              group: "Operations & Gateways",
-              items: [
-                {
-                  id: "gateways",
-                  altIds: ["dashboard"],
-                  label: "Carrier Gateways & Latency",
-                  icon: Server,
-                  badge: "Live",
-                },
-                {
-                  id: "orders-audit",
-                  altIds: ["order-monitor"],
-                  label: "Orders Audit & Dispatch",
-                  icon: Clock,
-                },
-                {
-                  id: "settlement",
-                  altIds: ["payouts"],
-                  label: "Settlement & Balances",
-                  icon: DollarSign,
-                  count: pendingPayoutsCount,
-                },
-              ],
-            },
-            {
-              group: "Services Administration",
-              items: [
-                {
-                  id: "afa-verification",
-                  altIds: ["afa-admin"],
-                  label: "AFA Approvals",
-                  icon: ShieldCheck,
-                },
-                {
-                  id: "vouchers-stock",
-                  altIds: ["checkers-admin"],
-                  label: "Voucher Stock (WAEC/BECE)",
-                  icon: GraduationCap,
-                },
-              ],
-            },
-          ];
+        ? AGENT_NAV
+        : ADMIN_NAV;
+
+  // Update counts dynamically
+  const groupsWithCounts = groups.map((group) => ({
+    ...group,
+    items: group.items.map((item) => {
+      if (item.id === "notifications") {
+        return { ...item, count: unreadNotifications };
+      }
+      if (item.id === "complaints") {
+        return { ...item, count: openComplaintsCount };
+      }
+      if (item.id === "settlement") {
+        return { ...item, count: pendingPayoutsCount };
+      }
+      return item;
+    }),
+  }));
 
   const roleLabel =
     currentRole === "admin"
@@ -280,7 +145,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   // Shared Navigation list renderer
   const renderNavItems = (collapsed = false) => (
     <div className="flex flex-col gap-4">
-      {groups.map((group) => (
+      {groupsWithCounts.map((group) => (
         <section key={group.group} className="flex flex-col gap-1">
           <h2
             className={`${
