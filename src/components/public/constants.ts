@@ -133,6 +133,7 @@ export const CONTACT_CATEGORIES = [
 export type FooterAction =
   | { type: "purchase"; bundleId: string; network: TelecomNetwork }
   | { type: "public"; tab: PublicTabType }
+  | { type: "legal"; page: "terms" | "privacy" }
   | {
       type: "role";
       role: UserRole;
@@ -263,11 +264,11 @@ export const FOOTER_COLUMNS: FooterColumn[] = [
       { label: "Help Center & FAQs", action: { type: "public", tab: "faq" } },
       {
         label: "Terms of Service & SLA",
-        action: { type: "public", tab: "contact" },
+        action: { type: "legal", page: "terms" },
       },
       {
         label: "Privacy & Cookie Policy",
-        action: { type: "public", tab: "contact" },
+        action: { type: "legal", page: "privacy" },
       },
     ],
   },

@@ -17,6 +17,7 @@ export interface PublicMarketingSiteProps {
   onApplyAgent?: () => void;
   orders: Order[];
   onNavigate?: (role: UserRole, tab: string) => void;
+  onNavigateToLegal?: (page: "terms" | "privacy") => void;
   onOpenReceipt?: (order: Order) => void;
   onOpenAuth?: (mode?: "signin" | "signup" | "demo") => void;
   onOpenSecurityPins?: () => void;
@@ -29,6 +30,7 @@ export const PublicMarketingSite: React.FC<PublicMarketingSiteProps> = ({
   onApplyAgent,
   orders,
   onNavigate,
+  onNavigateToLegal,
 }) => {
   const [selectedNetwork, setSelectedNetwork] = useState<TelecomNetwork>("MTN");
   const [selectedBundleId, setSelectedBundleId] = useState<string>("mtn-5gb");
@@ -187,6 +189,7 @@ export const PublicMarketingSite: React.FC<PublicMarketingSiteProps> = ({
         onStartPurchase={onStartPurchase}
         onNavigatePublicTab={navigatePublicTab}
         onNavigate={onNavigate}
+        onNavigateToLegal={onNavigateToLegal}
       />
     </div>
   );

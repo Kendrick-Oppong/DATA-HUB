@@ -804,6 +804,7 @@ export default function App() {
               navigateToAuth(mode === "signup" ? "sign-up" : "sign-in")
             }
             onOpenSecurityPins={() => setIsSecurityPinsOpen(true)}
+            onNavigateToLegal={navigateToLegal}
           />
         </main>
 
@@ -854,9 +855,19 @@ export default function App() {
   // 4. LEGAL PAGES (/terms, /privacy)
   if (route.type === "legal") {
     if (route.page === "terms") {
-      return <TermsOfService onBack={() => navigateToPublic("home")} />;
+      return (
+        <TermsOfService
+          onBack={() => navigateToPublic("home")}
+          onNavigateToPrivacy={() => navigateToLegal("privacy")}
+        />
+      );
     }
-    return <PrivacyPolicy onBack={() => navigateToPublic("home")} />;
+    return (
+      <PrivacyPolicy
+        onBack={() => navigateToPublic("home")}
+        onNavigateToTerms={() => navigateToLegal("terms")}
+      />
+    );
   }
 
   // 5. DASHBOARD SHELL (/customer, /agent, /admin)

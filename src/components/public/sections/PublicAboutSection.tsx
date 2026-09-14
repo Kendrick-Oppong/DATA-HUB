@@ -49,10 +49,8 @@ export const PublicAboutSection: React.FC<PublicAboutSectionProps> = ({
             <span className="text-primary"> backbone</span>
           </h1>
           <p className="mt-4 text-base text-muted-foreground max-w-xl mx-auto leading-relaxed">
-            Smart Data Hub (SDH) is Ghana's mission-driven digital commerce and
-            telecom distribution network — powering connectivity for thousands
-            of students, professionals, and merchants across all 16 regions with
-            direct carrier-level access.
+            Smart Data Hub (SDH) operates under <strong className="text-foreground font-semibold">Smart Pixels Ventures</strong>.
+            Our mission is simple — <strong className="text-foreground font-semibold">“Smart Data, Seamless Connection.”</strong> We provide convenient, affordable, and automated access to data bundles, airtime, utility payments, and digital vouchers across all 16 regions of Ghana.
           </p>
         </div>
       </section>

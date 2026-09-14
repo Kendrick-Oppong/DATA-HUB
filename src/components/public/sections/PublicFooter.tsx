@@ -24,12 +24,14 @@ interface PublicFooterProps {
   onStartPurchase?: (bundleId: string, network: TelecomNetwork) => void;
   onNavigatePublicTab: (tab: PublicTabType) => void;
   onNavigate?: (role: UserRole, tab: string) => void;
+  onNavigateToLegal?: (page: "terms" | "privacy") => void;
 }
 
 export const PublicFooter: React.FC<PublicFooterProps> = ({
   onStartPurchase,
   onNavigatePublicTab,
   onNavigate,
+  onNavigateToLegal,
 }) => {
   const resolveClick = useCallback(
     (action: FooterAction) => () => {
@@ -39,6 +41,15 @@ export const PublicFooter: React.FC<PublicFooterProps> = ({
           return;
         case "public":
           onNavigatePublicTab(action.tab);
+          return;
+        case "legal":
+          if (onNavigateToLegal) {
+            onNavigateToLegal(action.page);
+            return;
+          }
+          if (typeof window !== "undefined") {
+            window.location.href = action.page === "terms" ? "/terms" : "/privacy";
+          }
           return;
         case "role":
           if (onNavigate) {
@@ -150,8 +161,31 @@ export const PublicFooter: React.FC<PublicFooterProps> = ({
 
         {/* Bottom Bar: Copyright, Compliance, MoMo Badges */}
         <div className="pt-6 border-t border-border/70 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-muted-foreground">
-          <div>
+          <div className="flex flex-col sm:flex-row items-center sm:items-start gap-2 sm:gap-4 text-center sm:text-left">
             <p>{FOOTER_COPYRIGHT}</p>
+            <div className="flex items-center gap-3 text-[11px]">
+              <button
+                type="button"
+                onClick={() => {
+                  if (onNavigateToLegal) onNavigateToLegal("terms");
+                  else window.location.href = "/terms";
+                }}
+                className="hover:text-primary transition-colors cursor-pointer"
+              >
+                Terms of Service
+              </button>
+              <span>•</span>
+              <button
+                type="button"
+                onClick={() => {
+                  if (onNavigateToLegal) onNavigateToLegal("privacy");
+                  else window.location.href = "/privacy";
+                }}
+                className="hover:text-primary transition-colors cursor-pointer"
+              >
+                Privacy Policy
+              </button>
+            </div>
           </div>
 
           <div className="flex items-center gap-2 flex-wrap">
