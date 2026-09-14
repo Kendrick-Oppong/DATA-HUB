@@ -8,6 +8,9 @@ import {
   Loader2,
   RotateCcw,
   Info,
+  Search,
+  SlidersHorizontal,
+  Upload,
 } from "lucide-react";
 import { Button } from "../ui/button";
 import {
@@ -29,6 +32,14 @@ import { Badge } from "../ui/badge";
 import { Textarea } from "../ui/textarea";
 import { Label } from "../ui/label";
 import { ScrollArea } from "../ui/scroll-area";
+import { Input } from "../ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
 import { VerificationResult, VerificationSummary } from "../../types";
 import {
   normalizePhoneNumber,
@@ -45,6 +56,12 @@ export const VerificationScreen: React.FC = () => {
   const [validationErrors, setValidationErrors] = useState<string[]>([]);
   const [duplicateNumbers, setDuplicateNumbers] = useState<string[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Search and filter state
+  const [searchQuery, setSearchQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState<
+    "all" | "verified" | "unverified"
+  >("all");
 
   const handlePhoneNumbersChange = (
     e: React.ChangeEvent<HTMLTextAreaElement>,
@@ -163,10 +180,28 @@ export const VerificationScreen: React.FC = () => {
     setSummary(null);
     setValidationErrors([]);
     setDuplicateNumbers([]);
+    setSearchQuery("");
+    setStatusFilter("all");
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
     }
   };
+
+  // Filter results based on search and status
+  const filteredResults = results.filter((result) => {
+    const matchesSearch =
+      searchQuery === "" ||
+      result.phoneNumber.includes(searchQuery) ||
+      (result.explanation &&
+        result.explanation.toLowerCase().includes(searchQuery.toLowerCase()));
+
+    const matchesStatus =
+      statusFilter === "all" ||
+      (statusFilter === "verified" && result.status === "verified") ||
+      (statusFilter === "unverified" && result.status === "unverified");
+
+    return matchesSearch && matchesStatus;
+  });
 
   const handleRemoveCsv = () => {
     setCsvFile(null);
@@ -439,16 +474,98 @@ export const VerificationScreen: React.FC = () => {
           {/* Results Table */}
           <Card className="border-border shadow-xs">
             <CardHeader className="border-b border-border pb-4">
-              <div>
-                <CardTitle className="flex items-center gap-2 text-base font-extrabold text-foreground">
-                  Verification Results
-                </CardTitle>
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle className="flex items-center gap-2 text-base font-extrabold text-foreground">
+                    Verification Results
+                  </CardTitle>
 
-                <CardDescription className="mt-1 text-xs">
-                  Results for {results.length} phone numbers
-                </CardDescription>
+                  <CardDescription className="mt-1 text-xs">
+                    Results for {results.length} phone numbers
+                  </CardDescription>
+                </div>
+
+                {summary && summary.unverified > 0 && (
+                  <Button size="lg">
+                    <Upload className="w-3 h-3 mr-1" />
+                    Submit Unverified
+                  </Button>
+                )}
               </div>
             </CardHeader>
+
+            {/* Search + Filters */}
+            <div className="border-b border-border bg-muted/20 p-4">
+              <div className="space-y-4">
+                {/* Search */}
+                <div className="space-y-1.5">
+                  <Label
+                    htmlFor="verification-search"
+                    className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground"
+                  >
+                    Search results
+                  </Label>
+
+                  <div className="relative">
+                    <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+
+                    <Input
+                      id="verification-search"
+                      type="text"
+                      placeholder="Phone number or explanation..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className="h-10 bg-background pl-9 text-xs"
+                    />
+                  </div>
+                </div>
+
+                {/* Filters */}
+                <div className="rounded-xl border border-border bg-background p-3">
+                  <div className="mb-3 flex items-center gap-2">
+                    <SlidersHorizontal className="size-3.5 text-muted-foreground" />
+
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                      Verification filters
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-1">
+                    {/* Status */}
+                    <div className="space-y-1.5">
+                      <Label
+                        htmlFor="verification-status"
+                        className="text-[10px] font-semibold text-muted-foreground"
+                      >
+                        Verification status
+                      </Label>
+
+                      <Select
+                        value={statusFilter}
+                        onValueChange={(value) =>
+                          setStatusFilter(value || "all")
+                        }
+                      >
+                        <SelectTrigger
+                          id="verification-status"
+                          className="h-9 w-1/2 text-xs"
+                        >
+                          <SelectValue />
+                        </SelectTrigger>
+
+                        <SelectContent>
+                          <SelectItem value="all">All statuses</SelectItem>
+
+                          <SelectItem value="verified">Verified</SelectItem>
+
+                          <SelectItem value="unverified">Unverified</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
 
             <CardContent className="p-0">
               <ScrollArea className="h-[400px]">
@@ -463,7 +580,7 @@ export const VerificationScreen: React.FC = () => {
                   </TableHeader>
 
                   <TableBody>
-                    {results.map((result, idx) => (
+                    {filteredResults.map((result, idx) => (
                       <TableRow key={idx} className="hover:bg-muted/40">
                         <TableCell className="text-xs font-bold text-foreground">
                           {result.phoneNumber}
@@ -504,9 +621,9 @@ export const VerificationScreen: React.FC = () => {
                 <span className="text-xs text-muted-foreground">
                   Showing{" "}
                   <span className="font-bold text-foreground">
-                    {results.length}
+                    {filteredResults.length}
                   </span>{" "}
-                  verification results
+                  of {results.length} verification results
                 </span>
 
                 <Button
