@@ -859,6 +859,8 @@ export default function App() {
         <TermsOfService
           onBack={() => navigateToPublic("home")}
           onNavigateToPrivacy={() => navigateToLegal("privacy")}
+          onNavigateToLegal={navigateToLegal}
+          onNavigatePublicTab={navigateToPublic}
         />
       );
     }
@@ -866,6 +868,8 @@ export default function App() {
       <PrivacyPolicy
         onBack={() => navigateToPublic("home")}
         onNavigateToTerms={() => navigateToLegal("terms")}
+        onNavigateToLegal={navigateToLegal}
+        onNavigatePublicTab={navigateToPublic}
       />
     );
   }

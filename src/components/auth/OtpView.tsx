@@ -1,7 +1,7 @@
 "use client";
 
 import type { FormEvent } from "react";
-import { ArrowRight, Loader2, MessageSquare, RefreshCw } from "lucide-react";
+import { ArrowRight, Loader2, RefreshCw } from "lucide-react";
 
 import { Button } from "../ui/button";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "../ui/input-otp";
