@@ -568,7 +568,11 @@ export const VerificationScreen: React.FC = () => {
             </div>
 
             <CardContent className="p-0">
-              <ScrollArea className="h-[400px]">
+              <ScrollArea
+                className={
+                  filteredResults.length === 0 ? "h-auto" : "h-[400px]"
+                }
+              >
                 <Table>
                   <TableHeader>
                     <TableRow>
@@ -580,38 +584,71 @@ export const VerificationScreen: React.FC = () => {
                   </TableHeader>
 
                   <TableBody>
-                    {filteredResults.map((result, idx) => (
-                      <TableRow key={idx} className="hover:bg-muted/40">
-                        <TableCell className="text-xs font-bold text-foreground">
-                          {result.phoneNumber}
-                        </TableCell>
+                    {filteredResults.length === 0 ? (
+                      <TableRow>
+                        <TableCell
+                          colSpan={4}
+                          className="py-10 text-center text-muted-foreground"
+                        >
+                          <div className="flex flex-col items-center justify-center space-y-2">
+                            <Search className="size-8 text-muted-foreground/40" />
 
-                        <TableCell>{getStatusBadge(result.status)}</TableCell>
+                            <p className="text-sm font-bold text-foreground">
+                              No matching results found
+                            </p>
 
-                        <TableCell>
-                          <span
-                            className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase ${
-                              result.isEligible
-                                ? "bg-emerald-500/15 text-emerald-700 dark:text-emerald-400"
-                                : "bg-rose-500/15 text-rose-700 dark:text-rose-400"
-                            }`}
-                          >
-                            <span
-                              className={`size-1.5 rounded-full ${
-                                result.isEligible
-                                  ? "bg-emerald-500"
-                                  : "bg-rose-500"
-                              }`}
-                            />
-                            {result.isEligible ? "Eligible" : "Not Eligible"}
-                          </span>
-                        </TableCell>
+                            <p className="text-xs text-muted-foreground">
+                              Try adjusting your search or filters.
+                            </p>
 
-                        <TableCell className="text-xs text-muted-foreground">
-                          {result.explanation}
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => {
+                                setSearchQuery("");
+                                setStatusFilter("all");
+                              }}
+                              className="mt-2 text-xs"
+                            >
+                              Reset Filters
+                            </Button>
+                          </div>
                         </TableCell>
                       </TableRow>
-                    ))}
+                    ) : (
+                      filteredResults.map((result, idx) => (
+                        <TableRow key={idx} className="hover:bg-muted/40">
+                          <TableCell className="text-xs font-bold text-foreground">
+                            {result.phoneNumber}
+                          </TableCell>
+
+                          <TableCell>{getStatusBadge(result.status)}</TableCell>
+
+                          <TableCell>
+                            <span
+                              className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase ${
+                                result.isEligible
+                                  ? "bg-emerald-500/15 text-emerald-700 dark:text-emerald-400"
+                                  : "bg-rose-500/15 text-rose-700 dark:text-rose-400"
+                              }`}
+                            >
+                              <span
+                                className={`size-1.5 rounded-full ${
+                                  result.isEligible
+                                    ? "bg-emerald-500"
+                                    : "bg-rose-500"
+                                }`}
+                              />
+                              {result.isEligible ? "Eligible" : "Not Eligible"}
+                            </span>
+                          </TableCell>
+
+                          <TableCell className="text-xs text-muted-foreground">
+                            {result.explanation}
+                          </TableCell>
+                        </TableRow>
+                      ))
+                    )}
                   </TableBody>
                 </Table>
               </ScrollArea>
