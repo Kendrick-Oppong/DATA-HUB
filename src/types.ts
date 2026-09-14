@@ -36,6 +36,21 @@ export type ServiceType =
   | "utility"
   | "sms";
 
+export type VerificationStatus = "verified" | "unverified";
+
+export interface VerificationResult {
+  phoneNumber: string;
+  status: VerificationStatus;
+  isEligible: boolean;
+  explanation?: string;
+}
+
+export interface VerificationSummary {
+  totalNumbers: number;
+  verified: number;
+  unverified: number;
+}
+
 export interface DataBundle {
   id: string;
   network: TelecomNetwork;

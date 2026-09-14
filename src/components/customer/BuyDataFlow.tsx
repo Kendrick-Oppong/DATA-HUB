@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from "react";
 import {
   Wifi,
   Smartphone,
@@ -8,16 +8,29 @@ import {
   ArrowLeft,
   Copy,
   Check,
-} from 'lucide-react';
-import { TelecomNetwork, DataBundle, Order } from '../../types';
-import { detectGhanaNetwork } from '../../mockData';
-import { SignalRail } from '../common/SignalRail';
-import { Button } from '../ui/button';
-import { Input } from '../ui/input';
-import { Textarea } from '../ui/textarea';
-import { Label } from '../ui/label';
-import { Card, CardContent } from '../ui/card';
-import { Badge } from '../ui/badge';
+  ShieldCheck,
+  XCircle,
+  AlertTriangle,
+} from "lucide-react";
+import {
+  TelecomNetwork,
+  DataBundle,
+  Order,
+  VerificationStatus,
+} from "../../types";
+import { detectGhanaNetwork } from "../../mockData";
+import {
+  verifyPhoneNumber,
+  normalizePhoneNumber,
+} from "../../mockVerificationData";
+import { SignalRail } from "../common/SignalRail";
+import { Button } from "../ui/button";
+import { Input } from "../ui/input";
+import { Textarea } from "../ui/textarea";
+import { Label } from "../ui/label";
+import { Card, CardContent } from "../ui/card";
+import { Badge } from "../ui/badge";
+import { Alert, AlertDescription } from "../ui/alert";
 
 interface BuyDataFlowProps {
   bundles: DataBundle[];
@@ -34,30 +47,46 @@ export const BuyDataFlow: React.FC<BuyDataFlowProps> = ({
   onOrderCreated,
   onOpenReceipt,
   initialBundleId,
-  initialNetwork = 'MTN',
+  initialNetwork = "MTN",
 }) => {
-  const [step, setStep] = useState<'network' | 'bundle' | 'recipient' | 'review' | 'processing' | 'success'>('network');
+  const [step, setStep] = useState<
+    "network" | "recipient" | "bundle" | "review" | "processing" | "success"
+  >("network");
 
-  const [selectedNetwork, setSelectedNetwork] = useState<TelecomNetwork>(initialNetwork);
+  const [selectedNetwork, setSelectedNetwork] =
+    useState<TelecomNetwork>(initialNetwork);
   const [selectedBundleId, setSelectedBundleId] = useState<string>(
-    initialBundleId || bundles.find((b) => b.network === initialNetwork)?.id || 'mtn-5gb'
+    initialBundleId ||
+      bundles.find((b) => b.network === initialNetwork)?.id ||
+      "mtn-5gb",
   );
-  const [recipientPhone, setRecipientPhone] = useState<string>('0244192834');
-  const [paymentMethod, setPaymentMethod] = useState<'wallet' | 'momo_mtn' | 'momo_telecel' | 'momo_at'>('wallet');
-  const [inputMode, setInputMode] = useState<'cards' | 'text' | 'bulk'>('cards');
-  const [bulkNumbersText, setBulkNumbersText] = useState<string>('');
+  const [recipientPhone, setRecipientPhone] = useState<string>("");
+  const [paymentMethod, setPaymentMethod] = useState<
+    "wallet" | "momo_mtn" | "momo_telecel" | "momo_at"
+  >("wallet");
+  const [inputMode, setInputMode] = useState<"cards" | "text" | "bulk">(
+    "cards",
+  );
+  const [bulkNumbersText, setBulkNumbersText] = useState<string>("");
   const [createdOrder, setCreatedOrder] = useState<Order | null>(null);
   const [copiedRef, setCopiedRef] = useState(false);
 
+  // Verification state
+  const [verificationStatus, setVerificationStatus] =
+    useState<VerificationStatus | null>(null);
+  const [isVerifying, setIsVerifying] = useState(false);
+  const [verificationMessage, setVerificationMessage] = useState<string>("");
+
   const steps = [
-    { id: 'network', label: 'Network', icon: Wifi },
-    { id: 'bundle', label: 'Bundle', icon: CheckCircle2 },
-    { id: 'recipient', label: 'Recipient', icon: Smartphone },
-    { id: 'review', label: 'Review', icon: CheckCircle2 },
+    { id: "network", label: "Network", icon: Wifi },
+    { id: "recipient", label: "Recipient", icon: Smartphone },
+    { id: "bundle", label: "Bundle", icon: CheckCircle2 },
+    { id: "review", label: "Review", icon: CheckCircle2 },
   ];
 
   const filteredBundles = bundles.filter((b) => b.network === selectedNetwork);
-  const currentBundle = bundles.find((b) => b.id === selectedBundleId) || filteredBundles[0];
+  const currentBundle =
+    bundles.find((b) => b.id === selectedBundleId) || filteredBundles[0];
 
   const handlePhoneChange = (val: string) => {
     setRecipientPhone(val);
@@ -71,16 +100,43 @@ export const BuyDataFlow: React.FC<BuyDataFlowProps> = ({
     }
   };
 
+  // Automatic verification for MTN recipients
+  useEffect(() => {
+    if (selectedNetwork === "MTN" && recipientPhone.length >= 10) {
+      setIsVerifying(true);
+      setVerificationStatus(null);
+      setVerificationMessage("");
+
+      // Simulate verification delay
+      setTimeout(() => {
+        const verification = verifyPhoneNumber(recipientPhone);
+        setVerificationStatus(verification.status);
+        setVerificationMessage(verification.explanation);
+        setIsVerifying(false);
+      }, 800);
+    } else if (selectedNetwork !== "MTN") {
+      // Reset verification for non-MTN networks
+      setVerificationStatus(null);
+      setVerificationMessage("");
+    }
+  }, [recipientPhone, selectedNetwork]);
+
   const validateStep = (currentStep: string): boolean => {
     switch (currentStep) {
-      case 'network':
+      case "network":
         return !!selectedNetwork;
-      case 'bundle':
+      case "bundle":
         return !!selectedBundleId;
-      case 'recipient':
-        return recipientPhone.length >= 10;
-      case 'review':
-        return paymentMethod !== 'wallet' || walletBalance >= currentBundle.retailPrice;
+      case "recipient":
+        return (
+          recipientPhone.length >= 10 &&
+          (selectedNetwork !== "MTN" || verificationStatus === "verified")
+        );
+      case "review":
+        return (
+          paymentMethod !== "wallet" ||
+          walletBalance >= currentBundle.retailPrice
+        );
       default:
         return true;
     }
@@ -88,54 +144,79 @@ export const BuyDataFlow: React.FC<BuyDataFlowProps> = ({
 
   const handleNext = () => {
     if (!validateStep(step)) {
-      if (step === 'bundle') alert('Please select a data bundle.');
-      if (step === 'recipient') alert('Please enter a valid 10-digit phone number.');
-      if (step === 'review') alert('Insufficient wallet balance. Please choose Mobile Money.');
+      if (step === "network") alert("Please select a network.");
+      if (step === "recipient")
+        alert("Please enter a valid 10-digit phone number.");
+      if (step === "bundle") alert("Please select a data bundle.");
+      if (step === "review")
+        alert("Insufficient wallet balance. Please choose Mobile Money.");
       return;
     }
 
-    if (step === 'network') setStep('bundle');
-    else if (step === 'bundle') setStep('recipient');
-    else if (step === 'recipient') setStep('review');
+    if (step === "network") setStep("recipient");
+    else if (step === "recipient") setStep("bundle");
+    else if (step === "bundle") setStep("review");
   };
 
   const handleBack = () => {
-    if (step === 'bundle') setStep('network');
-    else if (step === 'recipient') setStep('bundle');
-    else if (step === 'review') setStep('recipient');
+    if (step === "recipient") setStep("network");
+    else if (step === "bundle") setStep("recipient");
+    else if (step === "review") setStep("bundle");
   };
 
   const handleSubmit = () => {
-    if (!validateStep('review')) return;
+    if (!validateStep("review")) return;
 
-    setStep('processing');
+    setStep("processing");
 
     const newRef = `SDH-GH-2026-${Math.floor(10000 + Math.random() * 90000)}`;
     const newOrder: Order = {
       id: `ord-${Date.now()}`,
       reference: newRef,
-      date: new Date().toISOString().replace('T', ' ').slice(0, 16),
-      customerName: 'Kojo Mensah',
+      date: new Date().toISOString().replace("T", " ").slice(0, 16),
+      customerName: "Kojo Mensah",
       recipientPhone,
       network: selectedNetwork,
-      serviceType: 'data',
+      serviceType: "data",
       productName: currentBundle.name,
       amount: currentBundle.retailPrice,
       paymentMethod,
-      status: 'delivered',
-      agentMargin: Number((currentBundle.retailPrice - currentBundle.wholesalePrice).toFixed(2)),
+      status: "delivered",
+      agentMargin: Number(
+        (currentBundle.retailPrice - currentBundle.wholesalePrice).toFixed(2),
+      ),
       deliveryTimeline: [
-        { step: 'Order Authorized', timestamp: '10:00:01', status: 'completed', note: `Paid via ${paymentMethod.replace('_', ' ')}` },
-        { step: 'Core Gateway Dispatch', timestamp: '10:00:05', status: 'completed', note: `${selectedNetwork} Carrier Node` },
-        { step: 'Network Acknowledged', timestamp: '10:00:12', status: 'completed', note: 'EVD Batch Accepted' },
-        { step: 'Delivered to Beneficiary', timestamp: '10:00:19', status: 'completed', note: 'Customer balance credited' }
-      ]
+        {
+          step: "Order Authorized",
+          timestamp: "10:00:01",
+          status: "completed",
+          note: `Paid via ${paymentMethod.replace("_", " ")}`,
+        },
+        {
+          step: "Core Gateway Dispatch",
+          timestamp: "10:00:05",
+          status: "completed",
+          note: `${selectedNetwork} Carrier Node`,
+        },
+        {
+          step: "Network Acknowledged",
+          timestamp: "10:00:12",
+          status: "completed",
+          note: "EVD Batch Accepted",
+        },
+        {
+          step: "Delivered to Beneficiary",
+          timestamp: "10:00:19",
+          status: "completed",
+          note: "Customer balance credited",
+        },
+      ],
     };
 
     setTimeout(() => {
       onOrderCreated(newOrder);
       setCreatedOrder(newOrder);
-      setStep('success');
+      setStep("success");
     }, 2400);
   };
 
@@ -147,7 +228,7 @@ export const BuyDataFlow: React.FC<BuyDataFlowProps> = ({
     }
   };
 
-  const currentStepIndex = steps.findIndex(s => s.id === step);
+  const currentStepIndex = steps.findIndex((s) => s.id === step);
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
@@ -418,7 +499,17 @@ export const BuyDataFlow: React.FC<BuyDataFlowProps> = ({
                   placeholder="e.g. 0244123456"
                   value={recipientPhone}
                   onChange={(e) => handlePhoneChange(e.target.value)}
-                  className="pl-10 tabular-nums"
+                  className={`pl-10 tabular-nums ${
+                    selectedNetwork === "MTN" && recipientPhone.length >= 10
+                      ? verificationStatus === "verified"
+                        ? "border-emerald-500 focus-visible:ring-emerald-500/30"
+                        : verificationStatus === "unverified"
+                          ? "border-rose-500 focus-visible:ring-rose-500/30"
+                          : isVerifying
+                            ? "border-amber-500 focus-visible:ring-amber-500/30"
+                            : ""
+                      : ""
+                  }`}
                 />
               </div>
               {recipientPhone.length >= 3 && (
@@ -430,6 +521,40 @@ export const BuyDataFlow: React.FC<BuyDataFlowProps> = ({
                 </p>
               )}
             </div>
+
+            {/* MTN Verification Status */}
+            {selectedNetwork === "MTN" && recipientPhone.length >= 10 && (
+              <div className="space-y-2">
+                {isVerifying ? (
+                  <Alert className="border-amber-500/20 bg-amber-500/5">
+                    <Loader2 className="size-4 text-amber-600 dark:text-amber-400 animate-spin" />
+                    <AlertDescription className="text-xs">
+                      Verifying recipient number...
+                    </AlertDescription>
+                  </Alert>
+                ) : verificationStatus === "verified" ? (
+                  <Alert className="border-emerald-500/20 bg-emerald-500/5">
+                    <CheckCircle2 className="size-4 text-emerald-600 dark:text-emerald-400" />
+                    <AlertDescription className="text-xs">
+                      <span className="font-semibold text-emerald-700 dark:text-emerald-400">
+                        Verified
+                      </span>{" "}
+                      - This number is eligible to receive MTN bundles.
+                    </AlertDescription>
+                  </Alert>
+                ) : verificationStatus === "unverified" ? (
+                  <Alert className="border-rose-500/20 bg-rose-500/">
+                    <XCircle className="size-4 text-rose-600 dark:text-rose-400" />
+                    <AlertDescription className="text-xs font-medium">
+                      <span className="font-semibold text-rose-700 dark:text-rose-400">
+                        Unverified
+                      </span>{" "}
+                      - {verificationMessage}
+                    </AlertDescription>
+                  </Alert>
+                ) : null}
+              </div>
+            )}
 
             <div className="space-y-3">
               <Label className="text-xs font-bold">
@@ -503,31 +628,41 @@ export const BuyDataFlow: React.FC<BuyDataFlowProps> = ({
 
             <div className="p-4 rounded-xl bg-muted/40 border border-border space-y-3 text-xs">
               <div className="flex justify-between">
-                <span className="text-muted-foreground font-semibold">Network:</span>
+                <span className="text-muted-foreground font-semibold">
+                  Network:
+                </span>
                 <span className="font-bold text-foreground">
                   {selectedNetwork} Ghana
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-muted-foreground font-semibold">Bundle:</span>
+                <span className="text-muted-foreground font-semibold">
+                  Bundle:
+                </span>
                 <span className="font-bold text-foreground">
                   {currentBundle.name}
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-muted-foreground font-semibold">Validity:</span>
+                <span className="text-muted-foreground font-semibold">
+                  Validity:
+                </span>
                 <span className="font-bold text-foreground">
                   {currentBundle.validity}
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-muted-foreground font-semibold">Recipient:</span>
+                <span className="text-muted-foreground font-semibold">
+                  Recipient:
+                </span>
                 <span className=" font-bold text-foreground">
                   {recipientPhone}
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-muted-foreground font-semibold">Payment:</span>
+                <span className="text-muted-foreground font-semibold">
+                  Payment:
+                </span>
                 <span className="font-bold text-foreground capitalize">
                   {paymentMethod.replace("_", " ")}
                 </span>
@@ -661,12 +796,26 @@ export const BuyDataFlow: React.FC<BuyDataFlowProps> = ({
             </Button>
           )}
           {step !== "review" ? (
-            <Button onClick={handleNext} className="flex-1">
+            <Button
+              onClick={handleNext}
+              className="flex-1"
+              disabled={
+                step === "recipient" &&
+                selectedNetwork === "MTN" &&
+                verificationStatus !== "verified"
+              }
+            >
               Next
               <ArrowRight className="w-4 h-4 ml-2" />
             </Button>
           ) : (
-            <Button onClick={handleSubmit} className="flex-1">
+            <Button
+              onClick={handleSubmit}
+              className="flex-1"
+              disabled={
+                selectedNetwork === "MTN" && verificationStatus !== "verified"
+              }
+            >
               Complete Purchase
               <CheckCircle2 className="w-4 h-4 ml-2" />
             </Button>

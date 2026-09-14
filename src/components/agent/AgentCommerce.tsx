@@ -24,10 +24,16 @@ import {
   Order,
   TelecomNetwork,
 } from "../../types";
-import { SignalRail } from "../common/SignalRail";
+import { VerificationScreen } from "./VerificationScreen";
 
 interface AgentCommerceProps {
-  view: "store-orders" | "pricing" | "analytics" | "bulk-sms" | "withdraw";
+  view:
+    | "store-orders"
+    | "pricing"
+    | "analytics"
+    | "bulk-sms"
+    | "withdraw"
+    | "verify";
   storeConfig: AgentStoreConfig;
   bundles: DataBundle[];
   orders: Order[];
@@ -155,8 +161,11 @@ export const AgentCommerce: React.FC<AgentCommerceProps> = ({
   };
 
   return (
-    <div className="space-y-6">
-      {/* VIEW: STORE ORDERS */}
+    <div>
+      {/* Verification Screen */}
+      {view === "verify" && <VerificationScreen />}
+
+      {/* Store Orders View */}
       {view === "store-orders" && (
         <div className="space-y-6">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-4 border-b border-border">

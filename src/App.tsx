@@ -179,8 +179,8 @@ export default function App() {
     setTheme((prev) => (prev === "light" ? "dark" : "light"));
   };
 
-  const handleSetTheme = (newTheme: AppTheme) => {
-    setTheme(newTheme);
+  const handleSetTheme = (newTheme: string) => {
+    setTheme(newTheme as AppTheme);
   };
 
   // User Authentication & Demo Account State
@@ -564,7 +564,7 @@ export default function App() {
           ...o,
           status: "delivered" as const,
           deliveryTimeline: [
-            ...o.deliveryTimeline,
+            ...(o.deliveryTimeline || []),
             {
               step: "Admin Manual EVD Retry Dispatched",
               timestamp: "10:05:00",
@@ -1099,7 +1099,8 @@ export default function App() {
                 activeTab === "pricing" ||
                 activeTab === "analytics" ||
                 activeTab === "bulk-sms" ||
-                activeTab === "withdraw") && (
+                activeTab === "withdraw" ||
+                activeTab === "verify") && (
                 <AgentCommerce
                   view={activeTab as any}
                   storeConfig={storeConfig}

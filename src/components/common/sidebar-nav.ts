@@ -110,6 +110,11 @@ export const AGENT_NAV: NavGroup[] = [
         icon: ShoppingBag,
         badge: "Live",
       },
+      {
+        id: "verify",
+        label: "Verify",
+        icon: ShieldCheck,
+      },
     ],
   },
   {
