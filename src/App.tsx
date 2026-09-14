@@ -149,7 +149,7 @@ function parsePathToRoute(pathname: string, search = ""): AppRoute {
 export default function App() {
   // Theme state (supports 6 themes: light, dark, sunset-amber, emerald-matrix, royal-indigo, ruby-red)
   const [theme, setTheme] = useState<AppTheme>(() => {
-    return (localStorage.getItem("sdh_theme") as AppTheme) || "light";
+    return (localStorage.getItem("sdh_theme") as AppTheme) || "ruby-red";
   });
 
   useEffect(() => {
