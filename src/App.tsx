@@ -857,19 +857,45 @@ export default function App() {
     if (route.page === "terms") {
       return (
         <TermsOfService
+          user={user}
           onBack={() => navigateToPublic("home")}
           onNavigateToPrivacy={() => navigateToLegal("privacy")}
           onNavigateToLegal={navigateToLegal}
           onNavigatePublicTab={navigateToPublic}
+          onNavigateToAuth={(mode) => navigateToAuth(mode || "sign-in")}
+          onNavigateToDashboard={(role) => {
+            if (role === "storefront") {
+              navigateTo({ type: "storefront" });
+            } else if (role !== "public") {
+              navigateToDashboard(role);
+            }
+          }}
+          onSignOut={handleSignOut}
+          theme={theme}
+          onSetTheme={handleSetTheme}
+          onOpenSecurityPins={() => setIsSecurityPinsOpen(true)}
         />
       );
     }
     return (
       <PrivacyPolicy
+        user={user}
         onBack={() => navigateToPublic("home")}
         onNavigateToTerms={() => navigateToLegal("terms")}
         onNavigateToLegal={navigateToLegal}
         onNavigatePublicTab={navigateToPublic}
+        onNavigateToAuth={(mode) => navigateToAuth(mode || "sign-in")}
+        onNavigateToDashboard={(role) => {
+          if (role === "storefront") {
+            navigateTo({ type: "storefront" });
+          } else if (role !== "public") {
+            navigateToDashboard(role);
+          }
+        }}
+        onSignOut={handleSignOut}
+        theme={theme}
+        onSetTheme={handleSetTheme}
+        onOpenSecurityPins={() => setIsSecurityPinsOpen(true)}
       />
     );
   }

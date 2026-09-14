@@ -2,30 +2,32 @@
 
 import React, { useState } from "react";
 import {
-  ArrowLeft,
   ShieldCheck,
   Lock,
   Eye,
   FileCheck,
   Server,
   UserCheck,
-  Cookie,
-  Mail,
-  Scale,
   ExternalLink,
-  ChevronRight,
   Database,
   CheckCircle2,
 } from "lucide-react";
-import { Button } from "../ui/button";
-import { Badge } from "../ui/badge";
 import { PublicFooter } from "../public/sections/PublicFooter";
+import { PublicNavbar } from "../public/PublicNavbar";
+import type { UserAccount } from "../../types";
 
 interface PrivacyPolicyProps {
+  user?: UserAccount | null;
   onBack: () => void;
   onNavigateToTerms?: () => void;
   onNavigateToLegal?: (page: "terms" | "privacy") => void;
   onNavigatePublicTab?: (tab: any) => void;
+  onNavigateToAuth?: (mode: string) => void;
+  onNavigateToDashboard?: (role: string) => void;
+  onSignOut?: () => void;
+  theme?: string;
+  onSetTheme?: (theme: string) => void;
+  onOpenSecurityPins?: () => void;
 }
 
 const SECTIONS = [
@@ -50,10 +52,17 @@ const SECTIONS = [
 ];
 
 export function PrivacyPolicy({
+  user,
   onBack,
   onNavigateToTerms,
   onNavigateToLegal,
   onNavigatePublicTab,
+  onNavigateToAuth,
+  onNavigateToDashboard,
+  onSignOut,
+  theme,
+  onSetTheme,
+  onOpenSecurityPins,
 }: Readonly<PrivacyPolicyProps>) {
   const [activeSection, setActiveSection] = useState<string>("overview");
 
@@ -67,52 +76,23 @@ export function PrivacyPolicy({
 
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col selection:bg-primary/20">
-      {/* Sticky Header */}
-      <header className="sticky top-0 z-40 border-b border-border/80 bg-card/85 px-4 py-3 backdrop-blur-md sm:px-8">
-        <div className="mx-auto flex w-full max-w-7xl items-center justify-between gap-4">
-          <div className="flex items-center gap-4">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={onBack}
-              className="gap-1.5 text-sm font-semibold text-muted-foreground font-medium hover:text-foreground hover:bg-muted"
-            >
-              <ArrowLeft className="size-3.5" />
-              <span>Back to home</span>
-            </Button>
-
-            <div className="h-4 w-px bg-border/80 hidden sm:block" />
-
-            <div className="flex items-center gap-2.5">
-              <div className="flex size-7 items-center justify-center rounded-lg bg-primary text-sm font-black text-primary-foreground">
-                SDH
-              </div>
-              <span className="text-sm font-extrabold tracking-tight">
-                Smart Data Hub
-              </span>
-              <Badge
-                variant="outline"
-                className="hidden sm:inline-flex text-[10px] uppercase font-bold tracking-wider"
-              >
-                Privacy
-              </Badge>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-2">
-            {onNavigateToTerms && (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={onNavigateToTerms}
-                className="text-sm font-semibold h-8 rounded-lg"
-              >
-                Terms & Conditions <ChevronRight className="size-3 ml-1" />
-              </Button>
-            )}
-          </div>
-        </div>
-      </header>
+      <PublicNavbar
+        user={user}
+        activeTab="home"
+        onNavigateToPublic={onNavigatePublicTab || (() => {})}
+        onNavigateToAuth={(mode) => onNavigateToAuth?.(mode || "sign-in")}
+        onNavigateToDashboard={(role) => {
+          if (role === "storefront") {
+            onNavigatePublicTab?.("home");
+          } else if (role !== "public") {
+            onNavigateToDashboard?.(role);
+          }
+        }}
+        onSignOut={onSignOut || (() => {})}
+        theme={(theme as any) || "light"}
+        onSetTheme={onSetTheme || (() => {})}
+        onOpenSecurityPins={onOpenSecurityPins || (() => {})}
+      />
 
       {/* Hero Section */}
       <section className="relative isolate overflow-hidden border-b border-border bg-background">
@@ -222,9 +202,7 @@ export function PrivacyPolicy({
             {/* 01: Overview & Scope */}
             <section id="overview" className="space-y-4 scroll-mt-24">
               <div className="flex items-baseline gap-3 border-b border-border pb-3">
-                <span className="text-2xl font-black text-primary ">
-                  01
-                </span>
+                <span className="text-2xl font-black text-primary ">01</span>
                 <h2 className="text-2xl font-black tracking-tight text-foreground">
                   Overview & Scope
                 </h2>
@@ -253,9 +231,7 @@ export function PrivacyPolicy({
             {/* 02: Information We Collect */}
             <section id="data-we-collect" className="space-y-4 scroll-mt-24">
               <div className="flex items-baseline gap-3 border-b border-border pb-3">
-                <span className="text-2xl font-black text-primary ">
-                  02
-                </span>
+                <span className="text-2xl font-black text-primary ">02</span>
                 <h2 className="text-2xl font-black tracking-tight text-foreground">
                   Information We Collect
                 </h2>
@@ -320,9 +296,7 @@ export function PrivacyPolicy({
             {/* 03: How We Use Your Data */}
             <section id="how-we-use" className="space-y-4 scroll-mt-24">
               <div className="flex items-baseline gap-3 border-b border-border pb-3">
-                <span className="text-2xl font-black text-primary ">
-                  03
-                </span>
+                <span className="text-2xl font-black text-primary ">03</span>
                 <h2 className="text-2xl font-black tracking-tight text-foreground">
                   How We Use Your Information
                 </h2>
@@ -378,9 +352,7 @@ export function PrivacyPolicy({
             {/* 04: Compliance with Act 843 (Ghana) */}
             <section id="legal-basis" className="space-y-4 scroll-mt-24">
               <div className="flex items-baseline gap-3 border-b border-border pb-3">
-                <span className="text-2xl font-black text-primary ">
-                  04
-                </span>
+                <span className="text-2xl font-black text-primary ">04</span>
                 <h2 className="text-2xl font-black tracking-tight text-foreground">
                   Compliance with Ghana Data Protection Act 2012 (Act 843)
                 </h2>
@@ -420,9 +392,7 @@ export function PrivacyPolicy({
             {/* 05: Data Sharing & Carrier Disclosures */}
             <section id="data-sharing" className="space-y-4 scroll-mt-24">
               <div className="flex items-baseline gap-3 border-b border-border pb-3">
-                <span className="text-2xl font-black text-primary ">
-                  05
-                </span>
+                <span className="text-2xl font-black text-primary ">05</span>
                 <h2 className="text-2xl font-black tracking-tight text-foreground">
                   Data Sharing & Third-Party Disclosures
                 </h2>
@@ -466,9 +436,7 @@ export function PrivacyPolicy({
             {/* 06: Security Measures & Encryption */}
             <section id="security" className="space-y-4 scroll-mt-24">
               <div className="flex items-baseline gap-3 border-b border-border pb-3">
-                <span className="text-2xl font-black text-primary ">
-                  06
-                </span>
+                <span className="text-2xl font-black text-primary ">06</span>
                 <h2 className="text-2xl font-black tracking-tight text-foreground">
                   Security Measures & Encryption
                 </h2>
@@ -512,9 +480,7 @@ export function PrivacyPolicy({
             {/* 07: Data Retention & Storage */}
             <section id="retention" className="space-y-4 scroll-mt-24">
               <div className="flex items-baseline gap-3 border-b border-border pb-3">
-                <span className="text-2xl font-black text-primary ">
-                  07
-                </span>
+                <span className="text-2xl font-black text-primary ">07</span>
                 <h2 className="text-2xl font-black tracking-tight text-foreground">
                   Data Retention & Storage
                 </h2>
@@ -553,9 +519,7 @@ export function PrivacyPolicy({
             {/* 08: Your Privacy Rights & Choices */}
             <section id="your-rights" className="space-y-4 scroll-mt-24">
               <div className="flex items-baseline gap-3 border-b border-border pb-3">
-                <span className="text-2xl font-black text-primary ">
-                  08
-                </span>
+                <span className="text-2xl font-black text-primary ">08</span>
                 <h2 className="text-2xl font-black tracking-tight text-foreground">
                   Your Privacy Rights & Choices
                 </h2>
@@ -609,9 +573,7 @@ export function PrivacyPolicy({
             {/* 09: Cookies & Tracking */}
             <section id="cookies" className="space-y-4 scroll-mt-24">
               <div className="flex items-baseline gap-3 border-b border-border pb-3">
-                <span className="text-2xl font-black text-primary ">
-                  09
-                </span>
+                <span className="text-2xl font-black text-primary ">09</span>
                 <h2 className="text-2xl font-black tracking-tight text-foreground">
                   Cookies & Tracking Technologies
                 </h2>
@@ -630,9 +592,7 @@ export function PrivacyPolicy({
             {/* 10: Data Protection Officer & Contact */}
             <section id="contact-dpo" className="space-y-4 scroll-mt-24">
               <div className="flex items-baseline gap-3 border-b border-border pb-3">
-                <span className="text-2xl font-black text-primary ">
-                  10
-                </span>
+                <span className="text-2xl font-black text-primary ">10</span>
                 <h2 className="text-2xl font-black tracking-tight text-foreground">
                   Data Protection Officer & Contact Information
                 </h2>

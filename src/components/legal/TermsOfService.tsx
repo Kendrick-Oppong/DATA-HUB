@@ -2,7 +2,6 @@
 
 import React, { useState } from "react";
 import {
-  ArrowLeft,
   ShieldCheck,
   FileText,
   AlertTriangle,
@@ -15,12 +14,21 @@ import {
 import { Button } from "../ui/button";
 import { Badge } from "../ui/badge";
 import { PublicFooter } from "../public/sections/PublicFooter";
+import { PublicNavbar } from "../public/PublicNavbar";
+import type { UserAccount } from "../../types";
 
 interface TermsOfServiceProps {
+  user?: UserAccount | null;
   onBack: () => void;
   onNavigateToPrivacy?: () => void;
   onNavigateToLegal?: (page: "terms" | "privacy") => void;
   onNavigatePublicTab?: (tab: any) => void;
+  onNavigateToAuth?: (mode: string) => void;
+  onNavigateToDashboard?: (role: string) => void;
+  onSignOut?: () => void;
+  theme?: string;
+  onSetTheme?: (theme: string) => void;
+  onOpenSecurityPins?: () => void;
 }
 
 const SECTIONS = [
@@ -49,10 +57,17 @@ const SECTIONS = [
 ];
 
 export function TermsOfService({
+  user,
   onBack,
   onNavigateToPrivacy,
   onNavigateToLegal,
   onNavigatePublicTab,
+  onNavigateToAuth,
+  onNavigateToDashboard,
+  onSignOut,
+  theme,
+  onSetTheme,
+  onOpenSecurityPins,
 }: TermsOfServiceProps) {
   const [activeSection, setActiveSection] = useState<string>("about");
 
@@ -66,52 +81,23 @@ export function TermsOfService({
 
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col selection:bg-primary/20">
-      {/* Sticky Header */}
-      <header className="sticky top-0 z-40 border-b border-border/80 bg-card/85 px-4 py-3 backdrop-blur-md sm:px-8">
-        <div className="mx-auto flex w-full max-w-7xl items-center justify-between gap-4">
-          <div className="flex items-center gap-4">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={onBack}
-              className="gap-1.5 text-sm font-semibold text-muted-foreground font-medium hover:text-foreground hover:bg-muted"
-            >
-              <ArrowLeft className="size-3.5" />
-              <span>Back to home</span>
-            </Button>
-
-            <div className="h-4 w-px bg-border/80 hidden sm:block" />
-
-            <div className="flex items-center gap-2.5">
-              <div className="flex size-7 items-center justify-center rounded-lg bg-primary text-sm font-black text-primary-foreground">
-                SDH
-              </div>
-              <span className="text-sm font-extrabold tracking-tight">
-                Smart Data Hub
-              </span>
-              <Badge
-                variant="outline"
-                className="hidden sm:inline-flex text-[10px] uppercase font-bold tracking-wider"
-              >
-                Legal
-              </Badge>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-2">
-            {onNavigateToPrivacy && (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={onNavigateToPrivacy}
-                className="text-sm font-semibold h-8 rounded-lg"
-              >
-                Privacy Policy <ChevronRight className="size-3 ml-1" />
-              </Button>
-            )}
-          </div>
-        </div>
-      </header>
+      <PublicNavbar
+        user={user}
+        activeTab="home"
+        onNavigateToPublic={onNavigatePublicTab || (() => {})}
+        onNavigateToAuth={(mode) => onNavigateToAuth?.(mode || "sign-in")}
+        onNavigateToDashboard={(role) => {
+          if (role === "storefront") {
+            onNavigatePublicTab?.("home");
+          } else if (role !== "public") {
+            onNavigateToDashboard?.(role);
+          }
+        }}
+        onSignOut={onSignOut || (() => {})}
+        theme={(theme as any) || "light"}
+        onSetTheme={onSetTheme || (() => {})}
+        onOpenSecurityPins={onOpenSecurityPins || (() => {})}
+      />
 
       {/* Hero Header */}
       <section className="relative isolate overflow-hidden border-b border-border bg-background">
@@ -226,9 +212,7 @@ export function TermsOfService({
             {/* 01: About Smart Data Hub */}
             <section id="about" className="space-y-4 scroll-mt-24">
               <div className="flex items-baseline gap-3 border-b border-border pb-3">
-                <span className="text-2xl font-black text-primary">
-                  01
-                </span>
+                <span className="text-2xl font-black text-primary">01</span>
                 <h2 className="text-2xl font-black tracking-tight text-foreground">
                   About Smart Data Hub
                 </h2>
@@ -261,9 +245,7 @@ export function TermsOfService({
             {/* 02: Services We Provide */}
             <section id="services" className="space-y-4 scroll-mt-24">
               <div className="flex items-baseline gap-3 border-b border-border pb-3">
-                <span className="text-2xl font-black text-primary">
-                  02
-                </span>
+                <span className="text-2xl font-black text-primary">02</span>
                 <h2 className="text-2xl font-black tracking-tight text-foreground">
                   Services We Provide
                 </h2>
@@ -325,9 +307,7 @@ export function TermsOfService({
             {/* 03: Eligibility & Account Registration */}
             <section id="eligibility" className="space-y-4 scroll-mt-24">
               <div className="flex items-baseline gap-3 border-b border-border pb-3">
-                <span className="text-2xl font-black text-primary">
-                  03
-                </span>
+                <span className="text-2xl font-black text-primary">03</span>
                 <h2 className="text-2xl font-black tracking-tight text-foreground">
                   Eligibility & Account Registration
                 </h2>
@@ -367,9 +347,7 @@ export function TermsOfService({
             {/* 04: Ordering, Pricing & Payment */}
             <section id="ordering" className="space-y-4 scroll-mt-24">
               <div className="flex items-baseline gap-3 border-b border-border pb-3">
-                <span className="text-2xl font-black text-primary">
-                  04
-                </span>
+                <span className="text-2xl font-black text-primary">04</span>
                 <h2 className="text-2xl font-black tracking-tight text-foreground">
                   Ordering, Pricing & Payment
                 </h2>
@@ -405,9 +383,7 @@ export function TermsOfService({
             {/* 05: Delivery & Fulfillment SLA */}
             <section id="delivery" className="space-y-4 scroll-mt-24">
               <div className="flex items-baseline gap-3 border-b border-border pb-3">
-                <span className="text-2xl font-black text-primary">
-                  05
-                </span>
+                <span className="text-2xl font-black text-primary">05</span>
                 <h2 className="text-2xl font-black tracking-tight text-foreground">
                   Delivery & Fulfillment SLA
                 </h2>
@@ -453,9 +429,7 @@ export function TermsOfService({
             {/* 06: No Refund & Cancellation Policy */}
             <section id="no-refund" className="space-y-4 scroll-mt-24">
               <div className="flex items-baseline gap-3 border-b border-border pb-3">
-                <span className="text-2xl font-black text-destructive">
-                  06
-                </span>
+                <span className="text-2xl font-black text-destructive">06</span>
                 <h2 className="text-2xl font-black tracking-tight text-destructive flex items-center gap-2">
                   No Refund & Cancellation Policy
                 </h2>
@@ -533,9 +507,7 @@ export function TermsOfService({
             {/* 07: Agent & Reseller Program Terms */}
             <section id="agent-terms" className="space-y-4 scroll-mt-24">
               <div className="flex items-baseline gap-3 border-b border-border pb-3">
-                <span className="text-2xl font-black text-primary">
-                  07
-                </span>
+                <span className="text-2xl font-black text-primary">07</span>
                 <h2 className="text-2xl font-black tracking-tight text-foreground">
                   Agent & Reseller Program Terms
                 </h2>
@@ -581,9 +553,7 @@ export function TermsOfService({
             {/* 08: User Conduct & Acceptable Use */}
             <section id="user-conduct" className="space-y-4 scroll-mt-24">
               <div className="flex items-baseline gap-3 border-b border-border pb-3">
-                <span className="text-2xl font-black text-primary">
-                  08
-                </span>
+                <span className="text-2xl font-black text-primary">08</span>
                 <h2 className="text-2xl font-black tracking-tight text-foreground">
                   User Conduct & Acceptable Use
                 </h2>
@@ -619,9 +589,7 @@ export function TermsOfService({
             {/* 09: Limitation of Liability & Warranties */}
             <section id="liability" className="space-y-4 scroll-mt-24">
               <div className="flex items-baseline gap-3 border-b border-border pb-3">
-                <span className="text-2xl font-black text-primary">
-                  09
-                </span>
+                <span className="text-2xl font-black text-primary">09</span>
                 <h2 className="text-2xl font-black tracking-tight text-foreground">
                   Limitation of Liability & Warranties
                 </h2>
@@ -654,9 +622,7 @@ export function TermsOfService({
             {/* 10: Governing Law, Disputes & Contact */}
             <section id="governing-law" className="space-y-4 scroll-mt-24">
               <div className="flex items-baseline gap-3 border-b border-border pb-3">
-                <span className="text-2xl font-black text-primary">
-                  10
-                </span>
+                <span className="text-2xl font-black text-primary">10</span>
                 <h2 className="text-2xl font-black tracking-tight text-foreground">
                   Governing Law, Disputes & Contact
                 </h2>

@@ -105,7 +105,7 @@ export const PublicNavbar: React.FC<PublicNavbarProps> = ({
           <Button
             variant="ghost"
             onClick={() => handleNavClick("home")}
-            className="group h-auto cursor-pointer gap-2.5 rounded-lg p-0 text-left hover:bg-transparent"
+            className="group h-auto cursor-pointer gap-2.5 rounded-lg p-0 text-left hover:!bg-transparent"
           >
             <div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-primary text-sm font-black text-primary-foreground shadow-xs transition-transform group-hover:scale-105">
               SDH
@@ -113,7 +113,7 @@ export const PublicNavbar: React.FC<PublicNavbarProps> = ({
 
             <div>
               <div className="flex items-center gap-2">
-                <span className="text-base font-black tracking-tight text-foreground transition-colors group-hover:text-primary">
+                <span className="text-base font-black tracking-tight text-foreground transition-colors">
                   Smart Data Hub
                 </span>
               </div>
@@ -130,7 +130,7 @@ export const PublicNavbar: React.FC<PublicNavbarProps> = ({
           aria-label="Public site navigation"
           className="hidden xl:flex items-center"
         >
-          <div className="flex items-center gap-1 rounded-xl border border-border/70 bg-muted/40 p-1">
+          <div className="flex items-center gap-1 rounded-full border border-border/70 bg-muted/40 p-1">
             {publicNavItems.map((item) => {
               const Icon = item.icon;
               const isActive = activeTab === item.id;
@@ -165,7 +165,7 @@ export const PublicNavbar: React.FC<PublicNavbarProps> = ({
         {/* Right Controls */}
         <div className="flex items-center gap-1 rounded-full border border-border/70 bg-muted/40 p-1">
           {/* Security PINs */}
-          {onOpenSecurityPins && (
+          {/* {onOpenSecurityPins && (
             <Button
               variant="ghost"
               size="sm"
@@ -176,7 +176,7 @@ export const PublicNavbar: React.FC<PublicNavbarProps> = ({
               <KeyRound className="size-3.5 text-primary" />
               <span>PINs (0000)</span>
             </Button>
-          )}
+          )} */}
 
           {/* Theme */}
           <DropdownMenu>
@@ -227,7 +227,7 @@ export const PublicNavbar: React.FC<PublicNavbarProps> = ({
                 render={
                   <Button
                     variant="ghost"
-                    className="relative flex size-9 items-center justify-center rounded-full border border-primary/30 bg-primary/10 p-0 text-primary font-black text-xs shadow-2xs transition-all hover:border-primary/60 hover:bg-primary/20 hover:scale-105 active:scale-95"
+                    className="relative flex size-7 items-center justify-center rounded-full border border-primary/30 bg-primary/10 p-0 text-primary font-black text-xs shadow-2xs transition-all hover:border-primary/60 hover:bg-primary/20 hover:scale-105 active:scale-95"
                     title={user.name || user.phone}
                     aria-label="User profile menu"
                   />
@@ -317,22 +317,13 @@ export const PublicNavbar: React.FC<PublicNavbarProps> = ({
           ) : (
             <div className="flex items-center gap-1">
               <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => onNavigateToAuth("sign-in")}
-                className="rounded-full border-transparent bg-transparent text-xs font-bold hover:bg-muted"
-              >
-                <LogIn className="size-3.5" />
-              </Button>
-
-              <Button
                 variant="default"
                 size="sm"
-                onClick={() => onNavigateToAuth("sign-up")}
+                onClick={() => onNavigateToAuth("sign-in")}
                 className="rounded-full text-xs font-bold shadow-2xs"
               >
-                <span>Get Started</span>
-                <ArrowRight className="size-3.5" />
+                <span>Sign In</span>
+                <LogIn className="size-3.5 stroke-3" />
               </Button>
             </div>
           )}
