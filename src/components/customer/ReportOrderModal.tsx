@@ -325,7 +325,7 @@ export const ReportOrderModal: React.FC<ReportOrderModalProps> = ({
 
                   <Select
                     value={complaintType}
-                    onValueChange={setComplaintType}
+                    onValueChange={(value) => setComplaintType(value || "")}
                   >
                     <SelectTrigger className="!h-11 w-full text-sm">
                       <SelectValue placeholder="Select complaint type..." />
@@ -595,11 +595,13 @@ export const ReportOrderModal: React.FC<ReportOrderModalProps> = ({
       <Dialog open={showMainPageSample} onOpenChange={setShowMainPageSample}>
         <DialogContent className="max-w-3xl">
           <DialogHeader>
-            <DialogTitle className="text-center text-sm">Sample: Network App Main Page</DialogTitle>
+            <DialogTitle className="text-center text-sm">
+              Sample: Network App Main Page
+            </DialogTitle>
           </DialogHeader>
           <div className="flex justify-center">
             <img
-              src="/src/assets/main-page.png"
+              src="/assets/main-page.png"
               alt="Main page sample"
               className="max-h-[70vh] w-auto rounded-lg border border-border"
             />
@@ -613,11 +615,13 @@ export const ReportOrderModal: React.FC<ReportOrderModalProps> = ({
       >
         <DialogContent className="max-w-3xl">
           <DialogHeader>
-            <DialogTitle className="text-center text-sm">Sample: Balance Details Page</DialogTitle>
+            <DialogTitle className="text-center text-sm">
+              Sample: Balance Details Page
+            </DialogTitle>
           </DialogHeader>
           <div className="flex justify-center">
             <img
-              src="/src/assets/details-page.png"
+              src="/assets/details-page.png"
               alt="Details page sample"
               className="max-h-[70vh] w-auto rounded-lg border border-border"
             />
