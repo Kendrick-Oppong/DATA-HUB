@@ -44,7 +44,7 @@ interface PublicNavbarProps {
     | "about"
     | "contact";
   onNavigateToPublic: (tab: string) => void;
-  onNavigateToAuth: (mode?: "login" | "register") => void;
+  onNavigateToAuth: (mode?: "sign-in" | "sign-up") => void;
   onNavigateToDashboard: (role: UserRole) => void;
   onSignOut: () => void;
   theme: AppTheme;
@@ -319,17 +319,16 @@ export const PublicNavbar: React.FC<PublicNavbarProps> = ({
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => onNavigateToAuth("login")}
+                onClick={() => onNavigateToAuth("sign-in")}
                 className="rounded-full border-transparent bg-transparent text-xs font-bold hover:bg-muted"
               >
                 <LogIn className="size-3.5" />
-                <span>Sign In</span>
               </Button>
 
               <Button
                 variant="default"
                 size="sm"
-                onClick={() => onNavigateToAuth("register")}
+                onClick={() => onNavigateToAuth("sign-up")}
                 className="rounded-full text-xs font-bold shadow-2xs"
               >
                 <span>Get Started</span>

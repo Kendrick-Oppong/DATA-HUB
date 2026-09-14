@@ -69,7 +69,14 @@ export type AppRoute =
   | { type: "public"; tab: string }
   | {
       type: "auth";
-      mode: "login" | "register" | "otp" | "reset-pin";
+      mode:
+        | "sign-in"
+        | "sign-up"
+        | "otp"
+        | "forgot-password"
+        | "new-password"
+        | "two-factor"
+        | "kyc-verify";
       redirectTargetRole?: UserRole;
       redirectReason?: string | null;
     }
@@ -80,16 +87,30 @@ export type AppRoute =
 function parsePathToRoute(pathname: string, search = ""): AppRoute {
   const clean = pathname.replace(/\/$/, "") || "/";
   if (clean.startsWith("/auth")) {
-    if (clean.includes("register") || clean.includes("signup")) {
-      return { type: "auth", mode: "register" };
+    if (
+      clean.includes("sign-up") ||
+      clean.includes("signup") ||
+      clean.includes("register")
+    ) {
+      return { type: "auth", mode: "sign-up" };
+    }
+    if (
+      clean.includes("sign-in") ||
+      clean.includes("signin") ||
+      clean.includes("login")
+    ) {
+      return { type: "auth", mode: "sign-in" };
     }
     if (clean.includes("otp")) {
       return { type: "auth", mode: "otp" };
     }
-    if (clean.includes("reset") || clean.includes("forgot")) {
-      return { type: "auth", mode: "reset-pin" };
+    if (clean.includes("forgot") || clean.includes("reset")) {
+      return { type: "auth", mode: "forgot-password" };
     }
-    return { type: "auth", mode: "login" };
+    if (clean.includes("new-password")) {
+      return { type: "auth", mode: "new-password" };
+    }
+    return { type: "auth", mode: "sign-in" };
   }
   if (clean.startsWith("/terms") || clean.includes("/terms-of-service")) {
     return { type: "legal", page: "terms" };
@@ -236,7 +257,14 @@ export default function App() {
   };
 
   const navigateToAuth = (
-    mode: "login" | "register" | "otp" | "reset-pin" = "login",
+    mode:
+      | "sign-in"
+      | "sign-up"
+      | "otp"
+      | "forgot-password"
+      | "new-password"
+      | "two-factor"
+      | "kyc-verify",
     redirectTarget?: UserRole,
     reason?: string | null,
   ) => {
@@ -259,7 +287,7 @@ export default function App() {
     // ROUTE GUARD: unauthenticated user trying to access dashboard
     if (!user) {
       navigateToAuth(
-        "login",
+        "sign-in",
         role,
         `Authentication Required: You must be signed in to access the ${role.toUpperCase()} dashboard. Please sign in or register.`,
       );
@@ -651,7 +679,7 @@ export default function App() {
   // Repeat Order shortcut
   const handleRepeatOrder = (order: Order) => {
     if (!user) {
-      navigateToAuth("login", "customer");
+      navigateToAuth("sign-in", "customer");
       return;
     }
     if (order.serviceType === "data") {
@@ -673,10 +701,11 @@ export default function App() {
     return (
       <div className="min-h-screen bg-background text-foreground flex flex-col selection:bg-primary/20">
         <AuthPage
-          initialMode={route.mode}
+          mode={route.mode}
           redirectReason={route.redirectReason}
           onAuthSuccess={handleAuthSuccess}
           onBackToPublic={() => navigateToPublic("home")}
+          onNavigateToAuth={navigateToAuth}
           onNavigateToLegal={navigateToLegal}
           theme={theme}
           onSetTheme={handleSetTheme}
@@ -708,7 +737,7 @@ export default function App() {
           user={user}
           activeTab={route.tab as any}
           onNavigateToPublic={navigateToPublic}
-          onNavigateToAuth={(mode) => navigateToAuth(mode || "login")}
+          onNavigateToAuth={(mode) => navigateToAuth(mode || "sign-in")}
           onNavigateToDashboard={(role) => {
             if (role === "storefront") {
               navigateTo({ type: "storefront" });
@@ -740,7 +769,7 @@ export default function App() {
             onStartPurchase={(bundleId, network) => {
               if (!user) {
                 navigateToAuth(
-                  "login",
+                  "sign-in",
                   "customer",
                   "Please sign in or register to complete your instant data purchase.",
                 );
@@ -751,7 +780,7 @@ export default function App() {
             onOpenOrderTracker={(refOrPhone) => {
               if (!user) {
                 navigateToAuth(
-                  "login",
+                  "sign-in",
                   "customer",
                   "Sign in to audit your real-time telecom orders.",
                 );
@@ -762,7 +791,7 @@ export default function App() {
             onApplyAgent={() => {
               if (!user) {
                 navigateToAuth(
-                  "register",
+                  "sign-up",
                   "agent",
                   "Register your reseller business account to activate your branded store.",
                 );
@@ -772,7 +801,7 @@ export default function App() {
             }}
             onOpenReceipt={(order) => setSelectedReceiptOrder(order)}
             onOpenAuth={(mode) =>
-              navigateToAuth(mode === "signup" ? "register" : "login")
+              navigateToAuth(mode === "signup" ? "sign-up" : "sign-in")
             }
             onOpenSecurityPins={() => setIsSecurityPinsOpen(true)}
           />
@@ -836,10 +865,11 @@ export default function App() {
     return (
       <div className="min-h-screen bg-background text-foreground flex flex-col selection:bg-primary/20">
         <AuthPage
-          initialMode="login"
+          mode="sign-in"
           redirectReason="Authentication Required: You must be signed in to access the Smart Data Hub dashboard. Please enter your phone number and password, or register a new account."
           onAuthSuccess={handleAuthSuccess}
           onBackToPublic={() => navigateToPublic("home")}
+          onNavigateToAuth={navigateToAuth}
           theme={theme}
           onSetTheme={handleSetTheme}
           onOpenSecurityPins={() => setIsSecurityPinsOpen(true)}
@@ -885,7 +915,7 @@ export default function App() {
         }}
         user={user}
         onOpenAuth={(mode) =>
-          navigateToAuth(mode === "signup" ? "register" : "login")
+          navigateToAuth(mode === "signup" ? "sign-up" : "sign-in")
         }
         onLogout={handleSignOut}
         onOpenSecurityPins={() => setIsSecurityPinsOpen(true)}

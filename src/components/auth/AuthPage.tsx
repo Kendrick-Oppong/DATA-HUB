@@ -27,8 +27,8 @@ import {
 import { Tabs, TabsList, TabsTrigger } from "../ui/tabs";
 import { themeOptions } from "../../lib/themes";
 
-import { LoginView } from "./LoginView";
-import { RegisterView } from "./RegisterView";
+import { SignInView } from "./SignInView";
+import { SignUpView } from "./SignUpView";
 import { OtpView } from "./OtpView";
 import { ForgotPasswordView } from "./ForgotPasswordView";
 import { NewPasswordView } from "./NewPasswordView";
@@ -42,8 +42,8 @@ export interface AuthSuccessPayload {
 }
 
 export type AuthFlowMode =
-  | "login"
-  | "register"
+  | "sign-in"
+  | "sign-up"
   | "otp"
   | "forgot-password"
   | "new-password"
@@ -55,10 +55,11 @@ type OtpChannel = "sms" | "whatsapp";
 type OtpPurpose = "registration" | "forgot-password";
 
 interface AuthPageProps {
-  initialMode?: AuthFlowMode;
+  mode: AuthFlowMode;
   redirectReason?: string | null;
   onAuthSuccess: (user: AuthSuccessPayload) => void;
   onBackToPublic: () => void;
+  onNavigateToAuth: (mode: AuthFlowMode) => void;
   onNavigateToLegal?: (page: "terms" | "privacy") => void;
   theme: AppTheme;
   onSetTheme: (theme: AppTheme) => void;
@@ -66,16 +67,16 @@ interface AuthPageProps {
 }
 
 export const AuthPage: React.FC<AuthPageProps> = ({
-  initialMode = "login",
+  mode,
   redirectReason,
   onAuthSuccess,
   onBackToPublic,
+  onNavigateToAuth,
   onNavigateToLegal,
   theme,
   onSetTheme,
   onOpenSecurityPins,
 }) => {
-  const [mode, setMode] = useState<AuthFlowMode>(initialMode);
   const [showThemeMenu, setShowThemeMenu] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -105,17 +106,8 @@ export const AuthPage: React.FC<AuthPageProps> = ({
   const [newPassword, setNewPassword] = useState("");
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
 
-  useEffect(() => {
-    setMode(initialMode);
-  }, [initialMode]);
-
   function clearError() {
     setError(null);
-  }
-
-  function changeMode(nextMode: AuthFlowMode) {
-    setMode(nextMode);
-    clearError();
   }
 
   function resetOtpState() {
@@ -132,18 +124,18 @@ export const AuthPage: React.FC<AuthPageProps> = ({
   }
 
   function goToLogin() {
-    changeMode("login");
+    onNavigateToAuth("sign-in");
     resetOtpState();
     resetForgotPasswordState();
   }
 
   function goToRegister() {
-    changeMode("register");
+    onNavigateToAuth("sign-up");
     resetOtpState();
   }
 
   function goToForgotPassword() {
-    changeMode("forgot-password");
+    onNavigateToAuth("forgot-password");
     resetForgotPasswordState();
     resetOtpState();
   }
@@ -282,7 +274,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
       setOtpPurpose("registration");
       setOtpPhone(phone.trim());
       setOtp("");
-      changeMode("otp");
+      onNavigateToAuth("otp");
       setIsLoading(false);
     }, 700);
   }
@@ -327,7 +319,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
       setOtpPurpose("forgot-password");
       setOtpPhone(trimmedIdentifier);
       setOtp("");
-      changeMode("otp");
+      onNavigateToAuth("otp");
       setIsLoading(false);
     }, 700);
   }
@@ -344,7 +336,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
     setIsLoading(true);
 
     window.setTimeout(() => {
-      changeMode("new-password");
+      onNavigateToAuth("new-password");
       setIsLoading(false);
     }, 700);
   }
@@ -385,9 +377,9 @@ export const AuthPage: React.FC<AuthPageProps> = ({
 
   function renderAuthView() {
     switch (mode) {
-      case "login":
+      case "sign-in":
         return (
-          <LoginView
+          <SignInView
             identifier={identifier}
             password={loginPassword}
             error={error}
@@ -400,9 +392,9 @@ export const AuthPage: React.FC<AuthPageProps> = ({
           />
         );
 
-      case "register":
+      case "sign-up":
         return (
-          <RegisterView
+          <SignUpView
             name={name}
             phone={phone}
             countryCode={countryCode}
@@ -627,8 +619,8 @@ export const AuthPage: React.FC<AuthPageProps> = ({
               <div className="flex items-start justify-between gap-4">
                 <div className="space-y-1.5">
                   <CardTitle className="text-xl font-black tracking-tight sm:text-2xl">
-                    {mode === "login" && "Sign In to Your Account"}
-                    {mode === "register" && "Create Your Hub Account"}
+                    {mode === "sign-in" && "Sign In to Your Account"}
+                    {mode === "sign-up" && "Create Your Hub Account"}
                     {mode === "otp" && "Verify Mobile Number"}
                     {mode === "forgot-password" && "Recover Your Password"}
                     {mode === "new-password" && "Create a New Password"}
@@ -637,10 +629,10 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                   </CardTitle>
 
                   <CardDescription className="max-w-xl text-xs leading-relaxed">
-                    {mode === "login" &&
+                    {mode === "sign-in" &&
                       "Enter your registered phone number or email to continue."}
 
-                    {mode === "register" &&
+                    {mode === "sign-up" &&
                       "Create your account and start using Smart Data Hub."}
 
                     {mode === "otp" &&
@@ -667,15 +659,17 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                 </div>
               </div>
 
-              {(mode === "login" || mode === "register") && (
+              {(mode === "sign-in" || mode === "sign-up") && (
                 <Tabs
                   value={mode}
-                  onValueChange={(value) => changeMode(value as AuthFlowMode)}
+                  onValueChange={(value) =>
+                    onNavigateToAuth(value as AuthFlowMode)
+                  }
                   className="w-full"
                 >
                   <TabsList className="grid !h-10 w-full grid-cols-2 rounded-full border border-border/70 bg-muted/60 p-1.5">
                     <TabsTrigger
-                      value="login"
+                      value="sign-in"
                       className="h-7 rounded-full text-sm font-bold transition-all data-[state=active]:bg-background data-[state=active]:text-primary data-[state=active]:shadow-md"
                     >
                       <Lock className="size-4" />
@@ -683,7 +677,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                     </TabsTrigger>
 
                     <TabsTrigger
-                      value="register"
+                      value="sign-up"
                       className="h-7 rounded-full text-sm font-bold transition-all data-[state=active]:bg-background data-[state=active]:text-primary data-[state=active]:shadow-md"
                     >
                       <User className="size-4" />
