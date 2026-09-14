@@ -1,0 +1,166 @@
+/* ============================================================
+   Smart Data Hub — global motion layer
+   Page entrances, scroll-reveal, and micro-interactions.
+   Loaded LAST so it can layer onto web.css + platform.css.
+   Every entrance/reveal effect is opt-in via a class that
+   JS adds only when motion is allowed — so if JS never runs,
+   or the user prefers reduced motion, content stays fully
+   visible (no hidden-forever FOUC).
+   ============================================================ */
+
+/* ---------- keyframes ----------
+   Entrance keyframes are TRANSFORM-ONLY (no opacity). This keeps content
+   visible at every frame — including frozen/print/PDF/no-clock captures —
+   so nothing can ever render blank, and there is no reveal "flash". */
+@keyframes sdhRise   { from{ transform:translateY(20px); } to{ transform:none; } }
+@keyframes sdhFadeIn { from{ transform:translateY(8px); } to{ transform:none; } }
+@keyframes sdhPopIn  { from{ transform:scale(.95); } to{ transform:none; } }
+@keyframes sdhSlideL { from{ transform:translateX(-16px); } to{ transform:none; } }
+@keyframes sdhSheen  { from{ background-position:-160% 0; } to{ background-position:260% 0; } }
+@keyframes sdhFloat  { 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-7px); } }
+@keyframes sdhDotPulse{ 0%,100%{ box-shadow:0 0 0 0 rgba(18,161,80,.42); } 70%{ box-shadow:0 0 0 7px rgba(18,161,80,0); } }
+
+@media (prefers-reduced-motion: no-preference){
+
+  /* ---------- app page-enter cascade ----------
+     JS adds .pg-cascade to .content on route change and sets
+     --pg-i (index) on each direct child for the stagger. */
+  .content.pg-cascade > *{
+    animation: sdhRise .52s cubic-bezier(.22,.61,.36,1) both;
+    animation-delay: calc(var(--pg-i, 0) * 52ms);
+  }
+
+  /* topbar title swap */
+  .topbar.pg-cascade .mtitle{ animation: sdhSlideL .42s cubic-bezier(.22,.61,.36,1) both; }
+  .topbar.pg-cascade .msub{ animation: sdhFadeIn .5s ease both; animation-delay:.06s; }
+
+  /* ---------- scroll reveal (marketing site) ----------
+     Base state is the VISIBLE end-state (so print, PDF, reduced-motion,
+     no-JS, and frozen-clock captures all show content). JS adds .sdh-in
+     when a block scrolls into view, which plays the entrance FROM hidden. */
+  .sdh-rv.sdh-in{
+    animation: sdhRise .6s cubic-bezier(.22,.61,.36,1) both;
+    animation-delay: var(--rv-d, 0ms);
+  }
+
+  /* hero gets a touch more presence on first paint */
+  .hero .badge-live{ animation: sdhRise .6s cubic-bezier(.22,.61,.36,1) both; animation-delay:.05s; }
+  .hero h1{ animation: sdhRise .7s cubic-bezier(.22,.61,.36,1) both; animation-delay:.12s; }
+  .hero .sub{ animation: sdhRise .7s cubic-bezier(.22,.61,.36,1) both; animation-delay:.2s; }
+  .hero .hero-cta{ animation: sdhRise .7s cubic-bezier(.22,.61,.36,1) both; animation-delay:.28s; }
+  .hero .trust{ animation: sdhRise .7s cubic-bezier(.22,.61,.36,1) both; animation-delay:.36s; }
+  .browser-wrap{ animation: sdhPopIn .8s cubic-bezier(.22,.61,.36,1) both; animation-delay:.18s; }
+
+  /* gentle perpetual life on the floating hero chips */
+  .float.f1{ animation: sdhFloat 5.5s ease-in-out infinite; }
+  .float.f2{ animation: sdhFloat 6.5s ease-in-out .8s infinite; }
+
+  /* live badge dot heartbeat */
+  .badge-live .dot, .store-dot{ animation: sdhDotPulse 2.4s ease-out infinite; }
+
+  /* auth + storefront entrance */
+  .auth-card{ animation: sdhRise .55s cubic-bezier(.22,.61,.36,1) both; }
+  .auth-aside .pt{ animation: sdhSlideL .5s cubic-bezier(.22,.61,.36,1) both; }
+  .auth-aside .pt:nth-child(1){ animation-delay:.1s; }
+  .auth-aside .pt:nth-child(2){ animation-delay:.2s; }
+  .auth-aside .pt:nth-child(3){ animation-delay:.3s; }
+  .auth-aside .pt:nth-child(4){ animation-delay:.4s; }
+  .sf-card{ animation: sdhRise .5s cubic-bezier(.22,.61,.36,1) both; animation-delay: calc(var(--pg-i, 0) * 40ms); }
+
+  /* toast already rises in platform.css; add a soft pop to success ring handled there */
+}
+
+/* ============================================================
+   Micro-interactions (cheap, mostly transform/opacity).
+   Kept subtle; safe to run alongside reduced-motion since they
+   are user-initiated, but we still soften them in the reduce
+   block at the bottom.
+   ============================================================ */
+
+/* lift cards/tiles that read as interactive surfaces */
+.stat-tile, .metric-card, .tcard, .wn-body, .qa, .util-card,
+.feat, .how, .net-pick .np, .bundle, .sf-card, .pc-opt, .role-pick .rp{
+  transition: transform .2s cubic-bezier(.22,.61,.36,1), box-shadow .2s ease, border-color .15s ease;
+}
+.stat-tile:hover, .metric-card:hover, .tcard:hover, .wn-body:hover{
+  transform: translateY(-3px); box-shadow: var(--sh);
+}
+
+/* icon buttons + qty steppers: press feedback */
+.iconbtn, .qty-btn, .os-refresh, .cpy, .mclose{ transition: transform .14s ease, border-color .15s, color .15s, background .15s; }
+.iconbtn:hover, .qty-btn:hover{ transform: translateY(-1px); }
+.iconbtn:active, .qty-btn:active, .botnav .bn:active{ transform: scale(.9); }
+
+/* topbar wallet "add" button spin-press */
+.topbar .wallet-pill .add{ transition: transform .16s cubic-bezier(.22,1.2,.4,1), background .15s; }
+.topbar .wallet-pill .add:hover{ transform: rotate(90deg); }
+.topbar .wallet-pill .add:active{ transform: rotate(90deg) scale(.88); }
+
+/* sidebar nav nudge */
+.side .nl:hover{ transform: translateX(3px); }
+.side .nl.on{ transform:none; }
+
+/* bottom-nav active pop */
+.botnav .bn{ transition: color .15s, transform .15s; }
+.botnav .bn.on{ transform: translateY(-2px); }
+
+/* primary buttons: gentle lift (press handled in web.css) */
+.btn{ transition: transform .14s ease, box-shadow .25s ease, background .15s ease, filter .15s ease; }
+.btn-pri:hover, .btn-teal:hover, .btn-dark:hover{ transform: translateY(-2px); }
+.btn:active{ transform: translateY(1px) scale(.99); }
+
+/* nav-link underline sweep (marketing) */
+.nav-links a{ position:relative; }
+.nav-links a::after{
+  content:""; position:absolute; left:0; right:100%; bottom:-5px; height:2px;
+  background: var(--blue); border-radius:2px; transition: right .26s cubic-bezier(.22,.61,.36,1);
+}
+.nav-links a:hover::after{ right:0; }
+
+/* segmented control + tab thumbs already transition; add the buy-flow step fill shimmer */
+.steps .st.on{
+  background: linear-gradient(90deg, var(--blue), var(--teal-ink), var(--blue));
+  background-size: 220% 100%;
+}
+@media (prefers-reduced-motion: no-preference){
+  .steps .st.on{ animation: sdhSheen 2.4s linear infinite; }
+}
+
+/* swatches + network picks already scale; add focus-ring softening on inputs */
+.field .control, .otp-row input{ transition: border-color .15s, box-shadow .2s, background .15s; }
+
+/* table rows: smooth hover (bg already set) */
+table.tbl td{ transition: background .15s ease; }
+
+/* pills get a hairline scale on hover where clickable contexts use them */
+.growth-chip{ transition: transform .15s ease; }
+
+/* spinner reuse: ensure success ring keeps its pop (defined in platform.css) */
+
+/* ---------- reduced motion: neutralize movement ---------- */
+@media (prefers-reduced-motion: reduce){
+  .sdh-rv, .sdh-rv.sdh-in, .content.pg-cascade > *,
+  .hero .badge-live, .hero h1, .hero .sub, .hero .hero-cta, .hero .trust,
+  .browser-wrap, .auth-card, .auth-aside .pt, .sf-card{
+    animation:none !important; opacity:1 !important; transform:none !important;
+  }
+  .float.f1, .float.f2, .badge-live .dot, .store-dot, .steps .st.on{ animation:none !important; }
+  *, *::before, *::after{
+    animation-duration:.001ms !important;
+    animation-iteration-count:1 !important;
+    transition-duration:.001ms !important;
+  }
+  .stat-tile:hover, .metric-card:hover, .tcard:hover, .wn-body:hover,
+  .iconbtn:hover, .qty-btn:hover, .side .nl:hover,
+  .btn-pri:hover, .btn-teal:hover, .btn-dark:hover, .botnav .bn.on{ transform:none !important; }
+}
+
+/* ---------- print / PDF: never freeze on a pre-animation frame ---------- */
+@media print{
+  .sdh-rv, .sdh-rv.sdh-in, .content.pg-cascade > *,
+  .hero .badge-live, .hero h1, .hero .sub, .hero .hero-cta, .hero .trust,
+  .browser-wrap, .auth-card, .auth-aside .pt, .sf-card{
+    animation:none !important; opacity:1 !important; transform:none !important;
+  }
+  .float.f1, .float.f2{ animation:none !important; }
+}

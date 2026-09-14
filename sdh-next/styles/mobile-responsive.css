@@ -1,0 +1,444 @@
+/* ============================================================
+   Smart Data Hub — REAL mobile responsiveness for the web build ("/").
+   mobile.css only applies inside the fixed-width iPhone mockup on
+   /mobile (scoped to .ios-screen, no media queries — the frame never
+   changes size). This file ports the same visual refinements to real
+   phones visiting the live site, as genuine @media rules against the
+   shared screen components (customer/reseller/admin pages, storefront,
+   auth, legal…) that both builds render through the same AppRouter.
+   ============================================================ */
+
+/* bottom quick-access nav had no dark-theme background (only the phone
+   mockup did) — on a real phone in dark mode it rendered as a bright
+   white bar pinned to the bottom of the screen. */
+@media (max-width: 860px){
+  [data-theme="dark"] .botnav{ background:rgba(20,31,51,.96) !important; }
+  /* keep the toast above the fixed bottom nav instead of sitting under it */
+  .toast{ bottom:calc(74px + env(safe-area-inset-bottom)); }
+}
+
+/* Contact page: WhatsApp channel + message form side-by-side grid is set
+   via inline style (gridTemplateColumns), so it needs !important to
+   collapse — otherwise the two columns get squeezed illegibly on phones. */
+@media (max-width: 760px){
+  .contact-grid{ grid-template-columns:1fr !important; gap:28px !important; }
+}
+
+/* AFA registrations + "About AFA" panel: the inline gridTemplateColumns
+   (1.5fr 1fr) beats platform.css's own .g-2 collapse rule at ≤860px, so
+   the two columns never stacked on a phone. */
+@media (max-width: 860px){
+  .afa-grid{ grid-template-columns:1fr !important; }
+}
+
+/* Admin dashboard: Live order feed + Network mix, same inline-grid issue.
+   Collapse to one column — DOM order already puts the order feed first and
+   Network mix second, so no `order` override is needed. */
+@media (max-width: 860px){
+  .admin-dash-grid{ grid-template-columns:1fr !important; }
+}
+
+/* Admin dashboard: Top referrers + Latest referrals, same inline-grid issue.
+   Collapse to one column — DOM order already puts Top referrers first and
+   Latest referrals second, so no `order` override is needed. */
+@media (max-width: 860px){
+  .admin-referrals-grid{ grid-template-columns:1fr !important; }
+}
+
+/* Reseller dashboard: Sales this week + Tier progress, and Recent commissions +
+   Refer & earn, same inline-grid issue. Collapse both to one column — DOM order
+   already puts the chart/table first and the side card second, so no `order`
+   override is needed. */
+@media (max-width: 860px){
+  .reseller-sales-grid, .reseller-commissions-grid{ grid-template-columns:1fr !important; }
+}
+
+/* My Store builder: Storefront branding + Products & your prices, same inline-grid
+   issue. Collapse to one column — DOM order already puts branding first and
+   products/pricing second, so no `order` override is needed. */
+@media (max-width: 860px){
+  .store-builder-grid{ grid-template-columns:1fr !important; }
+}
+
+/* Reseller commissions page: Profit trend + Where your profit comes from, same
+   inline-grid issue. Collapse to one column — DOM order already puts the trend
+   chart first and the breakdown second, so no `order` override is needed. */
+@media (max-width: 860px){
+  .reseller-profit-grid{ grid-template-columns:1fr !important; }
+}
+
+/* Reseller withdrawals page: Wallet balance + How payouts work, same inline-grid
+   issue. Collapse to one column — DOM order already puts the balance/withdraw
+   card first and the explainer second, so no `order` override is needed. */
+@media (max-width: 860px){
+  .reseller-withdrawals-grid{ grid-template-columns:1fr !important; }
+}
+
+/* Bulk SMS compose page: Compose message + Summary, same inline-grid issue.
+   Collapse to one column — DOM order already puts Compose message first and
+   Summary second, so no `order` override is needed. */
+@media (max-width: 860px){
+  .sms-compose-grid{ grid-template-columns:1fr !important; }
+}
+
+/* Sender IDs page: Your sender IDs + Register new, same inline-grid issue.
+   Collapse to one column — DOM order already puts Your sender IDs first and
+   Register new second, so no `order` override is needed. */
+@media (max-width: 860px){
+  .sender-ids-grid{ grid-template-columns:1fr !important; }
+}
+
+/* Analytics page: When customers buy + Customers, same inline-grid issue.
+   Collapse to one column — DOM order already puts When customers buy first and
+   Customers second, so no `order` override is needed. */
+@media (max-width: 860px){
+  .an-peak-grid{ grid-template-columns:1fr !important; }
+}
+
+/* Store insights (My Store): Orders per day + Busiest hours, same inline-grid issue.
+   Collapse to one column — DOM order already puts Orders per day first and
+   Busiest hours second, so no `order` override is needed. */
+@media (max-width: 860px){
+  .sx-peak-grid{ grid-template-columns:1fr !important; }
+}
+
+/* Store insights (My Store): Best sellers + Customers, same inline-grid issue.
+   Collapse to one column — DOM order already puts Best sellers first and
+   Customers second, so no `order` override is needed. */
+@media (max-width: 860px){
+  .sx-top-grid{ grid-template-columns:1fr !important; }
+}
+
+/* About page: story text + Vision/Core values cards, same inline-grid issue.
+   Collapse to one column, and put Vision/Core values ABOVE the story text
+   (reversed from the desktop DOM order) using `order` — no DOM change, so
+   the desktop two-column layout is untouched. */
+@media (max-width: 860px){
+  .about-grid{ grid-template-columns:1fr !important; gap:32px !important; }
+  .about-side{ order:-1; }
+}
+
+@media (max-width: 480px){
+  /* ---------- tighter section padding ---------- */
+  .wrap, .sf-wrap{ padding:0 16px; }
+  .grid{ gap:13px; }
+  .grid > *{ min-width:0; }
+  .qa-grid{ gap:11px; }
+
+  /* ---- role picker: keep side-by-side, just compact ---- */
+  .role-pick{ gap:10px; margin-top:12px; }
+  .role-pick .rp{ padding:13px 12px; border-radius:14px; }
+  .role-pick .rp .ic{ width:34px; height:34px; border-radius:10px; }
+  .role-pick .rp .t{ font-size:14px; margin-top:10px; }
+  .role-pick .rp .s{ font-size:11.5px; margin-top:2px; }
+
+  /* ---- auth (sign in / sign up) scaled down to phone proportions ---- */
+  .auth-main{ padding:54px 18px 24px; }
+  .auth-card .top-brand{ display:flex; justify-content:center; margin-bottom:18px; }
+  .auth-card{ padding:24px 20px; }
+  .auth-card .top-brand .brand{ font-size:16px; gap:8px; }
+  .auth-card .top-brand .brand img{ width:30px; height:30px; }
+  .auth-hello .hb{ width:46px; height:46px; border-radius:15px; margin-bottom:14px; }
+  .auth-card h1{ font-size:21px; }
+  .auth-card .sub{ font-size:13px; margin-top:7px; }
+  .seg{ margin-top:18px; flex-wrap:wrap; }
+  .seg button{ font-size:13px; padding:9px; }
+  .field{ margin-top:13px; }
+  .field label{ font-size:12px; margin-bottom:5px; }
+  .auth-card .field .control{ height:46px; border-radius:13px; }
+  .field input{ font-size:14px; }
+  .field .control .pre{ font-size:13.5px; }
+  .field .hint{ font-size:11.5px; margin-top:5px; }
+  .btn-full{ padding:13px; font-size:15px; margin-top:18px; }
+  .auth-alt{ font-size:13px; margin-top:14px; }
+  .legal{ font-size:11px; margin-top:14px; }
+  .auth-remember, .auth-agree, .auth-forgot{ font-size:12.5px; }
+  .auth-remember .rbox, .auth-agree .rbox{ width:18px; height:18px; border-radius:5px; }
+  .auth-remember-row{ margin-top:13px; }
+  .auth-agree{ margin-top:14px; }
+
+  /* ---------- type scale tuned for phone widths ---------- */
+  .card{ padding:15px; border-radius:18px; }
+  .card.pad-lg{ padding:16px; }
+  .card-h{ margin-bottom:12px; }
+  .card-h h3, .section-title{ font-size:14px; }
+  h1{ font-size:20px; }
+  h2{ font-size:17px; }
+  h3{ font-size:14.5px; }
+  .earn-hero{ padding:18px 16px; border-radius:22px; }
+  .earn-hero .big{ font-size:25px !important; }
+  .earn-hero .lbl, .earn-hero .sub{ font-size:12px; }
+  .earn-hero .tier-badge{ font-size:11px; }
+  .an-hero{ padding:16px; }
+  .an-hero-big{ font-size:24px; }
+  .an-hero-lbl{ font-size:12px; }
+  .an-hero-stat .v{ font-size:15px; }
+  .an-hero-stat .l{ font-size:11px; }
+  .stat-tile{ padding:13px; }
+  .stat-tile .lbl{ font-size:11px; }
+  .metric-card .mc-v{ font-size:16.5px; }
+  .metric-card .mc-l{ font-size:11.5px; }
+  .hero-metrics .m{ padding:13px; }
+  .hero-metrics .n{ font-size:16px; }
+  .hero-metrics .l{ font-size:11.5px; }
+  .summary .total .v{ font-size:18px; }
+  .os-bal .bv{ font-size:16px; }
+  .prof-head{ gap:13px; }
+  .prof-head .av{ width:52px; height:52px; font-size:18px; }
+  .bundle .gb{ font-size:16px; }
+  .bundle .pr{ font-size:14.5px; }
+  .flow-result h2{ font-size:18px; }
+  .flow-result p{ font-size:13.5px; }
+  .btn{ font-size:14px; }
+  .field input, .field .control select, .field textarea{ font-size:15px; }
+  .field label{ font-size:12.5px; }
+  .qa .t{ font-size:13.5px; }
+  .qa .s{ font-size:11.5px; }
+  .util-name{ font-size:14.5px; }
+  .pill{ font-size:11px; }
+  .stat-tile .v{ font-size:16px; }
+
+  /* ---------- reframe tables as stacked rows (kills side-scroll) ---------- */
+  .tbl-wrap{ overflow-x:visible; }
+  table.tbl{ display:block; width:100%; font-size:13px; }
+  table.tbl thead{ display:none; }
+  table.tbl tbody{ display:block; }
+  table.tbl tr{ display:flex; flex-wrap:wrap; align-items:center; gap:5px 12px; padding:13px 2px; border-top:1px solid var(--line); }
+  table.tbl tr:first-child{ border-top:none; }
+  table.tbl tr:hover td{ background:none; }
+  table.tbl td{ padding:0; border:none; white-space:normal; }
+  table.tbl td:first-child{ flex:1 1 100%; margin-bottom:2px; }
+  table.tbl td .mono{ font-size:12px; }
+  table.tbl td.amt{ font-size:14px; }
+  /* agent order list: tapping a row opens full detail, so the list row only
+     needs the essentials on a phone */
+  .o-ref{ display:none; }
+  td.o-src{ display:none; }
+
+  /* Admin pricing grid: every cell is an editable input (bundle size, validity,
+     retail/wholesale/commission), not scannable prose, so the flatten-and-hide-header
+     treatment above turns it into an unlabelled jumble of tiny controls. Keep it a real
+     table with its header and scroll it horizontally instead — same specificity as the
+     rules above (one class + one element each), so source order alone makes these win. */
+  .tbl-wrap:has(table.pricing-tbl){ overflow-x:auto; -webkit-overflow-scrolling:touch; }
+  table.pricing-tbl{ display:table; width:auto; min-width:720px; font-size:13px; }
+  table.pricing-tbl thead{ display:table-header-group; }
+  table.pricing-tbl tbody{ display:table-row-group; }
+  table.pricing-tbl tr{ display:table-row; }
+  table.pricing-tbl td{ display:table-cell; padding:10px 8px; border-top:1px solid var(--line); white-space:nowrap; }
+  table.pricing-tbl td:first-child{ margin-bottom:0; }
+  table.pricing-tbl th{ padding:0 8px 10px; }
+
+  /* ---- mobile-only overrides for the many INLINE font sizes in the
+     shared screens (editing the JSX would shrink the desktop build too).
+     React serialises inline styles as "font-size: NNpx", so we match the
+     exact px and scale it down ~25%. ---- */
+  [style*="font-size: 54px"]{ font-size:30px !important; }
+  [style*="font-size: 44px"]{ font-size:25px !important; }
+  [style*="font-size: 40px"]{ font-size:23px !important; }
+  [style*="font-size: 30px"]{ font-size:20px !important; }
+  [style*="font-size: 28px"]{ font-size:19px !important; }
+  [style*="font-size: 26px"]{ font-size:18px !important; }
+  [style*="font-size: 25px"]{ font-size:18px !important; }
+  [style*="font-size: 24px"]{ font-size:17px !important; }
+  [style*="font-size: 23px"]{ font-size:17px !important; }
+  [style*="font-size: 22px"]{ font-size:16.5px !important; }
+  [style*="font-size: 21px"]{ font-size:16px !important; }
+  [style*="font-size: 20px"]{ font-size:15.5px !important; }
+  [style*="font-size: 19px"]{ font-size:15px !important; }
+  [style*="font-size: 18px"]{ font-size:14.5px !important; }
+
+  /* ============================================================
+     Screen-specific reframing so nothing overflows its card
+     ============================================================ */
+  .bars{ gap:4px; height:150px; margin-top:4px; }
+  .bars .col{ min-width:0; gap:6px; }
+  .bars .bar{ max-width:26px; }
+  .bars .col .vl{ font-size:8.5px; white-space:nowrap; }
+  .bars .col .dl{ font-size:9.5px; }
+
+  .earn-hero{ flex-direction:column !important; align-items:flex-start !important; gap:16px !important; }
+  .earn-hero > div{ width:100%; text-align:left !important; margin-top:0 !important; }
+  .earn-hero .acts{ width:100%; display:flex; flex-wrap:wrap; gap:10px; margin-top:0 !important; }
+  .earn-hero .acts .btn{ flex:1 1 auto; }
+
+  /* 3-up stat rows → 2-up (denser, never a lone full-width tile) */
+  .g-3{ grid-template-columns:1fr 1fr !important; }
+  .g-3 > :last-child:nth-child(odd){ grid-column:1 / -1; }
+
+  /* filter headers (Orders · Customers): stack tidily, segmented bars go full-width */
+  .card-h:has(.seg), .card-h:has(.field){ flex-direction:column; align-items:stretch; gap:12px; }
+  .card-h:has(.seg) > div:not(.seg), .card-h:has(.field) > div:not(.seg){ width:100%; display:flex; flex-direction:column; align-items:stretch; gap:10px; }
+  .card-h .field{ width:100% !important; }
+  .seg{ width:100% !important; flex-direction:row !important; flex-wrap:nowrap; }
+  .seg button{ flex:1 1 0; min-width:0; padding:9px 4px !important; font-size:11px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .seg button .seg-count{ display:none; }
+
+  /* The Days/∞ toggle inside the admin pricing table's Validity cell is a tiny
+     content-sized control, not a page-level filter bar — the full-width .seg rule
+     above (meant for those) was stretching it across the cell and shoving the days
+     count input into the Retail column. Opt it back out to its natural size. */
+  .vm-seg{ width:auto !important; }
+  .vm-seg button{ flex:0 0 auto !important; padding:4px 9px !important; font-size:12px !important; }
+
+  /* results-checker / utility voucher cards */
+  .checker-card{ flex-wrap:wrap; gap:13px !important; }
+  .checker-card .ic{ width:46px !important; height:46px !important; border-radius:13px !important; }
+  .checker-card .ic svg{ width:22px; height:22px; }
+  .checker-card strong{ font-size:13px !important; line-height:1.25; }
+  .checker-card .pill{ font-size:9.5px !important; padding:2px 7px !important; }
+  .checker-card .ck-meta{ flex-wrap:wrap; gap:3px 10px !important; }
+  .checker-card .ck-meta > span:first-child{ font-size:15px !important; }
+  .checker-card .rs{ font-size:11px !important; }
+  .checker-card .ck-stock{ margin-left:0 !important; flex-basis:100%; font-size:11px !important; }
+  .checker-card .checker-cta{ flex:1 1 100%; }
+
+  .metric-card .growth-chip{ font-size:10.5px; padding:3px 8px; white-space:nowrap; }
+  .set-row{ padding:13px 14px; }
+
+  .btn{ font-size:15px; padding:13px 20px; }
+  .btn-full{ padding:15px; }
+
+  /* ---------- contain overlays inside the viewport ---------- */
+  .modal-scrim{ padding:16px; }
+  .modal{ border-radius:20px; max-height:88%; }
+
+  /* ---------- storefront SHOP layout tuned for a phone screen ---------- */
+  .sf-shop-wrap{ padding-top:16px; }
+  .sf-head .wa-mini span{ display:none; }
+  .sf-head .wa-mini{ padding:8px; }
+  .sf-head-cta{ gap:7px; }
+  .sf-brand .nm{ font-size:15px; }
+  .sf-brand .hd{ font-size:10.5px; }
+  .sf-logo{ width:36px; height:36px; border-radius:11px; font-size:14px; }
+  .sf-ann{ font-size:11.5px; padding:7px 0; }
+  .sf-latest-h{ font-size:10.5px; }
+  .trk-card{ padding:14px; }
+  .trk-card .th{ font-size:13.5px; }
+  .trk-sum .pk{ font-size:13.5px; }
+  .trk-times{ font-size:12px; }
+  .trk-took{ font-size:11.5px; }
+  .trk-eta{ font-size:11px; padding:5px 10px; }
+  .trk-step .lbl{ font-size:13px; }
+  .trk-step .tm{ font-size:11px; }
+  .sf-hero-card{ padding:17px 18px; border-radius:16px; }
+  .sf-hero-card h2{ font-size:19px; }
+  .sf-hero-card p{ font-size:12px; }
+  .sf-hero-card .ib{ font-size:11px; padding:5px 10px; }
+  .sf-promo-strip{ font-size:12px; padding:10px 12px; }
+  .sf-rows-h{ font-size:13px; margin:18px 0 10px; }
+  .sf-rows-h .n{ width:19px; height:19px; font-size:10.5px; }
+  .sf-row2{ padding:11px 12px; gap:11px; border-radius:13px; }
+  .sf-row2 .ic-tint{ width:36px; height:36px; border-radius:10px; }
+  .sf-row2 .m .t{ font-size:13.5px; }
+  .sf-row2 .m .s{ font-size:11px; }
+  .sf-row2 .fr .lbl{ font-size:8.5px; }
+  .sf-row2 .fr .v{ font-size:15px; }
+  .sf-track-btn{ font-size:13.5px; padding:12px; margin-top:14px; }
+  .sf-back{ font-size:13px; }
+  .sf-sec-h h2{ font-size:16.5px; }
+  .sf-sec-h .cap{ font-size:11.5px; }
+  .sf-card{ padding:15px 13px 13px; border-radius:15px; }
+  .sf-card .gb{ font-size:25px; }
+  .sf-card .gb small{ font-size:13px; }
+  .sf-card .title{ font-size:13.5px; }
+  .sf-card .sub{ font-size:11px; }
+  .sf-card .vd{ font-size:10.5px; padding:3px 9px; }
+  .sf-card .pr{ font-size:17px; }
+  .sf-card .pr .from{ font-size:10.5px; }
+  .sf-card .go{ width:30px; height:30px; }
+  .sf-card .ic-top{ width:40px; height:40px; border-radius:12px; }
+  .sf-tag{ font-size:9px; padding:3px 8px; }
+  .sf-side-card{ padding:16px; }
+  .sf-side-card h4{ font-size:14.5px; margin-bottom:12px; }
+  .sf-card-warn{ padding:13px 14px; }
+  .sf-card-warn .t{ font-size:13.5px; }
+  .sf-card-warn p{ font-size:11.5px; }
+  .wb .t{ font-size:13px; }
+  .wb p{ font-size:11px; }
+  .sf-contact{ font-size:13.5px; padding:10px; }
+  .sf-verify-note{ font-size:11.5px; padding:9px 11px; }
+  .sf-foot2{ margin-top:30px; padding-top:26px; }
+  .sf-foot-grid{ gap:20px; padding-bottom:20px; }
+  .sf-foot-grid h4{ font-size:13px; }
+  .sf-foot-grid .fcol > p, .sf-foot-grid .fcol button, .sf-foot-grid .fcol a{ font-size:12.5px; }
+  .sf-foot-base{ font-size:11px; }
+
+  /* ---------- MY STORE page ---------- */
+  .store-status{ gap:16px; }
+  .store-status .ss-left{ min-width:0; }
+  .ss-stats{ gap:20px; }
+  .ss-stats .m .n{ font-size:16px; margin-top:4px; }
+  .ss-stats .m .l{ font-size:11px; }
+  .store-status .ss-left > div:first-child h3{ font-size:16px !important; }
+  .store-url .u{ font-size:12.5px; }
+  .store-toggle{ font-size:12.5px; }
+  .store-share .btn{ font-size:13px !important; padding:10px 14px !important; }
+  .store-preview .sp-name{ font-size:16px; }
+  .store-preview .sp-tag{ font-size:12px; }
+  .store-preview .sp-logo{ width:42px; height:42px; }
+  .sx-tile{ padding:13px; }
+  .sx-tile .v{ font-size:16px; margin-top:7px; }
+  .sx-tile .lbl{ font-size:11px; }
+  .sx-tile .d{ font-size:11px; }
+  .sx-block{ padding:14px; }
+  .sx-h{ font-size:13px; margin-bottom:12px; }
+  .sx-bars{ height:120px; }
+  .sx-hrow .hl{ font-size:11px; width:48px; }
+  .sx-hrow .hv{ font-size:11px; }
+  .sx-top .nm{ font-size:13px; }
+  .sx-top .u{ font-size:11.5px; }
+  .sx-top .rev{ font-size:13px; width:54px; }
+  .sx-cust .ring{ width:84px; height:84px; }
+  .sx-cust .hole{ width:56px; height:56px; }
+  .sx-cust .hole .pc{ font-size:16px; }
+  .sx-cust .leg{ font-size:12px; }
+  .sx-src .sl{ font-size:11px; width:110px; }
+  .sx-src .sv{ font-size:11px; }
+  .promo{ padding:12px; gap:11px; }
+  .promo .pc-tag{ width:32px; height:32px; }
+  .promo .pc-main .code{ font-size:13.5px; }
+  .promo .pc-main .off-amt{ font-size:11px; }
+  .promo .pc-main .meta{ font-size:11px; }
+  .pn-dd, .pn-dd-btn{ width:100%; }
+  .pn-dd-menu{ width:100%; }
+  .price-net-row .markup-inline .mk-lbl{ width:100%; }
+
+  /* "Products & your prices" controls — organize into tidy grids on a phone */
+  .store-nets{ display:grid; grid-template-columns:1fr 1fr; gap:8px; align-items:stretch; margin-bottom:16px; }
+  .store-nets .lbl{ grid-column:1 / -1; margin:0; }
+  .store-nets .chip{ width:100%; justify-content:flex-start; padding:9px 13px; font-size:13px; }
+  .price-net-row{ gap:8px; }
+  .price-net-row .lbl{ flex-basis:100%; margin:0; }
+  .price-net-row .pn{ padding:8px 12px; font-size:12.5px; }
+  .price-net-row .markup-inline{ width:100%; margin-left:0; margin-top:8px; display:grid; grid-template-columns:repeat(4,1fr); gap:7px; }
+  .price-net-row .markup-inline .mk{ padding:9px 0; font-size:13px; text-align:center; }
+
+  /* Network picker (MTN / Telecel / AT iShare / AT BigTime): shrink the pills enough that
+     all four fit in view on a phone without scrolling or cropping (was overflowing past
+     the right edge). Keeps content-hugging widths — like the desktop row — with a smaller
+     badge, tighter gaps and padding; overflow-x stays as a fallback for the narrowest
+     screens rather than the primary fix. */
+  .pn-scroll{ flex-wrap:nowrap; gap:5px; overflow-x:auto; margin:0 -2px; padding:2px; scrollbar-width:none; -webkit-overflow-scrolling:touch; }
+  .pn-scroll::-webkit-scrollbar{ display:none; }
+  .pn-scroll .pn{ flex:0 0 auto; gap:4px; padding:6px 8px; font-size:11px; }
+  .pn-scroll .pn .netbadge{ width:16px !important; height:16px !important; font-size:5.5px !important; }
+
+  /* share kit modal card proportions inside the single-column layout */
+  .sk-stage{ min-height:0; padding:14px; }
+  .sk-card.sk-status{ max-width:180px; }
+  .sk-card.sk-square{ max-width:240px; }
+  .sk-card.sk-flyer{ max-width:220px; }
+  .sk-cap textarea{ font-size:12.5px; }
+
+  /* ---------- legal / terms + how-to guides ---------- */
+  .legal-sec h2{ font-size:18px; }
+  .legal-sec p, .legal-intro p{ font-size:14.5px; }
+  .legal-list li{ font-size:14px; }
+  .ht-head{ padding:13px 14px; }
+  .ht-ic{ width:38px; height:38px; }
+  .ht-title{ font-size:14.5px; }
+  .ht-sub{ font-size:11.5px; }
+  .ht-body{ padding:2px 14px 16px; }
+  .ht-steps li{ font-size:13px; }
+}
