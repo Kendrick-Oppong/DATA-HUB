@@ -217,7 +217,7 @@ export const VerificationScreen: React.FC = () => {
           <div className="text-xs">
             <strong className="text-foreground">How it works:</strong> Enter
             phone numbers (one per line) or upload a CSV file. Each number will
-            be checked against the MTN approved recipient list.
+            be checked against the approved recipient list.
           </div>
         </div>
       </div>
