@@ -7,8 +7,6 @@ import {
   Zap,
   FlagTriangleRight,
   ArrowRight,
-  CheckCircle2,
-  Clock,
 } from "lucide-react";
 import { Order, Transaction } from "../../types";
 import { SignalRail } from "../common/SignalRail";
@@ -143,30 +141,29 @@ export const CustomerDashboard: React.FC<CustomerDashboardProps> = ({
       )}
 
       {/* Latest MTN Successful Order */}
-      <div className="flex items-start gap-3 rounded-2xl border border-emerald-500/20 bg-emerald-500/10 p-4 text-xs">
-        <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-emerald-500/20 text-emerald-600 dark:text-emerald-400">
-          <CheckCircle2 className="size-4" />
-        </div>
+      <div className="flex items-center justify-between rounded-2xl border border-emerald-500/20 bg-emerald-500/10 p-4 text-xs">
+        <div className="flex items-center gap-3">
+          <SignalRail status="delivered" size="sm" />
 
-        <div className="flex-1 space-y-1.5">
-          <div className="font-semibold text-emerald-700 dark:text-emerald-400">
-            Latest MTN Successful Order
-          </div>
+          <div>
+            <span className="font-semibold text-emerald-700 dark:text-emerald-400">
+              Latest MTN Order:{" "}
+            </span>
 
-          <div className="text-muted-foreground">
-            Placed at Sep 14, 12:17 PM. Delivered at Sep 14, 01:27 PM
-          </div>
-
-          <div className="text-muted-foreground">Took about 1 hr 11 mins.</div>
-
-          <div className="flex items-center gap-1.5 text-muted-foreground">
-            <Clock className="size-4" />
-            <span>
-              Est. delivery: 1-2 hours. A validation process is currently
-              ongoing on the MTN system.
+            <span className="text-muted-foreground">
+              Delivered in 1h 11m. Validation completed.
             </span>
           </div>
         </div>
+
+        <Button
+          variant="link"
+          onClick={() => onNavigateTab("orders")}
+          className="h-auto shrink-0 px-0 text-xs"
+        >
+          View
+          <ArrowRight className="size-3.5" />
+        </Button>
       </div>
 
       {/* Quick Action Shortcuts */}
