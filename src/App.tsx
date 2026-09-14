@@ -707,9 +707,6 @@ export default function App() {
           onBackToPublic={() => navigateToPublic("home")}
           onNavigateToAuth={navigateToAuth}
           onNavigateToLegal={navigateToLegal}
-          theme={theme}
-          onSetTheme={handleSetTheme}
-          onOpenSecurityPins={() => setIsSecurityPinsOpen(true)}
         />
 
         {/* Credentials helper modal */}

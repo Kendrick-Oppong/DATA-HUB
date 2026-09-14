@@ -2,30 +2,17 @@
 
 import type { FormEvent } from "react";
 import { useEffect, useState } from "react";
-import {
-  ArrowLeft,
-  Check,
-  Info,
-  KeyRound,
-  Lock,
-  Palette,
-  ShieldCheck,
-  User,
-} from "lucide-react";
+import { Check, Info, Lock, User } from "lucide-react";
 
 import type { AppTheme, UserRole } from "../../types";
-import { Button } from "../ui/button";
-import { Badge } from "../ui/badge";
 import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "../ui/card";
 import { Tabs, TabsList, TabsTrigger } from "../ui/tabs";
-import { themeOptions } from "../../lib/themes";
 
 import { SignInView } from "./SignInView";
 import { SignUpView } from "./SignUpView";
@@ -61,9 +48,6 @@ interface AuthPageProps {
   onBackToPublic: () => void;
   onNavigateToAuth: (mode: AuthFlowMode) => void;
   onNavigateToLegal?: (page: "terms" | "privacy") => void;
-  theme: AppTheme;
-  onSetTheme: (theme: AppTheme) => void;
-  onOpenSecurityPins?: () => void;
 }
 
 export const AuthPage: React.FC<AuthPageProps> = ({
@@ -73,11 +57,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
   onBackToPublic,
   onNavigateToAuth,
   onNavigateToLegal,
-  theme,
-  onSetTheme,
-  onOpenSecurityPins,
 }) => {
-  const [showThemeMenu, setShowThemeMenu] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -492,112 +472,6 @@ export const AuthPage: React.FC<AuthPageProps> = ({
 
   return (
     <div className="flex min-h-screen flex-col bg-background text-foreground">
-      <header className="sticky top-0 z-40 border-b border-border/80 bg-card/85 px-4 py-3 backdrop-blur-md sm:px-8">
-        <div className="mx-auto flex w-full max-w-7xl items-center justify-between gap-4">
-          <div className="flex items-center gap-4">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={onBackToPublic}
-              className="gap-1.5 text-xs font-semibold text-muted-foreground hover:text-foreground"
-            >
-              <ArrowLeft className="size-3.5" />
-              <span>Back to Storefront</span>
-            </Button>
-
-            <div className="hidden h-4 w-px bg-border sm:block" />
-
-            <button
-              type="button"
-              onClick={onBackToPublic}
-              className="flex items-center gap-2.5"
-            >
-              <div className="flex size-8 items-center justify-center rounded-xl bg-primary text-xs font-black text-primary-foreground">
-                SDH
-              </div>
-
-              <div className="hidden items-center gap-1.5 sm:flex">
-                <span className="text-sm font-extrabold tracking-tight">
-                  Smart Data Hub
-                </span>
-
-                <Badge
-                  variant="outline"
-                  className="border-primary/30 px-1.5 py-0 text-[10px] font-bold text-primary"
-                >
-                  Ghana
-                </Badge>
-              </div>
-            </button>
-          </div>
-
-          <div className="flex items-center gap-2">
-            {onOpenSecurityPins && (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={onOpenSecurityPins}
-                className="h-8 gap-1.5 rounded-lg text-xs font-semibold"
-              >
-                <KeyRound className="size-3.5 text-primary" />
-
-                <span className="hidden sm:inline">
-                  Credentials Cheat Sheet
-                </span>
-
-                <span className="sm:hidden">Credentials</span>
-              </Button>
-            )}
-
-            <div className="relative">
-              <Button
-                variant="outline"
-                size="icon-sm"
-                onClick={() => setShowThemeMenu((value) => !value)}
-                title="Change Theme"
-                className="size-8 rounded-lg"
-              >
-                <Palette className="size-3.5" />
-              </Button>
-
-              {showThemeMenu && (
-                <div className="absolute right-0 z-50 mt-2 w-48 rounded-xl border border-border bg-card p-1.5 shadow-lg">
-                  <div className="px-2.5 py-1.5 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
-                    Select Theme
-                  </div>
-
-                  {themeOptions.map((option) => (
-                    <button
-                      key={option.id}
-                      type="button"
-                      onClick={() => {
-                        onSetTheme(option.id);
-                        setShowThemeMenu(false);
-                      }}
-                      className={`flex w-full items-center justify-between rounded-lg px-2.5 py-2 text-xs font-semibold transition-colors ${
-                        theme === option.id
-                          ? "bg-primary/10 text-primary"
-                          : "text-foreground hover:bg-muted"
-                      }`}
-                    >
-                      <span className="flex items-center gap-2">
-                        <span
-                          className={`size-2.5 rounded-full ${option.dot}`}
-                        />
-
-                        {option.name}
-                      </span>
-
-                      {theme === option.id && <Check className="size-3.5" />}
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      </header>
-
       <main className="flex flex-1 items-center justify-center bg-gradient-to-br from-primary/[0.03] via-background to-amber-500/[0.03] p-4 sm:p-6 lg:p-10">
         <div className="mx-auto w-full max-w-3xl">
           {redirectReason && (
