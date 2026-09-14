@@ -1,5 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { Clock, Search, SlidersHorizontal, ArrowUpDown } from "lucide-react";
+import {
+  Clock,
+  Search,
+  SlidersHorizontal,
+  ArrowUpDown,
+  FlagTriangleRight,
+} from "lucide-react";
 import { Order } from "../../../types";
 import { Button } from "../../ui/button";
 import { Input } from "../../ui/input";
@@ -27,6 +33,7 @@ import {
   SelectValue,
 } from "../../ui/select";
 import { PaginationHelper } from "./PaginationHelper";
+import { ReportOrderModal } from "../ReportOrderModal";
 
 interface CustomerOrdersViewProps {
   orders: Order[];
@@ -37,6 +44,10 @@ export const CustomerOrdersView: React.FC<CustomerOrdersViewProps> = ({
   orders,
   onOpenReceipt,
 }) => {
+  const [reportModalOpen, setReportModalOpen] = useState(false);
+  const [selectedOrderForReport, setSelectedOrderForReport] =
+    useState<Order | null>(null);
+
   const ORDERS_PER_PAGE = 5;
 
   const [orderSearch, setOrderSearch] = useState("");
@@ -45,6 +56,21 @@ export const CustomerOrdersView: React.FC<CustomerOrdersViewProps> = ({
   const [orderServiceFilter, setOrderServiceFilter] = useState<string>("all");
   const [orderSortBy, setOrderSortBy] = useState<string>("newest");
   const [ordersPage, setOrdersPage] = useState(1);
+
+  const handleOpenReport = (order: Order) => {
+    setSelectedOrderForReport(order);
+    setReportModalOpen(true);
+  };
+
+  const handleCloseReportModal = () => {
+    setReportModalOpen(false);
+    setSelectedOrderForReport(null);
+  };
+
+  const handleReportSubmitted = (report: any) => {
+    console.log("Report submitted:", report);
+    handleCloseReportModal();
+  };
 
   // Reset pagination on filter change
   useEffect(() => {
@@ -321,13 +347,9 @@ export const CustomerOrdersView: React.FC<CustomerOrdersViewProps> = ({
 
                     <SelectItem value="oldest">Oldest first</SelectItem>
 
-                    <SelectItem value="amount-high">
-                      Highest amount
-                    </SelectItem>
+                    <SelectItem value="amount-high">Highest amount</SelectItem>
 
-                    <SelectItem value="amount-low">
-                      Lowest amount
-                    </SelectItem>
+                    <SelectItem value="amount-low">Lowest amount</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -378,7 +400,7 @@ export const CustomerOrdersView: React.FC<CustomerOrdersViewProps> = ({
                 <TableHead>Date</TableHead>
                 <TableHead className="text-right">Amount</TableHead>
                 <TableHead className="text-center">Status</TableHead>
-                <TableHead className="text-right">Receipt</TableHead>
+                <TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
 
@@ -472,14 +494,29 @@ export const CustomerOrdersView: React.FC<CustomerOrdersViewProps> = ({
                     </TableCell>
 
                     <TableCell className="text-right">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => onOpenReceipt(order)}
-                        className="h-7 px-2.5 text-xs font-bold"
-                      >
-                        Receipt
-                      </Button>
+                      <div className="flex items-center justify-end gap-1.5">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => onOpenReceipt(order)}
+                          className="h-7 rounded-full px-2.5 text-xs font-semibold"
+                        >
+                          Receipt
+                        </Button>
+
+                        {order.status !== "processing" && (
+                          <Button
+                            variant="ghost"
+                            size="icon-xs"
+                            onClick={() => handleOpenReport(order)}
+                            title="File a report"
+                            aria-label="File a report"
+                            className="text-muted-foreground hover:text-foreground"
+                          >
+                            <FlagTriangleRight className="size-3.5 text-destructive" />
+                          </Button>
+                        )}
+                      </div>
                     </TableCell>
                   </TableRow>
                 ))
@@ -518,6 +555,14 @@ export const CustomerOrdersView: React.FC<CustomerOrdersViewProps> = ({
           </div>
         </CardContent>
       </Card>
+
+      {/* Report Order Modal */}
+      <ReportOrderModal
+        isOpen={reportModalOpen}
+        onClose={handleCloseReportModal}
+        order={selectedOrderForReport}
+        onReportSubmitted={handleReportSubmitted}
+      />
     </div>
   );
 };

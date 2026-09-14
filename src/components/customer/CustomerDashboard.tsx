@@ -1,12 +1,14 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Wifi,
   PhoneCall,
   GraduationCap,
   ShieldCheck,
   Zap,
-  RotateCcw,
+  FlagTriangleRight,
   ArrowRight,
+  CheckCircle2,
+  Clock,
 } from "lucide-react";
 import { Order, Transaction } from "../../types";
 import { SignalRail } from "../common/SignalRail";
@@ -26,6 +28,7 @@ import {
   TableRow,
   TableCell,
 } from "../ui/table";
+import { ReportOrderModal } from "./ReportOrderModal";
 
 interface CustomerDashboardProps {
   walletBalance: number;
@@ -45,8 +48,27 @@ export const CustomerDashboard: React.FC<CustomerDashboardProps> = ({
   onOpenReceipt,
   onRepeatOrder,
 }) => {
+  const [reportModalOpen, setReportModalOpen] = useState(false);
+  const [selectedOrderForReport, setSelectedOrderForReport] =
+    useState<Order | null>(null);
+
   const pendingOrders = orders.filter((o) => o.status === "processing");
   const recentOrders = orders.slice(0, 5);
+
+  const handleOpenReport = (order: Order) => {
+    setSelectedOrderForReport(order);
+    setReportModalOpen(true);
+  };
+
+  const handleCloseReportModal = () => {
+    setReportModalOpen(false);
+    setSelectedOrderForReport(null);
+  };
+
+  const handleReportSubmitted = (report: any) => {
+    console.log("Report submitted:", report);
+    handleCloseReportModal();
+  };
 
   return (
     <div className="space-y-6">
@@ -95,7 +117,7 @@ export const CustomerDashboard: React.FC<CustomerDashboardProps> = ({
 
       {/* Pending Dispatch Warning */}
       {pendingOrders.length > 0 && (
-        <div className="flex items-center justify-between rounded-2xl border border-amber-500/20 bg-amber-500/10 p-4 text-xs text-amber-950 dark:text-amber-200">
+        <div className="flex items-center justify-between rounded-2xl border border-amber-500/20 bg-amber-500/10 p-4 text-xs">
           <div className="flex items-center gap-3">
             <SignalRail status="processing" size="sm" />
 
@@ -119,6 +141,33 @@ export const CustomerDashboard: React.FC<CustomerDashboardProps> = ({
           </Button>
         </div>
       )}
+
+      {/* Latest MTN Successful Order */}
+      <div className="flex items-start gap-3 rounded-2xl border border-emerald-500/20 bg-emerald-500/10 p-4 text-xs">
+        <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-emerald-500/20 text-emerald-600 dark:text-emerald-400">
+          <CheckCircle2 className="size-4" />
+        </div>
+
+        <div className="flex-1 space-y-1.5">
+          <div className="font-semibold text-emerald-700 dark:text-emerald-400">
+            Latest MTN Successful Order
+          </div>
+
+          <div className="text-muted-foreground">
+            Placed at Sep 14, 12:17 PM. Delivered at Sep 14, 01:27 PM
+          </div>
+
+          <div className="text-muted-foreground">Took about 1 hr 11 mins.</div>
+
+          <div className="flex items-center gap-1.5 text-muted-foreground">
+            <Clock className="size-4" />
+            <span>
+              Est. delivery: 1-2 hours. A validation process is currently
+              ongoing on the MTN system.
+            </span>
+          </div>
+        </div>
+      </div>
 
       {/* Quick Action Shortcuts */}
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-5">
@@ -329,16 +378,18 @@ export const CustomerDashboard: React.FC<CustomerDashboardProps> = ({
                           Receipt
                         </Button>
 
-                        <Button
-                          variant="ghost"
-                          size="icon-xs"
-                          onClick={() => onRepeatOrder(order)}
-                          title="Repeat this purchase"
-                          aria-label="Repeat this purchase"
-                          className="text-muted-foreground hover:text-foreground"
-                        >
-                          <RotateCcw className="size-3.5" />
-                        </Button>
+                        {order.status !== "processing" && (
+                          <Button
+                            variant="ghost"
+                            size="icon-xs"
+                            onClick={() => handleOpenReport(order)}
+                            title="File a report"
+                            aria-label="File a report"
+                            className="text-muted-foreground hover:text-foreground"
+                          >
+                            <FlagTriangleRight className="size-3.5 text-destructive" />
+                          </Button>
+                        )}
                       </div>
                     </TableCell>
                   </TableRow>
@@ -348,6 +399,14 @@ export const CustomerDashboard: React.FC<CustomerDashboardProps> = ({
           </Table>
         </CardContent>
       </Card>
+
+      {/* Report Order Modal */}
+      <ReportOrderModal
+        isOpen={reportModalOpen}
+        onClose={handleCloseReportModal}
+        order={selectedOrderForReport}
+        onReportSubmitted={handleReportSubmitted}
+      />
     </div>
   );
 };

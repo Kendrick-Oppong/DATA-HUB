@@ -1,4 +1,3 @@
-
 import React from "react";
 import {
   Bell,
@@ -103,11 +102,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   };
 
   const profileInitials =
-    currentRole === "admin"
-      ? "AD"
-      : currentRole === "agent"
-        ? "KO"
-        : "KM";
+    currentRole === "admin" ? "AD" : currentRole === "agent" ? "KO" : "KM";
 
   const profileName =
     user?.name ||
@@ -155,13 +150,6 @@ export const Navbar: React.FC<NavbarProps> = ({
                   <span className="text-sm font-extrabold tracking-tight text-foreground">
                     Smart Data Hub
                   </span>
-
-                  <Badge
-                    variant="secondary"
-                    className="h-5 rounded-md bg-amber-500/15 px-1.5 text-[10px] font-bold text-amber-900 dark:text-amber-300"
-                  >
-                    GH₵
-                  </Badge>
                 </div>
 
                 <p className="-mt-0.5 text-[10px] text-muted-foreground">
@@ -169,19 +157,6 @@ export const Navbar: React.FC<NavbarProps> = ({
                 </p>
               </div>
             </button>
-
-            <Separator
-              orientation="vertical"
-              className="hidden h-6 lg:block"
-            />
-
-            <div className="hidden items-center lg:flex">
-              <SignalRail
-                status="online"
-                size="sm"
-                label="Gateway 99.8%"
-              />
-            </div>
           </div>
 
           {/* Actions */}
@@ -202,14 +177,10 @@ export const Navbar: React.FC<NavbarProps> = ({
 
                 <span>Search...</span>
 
-                <Kbd className="h-5 px-1.5 text-[10px]">
-                  ⌘K
-                </Kbd>
+                <Kbd className="h-5 px-1.5 text-[10px]">⌘K</Kbd>
               </TooltipTrigger>
 
-              <TooltipContent>
-                Search or jump to service
-              </TooltipContent>
+              <TooltipContent>Search or jump to service</TooltipContent>
             </Tooltip>
 
             {/* Security PINs */}
@@ -297,9 +268,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 )}
               </TooltipTrigger>
 
-              <TooltipContent>
-                Notifications
-              </TooltipContent>
+              <TooltipContent>Notifications</TooltipContent>
             </Tooltip>
 
             {/* Theme */}
@@ -323,10 +292,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 <ChevronDown className="hidden size-3 sm:block" />
               </DropdownMenuTrigger>
 
-              <DropdownMenuContent
-                align="end"
-                className="w-56"
-              >
+              <DropdownMenuContent align="end" className="w-56">
                 <DropdownMenuGroup>
                   <DropdownMenuLabel className="text-[10px] uppercase tracking-wider text-muted-foreground">
                     Select Theme Archetype
@@ -334,9 +300,7 @@ export const Navbar: React.FC<NavbarProps> = ({
 
                   <DropdownMenuRadioGroup
                     value={theme}
-                    onValueChange={(value) =>
-                      onSetTheme(value as AppTheme)
-                    }
+                    onValueChange={(value) => onSetTheme(value as AppTheme)}
                   >
                     {themeOptions.map((option) => (
                       <DropdownMenuRadioItem
@@ -373,16 +337,11 @@ export const Navbar: React.FC<NavbarProps> = ({
                 <ChevronDown className="hidden size-3.5 text-muted-foreground sm:block" />
               </DropdownMenuTrigger>
 
-              <DropdownMenuContent
-                align="end"
-                className="w-64"
-              >
+              <DropdownMenuContent align="end" className="w-64">
                 {/* Profile Header */}
                 <div className="flex items-center justify-between gap-3 px-3 py-2">
                   <div className="min-w-0">
-                    <p className="truncate text-xs font-bold">
-                      {profileName}
-                    </p>
+                    <p className="truncate text-xs font-bold">{profileName}</p>
 
                     <p className="truncate text-[11px] text-muted-foreground">
                       {user?.phone || "024 419 2834"} • Verified
@@ -414,7 +373,6 @@ export const Navbar: React.FC<NavbarProps> = ({
                     }
                   >
                     Customer Dashboard
-
                     {currentRole === "customer" && (
                       <Check className="ml-auto size-3.5" />
                     )}
@@ -429,7 +387,6 @@ export const Navbar: React.FC<NavbarProps> = ({
                     }
                   >
                     Agent Workspace
-
                     {currentRole === "agent" && (
                       <Check className="ml-auto size-3.5" />
                     )}
@@ -445,7 +402,6 @@ export const Navbar: React.FC<NavbarProps> = ({
                   >
                     <span className="flex items-center gap-1.5">
                       Admin NOC Console
-
                       {!isAdminUnlocked && (
                         <Lock className="size-3 text-muted-foreground" />
                       )}
@@ -465,7 +421,6 @@ export const Navbar: React.FC<NavbarProps> = ({
                     }
                   >
                     Kofi Telecom Storefront
-
                     {currentRole === "storefront" && (
                       <Check className="ml-auto size-3.5" />
                     )}
@@ -480,7 +435,6 @@ export const Navbar: React.FC<NavbarProps> = ({
                     }
                   >
                     Public Marketing Site
-
                     {currentRole === "public" && (
                       <Check className="ml-auto size-3.5" />
                     )}
@@ -492,9 +446,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 {/* Account Actions */}
                 <DropdownMenuGroup>
                   {onOpenSecurityPins && (
-                    <DropdownMenuItem
-                      onClick={onOpenSecurityPins}
-                    >
+                    <DropdownMenuItem onClick={onOpenSecurityPins}>
                       <KeyRound className="size-3.5 text-primary" />
                       Security PINs Reference Sheet
                     </DropdownMenuItem>
@@ -513,9 +465,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                     )}
 
                   {onOpenAuth && (
-                    <DropdownMenuItem
-                      onClick={() => onOpenAuth("signin")}
-                    >
+                    <DropdownMenuItem onClick={() => onOpenAuth("signin")}>
                       <LogIn className="size-3.5" />
                       Switch Account / Sign In
                     </DropdownMenuItem>

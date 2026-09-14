@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   DollarSign,
   TrendingUp,
@@ -16,13 +16,18 @@ import {
   Sliders,
   Filter,
   Search,
-  MessageSquare
-} from 'lucide-react';
-import { AgentStoreConfig, DataBundle, Order, TelecomNetwork } from '../../types';
-import { SignalRail } from '../common/SignalRail';
+  MessageSquare,
+} from "lucide-react";
+import {
+  AgentStoreConfig,
+  DataBundle,
+  Order,
+  TelecomNetwork,
+} from "../../types";
+import { SignalRail } from "../common/SignalRail";
 
 interface AgentCommerceProps {
-  view: 'store-orders' | 'pricing' | 'analytics' | 'bulk-sms' | 'withdraw';
+  view: "store-orders" | "pricing" | "analytics" | "bulk-sms" | "withdraw";
   storeConfig: AgentStoreConfig;
   bundles: DataBundle[];
   orders: Order[];
@@ -40,20 +45,27 @@ export const AgentCommerce: React.FC<AgentCommerceProps> = ({
   onWithdrawSuccess,
 }) => {
   // Store Orders State
-  const [orderFilterNet, setOrderFilterNet] = useState<string>('all');
+  const [orderFilterNet, setOrderFilterNet] = useState<string>("all");
   const storeOrders = orders.filter((o) => o.agentMargin !== undefined);
   const filteredOrders = storeOrders.filter(
-    (o) => orderFilterNet === 'all' || o.network === orderFilterNet
+    (o) => orderFilterNet === "all" || o.network === orderFilterNet,
   );
 
   // Pricing State
-  const [customPrices, setCustomPrices] = useState<Record<string, number>>(() => {
-    const initial: Record<string, number> = {};
-    bundles.forEach((b) => {
-      initial[b.id] = Number((b.wholesalePrice * (1 + storeConfig.marginMarkupPercent / 100)).toFixed(2));
-    });
-    return initial;
-  });
+  const [customPrices, setCustomPrices] = useState<Record<string, number>>(
+    () => {
+      const initial: Record<string, number> = {};
+      bundles.forEach((b) => {
+        initial[b.id] = Number(
+          (
+            b.wholesalePrice *
+            (1 + storeConfig.marginMarkupPercent / 100)
+          ).toFixed(2),
+        );
+      });
+      return initial;
+    },
+  );
 
   const handlePriceChange = (id: string, val: string) => {
     const num = parseFloat(val) || 0;
@@ -61,10 +73,12 @@ export const AgentCommerce: React.FC<AgentCommerceProps> = ({
   };
 
   // Bulk SMS State
-  const [smsAudience, setSmsAudience] = useState<'all' | 'repeat' | 'inactive'>('all');
-  const [senderId, setSenderId] = useState('KOFI-DATA');
+  const [smsAudience, setSmsAudience] = useState<"all" | "repeat" | "inactive">(
+    "all",
+  );
+  const [senderId, setSenderId] = useState("KOFI-DATA");
   const [smsMessage, setSmsMessage] = useState(
-    'Weekend Special: Enjoy non-expiry MTN 5GB for GH₵ 29.50 today on Kofi Telecom! Visit smartdatahub.com/store/kofi-telecom to order now.'
+    "Weekend Special: Enjoy non-expiry MTN 5GB for GH₵ 29.50 today on Kofi Telecom! Visit smartdatahub.com/store/kofi-telecom to order now.",
   );
   const [isSendingSms, setIsSendingSms] = useState(false);
   const [smsSentSuccess, setSmsSentSuccess] = useState(false);
@@ -83,34 +97,67 @@ export const AgentCommerce: React.FC<AgentCommerceProps> = ({
   };
 
   // Withdraw Commissions State
-  const [withdrawAmount, setWithdrawAmount] = useState<string>('50');
-  const [momoProvider, setMomoProvider] = useState<'MTN' | 'Telecel'>('MTN');
-  const [momoPhone, setMomoPhone] = useState<string>('0244192834');
+  const [withdrawAmount, setWithdrawAmount] = useState<string>("50");
+  const [momoProvider, setMomoProvider] = useState<"MTN" | "Telecel">("MTN");
+  const [momoPhone, setMomoPhone] = useState<string>("0244192834");
+  const [momoName, setMomoName] = useState<string>("");
   const [isWithdrawing, setIsWithdrawing] = useState<boolean>(false);
-  const [withdrawSuccessInfo, setWithdrawSuccessInfo] = useState<{ ref: string; amount: number } | null>(null);
+  const [withdrawSuccessInfo, setWithdrawSuccessInfo] = useState<{
+    ref: string;
+    amount: number;
+  } | null>(null);
+  const [withdrawStep, setWithdrawStep] = useState<1 | 2 | 3>(1);
+  const [otpCode, setOtpCode] = useState<string>("");
+  const [isVerifyingOtp, setIsVerifyingOtp] = useState<boolean>(false);
 
   const handleExecuteWithdrawal = (e: React.FormEvent) => {
     e.preventDefault();
     const amount = parseFloat(withdrawAmount) || 0;
     if (amount <= 0 || amount > commissionBalance) {
-      alert('Invalid withdrawal amount. It cannot exceed your available commission balance.');
+      alert(
+        "Invalid withdrawal amount. It cannot exceed your available commission balance.",
+      );
       return;
     }
 
     setIsWithdrawing(true);
+    // Simulate sending OTP
+    setTimeout(() => {
+      setIsWithdrawing(false);
+      setWithdrawStep(2);
+    }, 1000);
+  };
+
+  const handleVerifyOtp = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (otpCode.length !== 6) {
+      alert("Please enter a valid 6-digit OTP code.");
+      return;
+    }
+
+    setIsVerifyingOtp(true);
+    const amount = parseFloat(withdrawAmount) || 0;
     const ref = `WDR-GH-${Math.floor(10000 + Math.random() * 90000)}`;
 
     setTimeout(() => {
-      setIsWithdrawing(false);
+      setIsVerifyingOtp(false);
       onWithdrawSuccess(amount, ref);
       setWithdrawSuccessInfo({ ref, amount });
-    }, 1800);
+      setWithdrawStep(3);
+    }, 1500);
+  };
+
+  const handleResetWithdrawal = () => {
+    setWithdrawStep(1);
+    setWithdrawSuccessInfo(null);
+    setOtpCode("");
+    setWithdrawAmount("50");
   };
 
   return (
     <div className="space-y-6">
       {/* VIEW: STORE ORDERS */}
-      {view === 'store-orders' && (
+      {view === "store-orders" && (
         <div className="space-y-6">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-4 border-b border-border">
             <div>
@@ -119,19 +166,20 @@ export const AgentCommerce: React.FC<AgentCommerceProps> = ({
                 <span>Storefront Customer Orders</span>
               </h1>
               <p className="text-xs text-muted-foreground mt-0.5">
-                Orders placed through your public store link with automatic margin credit.
+                Orders placed through your public store link with automatic
+                margin credit.
               </p>
             </div>
 
             <div className="flex items-center gap-1.5">
-              {['all', 'MTN', 'Telecel', 'AirtelTigo'].map((n) => (
+              {["all", "MTN", "Telecel", "AirtelTigo"].map((n) => (
                 <button
                   key={n}
                   onClick={() => setOrderFilterNet(n)}
                   className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-colors cursor-pointer ${
                     orderFilterNet === n
-                      ? 'bg-primary text-primary-foreground'
-                      : 'bg-muted text-muted-foreground hover:text-foreground'
+                      ? "bg-primary text-primary-foreground"
+                      : "bg-muted text-muted-foreground hover:text-foreground"
                   }`}
                 >
                   {n}
@@ -156,11 +204,22 @@ export const AgentCommerce: React.FC<AgentCommerceProps> = ({
                 </thead>
                 <tbody className="divide-y divide-border/60">
                   {filteredOrders.map((o) => (
-                    <tr key={o.id} className="hover:bg-muted/30 transition-colors">
-                      <td className="py-3 font-mono font-bold text-foreground">{o.reference}</td>
-                      <td className="py-3 text-muted-foreground tabular-nums">{o.date}</td>
-                      <td className="py-3 font-mono text-foreground font-semibold">{o.recipientPhone}</td>
-                      <td className="py-3 font-medium text-foreground">{o.productName}</td>
+                    <tr
+                      key={o.id}
+                      className="hover:bg-muted/30 transition-colors"
+                    >
+                      <td className="py-3 font-mono font-bold text-foreground">
+                        {o.reference}
+                      </td>
+                      <td className="py-3 text-muted-foreground tabular-nums">
+                        {o.date}
+                      </td>
+                      <td className="py-3 font-mono text-foreground font-semibold">
+                        {o.recipientPhone}
+                      </td>
+                      <td className="py-3 font-medium text-foreground">
+                        {o.productName}
+                      </td>
                       <td className="py-3 text-right font-black text-foreground tabular-nums">
                         GH₵ {o.amount.toFixed(2)}
                       </td>
@@ -182,7 +241,7 @@ export const AgentCommerce: React.FC<AgentCommerceProps> = ({
       )}
 
       {/* VIEW: PRICING & MARGINS */}
-      {view === 'pricing' && (
+      {view === "pricing" && (
         <div className="space-y-6">
           <div className="flex justify-between items-center pb-4 border-b border-border">
             <div>
@@ -191,7 +250,8 @@ export const AgentCommerce: React.FC<AgentCommerceProps> = ({
                 <span>Wholesale vs. Retail Pricing Editor</span>
               </h1>
               <p className="text-xs text-muted-foreground mt-0.5">
-                Set custom prices for your storefront customers. You earn the difference instantly on each purchase.
+                Set custom prices for your storefront customers. You earn the
+                difference instantly on each purchase.
               </p>
             </div>
           </div>
@@ -212,14 +272,26 @@ export const AgentCommerce: React.FC<AgentCommerceProps> = ({
                   {bundles.map((b) => {
                     const price = customPrices[b.id] ?? b.retailPrice;
                     const profit = Math.max(0, price - b.wholesalePrice);
-                    const marginPercent = ((profit / b.wholesalePrice) * 100).toFixed(1);
+                    const marginPercent = (
+                      (profit / b.wholesalePrice) *
+                      100
+                    ).toFixed(1);
 
                     return (
-                      <tr key={b.id} className="hover:bg-muted/30 transition-colors">
+                      <tr
+                        key={b.id}
+                        className="hover:bg-muted/30 transition-colors"
+                      >
                         <td className="py-3 font-semibold text-foreground">
-                          <span className={`inline-block w-2 h-2 rounded-full mr-2 ${
-                            b.network === 'MTN' ? 'bg-amber-400' : b.network === 'Telecel' ? 'bg-red-500' : 'bg-blue-500'
-                          }`} />
+                          <span
+                            className={`inline-block w-2 h-2 rounded-full mr-2 ${
+                              b.network === "MTN"
+                                ? "bg-amber-400"
+                                : b.network === "Telecel"
+                                  ? "bg-red-500"
+                                  : "bg-blue-500"
+                            }`}
+                          />
                           {b.name} ({b.validity})
                         </td>
                         <td className="py-3 text-right font-mono text-muted-foreground tabular-nums">
@@ -233,7 +305,9 @@ export const AgentCommerce: React.FC<AgentCommerceProps> = ({
                             type="number"
                             step="0.5"
                             value={price}
-                            onChange={(e) => handlePriceChange(b.id, e.target.value)}
+                            onChange={(e) =>
+                              handlePriceChange(b.id, e.target.value)
+                            }
                             className="w-24 px-2 py-1 rounded-lg border border-input bg-background text-foreground font-mono text-right text-xs font-bold"
                           />
                         </td>
@@ -251,7 +325,7 @@ export const AgentCommerce: React.FC<AgentCommerceProps> = ({
       )}
 
       {/* VIEW: SALES ANALYTICS */}
-      {view === 'analytics' && (
+      {view === "analytics" && (
         <div className="space-y-6">
           <div className="pb-4 border-b border-border">
             <h1 className="text-2xl font-extrabold text-foreground tracking-tight flex items-center gap-2">
@@ -259,7 +333,8 @@ export const AgentCommerce: React.FC<AgentCommerceProps> = ({
               <span>Sales & Performance Analytics</span>
             </h1>
             <p className="text-xs text-muted-foreground mt-0.5">
-              Live metrics on customer volume, bundle popularity, and telecom network distribution.
+              Live metrics on customer volume, bundle popularity, and telecom
+              network distribution.
             </p>
           </div>
 
@@ -267,23 +342,32 @@ export const AgentCommerce: React.FC<AgentCommerceProps> = ({
             {/* 7-Day Revenue Trend (SVG Chart) */}
             <div className="p-6 rounded-3xl bg-card border border-border shadow-xs space-y-4">
               <div className="flex justify-between items-center">
-                <h3 className="font-bold text-sm text-foreground">7-Day Sales Volume (GH₵)</h3>
-                <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400">+24.8% vs last week</span>
+                <h3 className="font-bold text-sm text-foreground">
+                  7-Day Sales Volume (GH₵)
+                </h3>
+                <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400">
+                  +24.8% vs last week
+                </span>
               </div>
 
               {/* Responsive SVG Bar Chart */}
               <div className="h-44 w-full flex items-end justify-between gap-2 pt-6 px-2">
                 {[
-                  { day: 'Mon', val: 180, profit: 24 },
-                  { day: 'Tue', val: 240, profit: 36 },
-                  { day: 'Wed', val: 310, profit: 45 },
-                  { day: 'Thu', val: 280, profit: 40 },
-                  { day: 'Fri', val: 450, profit: 68 },
-                  { day: 'Sat', val: 520, profit: 82 },
-                  { day: 'Sun', val: 380, profit: 54 },
+                  { day: "Mon", val: 180, profit: 24 },
+                  { day: "Tue", val: 240, profit: 36 },
+                  { day: "Wed", val: 310, profit: 45 },
+                  { day: "Thu", val: 280, profit: 40 },
+                  { day: "Fri", val: 450, profit: 68 },
+                  { day: "Sat", val: 520, profit: 82 },
+                  { day: "Sun", val: 380, profit: 54 },
                 ].map((bar, i) => (
-                  <div key={i} className="flex-1 flex flex-col items-center gap-1.5 h-full justify-end">
-                    <span className="text-[10px] font-mono text-muted-foreground tabular-nums">GH₵{bar.val}</span>
+                  <div
+                    key={i}
+                    className="flex-1 flex flex-col items-center gap-1.5 h-full justify-end"
+                  >
+                    <span className="text-[10px] font-mono text-muted-foreground tabular-nums">
+                      GH₵{bar.val}
+                    </span>
                     <div
                       style={{ height: `${(bar.val / 550) * 100}%` }}
                       className="w-full max-w-[36px] bg-primary rounded-t-lg transition-all hover:bg-primary/80 relative group"
@@ -292,7 +376,9 @@ export const AgentCommerce: React.FC<AgentCommerceProps> = ({
                         Profit: GH₵{bar.profit}
                       </div>
                     </div>
-                    <span className="text-[10px] font-bold text-muted-foreground">{bar.day}</span>
+                    <span className="text-[10px] font-bold text-muted-foreground">
+                      {bar.day}
+                    </span>
                   </div>
                 ))}
               </div>
@@ -300,35 +386,52 @@ export const AgentCommerce: React.FC<AgentCommerceProps> = ({
 
             {/* Telecom Carrier Share */}
             <div className="p-6 rounded-3xl bg-card border border-border shadow-xs space-y-4">
-              <h3 className="font-bold text-sm text-foreground">Network Sales Breakdown</h3>
+              <h3 className="font-bold text-sm text-foreground">
+                Network Sales Breakdown
+              </h3>
               <div className="space-y-3 pt-2 text-xs">
                 <div>
                   <div className="flex justify-between font-semibold mb-1">
                     <span className="text-foreground">MTN Ghana (68%)</span>
-                    <span className="font-mono text-muted-foreground">GH₵ 2,140.00</span>
+                    <span className="font-mono text-muted-foreground">
+                      GH₵ 2,140.00
+                    </span>
                   </div>
                   <div className="w-full h-2.5 rounded-full bg-muted overflow-hidden">
-                    <div className="bg-amber-400 h-full rounded-full" style={{ width: '68%' }} />
+                    <div
+                      className="bg-amber-400 h-full rounded-full"
+                      style={{ width: "68%" }}
+                    />
                   </div>
                 </div>
 
                 <div>
                   <div className="flex justify-between font-semibold mb-1">
                     <span className="text-foreground">Telecel Ghana (22%)</span>
-                    <span className="font-mono text-muted-foreground">GH₵ 690.00</span>
+                    <span className="font-mono text-muted-foreground">
+                      GH₵ 690.00
+                    </span>
                   </div>
                   <div className="w-full h-2.5 rounded-full bg-muted overflow-hidden">
-                    <div className="bg-red-500 h-full rounded-full" style={{ width: '22%' }} />
+                    <div
+                      className="bg-red-500 h-full rounded-full"
+                      style={{ width: "22%" }}
+                    />
                   </div>
                 </div>
 
                 <div>
                   <div className="flex justify-between font-semibold mb-1">
                     <span className="text-foreground">AirtelTigo AT (10%)</span>
-                    <span className="font-mono text-muted-foreground">GH₵ 310.00</span>
+                    <span className="font-mono text-muted-foreground">
+                      GH₵ 310.00
+                    </span>
                   </div>
                   <div className="w-full h-2.5 rounded-full bg-muted overflow-hidden">
-                    <div className="bg-blue-600 h-full rounded-full" style={{ width: '10%' }} />
+                    <div
+                      className="bg-blue-600 h-full rounded-full"
+                      style={{ width: "10%" }}
+                    />
                   </div>
                 </div>
               </div>
@@ -338,7 +441,7 @@ export const AgentCommerce: React.FC<AgentCommerceProps> = ({
       )}
 
       {/* VIEW: BULK SMS CAMPAIGNS */}
-      {view === 'bulk-sms' && (
+      {view === "bulk-sms" && (
         <div className="max-w-3xl mx-auto space-y-6">
           <div className="pb-4 border-b border-border">
             <h1 className="text-2xl font-extrabold text-foreground tracking-tight flex items-center gap-2">
@@ -346,11 +449,15 @@ export const AgentCommerce: React.FC<AgentCommerceProps> = ({
               <span>Bulk SMS Campaign Dispatcher</span>
             </h1>
             <p className="text-xs text-muted-foreground mt-0.5">
-              Send promotional SMS alerts to your store customers with your custom sender name.
+              Send promotional SMS alerts to your store customers with your
+              custom sender name.
             </p>
           </div>
 
-          <form onSubmit={handleSendBulkSms} className="p-6 rounded-3xl bg-card border border-border shadow-xs space-y-5 text-xs">
+          <form
+            onSubmit={handleSendBulkSms}
+            className="p-6 rounded-3xl bg-card border border-border shadow-xs space-y-5 text-xs"
+          >
             {/* Audience Segment */}
             <div>
               <label className="block font-bold uppercase tracking-wider text-muted-foreground mb-1.5">
@@ -358,9 +465,9 @@ export const AgentCommerce: React.FC<AgentCommerceProps> = ({
               </label>
               <div className="grid grid-cols-3 gap-2">
                 {[
-                  { id: 'all', label: 'All Buyers', count: 145 },
-                  { id: 'repeat', label: 'Repeat Customers', count: 58 },
-                  { id: 'inactive', label: 'Inactive (>14d)', count: 42 },
+                  { id: "all", label: "All Buyers", count: 145 },
+                  { id: "repeat", label: "Repeat Customers", count: 58 },
+                  { id: "inactive", label: "Inactive (>14d)", count: 42 },
                 ].map((aud) => (
                   <button
                     key={aud.id}
@@ -368,12 +475,14 @@ export const AgentCommerce: React.FC<AgentCommerceProps> = ({
                     onClick={() => setSmsAudience(aud.id as any)}
                     className={`p-3 rounded-xl border text-center transition-all cursor-pointer ${
                       smsAudience === aud.id
-                        ? 'border-primary bg-primary/10 ring-2 ring-primary/30 font-bold text-foreground'
-                        : 'border-border bg-background hover:bg-muted text-muted-foreground'
+                        ? "border-primary bg-primary/10 ring-2 ring-primary/30 font-bold text-foreground"
+                        : "border-border bg-background hover:bg-muted text-muted-foreground"
                     }`}
                   >
                     <div className="text-xs">{aud.label}</div>
-                    <div className="text-[10px] text-primary font-bold">{aud.count} Contacts</div>
+                    <div className="text-[10px] text-primary font-bold">
+                      {aud.count} Contacts
+                    </div>
                   </button>
                 ))}
               </div>
@@ -398,7 +507,9 @@ export const AgentCommerce: React.FC<AgentCommerceProps> = ({
             <div>
               <div className="flex justify-between font-bold uppercase tracking-wider text-muted-foreground mb-1.5">
                 <span>Message Text</span>
-                <span className="font-mono">{smsMessage.length} / 160 (1 SMS page)</span>
+                <span className="font-mono">
+                  {smsMessage.length} / 160 (1 SMS page)
+                </span>
               </div>
               <textarea
                 rows={4}
@@ -412,9 +523,12 @@ export const AgentCommerce: React.FC<AgentCommerceProps> = ({
             {/* Cost & Submit */}
             <div className="pt-3 border-t border-border flex flex-col sm:flex-row justify-between items-center gap-3">
               <div>
-                <span className="text-muted-foreground">Estimated Campaign Cost:</span>
+                <span className="text-muted-foreground">
+                  Estimated Campaign Cost:
+                </span>
                 <div className="text-lg font-black text-foreground tabular-nums">
-                  GH₵ {smsUnitsCost} ({recipientCounts[smsAudience]} recipients @ GH₵ 0.04)
+                  GH₵ {smsUnitsCost} ({recipientCounts[smsAudience]} recipients
+                  @ GH₵ 0.04)
                 </div>
               </div>
 
@@ -440,7 +554,10 @@ export const AgentCommerce: React.FC<AgentCommerceProps> = ({
             {smsSentSuccess && (
               <div className="p-3 bg-emerald-500/15 border border-emerald-500/30 rounded-xl text-emerald-800 dark:text-emerald-300 font-bold flex items-center gap-2">
                 <CheckCircle2 className="w-4 h-4" />
-                <span>Campaign dispatched successfully to {recipientCounts[smsAudience]} handsets!</span>
+                <span>
+                  Campaign dispatched successfully to{" "}
+                  {recipientCounts[smsAudience]} handsets!
+                </span>
               </div>
             )}
           </form>
@@ -448,7 +565,7 @@ export const AgentCommerce: React.FC<AgentCommerceProps> = ({
       )}
 
       {/* VIEW: WITHDRAW COMMISSIONS */}
-      {view === 'withdraw' && (
+      {view === "withdraw" && (
         <div className="max-w-xl mx-auto space-y-6">
           <div className="pb-4 border-b border-border">
             <h1 className="text-2xl font-extrabold text-foreground tracking-tight flex items-center gap-2">
@@ -456,38 +573,59 @@ export const AgentCommerce: React.FC<AgentCommerceProps> = ({
               <span>Withdraw Commissions to Mobile Money</span>
             </h1>
             <p className="text-xs text-muted-foreground mt-0.5">
-              Payout is transferred instantly to your MTN MoMo or Telecel Cash wallet with 0% fee.
+              Payout is transferred instantly to your MTN MoMo or Telecel Cash
+              wallet with 0% fee.
             </p>
           </div>
 
-          {!withdrawSuccessInfo ? (
-            <form onSubmit={handleExecuteWithdrawal} className="p-6 rounded-3xl bg-card border border-border shadow-xs space-y-4 text-xs">
+          {/* Withdrawal Schedule Note */}
+          <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-950 dark:text-amber-200 text-xs">
+            <p className="font-semibold">Withdrawal Schedule:</p>
+            <p className="mt-1">
+              Withdrawals are processed instantly during business hours (8 AM -
+              8 PM GMT). Requests outside these hours are queued and processed
+              at 8 AM the next business day.
+            </p>
+          </div>
+
+          {/* Step 1: Withdrawal Form */}
+          {withdrawStep === 1 && (
+            <form
+              onSubmit={handleExecuteWithdrawal}
+              className="p-6 rounded-3xl bg-card border border-border shadow-xs space-y-4 text-xs"
+            >
               <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-amber-950 dark:text-amber-200">
-                <span className="text-[10px] uppercase font-bold tracking-wider block">Available to Withdraw</span>
-                <span className="text-2xl font-black tabular-nums">GH₵ {commissionBalance.toFixed(2)}</span>
+                <span className="text-[10px] uppercase font-bold tracking-wider block">
+                  Available to Withdraw
+                </span>
+                <span className="text-2xl font-black tabular-nums">
+                  GH₵ {commissionBalance.toFixed(2)}
+                </span>
               </div>
 
               <div>
-                <label className="block font-semibold text-muted-foreground mb-1">Select MoMo Network</label>
+                <label className="block font-semibold text-muted-foreground mb-1">
+                  Select MoMo Network
+                </label>
                 <div className="grid grid-cols-2 gap-2">
                   <button
                     type="button"
-                    onClick={() => setMomoProvider('MTN')}
+                    onClick={() => setMomoProvider("MTN")}
                     className={`py-2.5 rounded-xl border font-bold cursor-pointer ${
-                      momoProvider === 'MTN'
-                        ? 'bg-amber-400 text-amber-950 border-amber-500'
-                        : 'bg-muted/40 text-foreground border-border'
+                      momoProvider === "MTN"
+                        ? "bg-amber-400 text-amber-950 border-amber-500"
+                        : "bg-muted/40 text-foreground border-border"
                     }`}
                   >
                     MTN Mobile Money
                   </button>
                   <button
                     type="button"
-                    onClick={() => setMomoProvider('Telecel')}
+                    onClick={() => setMomoProvider("Telecel")}
                     className={`py-2.5 rounded-xl border font-bold cursor-pointer ${
-                      momoProvider === 'Telecel'
-                        ? 'bg-red-600 text-white border-red-700'
-                        : 'bg-muted/40 text-foreground border-border'
+                      momoProvider === "Telecel"
+                        ? "bg-red-600 text-white border-red-700"
+                        : "bg-muted/40 text-foreground border-border"
                     }`}
                   >
                     Telecel Cash
@@ -496,7 +634,9 @@ export const AgentCommerce: React.FC<AgentCommerceProps> = ({
               </div>
 
               <div>
-                <label className="block font-semibold text-muted-foreground mb-1">Beneficiary Mobile Number</label>
+                <label className="block font-semibold text-muted-foreground mb-1">
+                  Beneficiary Mobile Number
+                </label>
                 <input
                   type="tel"
                   required
@@ -507,7 +647,23 @@ export const AgentCommerce: React.FC<AgentCommerceProps> = ({
               </div>
 
               <div>
-                <label className="block font-semibold text-muted-foreground mb-1">Withdrawal Amount (GH₵)</label>
+                <label className="block font-semibold text-muted-foreground mb-1">
+                  Beneficiary Name
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={momoName}
+                  onChange={(e) => setMomoName(e.target.value)}
+                  placeholder="Full name on the MoMo account"
+                  className="w-full p-2.5 rounded-xl border border-input bg-background text-foreground"
+                />
+              </div>
+
+              <div>
+                <label className="block font-semibold text-muted-foreground mb-1">
+                  Withdrawal Amount (GH₵)
+                </label>
                 <input
                   type="number"
                   min="5"
@@ -527,27 +683,100 @@ export const AgentCommerce: React.FC<AgentCommerceProps> = ({
                 {isWithdrawing ? (
                   <>
                     <Loader2 className="w-4 h-4 animate-spin" />
-                    <span>Transferring to {momoProvider} Switch...</span>
+                    <span>Sending OTP...</span>
                   </>
                 ) : (
                   <>
-                    <span>Confirm Payout of GH₵ {parseFloat(withdrawAmount || '0').toFixed(2)}</span>
+                    <span>Continue to OTP Verification</span>
                     <ArrowRight className="w-4 h-4" />
                   </>
                 )}
               </button>
             </form>
-          ) : (
+          )}
+
+          {/* Step 2: OTP Verification */}
+          {withdrawStep === 2 && (
+            <form
+              onSubmit={handleVerifyOtp}
+              className="p-6 rounded-3xl bg-card border border-border shadow-xs space-y-4 text-xs"
+            >
+              <div className="text-center space-y-2">
+                <div className="w-12 h-12 rounded-full bg-primary/10 text-primary mx-auto flex items-center justify-center">
+                  <MessageSquare className="w-6 h-6" />
+                </div>
+                <h3 className="text-sm font-bold text-foreground">
+                  Enter OTP Code
+                </h3>
+                <p className="text-muted-foreground">
+                  A 6-digit code has been sent to your email. Enter it below to
+                  confirm your withdrawal of GH₵{" "}
+                  {parseFloat(withdrawAmount || "0").toFixed(2)}.
+                </p>
+              </div>
+
+              <div>
+                <label className="block font-semibold text-muted-foreground mb-1 text-center">
+                  OTP Code
+                </label>
+                <input
+                  type="text"
+                  maxLength={6}
+                  required
+                  value={otpCode}
+                  onChange={(e) =>
+                    setOtpCode(e.target.value.replace(/\D/g, ""))
+                  }
+                  placeholder="000000"
+                  className="w-full p-3 rounded-xl border border-input bg-background text-foreground font-mono text-center text-2xl font-bold tracking-widest"
+                />
+              </div>
+
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={handleResetWithdrawal}
+                  className="flex-1 py-3 rounded-xl border border-border bg-muted text-foreground font-bold text-xs hover:bg-muted/80 transition-all cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={isVerifyingOtp || otpCode.length !== 6}
+                  className="flex-1 py-3 rounded-xl bg-primary text-primary-foreground font-bold text-xs hover:bg-primary/90 transition-all flex items-center justify-center gap-2 shadow-md cursor-pointer disabled:opacity-50"
+                >
+                  {isVerifyingOtp ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      <span>Verifying...</span>
+                    </>
+                  ) : (
+                    <>
+                      <span>Confirm Withdrawal</span>
+                      <ArrowRight className="w-4 h-4" />
+                    </>
+                  )}
+                </button>
+              </div>
+            </form>
+          )}
+
+          {/* Step 3: Success */}
+          {withdrawStep === 3 && withdrawSuccessInfo && (
             <div className="p-8 rounded-3xl bg-card border border-border shadow-xl text-center space-y-4">
               <div className="w-16 h-16 rounded-full bg-emerald-500/10 text-emerald-500 mx-auto flex items-center justify-center">
                 <CheckCircle2 className="w-10 h-10" />
               </div>
-              <h3 className="text-xl font-bold text-foreground">Commission Paid Out!</h3>
+              <h3 className="text-xl font-bold text-foreground">
+                Commission Paid Out!
+              </h3>
               <p className="text-xs text-muted-foreground">
-                <strong>GH₵ {withdrawSuccessInfo.amount.toFixed(2)}</strong> has been transferred to your {momoProvider} wallet (Ref: <strong>{withdrawSuccessInfo.ref}</strong>).
+                <strong>GH₵ {withdrawSuccessInfo.amount.toFixed(2)}</strong> has
+                been transferred to your {momoProvider} wallet (Ref:{" "}
+                <strong>{withdrawSuccessInfo.ref}</strong>).
               </p>
               <button
-                onClick={() => setWithdrawSuccessInfo(null)}
+                onClick={handleResetWithdrawal}
                 className="px-6 py-2 rounded-xl bg-primary text-primary-foreground font-bold text-xs hover:bg-primary/90 cursor-pointer"
               >
                 Done

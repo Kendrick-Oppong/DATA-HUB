@@ -112,7 +112,8 @@ export interface AfaApplication {
   fullName: string;
   phoneNumber: string;
   ghanaCardNumber: string;
-  region: string;
+  location: string;
+  dateOfBirth: string;
   occupation: string;
   dateSubmitted: string;
   status: "under_review" | "approved" | "rejected" | "needs_correction";

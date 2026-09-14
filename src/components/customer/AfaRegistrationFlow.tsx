@@ -14,6 +14,7 @@ import {
   SlidersHorizontal,
   User,
   Wallet,
+  ArrowRight,
 } from "lucide-react";
 import { AfaApplication } from "../../types";
 import { SignalRail } from "../common/SignalRail";
@@ -131,7 +132,8 @@ export const AfaRegistrationFlow: React.FC<AfaRegistrationFlowProps> = ({
   const [fullName, setFullName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("0244192834");
   const [ghanaCard, setGhanaCard] = useState("GHA-728192834-1");
-  const [region, setRegion] = useState("Greater Accra");
+  const [location, setLocation] = useState("");
+  const [dateOfBirth, setDateOfBirth] = useState("");
   const [occupation, setOccupation] = useState("Agribusiness / Produce Retail");
 
   const [consent, setConsent] = useState(false);
@@ -243,8 +245,13 @@ export const AfaRegistrationFlow: React.FC<AfaRegistrationFlowProps> = ({
       return;
     }
 
-    if (!region) {
-      setSubmitError("Please select your region of residence.");
+    if (!location.trim()) {
+      setSubmitError("Please enter your location.");
+      return;
+    }
+
+    if (!dateOfBirth.trim()) {
+      setSubmitError("Please enter your date of birth.");
       return;
     }
 
@@ -261,7 +268,8 @@ export const AfaRegistrationFlow: React.FC<AfaRegistrationFlowProps> = ({
       fullName: fullName.trim(),
       phoneNumber: phoneNumber.trim(),
       ghanaCardNumber: ghanaCard.trim(),
-      region,
+      location: location.trim(),
+      dateOfBirth: dateOfBirth.trim(),
       occupation: occupation.trim(),
       dateSubmitted: new Date().toISOString().replace("T", " ").slice(0, 16),
       status: "under_review",
@@ -486,7 +494,10 @@ export const AfaRegistrationFlow: React.FC<AfaRegistrationFlowProps> = ({
                     Status
                   </Label>
 
-                  <Select value={statusFilter} onValueChange={setStatusFilter}>
+                  <Select
+                    value={statusFilter}
+                    onValueChange={(value) => setStatusFilter(value || "all")}
+                  >
                     <SelectTrigger
                       id="afa-status-filter"
                       className="h-9 w-full text-xs"
@@ -717,68 +728,40 @@ export const AfaRegistrationFlow: React.FC<AfaRegistrationFlowProps> = ({
           }
         }}
       >
-        <DialogContent
-          className="
-    flex
-    h-[90vh]
-    max-h-[90vh]
-    flex-col
-    gap-0
-    overflow-hidden
-    p-0
-    sm:max-w-xl
-  "
-        >
+        <DialogContent className="flex h-[90vh] max-h-[90vh] sm:max-w-lg flex-col gap-0 overflow-hidden rounded-3xl border border-border bg-card p-0 shadow-2xl">
           {/* ====================================================
               DIALOG HEADER (fixed)
               ==================================================== */}
 
-          <DialogHeader className="shrink-0 border-b border-border bg-gradient-to-br from-emerald-500/10 via-card to-primary/5 p-5 sm:p-6">
-            <div className="flex items-start gap-3">
-              <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
-                <ShieldCheck className="size-5" />
-              </div>
+          <DialogHeader className="relative shrink-0 overflow-hidden border-b border-border bg-gradient-to-br from-primary/10 via-card to-amber-500/10 p-5 sm:p-6">
+            <div className="absolute -right-12 -top-12 size-32 rounded-full bg-primary/5" />
+            <div className="absolute -bottom-16 left-1/3 size-40 rounded-full bg-amber-500/5" />
+            <div className="relative flex items-center justify-between gap-4">
+              <div className="flex items-center gap-3">
+                <div className="flex size-11 shrink-0 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-sm">
+                  <ShieldCheck className="size-5" />
+                </div>
 
-              <div className="min-w-0">
-                <DialogTitle className="text-base font-extrabold tracking-tight">
-                  New AFA Subscriber Registration
-                </DialogTitle>
+                <div className="min-w-0">
+                  <div className="flex items-center gap-2">
+                    <DialogTitle className="text-left text-base font-extrabold tracking-tight">
+                      New AFA Subscriber Registration
+                    </DialogTitle>
 
-                <DialogDescription className="mt-1 max-w-lg text-xs leading-relaxed">
-                  Register a Ghana SIM card for the subsidized telecom scheme.
-                </DialogDescription>
+                    <Badge
+                      variant="secondary"
+                      className="border-emerald-500/20 bg-emerald-500/15 px-2 py-0 text-[10px] font-bold text-emerald-700 dark:text-emerald-400"
+                    >
+                      Subsidized Tariff
+                    </Badge>
+                  </div>
+
+                  <DialogDescription className="mt-0.5 text-left text-xs">
+                    Register a Ghana SIM card for the subsidized telecom scheme.
+                  </DialogDescription>
+                </div>
               </div>
             </div>
-
-            {/* Progress */}
-            {!submitSuccess && (
-              <div className="mt-4 flex items-center gap-2">
-                <div className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">
-                  <span className="flex size-5 items-center justify-center rounded-full bg-emerald-500 text-[9px] text-white">
-                    1
-                  </span>
-                  Application
-                </div>
-
-                <div className="h-px flex-1 bg-border" />
-
-                <div className="flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
-                  <span className="flex size-5 items-center justify-center rounded-full border border-border text-[9px]">
-                    2
-                  </span>
-                  Review
-                </div>
-
-                <div className="h-px flex-1 bg-border" />
-
-                <div className="flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
-                  <span className="flex size-5 items-center justify-center rounded-full border border-border text-[9px]">
-                    3
-                  </span>
-                  Whitelist
-                </div>
-              </div>
-            )}
           </DialogHeader>
 
           {/* ====================================================
@@ -890,18 +873,33 @@ export const AfaRegistrationFlow: React.FC<AfaRegistrationFlowProps> = ({
                         </span>
                       </div>
 
-                      {/* Region */}
+                      {/* Location */}
                       <div className="flex min-h-12 items-center justify-between gap-4 px-4 py-3">
                         <div className="flex items-center gap-2.5">
                           <MapPin className="size-3.5 text-muted-foreground" />
 
                           <span className="text-[12px] font-medium text-muted-foreground">
-                            Region
+                            Location
                           </span>
                         </div>
 
                         <span className="text-xs font-semibold text-foreground">
-                          {submitSuccess.region}
+                          {submitSuccess.location}
+                        </span>
+                      </div>
+
+                      {/* Date of Birth */}
+                      <div className="flex min-h-12 items-center justify-between gap-4 px-4 py-3">
+                        <div className="flex items-center gap-2.5">
+                          <Briefcase className="size-3.5 text-muted-foreground" />
+
+                          <span className="text-[12px] font-medium text-muted-foreground">
+                            Date of birth
+                          </span>
+                        </div>
+
+                        <span className="text-xs font-semibold text-foreground">
+                          {submitSuccess.dateOfBirth}
                         </span>
                       </div>
 
@@ -966,16 +964,16 @@ export const AfaRegistrationFlow: React.FC<AfaRegistrationFlowProps> = ({
                 </div>
               </ScrollArea>
 
-              <DialogFooter className="shrink-0 border-t border-border bg-muted p-4">
-                <div className="pb-4 pr-4">
-                  <Button
-                    onClick={() => setShowModal(false)}
-                    className="w-full sm:w-auto"
-                  >
-                    Done
-                  </Button>
-                </div>
-              </DialogFooter>
+              <div className="shrink-0 border-t border-border bg-card p-4 sm:px-6">
+                <Button
+                  onClick={() => setShowModal(false)}
+                  size="lg"
+                  className="h-12 w-full gap-2 rounded-xl text-sm font-bold shadow-md"
+                >
+                  Done & Return to Dashboard
+                  <ArrowRight className="size-4" />
+                </Button>
+              </div>
             </>
           ) : (
             /* ==================================================
@@ -1040,15 +1038,11 @@ export const AfaRegistrationFlow: React.FC<AfaRegistrationFlowProps> = ({
                           id="afa-fullname"
                           type="text"
                           required
-                          placeholder="e.g. Kwame Mensah Addo"
+                          placeholder="Enter your full name"
                           value={fullName}
                           onChange={(e) => setFullName(e.target.value)}
                           className="h-10 text-xs"
                         />
-
-                        <p className="text-[10px] leading-relaxed text-muted-foreground">
-                          Enter your name exactly as shown on your Ghana Card.
-                        </p>
                       </div>
 
                       {/* Phone */}
@@ -1057,22 +1051,18 @@ export const AfaRegistrationFlow: React.FC<AfaRegistrationFlowProps> = ({
                           htmlFor="afa-phone"
                           className="text-[11px] font-semibold"
                         >
-                          Ghana phone number
+                          Phone number
                         </Label>
 
                         <Input
                           id="afa-phone"
                           type="tel"
                           required
-                          placeholder="0244192834"
+                          placeholder="Enter your phone number"
                           value={phoneNumber}
                           onChange={(e) => setPhoneNumber(e.target.value)}
                           className="h-10 text-xs"
                         />
-
-                        <p className="text-[10px] leading-relaxed text-muted-foreground">
-                          The SIM card you want to register.
-                        </p>
                       </div>
 
                       {/* Ghana Card */}
@@ -1088,47 +1078,51 @@ export const AfaRegistrationFlow: React.FC<AfaRegistrationFlowProps> = ({
                           id="afa-card"
                           type="text"
                           required
-                          placeholder="GHA-728192834-1"
+                          placeholder="Enter Ghana Card number"
                           value={ghanaCard}
                           onChange={(e) => setGhanaCard(e.target.value)}
                           className="h-10 text-xs uppercase"
                         />
-
-                        <p className="text-[10px] leading-relaxed text-muted-foreground">
-                          Must match your registered identity information.
-                        </p>
                       </div>
 
-                      {/* Region */}
+                      {/* Location */}
                       <div className="space-y-1.5">
                         <Label
-                          htmlFor="afa-region"
+                          htmlFor="afa-location"
                           className="text-[11px] font-semibold"
                         >
-                          Region of residence
+                          Location
                         </Label>
 
-                        <Select value={region} onValueChange={setRegion}>
-                          <SelectTrigger
-                            id="afa-region"
-                            className="!h-10 w-full text-xs"
-                          >
-                            <SelectValue placeholder="Select region" />
-                          </SelectTrigger>
-
-                          <SelectContent>
-                            {REGIONS.map((r) => (
-                              <SelectItem key={r} value={r}>
-                                {r} Region
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-
-                        <p className="text-[10px] leading-relaxed text-muted-foreground">
-                          Select your current region of residence.
-                        </p>
+                        <Input
+                          id="afa-location"
+                          type="text"
+                          required
+                          placeholder="Enter your location"
+                          value={location}
+                          onChange={(e) => setLocation(e.target.value)}
+                          className="h-10 text-xs"
+                        />
                       </div>
+
+                      {/* Date of Birth */}
+                    </div>
+                    <div className="space-y-1.5 w-full mt-4">
+                      <Label
+                        htmlFor="afa-dob"
+                        className="text-[11px] font-semibold"
+                      >
+                        Date of birth
+                      </Label>
+
+                      <Input
+                        id="afa-dob"
+                        type="date"
+                        required
+                        value={dateOfBirth}
+                        onChange={(e) => setDateOfBirth(e.target.value)}
+                        className="h-10 W-full text-xs"
+                      />
                     </div>
                   </section>
 
@@ -1268,29 +1262,33 @@ export const AfaRegistrationFlow: React.FC<AfaRegistrationFlowProps> = ({
                   FORM FOOTER (fixed)
                   ==================================================== */}
 
-              <DialogFooter className="shrink-0 border-t border-border bg-muted p-4-">
-                <div className="flex w-full gap-2 sm:w-auto p-4">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={handleCloseModal}
-                    className="flex-1 sm:flex-none"
-                  >
-                    Cancel
-                  </Button>
-
-                  <Button
-                    type="submit"
-                    disabled={!consent || !hasSufficientBalance}
-                    className="flex-1 gap-1.5 sm:flex-none"
-                  >
-                    <ShieldCheck className="size-4" />
-                    Submit application
-                  </Button>
-                </div>
-              </DialogFooter>
+              <div className="shrink-0 border-t border-border bg-card p-4 sm:px-6">
+                <Button
+                  type="submit"
+                  disabled={!consent || !hasSufficientBalance}
+                  size="lg"
+                  className="h-12 w-full gap-2 rounded-xl text-sm font-bold shadow-md"
+                >
+                  <span>Submit Application (GH₵ {fee.toFixed(2)})</span>
+                  <ArrowRight className="size-4" />
+                </Button>
+              </div>
             </form>
           )}
+
+          {/* ====================================================
+              MODAL FOOTER
+              ==================================================== */}
+
+          <DialogFooter className="m-0 shrink-0 rounded-none border-t border-border bg-muted/30 px-5 py-3 sm:justify-center">
+            <div className="flex items-center justify-center gap-2 text-xs font-medium text-muted-foreground">
+              <ShieldCheck className="size-4 shrink-0 text-emerald-600 dark:text-emerald-400" />
+
+              <span className="text-[11px]">
+                Secured by NIA & MoFA Verified Identity System
+              </span>
+            </div>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
     </div>
