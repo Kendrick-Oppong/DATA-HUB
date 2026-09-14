@@ -23,6 +23,7 @@ import {
   PanelLeftOpen,
   X,
   User,
+  LogOut,
 } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { UserRole, UserAccount } from "../../types";
@@ -49,6 +50,7 @@ export interface SidebarProps {
   user?: UserAccount | null;
   isMobileOpen?: boolean;
   onCloseMobile?: () => void;
+  onSignOut?: () => void;
 }
 
 type NavItem = {
@@ -73,6 +75,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   user,
   isMobileOpen = false,
   onCloseMobile,
+  onSignOut,
 }) => {
   // Hide on public and storefront
   if (currentRole === "public" || currentRole === "storefront") return null;
@@ -372,7 +375,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
     if (collapsed) {
       return (
-        <div className="border-t border-border/70 p-2 flex justify-center shrink-0">
+        <div className="border-t border-border/70 p-2 flex flex-col gap-2 shrink-0">
           <Tooltip>
             <TooltipTrigger
               render={
@@ -401,6 +404,26 @@ export const Sidebar: React.FC<SidebarProps> = ({
               </div>
             </TooltipContent>
           </Tooltip>
+          {onSignOut && (
+            <Tooltip>
+              <TooltipTrigger
+                render={
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={onSignOut}
+                    aria-label="Sign Out"
+                    className="flex size-10 items-center justify-center rounded-full text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-all cursor-pointer"
+                  >
+                    <LogOut className="size-4" />
+                  </Button>
+                }
+              />
+              <TooltipContent side="right">
+                <p className="text-xs font-bold text-foreground">Sign Out</p>
+              </TooltipContent>
+            </Tooltip>
+          )}
         </div>
       );
     }
@@ -410,7 +433,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
         <Button
           variant="ghost"
           onClick={() => select("profile")}
-          className={`group flex w-full h-auto items-center justify-start gap-3 rounded-2xl border p-2 text-left transition-all duration-150 cursor-pointer ${
+          className={`group flex w-full h-auto items-center justify-start gap-3  border p-2 text-left transition-all duration-150 cursor-pointer mb-2 ${
             isProfileActive
               ? "border-primary/40 bg-primary/10 text-primary shadow-xs ring-1 ring-primary/20"
               : "border-transparent hover:border-border/80 hover:bg-card/90 text-foreground"
@@ -451,6 +474,22 @@ export const Sidebar: React.FC<SidebarProps> = ({
             }`}
           />
         </Button>
+        {onSignOut && (
+          <Button
+            variant="ghost"
+            onClick={onSignOut}
+            className="group flex w-full h-auto items-center justify-start gap-3  border border-transparent p-2 text-left transition-all duration-150 cursor-pointer hover:border-destructive/30 hover:bg-destructive/5 text-muted-foreground hover:text-destructive"
+          >
+            <div className="flex size-8 shrink-0 items-center justify-center rounded-full bg-muted/50 group-hover:bg-destructive/10 transition-colors">
+              <LogOut className="size-4" />
+            </div>
+            <div className="min-w-0 flex-1">
+              <span className="text-xs font-semibold group-hover:text-destructive transition-colors">
+                Sign Out
+              </span>
+            </div>
+          </Button>
+        )}
       </div>
     );
   };
@@ -506,7 +545,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
             {/* Reseller Callout for Customers */}
             {!isCollapsed && currentRole === "customer" && (
-              <div className="mt-2 flex flex-col gap-2 rounded-2xl border border-primary/20 bg-primary/5 p-3">
+              <div className="mt-2 flex flex-col gap-2  border border-primary/20 bg-primary/5 p-3">
                 <div className="flex items-center gap-1.5 text-xs font-bold text-foreground">
                   <Sparkles className="size-3.5 text-primary shrink-0" />
                   <span>Sell data in Ghana</span>
@@ -591,7 +630,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
                   {/* Reseller Callout for Customers */}
                   {currentRole === "customer" && (
-                    <div className="mt-2 flex flex-col gap-2 rounded-2xl border border-primary/20 bg-primary/5 p-3">
+                    <div className="mt-2 flex flex-col gap-2  border border-primary/20 bg-primary/5 p-3">
                       <div className="flex items-center gap-1.5 text-xs font-bold text-foreground">
                         <Sparkles className="size-3.5 text-primary shrink-0" />
                         <span>Sell data in Ghana</span>

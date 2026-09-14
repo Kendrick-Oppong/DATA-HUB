@@ -976,12 +976,13 @@ export default function App() {
           unreadNotifications={0}
           openComplaintsCount={
             complaints.filter(
-              (c) => c.status === "open" || c.status === "investigating",
+              (c) => c.status === "open" || c.status === "pending",
             ).length
           }
           user={user}
           isMobileOpen={isMobileSidebarOpen}
           onCloseMobile={() => setIsMobileSidebarOpen(false)}
+          onSignOut={handleSignOut}
         />
 
         {/* Dynamic Content Main Pane */}
