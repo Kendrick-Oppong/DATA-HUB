@@ -33,8 +33,11 @@ import { SecurityPinsModal } from "./components/common/SecurityPinsModal";
 
 // Dedicated Auth & Security Screens
 import { AuthPage, AuthSuccessPayload } from "./components/auth/AuthPage";
-import { DEMO_ACCOUNTS } from "./components/auth/AuthModal";
 import { AdminPinGate } from "./components/auth/AdminPinGate";
+
+// Legal Pages
+import { TermsOfService } from "./components/legal/TermsOfService";
+import { PrivacyPolicy } from "./components/legal/PrivacyPolicy";
 
 // Dedicated Public Marketing Site & Navigation
 import { PublicMarketingSite } from "./components/public/PublicMarketingSite";
@@ -60,6 +63,7 @@ import { AdminOperations } from "./components/admin/AdminOperations";
 // Public Storefront
 import { PublicStorefront } from "./components/storefront/PublicStorefront";
 import FundWalletModal from "./components/common/FundWalletModal";
+import { DEMO_ACCOUNTS } from "./components/auth/auth.demo";
 
 export type AppRoute =
   | { type: "public"; tab: string }
@@ -70,7 +74,8 @@ export type AppRoute =
       redirectReason?: string | null;
     }
   | { type: "storefront" }
-  | { type: "dashboard"; role: "customer" | "agent" | "admin"; tab: string };
+  | { type: "dashboard"; role: "customer" | "agent" | "admin"; tab: string }
+  | { type: "legal"; page: "terms" | "privacy" };
 
 function parsePathToRoute(pathname: string, search = ""): AppRoute {
   const clean = pathname.replace(/\/$/, "") || "/";
@@ -85,6 +90,12 @@ function parsePathToRoute(pathname: string, search = ""): AppRoute {
       return { type: "auth", mode: "reset-pin" };
     }
     return { type: "auth", mode: "login" };
+  }
+  if (clean.startsWith("/terms") || clean.includes("/terms-of-service")) {
+    return { type: "legal", page: "terms" };
+  }
+  if (clean.startsWith("/privacy") || clean.includes("/privacy-policy")) {
+    return { type: "legal", page: "privacy" };
   }
   if (clean.startsWith("/store") || clean.startsWith("/storefront")) {
     return { type: "storefront" };
@@ -192,6 +203,8 @@ export default function App() {
         search = `?tab=${encodeURIComponent(newRoute.tab)}`;
       } else if (newRoute.type === "auth") {
         path = `/auth/${newRoute.mode}`;
+      } else if (newRoute.type === "legal") {
+        path = newRoute.page === "terms" ? "/terms" : "/privacy";
       } else if (newRoute.type === "storefront") {
         path = "/storefront";
       } else if (newRoute.type === "dashboard") {
@@ -233,6 +246,10 @@ export default function App() {
       redirectTargetRole: redirectTarget,
       redirectReason: reason,
     });
+  };
+
+  const navigateToLegal = (page: "terms" | "privacy") => {
+    navigateTo({ type: "legal", page });
   };
 
   const navigateToDashboard = (
@@ -660,6 +677,7 @@ export default function App() {
           redirectReason={route.redirectReason}
           onAuthSuccess={handleAuthSuccess}
           onBackToPublic={() => navigateToPublic("home")}
+          onNavigateToLegal={navigateToLegal}
           theme={theme}
           onSetTheme={handleSetTheme}
           onOpenSecurityPins={() => setIsSecurityPinsOpen(true)}
@@ -804,14 +822,22 @@ export default function App() {
     );
   }
 
-  // 4. DASHBOARD SHELL (/customer, /agent, /admin)
+  // 4. LEGAL PAGES (/terms, /privacy)
+  if (route.type === "legal") {
+    if (route.page === "terms") {
+      return <TermsOfService onBack={() => navigateToPublic("home")} />;
+    }
+    return <PrivacyPolicy onBack={() => navigateToPublic("home")} />;
+  }
+
+  // 5. DASHBOARD SHELL (/customer, /agent, /admin)
   // STRICT ROUTE GUARD: If not authenticated, DO NOT RENDER DASHBOARD OR DASHBOARD NAVBAR!
   if (!user) {
     return (
       <div className="min-h-screen bg-background text-foreground flex flex-col selection:bg-primary/20">
         <AuthPage
           initialMode="login"
-          redirectReason="Authentication Required: You must be signed in to access the Smart Data Hub dashboard. Please enter your phone number and 4-digit PIN, or register a new account."
+          redirectReason="Authentication Required: You must be signed in to access the Smart Data Hub dashboard. Please enter your phone number and password, or register a new account."
           onAuthSuccess={handleAuthSuccess}
           onBackToPublic={() => navigateToPublic("home")}
           theme={theme}
@@ -831,6 +857,11 @@ export default function App() {
         />
       </div>
     );
+  }
+
+  // Type guard for dashboard routes
+  if (route.type !== "dashboard") {
+    return null;
   }
 
   const currentRole = route.role;
