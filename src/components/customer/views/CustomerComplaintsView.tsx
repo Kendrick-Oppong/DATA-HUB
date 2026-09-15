@@ -443,7 +443,12 @@ export const CustomerComplaintsView: React.FC<CustomerComplaintsViewProps> = ({
             flex-col
             gap-0
             overflow-hidden
+            rounded-3xl
+            border
+            border-border
+            bg-card
             p-0
+            shadow-2xl
             sm:max-w-lg
           "
         >
@@ -451,8 +456,10 @@ export const CustomerComplaintsView: React.FC<CustomerComplaintsViewProps> = ({
               DIALOG HEADER (fixed)
               ==================================================== */}
 
-          <DialogHeader className="shrink-0 border-b border-border bg-gradient-to-br from-amber-500/10 via-card to-primary/5 p-5 sm:p-6">
-            <div className="flex items-start gap-3">
+          <DialogHeader className="relative shrink-0 overflow-hidden border-b border-border bg-gradient-to-br from-primary/10 via-card to-amber-500/10 p-5 sm:p-6">
+            <div className="absolute -right-12 -top-12 size-32 rounded-full bg-primary/5" />
+            <div className="absolute -bottom-16 left-1/3 size-40 rounded-full bg-amber-500/5" />
+            <div className="relative flex items-start gap-3">
               <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400">
                 <MessageSquareWarning className="size-5" />
               </div>
@@ -479,29 +486,22 @@ export const CustomerComplaintsView: React.FC<CustomerComplaintsViewProps> = ({
             className="flex min-h-0 flex-1 flex-col"
           >
             <ScrollArea className="min-h-0 flex-1 overflow-hidden">
-              <div className="space-y-6 p-5 sm:p-6">
+              <div className="p-5 sm:p-6 space-y-6">
                 {/* ================================================
-                    ISSUE DETAILS
+                    TICKET INFORMATION
                     ================================================ */}
 
-                <section>
-                  <div className="mb-4 flex items-start gap-3">
-                    <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                      <Tag className="size-4" />
+                <div className="space-y-4">
+                  <div className="flex items-center gap-2.5 border-b border-border pb-3">
+                    <div className="flex size-7 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                      <Tag className="size-3.5" />
                     </div>
-
-                    <div>
-                      <h3 className="text-xs font-bold text-foreground">
-                        Issue details
-                      </h3>
-
-                      <p className="mt-0.5 text-[10px] leading-relaxed text-muted-foreground">
-                        Tell us what kind of problem you're reporting.
-                      </p>
-                    </div>
+                    <h3 className="text-xs font-bold text-foreground">
+                      Ticket Information
+                    </h3>
                   </div>
 
-                  <div className="space-y-4">
+                  <div className="grid gap-4 sm:grid-cols-2">
                     <div className="space-y-1.5">
                       <Label
                         htmlFor="ticket-category"
@@ -550,7 +550,7 @@ export const CustomerComplaintsView: React.FC<CustomerComplaintsViewProps> = ({
                         htmlFor="ticket-order-ref"
                         className="text-[11px] font-semibold"
                       >
-                        Related order reference{" "}
+                        Order Reference{" "}
                         <span className="font-normal text-muted-foreground">
                           (optional)
                         </span>
@@ -564,33 +564,22 @@ export const CustomerComplaintsView: React.FC<CustomerComplaintsViewProps> = ({
                         onChange={(e) => setTicketOrderRef(e.target.value)}
                         className="h-10 text-xs"
                       />
-
-                      <p className="text-[10px] leading-relaxed text-muted-foreground">
-                        Helps us pull up the transaction faster.
-                      </p>
                     </div>
                   </div>
-                </section>
+                </div>
 
                 {/* ================================================
-                    DESCRIPTION
+                    ISSUE DESCRIPTION
                     ================================================ */}
 
-                <section>
-                  <div className="mb-4 flex items-start gap-3">
-                    <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-amber-500/10 text-amber-600 dark:text-amber-400">
-                      <FileText className="size-4" />
+                <div className="space-y-4">
+                  <div className="flex items-center gap-2.5 border-b border-border pb-3">
+                    <div className="flex size-7 shrink-0 items-center justify-center rounded-lg bg-amber-500/10 text-amber-600 dark:text-amber-400">
+                      <FileText className="size-3.5" />
                     </div>
-
-                    <div>
-                      <h3 className="text-xs font-bold text-foreground">
-                        Describe the issue
-                      </h3>
-
-                      <p className="mt-0.5 text-[10px] leading-relaxed text-muted-foreground">
-                        The more detail you give, the faster we can help.
-                      </p>
-                    </div>
+                    <h3 className="text-xs font-bold text-foreground">
+                      Issue Description
+                    </h3>
                   </div>
 
                   <div className="space-y-4">
@@ -618,7 +607,7 @@ export const CustomerComplaintsView: React.FC<CustomerComplaintsViewProps> = ({
                         htmlFor="ticket-message"
                         className="text-[11px] font-semibold"
                       >
-                        Detailed description
+                        Detailed Description
                       </Label>
 
                       <Textarea
@@ -637,13 +626,13 @@ export const CustomerComplaintsView: React.FC<CustomerComplaintsViewProps> = ({
                       </p>
                     </div>
                   </div>
-                </section>
+                </div>
 
                 {/* ================================================
-                    RESPONSE TIME NOTE
+                    SUPPORT INFO
                     ================================================ */}
 
-                <div className="flex items-start gap-2.5 rounded-xl border border-amber-500/20 bg-amber-500/5 p-3.5">
+                <div className="flex items-start gap-2.5 rounded-2xl border border-amber-500/20 bg-amber-500/5 p-3.5">
                   <Clock3 className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
 
                   <div>
@@ -664,28 +653,29 @@ export const CustomerComplaintsView: React.FC<CustomerComplaintsViewProps> = ({
                 FORM FOOTER (fixed)
                 ================================================== */}
 
-            <DialogFooter className="shrink-0 border-t border-border bg-muted p-4 sm:p-5">
-              <div className="flex w-full flex-col-reverse gap-2 sm:flex-row sm:justify-end">
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={handleCloseNewTicket}
-                  className="flex-1 sm:flex-none"
-                >
-                  Cancel
-                </Button>
-
-                <Button
-                  type="submit"
-                  disabled={!ticketSubject.trim() || !ticketMessage.trim()}
-                  className="flex-1 gap-1.5 sm:flex-none"
-                >
-                  <CheckCircle2 className="size-4" />
-                  Submit Ticket
-                </Button>
-              </div>
-            </DialogFooter>
+            <div className="shrink-0 border-t border-border bg-card p-4 sm:px-6">
+              <Button
+                type="submit"
+                disabled={!ticketSubject.trim() || !ticketMessage.trim()}
+                size="lg"
+                className="h-12 w-full gap-2 rounded-xl text-sm font-bold shadow-md"
+              >
+                <CheckCircle2 className="size-4" />
+                Submit Ticket
+              </Button>
+            </div>
           </form>
+
+          {/* Modal Footer */}
+          <DialogFooter className="m-0 shrink-0 rounded-none border-t border-border bg-muted/30 px-5 py-3 sm:justify-center">
+            <div className="flex items-center justify-center gap-2 text-xs font-medium text-muted-foreground">
+              <Headphones className="size-4 shrink-0 text-amber-600 dark:text-amber-400" />
+
+              <span className="text-[11px]">
+                SDH Network Operations Center (NOC) Support
+              </span>
+            </div>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
     </div>
