@@ -986,7 +986,7 @@ export default function App() {
 
         {/* Dynamic Content Main Pane */}
         <main
-          className={`${sidebarCollapsed ? "md:ml-20" : "md:ml-64"} ml-0 flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 sm:max-w-[95%] mx-auto w-full transition-[margin] duration-200`}
+          className={`${sidebarCollapsed ? "md:ml-20" : "md:ml-64"} ml-0 flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 md:max-w-[95%] mx-auto w-full transition-[margin] duration-200`}
         >
           {/* CUSTOMER PORTAL */}
           {currentRole === "customer" && (

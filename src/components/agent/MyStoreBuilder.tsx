@@ -113,6 +113,11 @@ export const MyStoreBuilder: React.FC<MyStoreBuilderProps> = ({
 }) => {
   const [config, setConfig] = useState<AgentStoreConfig>({
     ...storeConfig,
+    marginMarkupPercent:
+      typeof storeConfig?.marginMarkupPercent === "number" &&
+      !isNaN(storeConfig.marginMarkupPercent)
+        ? storeConfig.marginMarkupPercent
+        : 8,
     enabledNetworks: storeConfig.enabledNetworks || [
       "MTN",
       "Telecel",
@@ -611,8 +616,8 @@ export const MyStoreBuilder: React.FC<MyStoreBuilderProps> = ({
         className="space-y-6"
       >
         <ScrollArea className="w-full whitespace-nowrap pb-2">
-          <div className="w-full p-1">
-            <TabsList className="inline-flex w-full h-14 items-center justify-start rounded-2xl bg-muted/70 p-1.5 text-muted-foreground border border-border/80 shadow-2xs gap-1.5">
+          <div className="min-w-full p-1">
+            <TabsList className="inline-flex h-14 w-max min-w-full items-center justify-start gap-1.5 rounded-2xl border border-border/80 bg-muted/70 p-1.5 text-muted-foreground shadow-2xs">
               <TabsTrigger
                 value="branding"
                 className="h-6 rounded-xl px-4 py-2 text-[12px]  flex items-center gap-2 transition-all data-active:!bg-background data-active:text-foreground data-active:shadow-sm"
@@ -1077,68 +1082,81 @@ export const MyStoreBuilder: React.FC<MyStoreBuilderProps> = ({
           {/* Global Retail Markup Slider Card */}
           <Card className="rounded-2xl border border-border bg-card shadow-xs">
             <CardContent className="p-5 space-y-4">
-              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
-                <div>
-                  <h3 className="text-sm font-extrabold text-foreground flex items-center gap-2">
-                    <Sliders className="w-4 h-4 text-amber-500" />
-                    <span>Global Retail Markup Margin</span>
-                  </h3>
-                  <p className="text-xs text-muted-foreground">
-                    Automatically computes your retail selling prices above
-                    carrier wholesale cost.
-                  </p>
-                </div>
-                <div className="px-3 py-1.5 rounded-xl bg-primary/10 border border-primary/20 text-primary font-black text-sm tabular-nums">
-                  +{config.marginMarkupPercent}% Markup
-                </div>
-              </div>
+              {(() => {
+                const currentMarkup =
+                  typeof config.marginMarkupPercent === "number" &&
+                  !isNaN(config.marginMarkupPercent)
+                    ? config.marginMarkupPercent
+                    : 8;
 
-              {/* Slider & Quick presets */}
-              <div className="space-y-3">
-                <Slider
-                  value={[config.marginMarkupPercent]}
-                  onValueChange={(values) =>
-                    updateConfig({ marginMarkupPercent: values[0] })
-                  }
-                  min={2}
-                  max={25}
-                  step={1}
-                  className="w-full"
-                />
+                return (
+                  <>
+                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+                      <div>
+                        <h3 className="text-sm font-extrabold text-foreground flex items-center gap-2">
+                          <Sliders className="w-4 h-4 text-primary" />
+                          <span>Global Retail Markup Margin</span>
+                        </h3>
+                        <p className="text-xs text-muted-foreground">
+                          Automatically computes your retail selling prices above
+                          carrier wholesale cost.
+                        </p>
+                      </div>
+                      <div className="px-3 py-1.5 rounded-xl bg-primary/10 border border-primary/20 text-primary font-black text-sm tabular-nums">
+                        +{currentMarkup}% Markup
+                      </div>
+                    </div>
 
-                <div className="flex flex-wrap items-center justify-between gap-2 pt-1">
-                  <div className="flex items-center gap-1.5">
-                    <span className="text-[10px] uppercase font-bold text-muted-foreground">
-                      Quick Presets:
-                    </span>
-                    {[5, 8, 10, 12, 15, 20].map((p) => (
-                      <Button
-                        key={p}
-                        variant={
-                          config.marginMarkupPercent === p
-                            ? "default"
-                            : "outline"
-                        }
-                        size="sm"
-                        onClick={() => applyMarkupPercent(p)}
-                        className="h-7 px-2.5 text-[11px] font-bold cursor-pointer tabular-nums"
-                      >
-                        +{p}%
-                      </Button>
-                    ))}
-                  </div>
+                    {/* Slider & Quick presets */}
+                    <div className="space-y-3">
+                      <Slider
+                        value={[currentMarkup]}
+                        onValueChange={(values) => {
+                          const val = Array.isArray(values) ? values[0] : values;
+                          if (typeof val === "number" && !isNaN(val)) {
+                            updateConfig({ marginMarkupPercent: val });
+                          }
+                        }}
+                        min={2}
+                        max={25}
+                        step={1}
+                        className="w-full"
+                      />
 
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={handleResetCustomPrices}
-                    className="h-7 text-[11px] text-muted-foreground hover:text-foreground cursor-pointer flex items-center gap-1"
-                  >
-                    <RefreshCw className="w-3 h-3" />
-                    <span>Reset custom prices</span>
-                  </Button>
-                </div>
-              </div>
+                      <div className="flex flex-wrap items-center justify-between gap-2 pt-1">
+                        <div className="flex items-center gap-1.5">
+                          <span className="text-[10px] uppercase font-bold text-muted-foreground">
+                            Quick Presets:
+                          </span>
+                          {[5, 8, 10, 12, 15, 20].map((p) => (
+                            <Button
+                              key={p}
+                              variant={
+                                currentMarkup === p ? "default" : "outline"
+                              }
+                              size="sm"
+                              onClick={() => applyMarkupPercent(p)}
+                              className="h-7 px-2.5 text-[11px] font-bold cursor-pointer tabular-nums"
+                            >
+                              +{p}%
+                            </Button>
+                          ))}
+                        </div>
+
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={handleResetCustomPrices}
+                          className="h-7 text-[11px] text-muted-foreground hover:text-foreground cursor-pointer flex items-center gap-1"
+                        >
+                          <RefreshCw className="w-3 h-3" />
+                          <span>Reset custom prices</span>
+                        </Button>
+                      </div>
+                    </div>
+                  </>
+                );
+              })()}
             </CardContent>
           </Card>
 
@@ -1333,13 +1351,18 @@ export const MyStoreBuilder: React.FC<MyStoreBuilderProps> = ({
                   ) : (
                     paginatedBundles.map((b) => {
                       const customPrice = config.customPrices?.[b.id];
+                      const activeMarkup =
+                        typeof config.marginMarkupPercent === "number" &&
+                        !isNaN(config.marginMarkupPercent)
+                          ? config.marginMarkupPercent
+                          : 8;
                       const effectivePrice =
                         customPrice !== undefined
                           ? customPrice
                           : Number(
                               (
                                 b.wholesalePrice *
-                                (1 + config.marginMarkupPercent / 100)
+                                (1 + activeMarkup / 100)
                               ).toFixed(2),
                             );
                       const profit = Math.max(
