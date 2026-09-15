@@ -26,6 +26,13 @@ import { Badge } from "../../ui/badge";
 import { Input } from "../../ui/input";
 import { Label } from "../../ui/label";
 import { ScrollArea } from "../../ui/scroll-area";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../../ui/select";
 
 interface PromoCodeListProps {
   promoCodes: PromoCode[];
@@ -74,7 +81,7 @@ export const PromoCodeList: React.FC<PromoCodeListProps> = ({
           onClick={() => setCreateModalOpen(true)}
           className="h-8 gap-1.5 rounded-xl font-bold text-xs cursor-pointer shadow-xs"
         >
-          <Plus className="size-3.5" />
+          <Plus className="size-3.5 stroke-3" />
           <span>New Discount Code</span>
         </Button>
       </div>
@@ -106,7 +113,7 @@ export const PromoCodeList: React.FC<PromoCodeListProps> = ({
         </div>
       ) : (
         <div className="space-y-2">
-          {promoCodes.map((promo) => (
+          {[...promoCodes].reverse().map((promo) => (
             <div
               key={promo.code}
               className="p-3.5 rounded-2xl border border-border bg-card flex items-center justify-between gap-3 shadow-2xs hover:border-primary/40 transition-colors"
@@ -139,8 +146,8 @@ export const PromoCodeList: React.FC<PromoCodeListProps> = ({
                       }`}
                     >
                       {promo.type === "percent"
-                        ? `${promo.value}% Off`
-                        : `GH₵${promo.value} Off`}
+                        ? `${promo.value || 0}% Off`
+                        : `GH₵${promo.value || 0} Off`}
                     </Badge>
                     {!promo.active && (
                       <span className="text-[10px] font-bold text-muted-foreground">
@@ -307,33 +314,31 @@ const CreatePromoModal: React.FC<CreatePromoModalProps> = ({
               <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
                 Discount Type
               </Label>
-              <div className="grid grid-cols-2 gap-2">
-                <Button
+              <div className="flex gap-1.5 p-1 rounded-2xl bg-muted/60 border border-border/70">
+                <button
                   type="button"
-                  variant={type === "percent" ? "default" : "outline"}
                   onClick={() => setType("percent")}
-                  className={`h-11 rounded-xl text-xs font-bold gap-1.5 ${
+                  className={`flex-1 px-3 py-2 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
                     type === "percent"
-                      ? "shadow-sm ring-2 ring-primary/20"
-                      : "hover:bg-muted/70"
+                      ? "bg-primary text-primary-foreground shadow-xs"
+                      : "text-muted-foreground hover:text-foreground"
                   }`}
                 >
                   <Percent className="size-3.5" />
                   <span>Percentage (%)</span>
-                </Button>
+                </button>
 
-                <Button
+                <button
                   type="button"
-                  variant={type === "fixed" ? "default" : "outline"}
                   onClick={() => setType("fixed")}
-                  className={`h-11 rounded-xl text-xs font-bold gap-1.5 ${
+                  className={`flex-1 px-3 py-2 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
                     type === "fixed"
-                      ? "shadow-sm ring-2 ring-primary/20"
-                      : "hover:bg-muted/70"
+                      ? "bg-primary text-primary-foreground shadow-xs"
+                      : "text-muted-foreground hover:text-foreground"
                   }`}
                 >
                   <span>Fixed Cash (GH₵)</span>
-                </Button>
+                </button>
               </div>
             </div>
 
@@ -361,18 +366,21 @@ const CreatePromoModal: React.FC<CreatePromoModalProps> = ({
               <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
                 Eligible Products
               </Label>
-              <select
+              <Select
                 value={scope}
-                onChange={(e) => setScope(e.target.value)}
-                className="w-full h-11 px-3.5 rounded-xl border border-input bg-background text-foreground text-xs font-bold shadow-xs focus:outline-none focus:ring-2 focus:ring-ring"
+                onValueChange={(value) => setScope(value || "all")}
               >
-                <option value="all">
-                  All Carrier Bundles (MTN, Telecel, AirtelTigo)
-                </option>
-                <option value="mtn">MTN Bundles Only</option>
-                <option value="telecel">Telecel Bundles Only</option>
-                <option value="atigo">AirtelTigo Bundles Only</option>
-              </select>
+                <SelectTrigger className="!h-11 w-full rounded-xl">
+                  <SelectValue placeholder="Select product scope" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All products</SelectItem>
+                  <SelectItem value="mtn">MTN data</SelectItem>
+                  <SelectItem value="telecel">Telecel data</SelectItem>
+                  <SelectItem value="at">AT data</SelectItem>
+                  <SelectItem value="airtime">Airtime</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
 
             {/* Usage Limit Cap */}
@@ -398,16 +406,18 @@ const CreatePromoModal: React.FC<CreatePromoModalProps> = ({
             <Button
               type="button"
               variant="outline"
+              size="lg"
               onClick={onClose}
-              className="h-12 flex-1 rounded-xl text-xs font-bold cursor-pointer"
+              className="flex-1 rounded-full text-xs font-bold cursor-pointer"
             >
               Cancel
             </Button>
             <Button
               type="submit"
               form="promo-form"
+              size="lg"
               disabled={!code.trim() || !value}
-              className="h-12 flex-1 gap-2 rounded-xl text-xs font-bold shadow-md cursor-pointer"
+              className="flex-1 gap-2 rounded-full text-xs font-bold shadow-md cursor-pointer"
             >
               <span>Save & Activate Code</span>
               <ArrowRight className="size-4" />

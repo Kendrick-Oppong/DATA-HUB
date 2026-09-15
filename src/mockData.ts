@@ -1148,8 +1148,33 @@ export const INITIAL_STORE_CONFIG: AgentStoreConfig = {
     afa: false,
   },
   promoCodes: [
-    { code: "KOFI10", type: "percent", value: 5, discountPercent: 5, scope: "all", uses: 14, active: true },
-    { code: "STUDENT", type: "percent", value: 3, discountPercent: 3, scope: "all", uses: 6, active: true },
+    {
+      code: "WELCOME10",
+      type: "percent",
+      value: 10,
+      discountPercent: 10,
+      scope: "all",
+      uses: 0,
+      active: true,
+    },
+    {
+      code: "FLASH5",
+      type: "percent",
+      value: 5,
+      discountPercent: 5,
+      scope: "all",
+      uses: 0,
+      active: true,
+    },
+    {
+      code: "STUDENT",
+      type: "percent",
+      value: 3,
+      discountPercent: 3,
+      scope: "all",
+      uses: 0,
+      active: true,
+    },
   ],
 };
 

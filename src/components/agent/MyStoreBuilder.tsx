@@ -675,7 +675,7 @@ export const MyStoreBuilder: React.FC<MyStoreBuilderProps> = ({
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
             {/* Left Col: Live Preview Chip & Visual Branding */}
             <div className="lg:col-span-5 space-y-4">
-              <Card className="rounded-2xl border border-border bg-card shadow-xs">
+              <Card className="rounded-2xl bg-card shadow-xs">
                 <CardHeader className="pb-3 border-b border-border">
                   <div className="flex items-center justify-between">
                     <CardTitle className="text-sm font-extrabold flex items-center gap-1.5 text-foreground">
@@ -770,7 +770,7 @@ export const MyStoreBuilder: React.FC<MyStoreBuilderProps> = ({
 
             {/* Right Col: Store Identity Form */}
             <div className="lg:col-span-7">
-              <Card className="rounded-2xl border border-border bg-card shadow-xs">
+              <Card className="rounded-2xl bg-card shadow-xs">
                 <CardHeader className="border-b border-border pb-4">
                   <CardTitle className="text-sm font-extrabold flex items-center gap-1.5 text-foreground">
                     <Store className="w-4 h-4 text-primary" />
@@ -934,7 +934,7 @@ export const MyStoreBuilder: React.FC<MyStoreBuilderProps> = ({
           {/* Network and Service Toggles */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Network Toggles */}
-            <Card className="rounded-2xl border border-border bg-card shadow-xs">
+            <Card className="rounded-2xl bg-card shadow-xs">
               <CardHeader className="pb-3 border-b border-border">
                 <CardTitle className="text-sm font-extrabold flex items-center gap-1.5 text-foreground">
                   <Radio className="w-4 h-4 text-primary" />
@@ -1007,7 +1007,7 @@ export const MyStoreBuilder: React.FC<MyStoreBuilderProps> = ({
             </Card>
 
             {/* Service & Product Toggles */}
-            <Card className="rounded-2xl border border-border bg-card shadow-xs">
+            <Card className="rounded-2xl bg-card shadow-xs">
               <CardHeader className="pb-3 border-b border-border">
                 <CardTitle className="text-sm font-extrabold flex items-center gap-1.5 text-foreground">
                   <Layers className="w-4 h-4 text-primary" />
@@ -1080,7 +1080,7 @@ export const MyStoreBuilder: React.FC<MyStoreBuilderProps> = ({
           </div>
 
           {/* Global Retail Markup Slider Card */}
-          <Card className="rounded-2xl border border-border bg-card shadow-xs">
+          <Card className="rounded-2xl bg-card shadow-xs">
             <CardContent className="p-5 space-y-4">
               {(() => {
                 const currentMarkup =
@@ -1098,8 +1098,8 @@ export const MyStoreBuilder: React.FC<MyStoreBuilderProps> = ({
                           <span>Global Retail Markup Margin</span>
                         </h3>
                         <p className="text-xs text-muted-foreground">
-                          Automatically computes your retail selling prices above
-                          carrier wholesale cost.
+                          Automatically computes your retail selling prices
+                          above carrier wholesale cost.
                         </p>
                       </div>
                       <div className="px-3 py-1.5 rounded-xl bg-primary/10 border border-primary/20 text-primary font-black text-sm tabular-nums">
@@ -1112,7 +1112,9 @@ export const MyStoreBuilder: React.FC<MyStoreBuilderProps> = ({
                       <Slider
                         value={[currentMarkup]}
                         onValueChange={(values) => {
-                          const val = Array.isArray(values) ? values[0] : values;
+                          const val = Array.isArray(values)
+                            ? values[0]
+                            : values;
                           if (typeof val === "number" && !isNaN(val)) {
                             updateConfig({ marginMarkupPercent: val });
                           }
@@ -1161,7 +1163,7 @@ export const MyStoreBuilder: React.FC<MyStoreBuilderProps> = ({
           </Card>
 
           {/* Product Wholesale Catalog & Pricing Table (CustomerWalletView Table Architecture) */}
-          <Card className="border-border shadow-xs">
+          <Card className="rounded-2xl bg-card shadow-xs">
             <CardHeader className="border-b border-border pb-4">
               <div>
                 <CardTitle className="flex items-center gap-2 text-base font-extrabold text-foreground">
@@ -1489,7 +1491,7 @@ export const MyStoreBuilder: React.FC<MyStoreBuilderProps> = ({
           value="discounts"
           className="space-y-6 animate-in fade-in-50"
         >
-          <Card className="rounded-2xl border border-border bg-card shadow-xs">
+          <Card className="rounded-2xl bg-card shadow-xs">
             <CardContent className="p-6">
               <PromoCodeList
                 promoCodes={config.promoCodes || []}
@@ -1511,7 +1513,7 @@ export const MyStoreBuilder: React.FC<MyStoreBuilderProps> = ({
         >
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Store Link & QR Code Card */}
-            <Card className="rounded-2xl border border-border bg-card shadow-xs">
+            <Card className="rounded-2xl bg-card shadow-xs">
               <CardHeader className="border-b border-border pb-4">
                 <CardTitle className="text-sm font-extrabold flex items-center gap-1.5 text-foreground">
                   <Globe className="w-4 h-4 text-primary" />
@@ -1570,7 +1572,7 @@ export const MyStoreBuilder: React.FC<MyStoreBuilderProps> = ({
             </Card>
 
             {/* WhatsApp Channel & Direct Sharing */}
-            <Card className="rounded-2xl border border-border bg-card shadow-xs">
+            <Card className="rounded-2xl  bg-card shadow-xs">
               <CardHeader className="border-b border-border pb-4">
                 <CardTitle className="text-sm font-extrabold flex items-center gap-1.5 text-foreground">
                   <MessageCircle className="w-4 h-4 text-emerald-600" />
@@ -1693,7 +1695,7 @@ export const MyStoreBuilder: React.FC<MyStoreBuilderProps> = ({
         {/* TAB 6: RECENT STORE ORDERS (Table matching CustomerWalletView pattern) */}
         {/* ========================================================================= */}
         <TabsContent value="orders" className="space-y-6 animate-in fade-in-50">
-          <Card className="border-border shadow-xs">
+          <Card className="rounded-2xl bg-card shadow-xs">
             <CardHeader className="border-b border-border pb-4">
               <div>
                 <CardTitle className="flex items-center gap-2 text-base font-extrabold text-foreground">
