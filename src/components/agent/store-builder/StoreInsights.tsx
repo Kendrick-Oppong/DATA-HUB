@@ -138,8 +138,7 @@ export const StoreInsights: React.FC<StoreInsightsProps> = ({
     return {
       day: date.toLocaleDateString("en-US", { weekday: "short" }),
       orders: liveOrders > 0 ? liveOrders : MOCK_ORDERS_PER_DAY[i],
-      delivered:
-        liveOrders > 0 ? liveDelivered : MOCK_DELIVERED_PER_DAY[i],
+      delivered: liveOrders > 0 ? liveDelivered : MOCK_DELIVERED_PER_DAY[i],
     };
   });
 
@@ -192,8 +191,7 @@ export const StoreInsights: React.FC<StoreInsightsProps> = ({
       name,
       count,
       revenue:
-        count *
-        (storeOrders.find((o) => o.productName === name)?.amount || 0),
+        count * (storeOrders.find((o) => o.productName === name)?.amount || 0),
     }))
     .sort((a, b) => b.count - a.count)
     .slice(0, 5);
@@ -259,8 +257,14 @@ export const StoreInsights: React.FC<StoreInsightsProps> = ({
 
         <div className="flex h-36 items-end gap-2">
           {ordersPerDay.map((d, i) => (
-            <div key={i} className="group flex flex-1 flex-col items-center gap-1">
-              <div className="w-full relative flex flex-col justify-end" style={{ height: "120px" }}>
+            <div
+              key={i}
+              className="group flex flex-1 flex-col items-center gap-1"
+            >
+              <div
+                className="w-full relative flex flex-col justify-end"
+                style={{ height: "120px" }}
+              >
                 {/* pending bar (bottom) */}
                 <div
                   className="w-full rounded-sm bg-muted transition-all duration-500"
@@ -322,7 +326,9 @@ export const StoreInsights: React.FC<StoreInsightsProps> = ({
                     <div className="h-5 w-full overflow-hidden rounded-lg bg-muted/40">
                       <div
                         className="h-full rounded-lg bg-primary/75 transition-all duration-700"
-                        style={{ width: `${(h.count / maxHourlyCount) * 100}%` }}
+                        style={{
+                          width: `${(h.count / maxHourlyCount) * 100}%`,
+                        }}
                       />
                     </div>
                   </div>
@@ -339,13 +345,13 @@ export const StoreInsights: React.FC<StoreInsightsProps> = ({
         {/* Best Sellers Pie Chart */}
         <div className="flex flex-col justify-between rounded-2xl border border-border bg-card p-5 shadow-xs">
           <div>
-            <h3 className="mb-5 text-sm font-extrabold text-foreground">
+            <h3 className="mb-2 text-sm font-extrabold text-foreground">
               Best sellers
             </h3>
 
-            <div className="flex flex-col gap-6 sm:flex-row sm:items-center">
+            <div className="flex flex-col items-center gap-4">
               {/* Donut */}
-              <div className="relative mx-auto size-40 shrink-0 sm:mx-0">
+              <div className="relative shrink-0 size-40">
                 <PieChart slices={bestSellers} />
                 {/* Centre label */}
                 <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
@@ -359,26 +365,26 @@ export const StoreInsights: React.FC<StoreInsightsProps> = ({
               </div>
 
               {/* Legend */}
-              <div className="flex-1 space-y-2.5">
+              <div className="w-full space-y-1.5">
                 {bestSellers.map((item, i) => {
                   const pct = ((item.count / pieTotal) * 100).toFixed(0);
                   return (
-                    <div key={i} className="flex items-center justify-between gap-3">
-                      <div className="flex min-w-0 items-center gap-2">
+                    <div key={i} className="flex items-center gap-2">
+                      <div className="flex min-w-0 items-center gap-1.5">
                         <span
-                          className={`size-2.5 shrink-0 rounded-full ${PIE_COLORS_TW[i % PIE_COLORS_TW.length]}`}
+                          className={`size-2 shrink-0 rounded-full ${PIE_COLORS_TW[i % PIE_COLORS_TW.length]}`}
                         />
-                        <span className="truncate text-xs font-medium text-foreground">
+                        <span className="truncate text-[11px] font-medium text-foreground">
                           {item.name}
                         </span>
                       </div>
 
-                      <div className="flex shrink-0 items-center gap-3 text-[10px]">
-                        <span className="tabular-nums text-muted-foreground">
+                      <div className="flex shrink-0 items-center gap-2 text-[9px]">
+                        <span className="tabular-nums font-bold text-muted-foreground">
                           {pct}%
                         </span>
                         <span className="tabular-nums font-bold text-foreground">
-                          {item.count} sold
+                          {item.count}
                         </span>
                       </div>
                     </div>
