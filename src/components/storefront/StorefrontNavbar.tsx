@@ -24,6 +24,7 @@ interface StorefrontNavbarProps {
   onOpenShare: () => void;
   onSwitchToSDH: () => void;
   onScrollToPackages?: () => void;
+  onNavigateToTrack?: () => void;
 }
 
 export const StorefrontNavbar: React.FC<StorefrontNavbarProps> = ({
@@ -31,6 +32,7 @@ export const StorefrontNavbar: React.FC<StorefrontNavbarProps> = ({
   onOpenShare,
   onSwitchToSDH,
   onScrollToPackages,
+  onNavigateToTrack,
 }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -107,15 +109,15 @@ export const StorefrontNavbar: React.FC<StorefrontNavbarProps> = ({
             <span className="hidden sm:inline">Share Store</span>
           </Button>
 
-          {/* WhatsApp Agent Quick Chat */}
+          {/* Track Order */}
           <Button
             type="button"
             size="sm"
-            onClick={openWhatsApp}
+            onClick={onNavigateToTrack}
             className="h-9 px-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center gap-1.5 cursor-pointer shadow-xs"
           >
-            <MessageCircle className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">WhatsApp</span>
+            <ExternalLink className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">Track Order</span>
           </Button>
 
           {/* Mobile menu hamburger toggle */}
@@ -172,39 +174,54 @@ export const StorefrontNavbar: React.FC<StorefrontNavbarProps> = ({
             </Button>
 
             <Button
+              variant="outline"
               size="sm"
               onClick={() => {
                 setMobileMenuOpen(false);
-                openWhatsApp();
+                onNavigateToTrack?.();
               }}
-              className="w-full justify-center h-10 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs"
+              className="w-full justify-center h-10 rounded-xl font-bold text-xs"
             >
-              <MessageCircle className="w-3.5 h-3.5 mr-1.5" />
-              <span>WhatsApp</span>
+              <ExternalLink className="w-3.5 h-3.5 mr-1.5 text-emerald-600" />
+              <span>Track Order</span>
             </Button>
           </div>
 
-          {store.phone && (
-            <a
-              href={`tel:${store.phone}`}
-              className="flex items-center justify-center gap-2 p-2.5 rounded-xl border border-border text-xs font-bold text-foreground hover:bg-muted"
-            >
-              <Phone className="w-3.5 h-3.5 text-primary" />
-              <span>Call Merchant ({store.phone})</span>
-            </a>
-          )}
+          <Button
+            size="sm"
+            onClick={() => {
+              setMobileMenuOpen(false);
+              openWhatsApp();
+            }}
+            className="w-full justify-center h-10 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs"
+          >
+            <MessageCircle className="w-3.5 h-3.5 mr-1.5" />
+            <span>WhatsApp</span>
+          </Button>
 
-          {store.whatsappChannelUrl && (
-            <a
-              href={store.whatsappChannelUrl}
-              target="_blank"
-              rel="noreferrer"
-              className="flex items-center justify-center gap-2 p-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-xs font-bold text-emerald-700 dark:text-emerald-400"
-            >
-              <Radio className="w-3.5 h-3.5" />
-              <span>Join VIP WhatsApp Channel</span>
-            </a>
-          )}
+          <div className="grid grid-cols-2 gap-2">
+            {store.phone && (
+              <a
+                href={`tel:${store.phone}`}
+                className="flex items-center justify-center gap-1.5 p-2.5 rounded-xl border border-border text-xs font-bold text-foreground hover:bg-muted"
+              >
+                <Phone className="w-3.5 h-3.5 text-primary" />
+                <span className="truncate">Call</span>
+              </a>
+            )}
+
+            {store.whatsappChannelUrl && (
+              <a
+                href={store.whatsappChannelUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="flex items-center justify-center gap-1.5 p-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-xs font-bold text-emerald-700 dark:text-emerald-400"
+              >
+                <Radio className="w-3.5 h-3.5" />
+                <span className="truncate">Join VIP</span>
+              </a>
+            )}
+          </div>
 
           <div className="pt-2 border-t border-border/80">
             <button
@@ -212,9 +229,10 @@ export const StorefrontNavbar: React.FC<StorefrontNavbarProps> = ({
                 setMobileMenuOpen(false);
                 onSwitchToSDH();
               }}
-              className="w-full py-2 text-center text-xs font-bold text-primary hover:underline"
+              className="w-full py-2 flex justify-center items-center gap-2 text-center text-xs font-bold text-primary hover:underline"
             >
-              ← Back to Smart Data Hub Main Portal
+              <ArrowLeft className="w-3.5 h-3.5" /> Back to Smart Data Hub Main
+              Portal
             </button>
           </div>
         </div>

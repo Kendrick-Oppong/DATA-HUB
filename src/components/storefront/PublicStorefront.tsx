@@ -403,6 +403,7 @@ export const PublicStorefront: React.FC<PublicStorefrontProps> = ({
         store={storeConfig}
         onOpenShare={() => setIsShareModalOpen(true)}
         onSwitchToSDH={onSwitchToSDH}
+        onNavigateToTrack={() => onNavigatePublicTab("track")}
       />
 
       {/* 2. MAIN STOREFRONT CONTENT CONTAINER */}
@@ -1357,13 +1358,17 @@ export const PublicStorefront: React.FC<PublicStorefrontProps> = ({
                     </span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-muted-foreground font-semibold">Amount Paid:</span>
+                    <span className="text-muted-foreground font-semibold">
+                      Amount Paid:
+                    </span>
                     <span className="font-black text-foreground tabular-nums">
                       GH₵ {completedOrder.amount.toFixed(2)}
                     </span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-muted-foreground font-semibold">Timestamp:</span>
+                    <span className="text-muted-foreground font-semibold">
+                      Timestamp:
+                    </span>
                     <span className="text-foreground">
                       {completedOrder.date}
                     </span>
