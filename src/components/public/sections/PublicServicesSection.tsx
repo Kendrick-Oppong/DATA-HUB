@@ -33,7 +33,18 @@ export const PublicServicesSection: React.FC<PublicServicesSectionProps> = ({
   onStartPurchase,
   onNavigatePublicTab,
 }) => {
-  const filteredBundles = bundles.filter((b) => b.network === selectedNetwork);
+  const [mtnTier, setMtnTier] = React.useState<"standard" | "xpress">("standard");
+  const [atTier, setAtTier] = React.useState<"ishare" | "bigtime">("ishare");
+  const filteredBundles = bundles.filter((b) => {
+    if (b.network !== selectedNetwork) return false;
+    if (selectedNetwork === "MTN") {
+      return (b.tier || "standard") === mtnTier;
+    }
+    if (selectedNetwork === "AirtelTigo") {
+      return (b.tier || "ishare") === atTier;
+    }
+    return true; // Telecel: regular picker, no tiers
+  });
   const accent = NETWORK_ACCENT[selectedNetwork];
 
   const networks: TelecomNetwork[] = ["MTN", "Telecel", "AirtelTigo"];
@@ -207,6 +218,148 @@ export const PublicServicesSection: React.FC<PublicServicesSectionProps> = ({
           </div>
         </div>
 
+        {/* MTN Delivery Option Switcher */}
+        {selectedNetwork === "MTN" && (
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 rounded-3xl border border-border bg-card p-4 sm:p-5 shadow-xs">
+            <div className="space-y-1">
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                  MTN Delivery Option
+                </span>
+                <span className="inline-flex items-center gap-1 rounded-full bg-amber-500/15 px-2 py-0.5 text-[10px] font-bold text-amber-700 dark:text-amber-400">
+                  <Sparkles className="size-3" />
+                  Dual Dispatch Speed
+                </span>
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Select standard routine fulfillment or prioritize your order in our upstream carrier queue.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 w-full sm:w-auto">
+              <button
+                type="button"
+                onClick={() => setMtnTier("standard")}
+                className={`p-3 sm:px-4 sm:py-2.5 rounded-2xl border text-left transition-all cursor-pointer ${
+                  mtnTier === "standard"
+                    ? "border-amber-500 bg-amber-500/15 ring-2 ring-amber-500/25 shadow-xs text-foreground"
+                    : "border-border bg-muted/30 text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                <div className="flex items-center justify-between gap-3">
+                  <div className="text-xs font-black flex items-center gap-1.5">
+                    <span className="size-2 rounded-full bg-amber-500" />
+                    Standard
+                  </div>
+                  {mtnTier === "standard" && (
+                    <Check className="size-3.5 text-amber-600 dark:text-amber-400 stroke-3" />
+                  )}
+                </div>
+                <div className="text-[11px] text-muted-foreground mt-0.5">
+                  Regular MTN bundles · standard validity
+                </div>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setMtnTier("xpress")}
+                className={`p-3 sm:px-4 sm:py-2.5 rounded-2xl border text-left transition-all cursor-pointer ${
+                  mtnTier === "xpress"
+                    ? "border-amber-500 bg-amber-500/15 ring-2 ring-amber-500/25 shadow-xs text-foreground"
+                    : "border-border bg-muted/30 text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                <div className="flex items-center justify-between gap-3">
+                  <div className="text-xs font-black flex items-center gap-1.5">
+                    <span className="size-2 rounded-full bg-amber-500 animate-pulse" />
+                    Xpress
+                    <span className="text-[9px] font-black uppercase px-1.5 py-0.2 rounded-full bg-amber-500 text-amber-950">
+                      Priority
+                    </span>
+                  </div>
+                  {mtnTier === "xpress" && (
+                    <Check className="size-3.5 text-amber-600 dark:text-amber-400 stroke-3" />
+                  )}
+                </div>
+                <div className="text-[11px] text-muted-foreground mt-0.5">
+                  Express delivery · priority queue
+                </div>
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* AT (AirtelTigo) Data Option Switcher */}
+        {selectedNetwork === "AirtelTigo" && (
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 rounded-3xl border border-border bg-card p-4 sm:p-5 shadow-xs">
+            <div className="space-y-1">
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                  AT Data Option
+                </span>
+                <span className="inline-flex items-center gap-1 rounded-full bg-blue-500/15 px-2 py-0.5 text-[10px] font-bold text-blue-700 dark:text-blue-400">
+                  <Sparkles className="size-3" />
+                  iShare & BigTime
+                </span>
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Choose between instant delivery with standard validity or bulk non-expiry data packages.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 w-full sm:w-auto">
+              <button
+                type="button"
+                onClick={() => setAtTier("ishare")}
+                className={`p-3 sm:px-4 sm:py-2.5 rounded-2xl border text-left transition-all cursor-pointer ${
+                  atTier === "ishare"
+                    ? "border-blue-500 bg-blue-500/15 ring-2 ring-blue-500/25 shadow-xs text-foreground"
+                    : "border-border bg-muted/30 text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                <div className="flex items-center justify-between gap-3">
+                  <div className="text-xs font-black flex items-center gap-1.5">
+                    <span className="size-2 rounded-full bg-blue-500" />
+                    iShare
+                  </div>
+                  {atTier === "ishare" && (
+                    <Check className="size-3.5 text-blue-600 dark:text-blue-400 stroke-3" />
+                  )}
+                </div>
+                <div className="text-[11px] text-muted-foreground mt-0.5">
+                  Instant delivery · standard validity
+                </div>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setAtTier("bigtime")}
+                className={`p-3 sm:px-4 sm:py-2.5 rounded-2xl border text-left transition-all cursor-pointer ${
+                  atTier === "bigtime"
+                    ? "border-blue-500 bg-blue-500/15 ring-2 ring-blue-500/25 shadow-xs text-foreground"
+                    : "border-border bg-muted/30 text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                <div className="flex items-center justify-between gap-3">
+                  <div className="text-xs font-black flex items-center gap-1.5">
+                    <span className="size-2 rounded-full bg-blue-500" />
+                    BigTime
+                    <span className="text-[9px] font-black uppercase px-1.5 py-0.2 rounded-full bg-blue-500/20 text-blue-800 dark:text-blue-300">
+                      No Expiry
+                    </span>
+                  </div>
+                  {atTier === "bigtime" && (
+                    <Check className="size-3.5 text-blue-600 dark:text-blue-400 stroke-3" />
+                  )}
+                </div>
+                <div className="text-[11px] text-muted-foreground mt-0.5">
+                  Bulk data · never expires
+                </div>
+              </button>
+            </div>
+          </div>
+        )}
+
         {/* Redesigned Bundle Cards Grid */}
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
           {filteredBundles.map((b, index) => {
@@ -234,7 +387,22 @@ export const PublicServicesSection: React.FC<PublicServicesSectionProps> = ({
                           : `${b.network} Direct`}
                       </span>
 
-                      {isPopular ? (
+                      {b.tier === "xpress" ? (
+                        <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-500/20 px-3 py-1 text-[10px] font-extrabold uppercase tracking-wider text-amber-700 dark:text-amber-300">
+                          <span className="size-2 rounded-full bg-amber-500 animate-pulse" />
+                          Xpress Priority
+                        </span>
+                      ) : b.tier === "bigtime" ? (
+                        <span className="inline-flex items-center gap-1.5 rounded-full bg-blue-500/20 px-3 py-1 text-[10px] font-extrabold uppercase tracking-wider text-blue-700 dark:text-blue-300">
+                          <Sparkles className="size-3 text-blue-500" />
+                          Never Expires
+                        </span>
+                      ) : b.tier === "ishare" ? (
+                        <span className="inline-flex items-center gap-1.5 rounded-full bg-blue-500/15 px-3 py-1 text-[10px] font-extrabold uppercase tracking-wider text-blue-700 dark:text-blue-300">
+                          <Clock className="size-3 text-blue-500" />
+                          iShare Instant
+                        </span>
+                      ) : isPopular ? (
                         <span className="inline-flex items-center gap-1 rounded-full bg-amber-500/15 px-3 py-1 text-[10px] font-extrabold uppercase tracking-wider text-amber-600 dark:text-amber-400">
                           <Sparkles className="size-3 text-amber-500" />
                           Popular
@@ -250,26 +418,55 @@ export const PublicServicesSection: React.FC<PublicServicesSectionProps> = ({
                     {/* Data Size Header */}
                     <div className="space-y-1">
                       <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
-                        Instant High-Speed Bundle
+                        {b.tier === "xpress"
+                          ? "Express Priority Bundle"
+                          : b.tier === "bigtime"
+                            ? "BigTime Non-Expiry Bundle"
+                            : b.tier === "ishare"
+                              ? "iShare Instant Delivery Bundle"
+                              : "Instant High-Speed Bundle"}
                       </p>
                       <h3 className="text-4xl sm:text-5xl font-black tracking-tight text-foreground group-hover:text-primary transition-colors">
                         {b.sizeLabel}
                       </h3>
-                      {isPopular && (
+                      {b.tier === "xpress" ? (
+                        <p className="text-xs flex items-center gap-1 font-medium text-amber-600 dark:text-amber-400">
+                          <Check className="size-3 stroke-[3px]" /> {b.validity}{" "}
+                          • 20s priority queue guarantee
+                        </p>
+                      ) : b.tier === "bigtime" ? (
+                        <p className="text-xs flex items-center gap-1 font-medium text-blue-600 dark:text-blue-400">
+                          <Check className="size-3 stroke-[3px]" /> Never expires{" "}
+                          • Bulk non-expiry data
+                        </p>
+                      ) : b.tier === "ishare" ? (
+                        <p className="text-xs flex items-center gap-1 font-medium text-blue-600 dark:text-blue-400">
+                          <Check className="size-3 stroke-[3px]" /> {b.validity}{" "}
+                          • Instant delivery dispatch
+                        </p>
+                      ) : isPopular ? (
                         <p className="text-xs flex items-center gap-1 font-medium text-emerald-600">
                           <Check className="size-3 stroke-[3px]" /> {b.validity}{" "}
                           • 45s dispatch guarantee
                         </p>
-                      )}
+                      ) : null}
                     </div>
                   </div>
 
                   {/* Route Pathway Visualizer */}
                   <div className="rounded-2xl border border-border/60 bg-muted/30 p-3.5 space-y-2">
                     <div className="flex items-center justify-between text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
-                      <span>Dispatch Rail</span>
+                      <span>
+                        {b.tier === "xpress"
+                          ? "Priority Queue Rail"
+                          : b.tier === "bigtime"
+                            ? "BigTime Core Rail"
+                            : b.tier === "ishare"
+                              ? "iShare Dispatch Rail"
+                              : "Dispatch Rail"}
+                      </span>
                       <span className="text-emerald-600 dark:text-emerald-400 font-extrabold flex items-center gap-1">
-                        Live
+                        {b.tier === "xpress" ? "Fast-Track" : "Live"}
                       </span>
                     </div>
                     <div className="flex items-center gap-2">

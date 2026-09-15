@@ -169,8 +169,14 @@ export const AgentOrdersView: React.FC<AgentOrdersViewProps> = ({
   const deliveredCount = unifiedOrders.filter(
     (o) => o.status === "delivered",
   ).length;
+  const waitingCount = unifiedOrders.filter(
+    (o) => o.status === "waiting",
+  ).length;
   const processingCount = unifiedOrders.filter(
-    (o) => o.status === "processing" || o.status === "pending_payment",
+    (o) => o.status === "processing",
+  ).length;
+  const pendingCount = unifiedOrders.filter(
+    (o) => o.status === "pending" || o.status === "pending_payment",
   ).length;
   const failedCount = unifiedOrders.filter((o) => o.status === "failed").length;
   const refundedCount = unifiedOrders.filter(
@@ -198,9 +204,13 @@ export const AgentOrdersView: React.FC<AgentOrdersViewProps> = ({
       // Status filter
       if (statusFilter === "delivered" && o.status !== "delivered")
         return false;
+      if (statusFilter === "waiting" && o.status !== "waiting")
+        return false;
+      if (statusFilter === "processing" && o.status !== "processing")
+        return false;
       if (
-        statusFilter === "processing" &&
-        o.status !== "processing" &&
+        statusFilter === "pending" &&
+        o.status !== "pending" &&
         o.status !== "pending_payment"
       )
         return false;
@@ -658,11 +668,17 @@ export const AgentOrdersView: React.FC<AgentOrdersViewProps> = ({
                       <SelectItem value="all">
                         All statuses ({totalCount})
                       </SelectItem>
-                      <SelectItem value="delivered">
-                        Delivered ({deliveredCount})
+                      <SelectItem value="waiting">
+                        Waiting ({waitingCount})
                       </SelectItem>
                       <SelectItem value="processing">
-                        Pending / In Progress ({processingCount})
+                        Processing ({processingCount})
+                      </SelectItem>
+                      <SelectItem value="pending">
+                        Pending ({pendingCount})
+                      </SelectItem>
+                      <SelectItem value="delivered">
+                        Delivered ({deliveredCount})
                       </SelectItem>
                       <SelectItem value="failed">
                         Failed / Issues ({failedCount})
@@ -774,11 +790,13 @@ export const AgentOrdersView: React.FC<AgentOrdersViewProps> = ({
               ) : (
                 paginatedOrders.map((order) => {
                   const isDelivered = order.status === "delivered";
+                  const isProcessing = order.status === "processing";
+                  const isWaiting = order.status === "waiting";
+                  const isPending =
+                    order.status === "pending" ||
+                    order.status === "pending_payment";
                   const isFailed = order.status === "failed";
                   const isRefunded = order.status === "refunded";
-                  const isPending =
-                    order.status === "processing" ||
-                    order.status === "pending_payment";
 
                   return (
                     <TableRow
@@ -870,9 +888,21 @@ export const AgentOrdersView: React.FC<AgentOrdersViewProps> = ({
                             <span>Delivered</span>
                           </Badge>
                         )}
-                        {isPending && (
+                        {isProcessing && (
                           <Badge className="bg-amber-500/15 text-amber-700 dark:text-amber-400 border border-amber-500/30 text-[10px] font-bold inline-flex items-center gap-1">
                             <span className="size-1.5 rounded-full bg-amber-500 animate-pulse" />
+                            <span>Processing</span>
+                          </Badge>
+                        )}
+                        {isWaiting && (
+                          <Badge className="bg-sky-500/15 text-sky-700 dark:text-sky-400 border border-sky-500/30 text-[10px] font-bold inline-flex items-center gap-1">
+                            <span className="size-1.5 rounded-full bg-sky-500" />
+                            <span>Waiting</span>
+                          </Badge>
+                        )}
+                        {isPending && (
+                          <Badge className="bg-purple-500/15 text-purple-700 dark:text-purple-400 border border-purple-500/30 text-[10px] font-bold inline-flex items-center gap-1">
+                            <span className="size-1.5 rounded-full bg-purple-500 animate-pulse" />
                             <span>Pending</span>
                           </Badge>
                         )}

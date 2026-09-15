@@ -72,24 +72,39 @@ export const ReceiptModal: React.FC<ReceiptModalProps> = ({
 
   const isDelivered = order.status === "delivered";
   const isProcessing = order.status === "processing";
+  const isWaiting = order.status === "waiting";
+  const isPending =
+    order.status === "pending" || order.status === "pending_payment";
 
   const statusLabel = isDelivered
     ? "Payment & delivery successful"
     : isProcessing
       ? "Order is being processed"
-      : "Order requires attention";
+      : isWaiting
+        ? "Queued for network dispatch"
+        : isPending
+          ? "Awaiting Paystack verification"
+          : "Order requires attention";
 
   const statusClass = isDelivered
     ? "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400"
     : isProcessing
       ? "bg-amber-500/10 text-amber-700 dark:text-amber-400"
-      : "bg-red-500/10 text-red-700 dark:text-red-400";
+      : isWaiting
+        ? "bg-sky-500/10 text-sky-700 dark:text-sky-400"
+        : isPending
+          ? "bg-purple-500/10 text-purple-700 dark:text-purple-400"
+          : "bg-red-500/10 text-red-700 dark:text-red-400";
 
   const statusDotClass = isDelivered
     ? "bg-emerald-500"
     : isProcessing
       ? "bg-amber-500"
-      : "bg-red-500";
+      : isWaiting
+        ? "bg-sky-500"
+        : isPending
+          ? "bg-purple-500"
+          : "bg-red-500";
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>

@@ -29,6 +29,7 @@ interface CustomerWalletOrdersProps {
   onOpenSecurityPins?: () => void;
   user?: UserAccount | null;
   onUpdateUser?: (user: UserAccount) => void;
+  onUpdateOrders?: (orders: Order[]) => void;
 }
 
 export const CustomerWalletOrders: React.FC<CustomerWalletOrdersProps> = ({
@@ -47,6 +48,7 @@ export const CustomerWalletOrders: React.FC<CustomerWalletOrdersProps> = ({
   onOpenSecurityPins,
   user,
   onUpdateUser,
+  onUpdateOrders,
 }) => {
   return (
     <div className="space-y-6">
@@ -62,6 +64,7 @@ export const CustomerWalletOrders: React.FC<CustomerWalletOrdersProps> = ({
         <CustomerOrdersView
           orders={orders}
           onOpenReceipt={onOpenReceipt}
+          onUpdateOrders={onUpdateOrders}
         />
       )}
 
