@@ -1011,6 +1011,7 @@ export default function App() {
           isMobileOpen={isMobileSidebarOpen}
           onCloseMobile={() => setIsMobileSidebarOpen(false)}
           onSignOut={handleSignOut}
+          storeStatus={storeConfig.status}
         />
 
         {/* Dynamic Content Main Pane */}

@@ -1382,8 +1382,8 @@ export const MyStoreBuilder: React.FC<MyStoreBuilderProps> = ({
                         <TableRow key={b.id} className="hover:bg-muted/40">
                           <TableCell className="text-xs font-bold text-foreground">
                             <div>{b.name}</div>
-                            <div className="text-[10px] text-muted-foreground font-normal">
-                              {b.validity} · Non-Expiry
+                            <div className="text-[10px] font-semibold text-muted-foreground">
+                              {b.validity}
                             </div>
                           </TableCell>
 

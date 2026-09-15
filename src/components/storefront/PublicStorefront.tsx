@@ -192,7 +192,13 @@ export const PublicStorefront: React.FC<PublicStorefrontProps> = ({
       return 25.0; // Standard AFA registration processing fee
     }
     return 0;
-  }, [activeService, currentBundle, airtimeAmount, currentChecker, storeConfig]);
+  }, [
+    activeService,
+    currentBundle,
+    airtimeAmount,
+    currentChecker,
+    storeConfig,
+  ]);
 
   // Calculate discount if promo code applied
   const discountAmount = appliedDiscount
@@ -229,7 +235,10 @@ export const PublicStorefront: React.FC<PublicStorefrontProps> = ({
     setRecipientPhone(clean);
     if (clean.length >= 3) {
       const detected = detectGhanaNetwork(clean);
-      if (detected !== selectedNetwork && availableNetworks.includes(detected)) {
+      if (
+        detected !== selectedNetwork &&
+        availableNetworks.includes(detected)
+      ) {
         setSelectedNetwork(detected);
         setMomoProvider(
           detected === "AirtelTigo" ? "AT" : (detected as "MTN" | "Telecel"),
@@ -253,7 +262,10 @@ export const PublicStorefront: React.FC<PublicStorefrontProps> = ({
       (p) => p.code.toUpperCase() === code && p.active,
     );
     if (found) {
-      setAppliedDiscount({ code: found.code, percent: found.discountPercent || 10 });
+      setAppliedDiscount({
+        code: found.code,
+        percent: found.discountPercent || 10,
+      });
       setPromoSuccess(
         `Promo applied! ${found.discountPercent}% discount activated.`,
       );
@@ -375,7 +387,8 @@ export const PublicStorefront: React.FC<PublicStorefrontProps> = ({
   };
 
   const themeColor = storeConfig.themeColor || "#2563eb";
-  const isPaused = storeConfig.status === "paused" || storeConfig.status === "draft";
+  const isPaused =
+    storeConfig.status === "paused" || storeConfig.status === "draft";
 
   // Check which services are enabled
   const hasAirtime = !!storeConfig.enabledServices?.airtime;
@@ -473,7 +486,7 @@ export const PublicStorefront: React.FC<PublicStorefrontProps> = ({
                       </div>
                       <p className="text-xs sm:text-sm text-muted-foreground mt-0.5 max-w-xl">
                         {storeConfig.tagline ||
-                          "Authorized telecom data reseller in Ghana. Non-expiry bundles with instant dispatch."}
+                          "Authorized telecom data reseller in Ghana."}
                       </p>
                       <div className="flex flex-wrap items-center gap-3 text-[11px] text-muted-foreground font-semibold mt-2">
                         <span className="flex items-center gap-1 text-amber-500">
@@ -499,26 +512,6 @@ export const PublicStorefront: React.FC<PublicStorefrontProps> = ({
                       </div>
                     </div>
                   </div>
-
-                  <div className="flex items-center gap-2 w-full sm:w-auto">
-                    <button
-                      type="button"
-                      onClick={() => setIsShareModalOpen(true)}
-                      className="flex-1 sm:flex-none px-3.5 py-2.5 rounded-xl border border-border bg-card hover:bg-muted text-foreground font-bold text-xs transition-colors flex items-center justify-center gap-1.5 shadow-2xs cursor-pointer"
-                    >
-                      <Share2 className="w-3.5 h-3.5 text-primary" />
-                      <span>Share</span>
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={openWhatsAppHelp}
-                      className="flex-1 sm:flex-none px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs transition-colors flex items-center justify-center gap-2 shadow-sm cursor-pointer"
-                    >
-                      <MessageCircle className="w-4 h-4" />
-                      <span>WhatsApp</span>
-                    </button>
-                  </div>
                 </div>
 
                 {/* Announcement Bar (if set in Store Builder) */}
@@ -534,7 +527,10 @@ export const PublicStorefront: React.FC<PublicStorefrontProps> = ({
                   <div className="p-2.5 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-xs flex items-center justify-between">
                     <div className="flex items-center gap-2 text-emerald-800 dark:text-emerald-300 font-bold">
                       <Radio className="w-3.5 h-3.5 text-emerald-600" />
-                      <span>Join {storeConfig.storeName} VIP Broadcast Channel for Flash Deals</span>
+                      <span>
+                        Join {storeConfig.storeName} VIP Broadcast Channel for
+                        Flash Deals
+                      </span>
                     </div>
                     <a
                       href={storeConfig.whatsappChannelUrl}
@@ -552,10 +548,10 @@ export const PublicStorefront: React.FC<PublicStorefrontProps> = ({
                 <div className="grid grid-cols-3 gap-2 pt-2 border-t border-border/60 text-center">
                   <div className="p-2 rounded-xl bg-muted/40">
                     <div className="text-xs font-black text-foreground">
-                      Non-Expiry
+                      Affordable Packages
                     </div>
                     <div className="text-[10px] text-muted-foreground">
-                      Lifetime Validity
+                      Great Value
                     </div>
                   </div>
                   <div className="p-2 rounded-xl bg-muted/40">
@@ -571,7 +567,7 @@ export const PublicStorefront: React.FC<PublicStorefrontProps> = ({
                       100% Guaranteed
                     </div>
                     <div className="text-[10px] text-muted-foreground">
-                      Instant MoMo Rails
+                      Reliable Service
                     </div>
                   </div>
                 </div>
@@ -678,7 +674,9 @@ export const PublicStorefront: React.FC<PublicStorefrontProps> = ({
                         onClick={() => {
                           setSelectedNetwork("MTN");
                           setMomoProvider("MTN");
-                          const first = bundles.find((b) => b.network === "MTN");
+                          const first = bundles.find(
+                            (b) => b.network === "MTN",
+                          );
                           if (first) setSelectedBundleId(first.id);
                         }}
                         className={`p-4 rounded-2xl border text-left transition-all cursor-pointer relative overflow-hidden ${
@@ -1004,7 +1002,9 @@ export const PublicStorefront: React.FC<PublicStorefrontProps> = ({
                     <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/20 space-y-3">
                       <div className="text-xs font-bold text-amber-950 dark:text-amber-200 flex items-center gap-1.5">
                         <UserCheck className="w-4 h-4 text-amber-600" />
-                        <span>Customer Identification Required by Merchant</span>
+                        <span>
+                          Customer Identification Required by Merchant
+                        </span>
                       </div>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <div className="space-y-1">
@@ -1048,9 +1048,6 @@ export const PublicStorefront: React.FC<PublicStorefrontProps> = ({
                     <div className="space-y-2">
                       <label className="text-xs font-bold text-foreground flex items-center justify-between">
                         <span>Recipient Phone Number</span>
-                        <span className="text-[11px] text-muted-foreground">
-                          Auto-detects Carrier
-                        </span>
                       </label>
 
                       <div className="relative">
@@ -1064,7 +1061,7 @@ export const PublicStorefront: React.FC<PublicStorefrontProps> = ({
                           onChange={(e) => handlePhoneChange(e.target.value)}
                           className="w-full pl-10 pr-24 py-2.5 rounded-xl border border-input bg-background text-foreground text-sm tabular-nums focus:ring-2 focus:ring-primary focus:border-primary outline-hidden"
                         />
-                        <div className="absolute right-2.5 top-2.5">
+                        <div className="absolute right-2.5 top-1.5">
                           <span className="px-2 py-0.5 rounded-md text-[10px] font-bold bg-muted text-foreground border border-border">
                             {selectedNetwork}
                           </span>
@@ -1141,49 +1138,38 @@ export const PublicStorefront: React.FC<PublicStorefrontProps> = ({
                   </div>
 
                   {/* Promo Code Strip */}
-                  <div className="pt-2 border-t border-border/60">
-                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-                      <div className="flex items-center gap-2 w-full sm:w-auto">
-                        <Tag className="w-4 h-4 text-muted-foreground shrink-0" />
+                  <div className="space-y-2 pt-4 border-t border-border/60">
+                    <label className="text-xs font-bold text-foreground">
+                      Promo Code
+                    </label>
+
+                    <div className="flex w-full items-end gap-2 sm:w-1/2">
+                      <div className="relative min-w-0 flex-1">
+                        <Tag className="absolute left-3.5 top-3 w-4 h-4 text-muted-foreground" />
+
                         <input
                           type="text"
-                          placeholder="Promo Code (e.g. WELCOME10)"
+                          placeholder="Promo Code"
                           value={promoCodeInput}
                           onChange={(e) => setPromoCodeInput(e.target.value)}
-                          className="h-8 px-3 rounded-lg border border-input bg-background text-xs uppercase focus:ring-1 focus:ring-primary outline-hidden w-48"
+                          className="w-full pl-10 pr-3 py-2.5 rounded-xl border border-input bg-background text-foreground text-sm tabular-nums focus:ring-2 focus:ring-primary focus:border-primary outline-hidden"
                         />
-                        <button
-                          type="button"
-                          onClick={handleApplyPromo}
-                          className="h-8 px-3 rounded-lg bg-muted hover:bg-muted/80 text-foreground font-bold text-xs cursor-pointer"
-                        >
-                          Apply
-                        </button>
                       </div>
 
-                      {appliedDiscount && (
-                        <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400">
-                          ✓ Code {appliedDiscount.code} applied (
-                          {appliedDiscount.percent}% off)
-                        </span>
-                      )}
+                      <button
+                        type="button"
+                        onClick={handleApplyPromo}
+                        className="h-10 shrink-0 px-5 rounded-xl bg-muted hover:bg-muted/80 text-foreground font-bold text-xs cursor-pointer"
+                      >
+                        Apply
+                      </button>
                     </div>
-                    {promoError && (
-                      <p className="text-xs text-destructive font-medium mt-1">
-                        {promoError}
-                      </p>
-                    )}
-                    {promoSuccess && (
-                      <p className="text-xs text-emerald-600 dark:text-emerald-400 font-medium mt-1">
-                        {promoSuccess}
-                      </p>
-                    )}
                   </div>
 
                   {/* Order Breakdown Summary & Checkout Action */}
                   <div className="p-5 rounded-2xl bg-muted/40 border border-border/70 space-y-3">
                     <div className="flex justify-between items-center text-xs text-muted-foreground">
-                      <span>Selected Product:</span>
+                      <span className="font-semibold">Selected Product:</span>
                       <span className="font-bold text-foreground">
                         {activeService === "data"
                           ? `${currentBundle.name} (${currentBundle.validity})`
@@ -1193,25 +1179,31 @@ export const PublicStorefront: React.FC<PublicStorefrontProps> = ({
                       </span>
                     </div>
                     <div className="flex justify-between items-center text-xs text-muted-foreground">
-                      <span>Target Carrier:</span>
+                      <span className="font-semibold">Target Carrier:</span>
                       <span className="font-bold text-foreground">
                         {selectedNetwork}
                       </span>
                     </div>
                     <div className="flex justify-between items-center text-xs text-muted-foreground">
-                      <span>Beneficiary Handset:</span>
+                      <span className="font-semibold">
+                        Beneficiary Handset:
+                      </span>
                       <span className="font-bold text-foreground">
                         {recipientPhone || "Not entered"}
                       </span>
                     </div>
                     {appliedDiscount && (
                       <div className="flex justify-between items-center text-xs text-emerald-600 dark:text-emerald-400 font-bold">
-                        <span>Discount ({appliedDiscount.percent}%):</span>
+                        <span className="font-semibold">
+                          Discount ({appliedDiscount.percent}%):
+                        </span>
                         <span>- GH₵ {discountAmount.toFixed(2)}</span>
                       </div>
                     )}
                     <div className="flex justify-between items-center text-xs text-muted-foreground">
-                      <span>Network Delivery Surcharge:</span>
+                      <span className="font-semibold">
+                        Network Delivery Surcharge:
+                      </span>
                       <span className="font-bold text-emerald-600 dark:text-emerald-400">
                         FREE (GH₵ 0.00)
                       </span>
@@ -1251,7 +1243,10 @@ export const PublicStorefront: React.FC<PublicStorefrontProps> = ({
                 <div className="relative w-20 h-20 mx-auto">
                   <div
                     className="w-20 h-20 rounded-full border-4 border-t-transparent animate-spin"
-                    style={{ borderColor: `${themeColor}30`, borderTopColor: themeColor }}
+                    style={{
+                      borderColor: `${themeColor}30`,
+                      borderTopColor: themeColor,
+                    }}
                   />
                   <div className="absolute inset-0 flex items-center justify-center">
                     <Zap className="w-8 h-8 text-primary animate-pulse" />

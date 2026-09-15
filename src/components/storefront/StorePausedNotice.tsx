@@ -29,7 +29,7 @@ export const StorePausedNotice: React.FC<StorePausedNoticeProps> = ({
   const openWhatsApp = () => {
     const phone = store.whatsappNumber.replace(/^0/, "");
     const text = encodeURIComponent(
-      `Hello ${store.storeName}, I am visiting your store but noticed it is currently paused. When will data purchases be back online?`
+      `Hello ${store.storeName}, I am visiting your store but noticed it is currently paused. When will data purchases be back online?`,
     );
     window.open(`https://wa.me/233${phone}?text=${text}`, "_blank");
   };
@@ -63,18 +63,19 @@ export const StorePausedNotice: React.FC<StorePausedNoticeProps> = ({
         {/* Headings */}
         <div className="space-y-2 max-w-xl mx-auto relative">
           <h2 className="text-2xl sm:text-3xl font-black text-foreground tracking-tight">
-            Your Storefront is Currently Paused
+            Storefront is Currently Paused
           </h2>
-          <p className="text-sm text-muted-foreground leading-relaxed">
-            Visitors will see an offline maintenance notice. Customers cannot checkout until enabled.
-          </p>
+
           <div className="p-4 rounded-2xl bg-muted/50 border border-border text-xs text-muted-foreground leading-relaxed text-left space-y-1.5 mt-4">
             <div className="font-bold text-foreground flex items-center gap-1.5">
               <AlertCircle className="w-4 h-4 text-amber-500 shrink-0" />
               <span>Catalog & Inventory Synchronization</span>
             </div>
             <p>
-              The store administrator has temporarily locked new order placements while wholesale allocations and carrier switch routes are being updated. All previously completed recharges remain active and unaffected.
+              The store administrator has temporarily locked new order
+              placements while wholesale allocations and carrier switch routes
+              are being updated. All previously completed recharges remain
+              active and unaffected.
             </p>
           </div>
         </div>
@@ -92,7 +93,7 @@ export const StorePausedNotice: React.FC<StorePausedNoticeProps> = ({
               className="w-full sm:w-auto flex-1 h-11 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center justify-center gap-2 cursor-pointer shadow-md"
             >
               <MessageCircle className="w-4 h-4" />
-              <span>WhatsApp Agent ({store.whatsappNumber})</span>
+              <span>WhatsApp Agent</span>
             </Button>
 
             {store.phone && (
@@ -123,28 +124,6 @@ export const StorePausedNotice: React.FC<StorePausedNoticeProps> = ({
             </div>
           )}
         </div>
-
-        {/* Store Owner Fast Resume Bar */}
-        {onGoLive && (
-          <div className="p-5 rounded-2xl bg-card border border-emerald-500/30 text-left flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 shadow-sm">
-            <div className="space-y-0.5">
-              <span className="text-xs font-black text-emerald-700 dark:text-emerald-400 flex items-center gap-1.5">
-                <Store className="w-4 h-4" />
-                Store Owner Fast Action
-              </span>
-              <p className="text-xs text-muted-foreground">
-                Ready to resume live customer checkout? Click to activate this store immediately.
-              </p>
-            </div>
-            <Button
-              onClick={onGoLive}
-              className="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs shrink-0 cursor-pointer shadow-md"
-            >
-              <Power className="w-3.5 h-3.5 mr-1.5" />
-              <span>Go Live Now</span>
-            </Button>
-          </div>
-        )}
       </div>
 
       {/* Trust & SDH Infrastructure Rail */}

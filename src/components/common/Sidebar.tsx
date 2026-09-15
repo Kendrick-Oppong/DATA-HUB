@@ -41,6 +41,7 @@ export interface SidebarProps {
   isMobileOpen?: boolean;
   onCloseMobile?: () => void;
   onSignOut?: () => void;
+  storeStatus?: "published" | "paused" | "draft";
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({
@@ -57,6 +58,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   isMobileOpen = false,
   onCloseMobile,
   onSignOut,
+  storeStatus = "published",
 }) => {
   // Hide on public and storefront
   if (currentRole === "public" || currentRole === "storefront") return null;
@@ -376,13 +378,21 @@ export const Sidebar: React.FC<SidebarProps> = ({
           }`}
         >
           <div className="flex items-center gap-2">
-            <span className="size-2.5 rounded-full bg-primary animate-pulse" />
+            <span
+              className={`size-2.5 rounded-full ${
+                storeStatus === "published"
+                  ? "bg-primary animate-pulse"
+                  : "bg-muted-foreground"
+              }`}
+            />
             <span
               className={`${
                 isCollapsed ? "sr-only" : ""
               } text-xs font-extrabold uppercase tracking-wider text-muted-foreground`}
             >
-              {roleLabel}
+              {storeStatus === "published"
+                ? roleLabel
+                : `${roleLabel} (Offline)`}
             </span>
           </div>
 
