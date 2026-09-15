@@ -117,7 +117,7 @@ export const Navbar: React.FC<NavbarProps> = ({
       <header className="sticky top-0 z-40 w-full border-b bg-card/90 backdrop-blur-md">
         <div className="flex h-16 items-center justify-between gap-2 px-3 sm:gap-3 sm:px-6">
           {/* Brand */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 shrink-0">
             {onToggleMobileMenu &&
               currentRole !== "public" &&
               currentRole !== "storefront" && (
@@ -159,9 +159,8 @@ export const Navbar: React.FC<NavbarProps> = ({
             </button>
           </div>
 
-          {/* Actions */}
-          <div className="flex items-center gap-1.5 sm:gap-2">
-            {/* Command Search */}
+          {/* Center Search (Organized layout inspired by PublicNavbar) */}
+          <div className="hidden flex-1 items-center justify-center max-w-sm mx-4 md:flex">
             <Tooltip>
               <TooltipTrigger
                 render={
@@ -169,33 +168,24 @@ export const Navbar: React.FC<NavbarProps> = ({
                     variant="outline"
                     size="sm"
                     onClick={handleOpenCommand}
-                    className="hidden h-9 gap-2 rounded-full bg-muted/40 px-2.5 text-xs text-muted-foreground hover:text-foreground xl:flex"
+                    className="flex h-9 w-full items-center justify-between gap-2 rounded-full bg-muted/40 px-3 text-xs text-muted-foreground hover:text-foreground"
                   />
                 }
               >
-                <Search className="size-3.5" />
-
-                <span>Search...</span>
+                <div className="flex items-center gap-2">
+                  <Search className="size-3.5 text-primary" />
+                  <span>Search commands & services...</span>
+                </div>
 
                 <Kbd className="h-5 px-1.5 text-[10px]">⌘K</Kbd>
               </TooltipTrigger>
 
               <TooltipContent>Search or jump to service</TooltipContent>
             </Tooltip>
+          </div>
 
-            {/* Security PINs */}
-            {onOpenSecurityPins && (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={onOpenSecurityPins}
-                className="hidden h-9 rounded-full text-xs font-bold lg:flex"
-              >
-                <KeyRound className="size-3.5 text-primary" />
-                <span>PINs (0000)</span>
-              </Button>
-            )}
-
+          {/* Actions */}
+          <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
             {/* Wallet */}
             <div className="flex h-9 items-center overflow-hidden rounded-full border bg-card shadow-2xs">
               <div className="px-2.5">
@@ -325,52 +315,62 @@ export const Navbar: React.FC<NavbarProps> = ({
               <DropdownMenuTrigger
                 render={
                   <Button
-                    variant="outline"
-                    className="h-9 gap-1.5 rounded-full px-1.5"
+                    variant="ghost"
+                    className="relative flex size-8 cursor-pointer items-center justify-center rounded-full border border-primary/30 bg-primary/10 p-0 text-xs font-black text-primary shadow-2xs transition-all hover:scale-105 hover:border-primary/60 hover:bg-primary/20 active:scale-95"
+                    title={profileName}
+                    aria-label="User profile menu"
                   />
                 }
               >
-                <div className="flex size-7 items-center justify-center rounded-full bg-primary/10 text-xs font-bold text-primary">
+                <span className="font-black text-xs tracking-tight uppercase">
                   {profileInitials}
-                </div>
-
-                <ChevronDown className="hidden size-3.5 text-muted-foreground sm:block" />
+                </span>
+                <span className="absolute -bottom-0.5 -right-0.5 flex size-2.5">
+                  <span className="size-2.5 rounded-full bg-emerald-500 ring-2 ring-card" />
+                </span>
               </DropdownMenuTrigger>
 
-              <DropdownMenuContent align="end" className="w-64">
+              <DropdownMenuContent
+                align="end"
+                className="w-64 rounded-xl border-border p-2 shadow-xl"
+              >
                 {/* Profile Header */}
-                <div className="flex items-center justify-between gap-3 px-3 py-2">
-                  <div className="min-w-0">
-                    <p className="truncate text-xs font-bold">{profileName}</p>
-
-                    <p className="truncate text-[11px] text-muted-foreground">
-                      {user?.phone || "024 419 2834"} • Verified
-                    </p>
+                <div className="flex items-center gap-3 p-2">
+                  <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary/15 text-sm font-black uppercase text-primary">
+                    {profileInitials}
                   </div>
 
-                  <Badge
-                    variant="secondary"
-                    className="shrink-0 text-[10px] font-bold uppercase"
-                  >
-                    {user?.role || currentRole}
-                  </Badge>
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-xs font-bold text-foreground">
+                      {profileName}
+                    </p>
+                    <p className="truncate font-mono text-[11px] text-muted-foreground">
+                      {user?.phone || "024 419 2834"}
+                    </p>
+                    <Badge
+                      variant="outline"
+                      className="mt-1 border-emerald-500/30 bg-emerald-500/10 py-0 text-[9px] font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400"
+                    >
+                      ● Verified {user?.role || currentRole}
+                    </Badge>
+                  </div>
                 </div>
 
-                <DropdownMenuSeparator />
+                <DropdownMenuSeparator className="my-1.5" />
 
                 {/* Workspace */}
                 <DropdownMenuGroup>
-                  <DropdownMenuLabel className="text-[10px] uppercase tracking-wider text-muted-foreground">
+                  <DropdownMenuLabel className="px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
                     Switch Workspace Mode
                   </DropdownMenuLabel>
 
                   <DropdownMenuItem
                     onClick={() => onRoleChange("customer")}
-                    className={
+                    className={`cursor-pointer gap-2.5 rounded-lg text-xs font-semibold ${
                       currentRole === "customer"
                         ? "bg-primary/10 font-bold text-primary"
                         : ""
-                    }
+                    }`}
                   >
                     Customer Dashboard
                     {currentRole === "customer" && (
@@ -380,11 +380,11 @@ export const Navbar: React.FC<NavbarProps> = ({
 
                   <DropdownMenuItem
                     onClick={() => onRoleChange("agent")}
-                    className={
+                    className={`cursor-pointer gap-2.5 rounded-lg text-xs font-semibold ${
                       currentRole === "agent"
                         ? "bg-primary/10 font-bold text-primary"
                         : ""
-                    }
+                    }`}
                   >
                     Agent Workspace
                     {currentRole === "agent" && (
@@ -394,11 +394,11 @@ export const Navbar: React.FC<NavbarProps> = ({
 
                   <DropdownMenuItem
                     onClick={() => onRoleChange("admin")}
-                    className={
+                    className={`cursor-pointer gap-2.5 rounded-lg text-xs font-semibold ${
                       currentRole === "admin"
                         ? "bg-primary/10 font-bold text-primary"
                         : ""
-                    }
+                    }`}
                   >
                     <span className="flex items-center gap-1.5">
                       Admin NOC Console
@@ -414,11 +414,11 @@ export const Navbar: React.FC<NavbarProps> = ({
 
                   <DropdownMenuItem
                     onClick={() => onRoleChange("storefront")}
-                    className={
+                    className={`cursor-pointer gap-2.5 rounded-lg text-xs font-semibold ${
                       currentRole === "storefront"
                         ? "bg-primary/10 font-bold text-primary"
                         : ""
-                    }
+                    }`}
                   >
                     Kofi Telecom Storefront
                     {currentRole === "storefront" && (
@@ -428,11 +428,11 @@ export const Navbar: React.FC<NavbarProps> = ({
 
                   <DropdownMenuItem
                     onClick={() => onRoleChange("public")}
-                    className={
+                    className={`cursor-pointer gap-2.5 rounded-lg text-xs font-semibold ${
                       currentRole === "public"
                         ? "bg-primary/10 font-bold text-primary"
                         : ""
-                    }
+                    }`}
                   >
                     Public Marketing Site
                     {currentRole === "public" && (
@@ -441,12 +441,15 @@ export const Navbar: React.FC<NavbarProps> = ({
                   </DropdownMenuItem>
                 </DropdownMenuGroup>
 
-                <DropdownMenuSeparator />
+                <DropdownMenuSeparator className="my-1.5" />
 
                 {/* Account Actions */}
                 <DropdownMenuGroup>
                   {onOpenSecurityPins && (
-                    <DropdownMenuItem onClick={onOpenSecurityPins}>
+                    <DropdownMenuItem
+                      onClick={onOpenSecurityPins}
+                      className="cursor-pointer gap-2.5 rounded-lg text-xs font-medium"
+                    >
                       <KeyRound className="size-3.5 text-primary" />
                       Security PINs Reference Sheet
                     </DropdownMenuItem>
@@ -457,7 +460,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                     onLockAdmin && (
                       <DropdownMenuItem
                         onClick={onLockAdmin}
-                        className="text-amber-600 focus:text-amber-600 dark:text-amber-400 dark:focus:text-amber-400"
+                        className="cursor-pointer gap-2.5 rounded-lg text-xs font-medium text-amber-600 focus:text-amber-600 dark:text-amber-400 dark:focus:text-amber-400"
                       >
                         <Lock className="size-3.5" />
                         Lock Admin Console
@@ -465,8 +468,11 @@ export const Navbar: React.FC<NavbarProps> = ({
                     )}
 
                   {onOpenAuth && (
-                    <DropdownMenuItem onClick={() => onOpenAuth("signin")}>
-                      <LogIn className="size-3.5" />
+                    <DropdownMenuItem
+                      onClick={() => onOpenAuth("signin")}
+                      className="cursor-pointer gap-2.5 rounded-lg text-xs font-medium"
+                    >
+                      <LogIn className="size-3.5 text-primary" />
                       Switch Account / Sign In
                     </DropdownMenuItem>
                   )}
@@ -474,6 +480,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                   <DropdownMenuItem
                     onClick={handleLogout}
                     variant="destructive"
+                    className="cursor-pointer gap-2.5 rounded-lg text-xs font-semibold text-destructive focus:bg-destructive/10"
                   >
                     <LogOut className="size-3.5" />
                     Sign Out & Return Home
