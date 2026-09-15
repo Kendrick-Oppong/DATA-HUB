@@ -63,6 +63,14 @@ import {
 } from "../ui/dialog";
 import { ScrollArea } from "../ui/scroll-area";
 import { PaginationHelper } from "../customer/views/PaginationHelper";
+import { SignalRail } from "../common/SignalRail";
+
+const NETWORK_ACCENT: Record<TelecomNetwork, { solid: string; short: string }> =
+  {
+    MTN: { solid: "bg-amber-400", short: "MTN" },
+    Telecel: { solid: "bg-red-600", short: "TGL" },
+    AirtelTigo: { solid: "bg-blue-600", short: "ATG" },
+  };
 
 export interface UnifiedAgentOrder extends Order {
   source: "storefront" | "direct";
@@ -188,7 +196,8 @@ export const AgentOrdersView: React.FC<AgentOrdersViewProps> = ({
       if (sourceFilter === "direct" && o.source !== "direct") return false;
 
       // Status filter
-      if (statusFilter === "delivered" && o.status !== "delivered") return false;
+      if (statusFilter === "delivered" && o.status !== "delivered")
+        return false;
       if (
         statusFilter === "processing" &&
         o.status !== "processing" &&
@@ -433,27 +442,15 @@ export const AgentOrdersView: React.FC<AgentOrdersViewProps> = ({
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div>
           <Button
-            variant="outline"
             size="sm"
             onClick={handleExportCsv}
             className="text-xs font-bold shadow-xs cursor-pointer gap-1.5 h-9"
           >
-            <Download className="size-3.5 text-muted-foreground" />
+            <Download className="size-4 stroke-3" />
             <span>Export CSV</span>
           </Button>
-
-          {onNavigateTab && (
-            <Button
-              size="sm"
-              onClick={() => onNavigateTab("buy-data")}
-              className="text-xs font-bold shadow-sm cursor-pointer gap-1.5 h-9"
-            >
-              <Plus className="size-4 stroke-3" />
-              <span>New Direct Sale</span>
-            </Button>
-          )}
         </div>
       </div>
 
@@ -545,8 +542,6 @@ export const AgentOrdersView: React.FC<AgentOrdersViewProps> = ({
                 agent dispatches.
               </CardDescription>
             </div>
-
-        
           </div>
         </CardHeader>
 
@@ -610,8 +605,10 @@ export const AgentOrdersView: React.FC<AgentOrdersViewProps> = ({
                   <Select
                     value={sourceFilter}
                     onValueChange={(val) => {
-                      setSourceFilter(val);
-                      setCurrentPage(1);
+                      if (val) {
+                        setSourceFilter(val);
+                        setCurrentPage(1);
+                      }
                     }}
                   >
                     <SelectTrigger
@@ -645,8 +642,10 @@ export const AgentOrdersView: React.FC<AgentOrdersViewProps> = ({
                   <Select
                     value={statusFilter}
                     onValueChange={(val) => {
-                      setStatusFilter(val);
-                      setCurrentPage(1);
+                      if (val) {
+                        setStatusFilter(val);
+                        setCurrentPage(1);
+                      }
                     }}
                   >
                     <SelectTrigger
@@ -686,8 +685,10 @@ export const AgentOrdersView: React.FC<AgentOrdersViewProps> = ({
                   <Select
                     value={networkFilter}
                     onValueChange={(val) => {
-                      setNetworkFilter(val);
-                      setCurrentPage(1);
+                      if (val) {
+                        setNetworkFilter(val);
+                        setCurrentPage(1);
+                      }
                     }}
                   >
                     <SelectTrigger
@@ -807,7 +808,7 @@ export const AgentOrdersView: React.FC<AgentOrdersViewProps> = ({
                             <div className="font-bold text-foreground truncate max-w-[180px] sm:max-w-xs">
                               {order.productName}
                             </div>
-                            <div className="font-mono text-[10px] text-muted-foreground">
+                            <div className=" text-[10px] text-muted-foreground">
                               {order.reference}
                             </div>
                           </div>
@@ -819,7 +820,7 @@ export const AgentOrdersView: React.FC<AgentOrdersViewProps> = ({
                         <div className="font-semibold text-foreground">
                           {order.customerName || "Customer"}
                         </div>
-                        <div className="font-mono text-[11px] text-muted-foreground">
+                        <div className=" text-[11px] text-muted-foreground">
                           {order.recipientPhone}
                         </div>
                       </TableCell>
@@ -892,7 +893,7 @@ export const AgentOrdersView: React.FC<AgentOrdersViewProps> = ({
                       </TableCell>
 
                       {/* When */}
-                      <TableCell className="text-xs text-muted-foreground whitespace-nowrap font-mono">
+                      <TableCell className="text-xs text-foreground whitespace-nowrap ">
                         {formatOrderDate(order.date)}
                       </TableCell>
 
@@ -926,7 +927,10 @@ export const AgentOrdersView: React.FC<AgentOrdersViewProps> = ({
               <span className="font-bold text-foreground">
                 {filteredOrders.length === 0
                   ? 0
-                  : Math.min(currentPage * ORDERS_PER_PAGE, filteredOrders.length)}
+                  : Math.min(
+                      currentPage * ORDERS_PER_PAGE,
+                      filteredOrders.length,
+                    )}
               </span>{" "}
               of{" "}
               <span className="font-bold text-foreground">
@@ -998,7 +1002,12 @@ export const AgentOrdersView: React.FC<AgentOrdersViewProps> = ({
                       </div>
 
                       <DialogDescription className="mt-0.5 text-left text-xs">
-                        Ref: <span className="font-mono font-bold text-foreground">{selectedOrder.reference}</span> · {selectedOrder.network} {selectedOrder.serviceType.toUpperCase()}
+                        Ref:{" "}
+                        <span className=" font-bold text-foreground">
+                          {selectedOrder.reference}
+                        </span>{" "}
+                        · {selectedOrder.network}{" "}
+                        {selectedOrder.serviceType.toUpperCase()}
                       </DialogDescription>
                     </div>
                   </div>
@@ -1019,7 +1028,8 @@ export const AgentOrdersView: React.FC<AgentOrdersViewProps> = ({
                           Delivered Successfully
                         </div>
                         <div className="text-[11px] text-muted-foreground mt-0.5">
-                          Package dispatched and credited to beneficiary SIM {selectedOrder.recipientPhone}.
+                          Package dispatched and credited to beneficiary SIM{" "}
+                          {selectedOrder.recipientPhone}.
                         </div>
                       </div>
                     </div>
@@ -1033,7 +1043,8 @@ export const AgentOrdersView: React.FC<AgentOrdersViewProps> = ({
                           Delivery Encountered An Issue
                         </div>
                         <div className="text-[11px] text-muted-foreground mt-0.5">
-                          Upstream telecom rejected or timed out. You can re-push or issue a customer refund below.
+                          Upstream telecom rejected or timed out. You can
+                          re-push or issue a customer refund below.
                         </div>
                       </div>
                     </div>
@@ -1047,85 +1058,252 @@ export const AgentOrdersView: React.FC<AgentOrdersViewProps> = ({
                           Payment Refunded
                         </div>
                         <div className="text-[11px] text-muted-foreground mt-0.5">
-                          The transaction was reversed and customer payment refunded.
+                          The transaction was reversed and customer payment
+                          refunded.
                         </div>
                       </div>
                     </div>
                   ) : null}
 
                   {/* Order Delivery Timeline */}
-                  <div className="space-y-3">
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
-                      Fulfillment Timeline
-                    </span>
-
-                    <div className="relative pl-6 space-y-3.5 before:absolute before:left-2.5 before:top-2 before:bottom-2 before:w-0.5 before:bg-border">
-                      {(
-                        selectedOrder.deliveryTimeline || [
-                          {
-                            step: "Order Placed",
-                            timestamp: formatOrderDate(selectedOrder.date),
-                            status: "completed",
-                            note:
-                              selectedOrder.source === "storefront"
-                                ? "Customer paid online"
-                                : "Agent wallet debit",
-                          },
-                          {
-                            step: "Gateway Dispatch",
-                            timestamp: "In progress",
-                            status:
-                              selectedOrder.status === "delivered"
-                                ? "completed"
-                                : selectedOrder.status === "failed"
-                                  ? "failed"
-                                  : "current",
-                            note: `${selectedOrder.network} Core API Route`,
-                          },
-                          {
-                            step: "Delivered to Beneficiary",
-                            timestamp:
-                              selectedOrder.status === "delivered"
-                                ? "Confirmed"
-                                : "Pending",
-                            status:
-                              selectedOrder.status === "delivered"
-                                ? "completed"
-                                : "pending",
-                            note: `Sim ${selectedOrder.recipientPhone}`,
-                          },
-                        ]
-                      ).map((item, idx) => (
-                        <div key={idx} className="relative text-xs">
-                          <span
-                            className={`absolute -left-6 top-0.5 size-5 rounded-full flex items-center justify-center ring-4 ring-card text-[10px] font-bold ${
-                              item.status === "completed"
-                                ? "bg-emerald-500 text-white"
-                                : item.status === "failed"
-                                  ? "bg-destructive text-destructive-foreground"
-                                  : item.status === "current"
-                                    ? "bg-primary text-primary-foreground animate-pulse"
-                                    : "bg-muted text-muted-foreground"
-                            }`}
-                          >
-                            {item.status === "completed" ? (
-                              <Check className="size-3 stroke-3" />
-                            ) : item.status === "failed" ? (
-                              <XCircle className="size-3" />
-                            ) : (
-                              idx + 1
-                            )}
-                          </span>
-
-                          <div className="font-bold text-foreground">
-                            {item.step}
+                  <div className="space-y-4">
+                    {/* Progress Bar */}
+                    {(() => {
+                      const timeline = selectedOrder.deliveryTimeline || [];
+                      const completedCount = timeline.filter(
+                        (s) => s.status === "completed",
+                      ).length;
+                      const progress = Math.round(
+                        (completedCount / timeline.length) * 100,
+                      );
+                      return (
+                        <div>
+                          <div className="flex items-center justify-between mb-1.5">
+                            <span className="text-[10px] font-bold uppercase text-muted-foreground tracking-wider">
+                              Delivery progress
+                            </span>
+                            <span className="text-[10px] font-bold text-primary tabular-nums">
+                              {progress}%
+                            </span>
                           </div>
-                          <div className="text-[11px] text-muted-foreground flex items-center gap-1.5 mt-0.5">
-                            <span>{item.timestamp}</span>
-                            {item.note && <span>· {item.note}</span>}
+                          <div className="h-1.5 w-full rounded-full bg-muted overflow-hidden">
+                            <div
+                              className="h-full rounded-full bg-primary transition-all duration-700"
+                              style={{ width: `${progress}%` }}
+                            />
                           </div>
                         </div>
-                      ))}
+                      );
+                    })()}
+
+                    {/* Routing Path */}
+                    <div className="rounded-xl border border-border bg-muted/20 p-3">
+                      <p className="text-[10px] font-bold uppercase text-muted-foreground tracking-wider mb-2.5">
+                        Delivery route
+                      </p>
+                      {(() => {
+                        const a =
+                          NETWORK_ACCENT[
+                            selectedOrder.network as TelecomNetwork
+                          ] ?? NETWORK_ACCENT.MTN;
+                        const timeline = selectedOrder.deliveryTimeline || [];
+                        const completedCount = timeline.filter(
+                          (s) => s.status === "completed",
+                        ).length;
+                        const progress = Math.round(
+                          (completedCount / timeline.length) * 100,
+                        );
+                        return (
+                          <div className="flex items-center gap-1.5">
+                            <div
+                              className={`flex size-7 shrink-0 items-center justify-center rounded-lg text-[9px] font-black text-white ${a.solid}`}
+                            >
+                              {a.short}
+                            </div>
+                            <div className="relative flex-1 h-px bg-primary/25">
+                              <div
+                                className="absolute inset-y-0 left-0 bg-primary transition-all duration-700 rounded-full"
+                                style={{ width: `${progress}%` }}
+                              />
+                              {selectedOrder.status === "processing" && (
+                                <span
+                                  className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 flex size-2 rounded-full bg-primary"
+                                  style={{ left: `${progress}%` }}
+                                >
+                                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75" />
+                                </span>
+                              )}
+                            </div>
+                            <div className="flex size-7 shrink-0 items-center justify-center rounded-lg bg-primary text-[9px] font-black text-primary-foreground">
+                              SDH
+                            </div>
+                            <div className="relative flex-1 h-px bg-primary/25">
+                              <div
+                                className="absolute inset-y-0 left-0 bg-primary transition-all duration-700 rounded-full"
+                                style={{
+                                  width: progress === 100 ? "100%" : "0%",
+                                }}
+                              />
+                            </div>
+                            <div
+                              className={`flex size-7 shrink-0 items-center justify-center rounded-lg transition-colors ${
+                                selectedOrder.status === "delivered"
+                                  ? "bg-emerald-500 text-white"
+                                  : "bg-muted border border-border text-muted-foreground"
+                              }`}
+                            >
+                              {selectedOrder.status === "delivered" ? (
+                                <Check className="size-3" />
+                              ) : (
+                                <SignalRail
+                                  status="online"
+                                  size="xs"
+                                  bars={4}
+                                />
+                              )}
+                            </div>
+                          </div>
+                        );
+                      })()}
+                      <div className="mt-1.5 flex justify-between text-[9px] text-muted-foreground">
+                        <span>{selectedOrder.network} EVD</span>
+                        <span>SDH Core</span>
+                        <span>Recipient</span>
+                      </div>
+                    </div>
+
+                    {/* Step Tracker */}
+                    <div>
+                      <p className="text-[10px]  mb-3 font-bold uppercase text-muted-foreground tracking-wider">
+                        Signal dispatch timeline
+                      </p>
+
+                      <div className="space-y-0">
+                        {(
+                          selectedOrder.deliveryTimeline || [
+                            {
+                              step: "Order Placed",
+                              timestamp: formatOrderDate(selectedOrder.date),
+                              status: "completed",
+                              note:
+                                selectedOrder.source === "storefront"
+                                  ? "Customer paid online"
+                                  : "Agent wallet debit",
+                            },
+                            {
+                              step: "Gateway Dispatch",
+                              timestamp: "In progress",
+                              status:
+                                selectedOrder.status === "delivered"
+                                  ? "completed"
+                                  : selectedOrder.status === "failed"
+                                    ? "failed"
+                                    : "current",
+                              note: `${selectedOrder.network} Core API Route`,
+                            },
+                            {
+                              step: "Delivered to Beneficiary",
+                              timestamp:
+                                selectedOrder.status === "delivered"
+                                  ? "Confirmed"
+                                  : "Pending",
+                              status:
+                                selectedOrder.status === "delivered"
+                                  ? "completed"
+                                  : "pending",
+                              note: `Sim ${selectedOrder.recipientPhone}`,
+                            },
+                          ]
+                        ).map((item, idx) => {
+                          const isCompleted = item.status === "completed";
+                          const isCurrent = item.status === "current";
+                          const isPending = item.status === "pending";
+                          const isFailed = item.status === "failed";
+                          const isLast =
+                            idx ===
+                            (selectedOrder.deliveryTimeline || []).length - 1;
+                          return (
+                            <div key={idx} className="flex gap-3">
+                              {/* Left: connector + dot */}
+                              <div className="flex flex-col items-center shrink-0 w-6">
+                                <div
+                                  className={`relative flex size-6 items-center justify-center rounded-full border-2 shrink-0 transition-all ${
+                                    isCompleted
+                                      ? "bg-primary border-primary text-primary-foreground"
+                                      : isCurrent
+                                        ? "bg-background border-primary text-primary"
+                                        : isFailed
+                                          ? "bg-red-500/10 border-red-500 text-red-500"
+                                          : "bg-muted border-border text-muted-foreground"
+                                  }`}
+                                >
+                                  {isCurrent && (
+                                    <span className="absolute inset-0 rounded-full animate-ping bg-primary/20" />
+                                  )}
+                                  {isCompleted ? (
+                                    <Check className="size-3" />
+                                  ) : isCurrent ? (
+                                    <span className="size-1.5 rounded-full bg-primary" />
+                                  ) : isFailed ? (
+                                    <span className="text-[9px] font-black">
+                                      ✕
+                                    </span>
+                                  ) : (
+                                    <span className="text-[9px] font-black">
+                                      {idx + 1}
+                                    </span>
+                                  )}
+                                </div>
+                                {!isLast && (
+                                  <div
+                                    className={`w-0.5 flex-1 my-1 min-h-[1.25rem] ${
+                                      isCompleted ? "bg-primary" : "bg-border"
+                                    }`}
+                                  />
+                                )}
+                              </div>
+                              {/* Right: content */}
+                              <div
+                                className={`pb-4 flex-1 ${isLast ? "pb-0" : ""}`}
+                              >
+                                <div className="flex flex-wrap items-center justify-between gap-2">
+                                  <p
+                                    className={`text-xs font-bold ${
+                                      isCompleted
+                                        ? "text-foreground"
+                                        : isCurrent
+                                          ? "text-primary"
+                                          : isFailed
+                                            ? "text-red-600"
+                                            : "text-muted-foreground"
+                                    }`}
+                                  >
+                                    {item.step}
+                                    {isCurrent && (
+                                      <span className="ml-2 inline-flex items-center gap-1 rounded-full bg-amber-500/10 px-1.5 py-0.5 text-[8px] font-bold uppercase text-amber-600 dark:text-amber-400">
+                                        <span className="size-1 rounded-full bg-amber-500 animate-pulse" />
+                                        In progress
+                                      </span>
+                                    )}
+                                  </p>
+                                  <span
+                                    className={`text-[9px] font-semibold text-muted-foreground tabular-nums ${
+                                      isPending ? "italic" : ""
+                                    }`}
+                                  >
+                                    {item.timestamp}
+                                  </span>
+                                </div>
+                                {item.note && (
+                                  <p className="mt-0.5 text-[11px] text-muted-foreground leading-relaxed">
+                                    {item.note}
+                                  </p>
+                                )}
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
                     </div>
                   </div>
 
@@ -1136,7 +1314,7 @@ export const AgentOrdersView: React.FC<AgentOrdersViewProps> = ({
                         Recipient Phone:
                       </span>
                       <div className="flex items-center gap-1.5">
-                        <span className="font-mono font-bold text-foreground">
+                        <span className=" font-bold text-foreground">
                           {selectedOrder.recipientPhone}
                         </span>
                         <Button
@@ -1166,7 +1344,7 @@ export const AgentOrdersView: React.FC<AgentOrdersViewProps> = ({
                         Order Reference:
                       </span>
                       <div className="flex items-center gap-1.5">
-                        <span className="font-mono font-bold text-foreground">
+                        <span className=" font-bold text-foreground">
                           {selectedOrder.reference}
                         </span>
                         <Button
@@ -1174,7 +1352,9 @@ export const AgentOrdersView: React.FC<AgentOrdersViewProps> = ({
                           variant="ghost"
                           size="sm"
                           onClick={() => {
-                            navigator.clipboard.writeText(selectedOrder.reference);
+                            navigator.clipboard.writeText(
+                              selectedOrder.reference,
+                            );
                             setCopiedRef(true);
                             setTimeout(() => setCopiedRef(false), 2000);
                           }}
@@ -1259,7 +1439,9 @@ export const AgentOrdersView: React.FC<AgentOrdersViewProps> = ({
                           selectedOrder.source === "storefront" && (
                             <Button
                               type="button"
-                              onClick={() => handleRepushOrder(selectedOrder.id)}
+                              onClick={() =>
+                                handleRepushOrder(selectedOrder.id)
+                              }
                               className="flex-1 text-xs font-bold gap-1.5 h-9 bg-primary cursor-pointer shadow-xs"
                             >
                               <RefreshCw className="size-3.5" />
@@ -1273,7 +1455,9 @@ export const AgentOrdersView: React.FC<AgentOrdersViewProps> = ({
                             <Button
                               type="button"
                               variant="outline"
-                              onClick={() => handleRefundOrder(selectedOrder.id)}
+                              onClick={() =>
+                                handleRefundOrder(selectedOrder.id)
+                              }
                               className="flex-1 text-xs font-bold gap-1.5 h-9 text-destructive hover:bg-destructive/10 cursor-pointer"
                             >
                               <RotateCcw className="size-3.5" />
@@ -1343,29 +1527,17 @@ export const AgentOrdersView: React.FC<AgentOrdersViewProps> = ({
               </ScrollArea>
 
               {/* Fixed Footer */}
-              <DialogFooter className="shrink-0 border-t border-border bg-muted/40 p-4">
-                <div className="flex w-full items-center justify-between gap-2">
+              <DialogFooter className="shrink-0 border-t border-border bg-muted/40 p-0">
+                <div className="flex items-center gap-2 px-6 py-4 pb-6 w-full">
                   <Button
                     type="button"
-                    variant="outline"
                     size="sm"
-                    onClick={() => setSelectedOrder(null)}
-                    className="text-xs font-bold cursor-pointer"
+                    onClick={() => handleWhatsAppCustomer(selectedOrder)}
+                    className="text-xs font-bold gap-1.5 h-9 bg-emerald-600 hover:bg-emerald-700 text-white cursor-pointer shadow-xs w-full"
                   >
-                    Close
+                    <MessageCircle className="size-3.5" />
+                    <span>WhatsApp Customer</span>
                   </Button>
-
-                  <div className="flex items-center gap-2">
-                    <Button
-                      type="button"
-                      size="sm"
-                      onClick={() => handleWhatsAppCustomer(selectedOrder)}
-                      className="text-xs font-bold gap-1.5 h-9 bg-emerald-600 hover:bg-emerald-700 text-white cursor-pointer shadow-xs"
-                    >
-                      <MessageCircle className="size-3.5" />
-                      <span>WhatsApp Customer</span>
-                    </Button>
-                  </div>
                 </div>
               </DialogFooter>
             </>
