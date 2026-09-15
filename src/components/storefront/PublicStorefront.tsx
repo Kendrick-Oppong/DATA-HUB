@@ -538,7 +538,7 @@ export const PublicStorefront: React.FC<PublicStorefrontProps> = ({
                       rel="noreferrer"
                       className="px-3 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-bold inline-flex items-center gap-1 cursor-pointer"
                     >
-                      <span>Join Free</span>
+                      <span>Join</span>
                       <ExternalLink className="w-3 h-3" />
                     </a>
                   </div>
