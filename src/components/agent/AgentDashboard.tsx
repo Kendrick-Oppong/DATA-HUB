@@ -69,7 +69,7 @@ export const AgentDashboard: React.FC<AgentDashboardProps> = ({
       ? window.location.origin
       : "https://smartdatahub.com";
   const fullStoreUrl = `${origin}/store/${storeConfig.handle || "store"}`;
-  const displayStoreUrl = `smartdatahub.com/store/${storeConfig.handle || "store"}`;
+  const displayStoreUrl = `${origin.replace(/^https?:\/\//, "")}/store/${storeConfig.handle || "store"}`;
 
   const handleCopyLink = () => {
     navigator.clipboard.writeText(fullStoreUrl);

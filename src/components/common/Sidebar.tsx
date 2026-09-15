@@ -182,7 +182,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
                       <span>{item.label}</span>
                       {item.badge && (
                         <span className="rounded-sm bg-primary/20 px-1 py-0.2 text-[9px] text-primary">
-                          {item.badge}
+                          {item.id === "my-store" && storeStatus !== "published"
+                            ? "Offline"
+                            : item.badge}
                         </span>
                       )}
                       {item.count ? (
@@ -217,7 +219,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
                     variant="secondary"
                     className="ml-auto text-[10px] px-1.5 py-0"
                   >
-                    {item.badge}
+                    {item.id === "my-store" && storeStatus !== "published"
+                      ? "Offline"
+                      : item.badge}
                   </Badge>
                 )}
                 {item.count ? (
@@ -379,20 +383,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
         >
           <div className="flex items-center gap-2">
             <span
-              className={`size-2.5 rounded-full ${
-                storeStatus === "published"
-                  ? "bg-primary animate-pulse"
-                  : "bg-muted-foreground"
-              }`}
-            />
-            <span
               className={`${
                 isCollapsed ? "sr-only" : ""
               } text-xs font-extrabold uppercase tracking-wider text-muted-foreground`}
             >
-              {storeStatus === "published"
-                ? roleLabel
-                : `${roleLabel} (Offline)`}
+              {roleLabel}
             </span>
           </div>
 

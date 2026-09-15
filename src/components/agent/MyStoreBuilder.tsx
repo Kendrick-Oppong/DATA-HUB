@@ -157,8 +157,13 @@ export const MyStoreBuilder: React.FC<MyStoreBuilderProps> = ({
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const saveTimerRef = useRef<NodeJS.Timeout | null>(null);
 
-  const storeUrl = `smartdatahub.com/store/${config.handle}`;
-  const fullStoreUrl = `https://${storeUrl}`;
+  const origin =
+    typeof window !== "undefined"
+      ? window.location.origin
+      : "https://smartdatahub.com";
+  const storeUrl = `${origin}/store/${config.handle}`;
+  const fullStoreUrl = storeUrl;
+  const displayStoreUrl = `${origin.replace(/^https?:\/\//, "")}/store/${config.handle}`;
 
   // Reset pagination on filter changes
   useEffect(() => {
@@ -428,7 +433,9 @@ export const MyStoreBuilder: React.FC<MyStoreBuilderProps> = ({
           <div className="flex flex-wrap items-center gap-2 pt-1">
             <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-background border border-border text-xs">
               <span className="text-muted-foreground font-semibold">URL:</span>
-              <span className="font-semibold text-foreground">{storeUrl}</span>
+              <span className="font-semibold text-foreground">
+                {displayStoreUrl}
+              </span>
             </div>
             <button
               onClick={handleCopyStoreLink}
@@ -442,7 +449,7 @@ export const MyStoreBuilder: React.FC<MyStoreBuilderProps> = ({
               <span>{copiedLink ? "Copied" : "Copy"}</span>
             </button>
             <a
-              href={storeUrl}
+              href={fullStoreUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="px-3 py-1.5 rounded-xl bg-primary text-primary-foreground text-xs font-bold hover:bg-primary/90 transition-colors flex items-center gap-1.5 cursor-pointer shadow-2xs inline-flex"
@@ -685,7 +692,7 @@ export const MyStoreBuilder: React.FC<MyStoreBuilderProps> = ({
                       <span>Live Storefront Chip</span>
                     </CardTitle>
                     <a
-                      href={storeUrl}
+                      href={fullStoreUrl}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-xs font-bold text-primary flex items-center gap-1 h-7 px-2 hover:underline cursor-pointer inline-flex"
