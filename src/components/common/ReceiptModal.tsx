@@ -11,6 +11,8 @@ import {
   ShieldCheck,
   Share2,
   ReceiptText,
+  ArrowRight,
+  ChevronRight,
 } from "lucide-react";
 import { Order } from "../../types";
 import {
@@ -25,6 +27,7 @@ import { Button } from "../ui/button";
 import { Badge } from "../ui/badge";
 import { Separator } from "../ui/separator";
 import { ScrollArea } from "../ui/scroll-area";
+import { SignalRail } from "./SignalRail";
 
 interface ReceiptModalProps {
   order: Order | null;
@@ -116,7 +119,12 @@ export const ReceiptModal: React.FC<ReceiptModalProps> = ({
       flex-col
       gap-0
       overflow-hidden
+      rounded-3xl
+      border
+      border-border
+      bg-card
       p-0
+      shadow-2xl
       sm:max-w-2xl
       print:h-auto
       print:max-h-none
@@ -351,7 +359,7 @@ export const ReceiptModal: React.FC<ReceiptModalProps> = ({
             )}
 
             {/* Delivery Timeline */}
-            {order.deliveryTimeline.length > 0 && (
+            {(order.deliveryTimeline || []).length > 0 && (
               <section className="mt-5">
                 <div className="mb-3 flex items-center gap-2">
                   <div className="flex size-7 items-center justify-center rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
@@ -370,82 +378,147 @@ export const ReceiptModal: React.FC<ReceiptModalProps> = ({
                 </div>
 
                 <div className="rounded-2xl border border-border bg-muted/20 p-4">
-                  {order.deliveryTimeline.map((item, idx) => {
-                    const isLast = idx === order.deliveryTimeline.length - 1;
-
-                    return (
-                      <div
-                        key={`${item.step}-${idx}`}
-                        className="relative flex gap-3"
-                      >
-                        {!isLast && (
-                          <div className="absolute left-[7px] top-4 h-full w-px bg-border" />
-                        )}
-
-                        <div className="relative z-10 mt-1.5 size-3.5 shrink-0 rounded-full border-2 border-background bg-emerald-500" />
-
-                        <div
-                          className={`flex min-w-0 flex-1 items-start justify-between gap-4 ${
-                            isLast ? "pb-0" : "pb-4"
-                          }`}
-                        >
-                          <p className="min-w-0 text-xs font-medium text-foreground">
-                            {item.step}
-                          </p>
-
-                          <p className="shrink-0 text-[12px] font-semibold tabular-nums text-muted-foreground">
-                            {item.timestamp}
-                          </p>
+                  <div className="space-y-1">
+                    {(order.deliveryTimeline || []).map((item, idx) => {
+                      const isCompleted = item.status === "completed";
+                      const isCurrent = item.status === "current";
+                      const isPending = item.status === "pending";
+                      const isFailed = item.status === "failed";
+                      const isLast =
+                        idx === (order.deliveryTimeline || []).length - 1;
+                      return (
+                        <div key={idx} className="flex gap-3">
+                          {/* Left: connector + dot */}
+                          <div className="flex flex-col items-center shrink-0 w-6">
+                            <div
+                              className={`relative flex size-6 items-center justify-center rounded-full border-2 shrink-0 transition-all ${
+                                isCompleted
+                                  ? "bg-primary border-primary text-primary-foreground"
+                                  : isCurrent
+                                    ? "bg-background border-primary text-primary"
+                                    : isFailed
+                                      ? "bg-red-500/10 border-red-500 text-red-500"
+                                      : "bg-muted border-border text-muted-foreground"
+                              }`}
+                            >
+                              {isCurrent && (
+                                <span className="absolute inset-0 rounded-full animate-ping bg-primary/20" />
+                              )}
+                              {isCompleted ? (
+                                <Check className="size-3" />
+                              ) : isCurrent ? (
+                                <span className="size-1.5 rounded-full bg-primary" />
+                              ) : isFailed ? (
+                                <span className="text-[9px] font-black">✕</span>
+                              ) : (
+                                <span className="text-[9px] font-black">
+                                  {idx + 1}
+                                </span>
+                              )}
+                            </div>
+                            {!isLast && (
+                              <div
+                                className={`w-0.5 flex-1 my-1 min-h-5 ${
+                                  isCompleted ? "bg-primary" : "bg-border"
+                                }`}
+                              />
+                            )}
+                          </div>
+                          {/* Right: content */}
+                          <div
+                            className={`pb-4 flex-1 ${isLast ? "pb-0" : ""}`}
+                          >
+                            <div className="flex flex-wrap items-center justify-between gap-2">
+                              <p
+                                className={`text-xs font-bold ${
+                                  isCompleted
+                                    ? "text-foreground"
+                                    : isCurrent
+                                      ? "text-primary"
+                                      : isFailed
+                                        ? "text-red-600"
+                                        : "text-muted-foreground"
+                                }`}
+                              >
+                                {item.step}
+                                {isCurrent && (
+                                  <span className="ml-2 inline-flex items-center gap-1 rounded-full bg-amber-500/10 px-1.5 py-0.5 text-[8px] font-bold uppercase text-amber-600 dark:text-amber-400">
+                                    <span className="size-1 rounded-full bg-amber-500 animate-pulse" />
+                                    In progress
+                                  </span>
+                                )}
+                              </p>
+                              <span
+                                className={`text-[9px] font-semibold text-muted-foreground tabular-nums ${
+                                  isPending ? "italic" : ""
+                                }`}
+                              >
+                                {item.timestamp}
+                              </span>
+                            </div>
+                            {item.note && (
+                              <p className="mt-0.5 text-[11px] text-muted-foreground leading-relaxed">
+                                {item.note}
+                              </p>
+                            )}
+                          </div>
                         </div>
-                      </div>
-                    );
-                  })}
+                      );
+                    })}
+                  </div>
                 </div>
               </section>
             )}
 
             {/* Note */}
-            <div className="mt-5 flex items-start gap-2.5 rounded-xl border border-border/70 bg-muted/30 p-3">
-              <ShieldCheck className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
+            <div className="mt-5 space-y-2 pt-1">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                Receipt Information
+              </span>
+              <div className="rounded-2xl border border-amber-500/20 bg-amber-500/5 p-3.5 space-y-2">
+                <div className="flex items-start gap-2.5">
+                  <ShieldCheck className="mt-0.5 size-4 shrink-0 text-amber-600 dark:text-amber-400" />
 
-              <p className="text-[12px] font-medium leading-relaxed text-muted-foreground">
-                Keep this receipt. Your order reference can be used to track
-                this transaction or request support.
-              </p>
+                  <p className="text-[11px] font-medium leading-relaxed text-muted-foreground">
+                    Keep this receipt. Your order reference can be used to track
+                    this transaction or request support.
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
         </ScrollArea>
 
         {/* Footer stays fixed */}
-        <DialogFooter className="shrink-0 border-t border-border bg-muted !py-0 !px-4 print:hidden">
-          <div className="flex w-full flex-col-reverse p-3 m-3 gap-2 sm:flex-row sm:items-center sm:justify-between">
-            <Button
-              variant="outline"
-              size="lg"
-              onClick={onClose}
-              className="w-full sm:w-auto"
-            >
-              Close
-            </Button>
-
-            <div className="flex w-full gap-2 sm:w-auto">
+        <DialogFooter className="shrink-0 border-t border-border bg-muted/40 p-0 print:hidden">
+          <div className="flex items-center gap-2 px-6 py-4 pb-6 w-full">
+            <div className="flex w-full gap-2">
               <Button
                 variant="outline"
-                size="lg"
-                onClick={handleShareWhatsApp}
-                className="flex-1 gap-1.5 sm:flex-none"
+                size="sm"
+                onClick={onClose}
+                className="flex-1 text-xs font-bold gap-1.5 h-9 cursor-pointer"
               >
-                <Share2 className="size-4" />
+                Close
+              </Button>
+
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleShareWhatsApp}
+                className="flex-1 text-xs font-bold gap-1.5 h-9 cursor-pointer"
+              >
+                <Share2 className="size-3.5" />
                 Share
               </Button>
 
               <Button
-                size="lg"
+                size="sm"
                 onClick={handlePrint}
-                className="flex-1 gap-1.5 sm:flex-none"
+                className="flex-1 text-xs font-bold gap-1.5 h-9 bg-emerald-600 hover:bg-emerald-700 cursor-pointer shadow-xs"
               >
-                <Printer className="size-4" />
-                Print receipt
+                <Printer className="size-3.5" />
+                Print
               </Button>
             </div>
           </div>
