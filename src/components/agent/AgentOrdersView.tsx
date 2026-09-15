@@ -1528,6 +1528,30 @@ export const AgentOrdersView: React.FC<AgentOrdersViewProps> = ({
                         </div>
                       </div>
                     )}
+
+                  {/* Report Not Received */}
+                  {selectedOrder.status === "delivered" && (
+                    <div className="space-y-2 pt-1">
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                        Delivery Issue
+                      </span>
+                      <div className="rounded-2xl border border-red-500/20 bg-red-500/5 p-3.5 space-y-2">
+                        <p className="text-[11px] text-muted-foreground leading-relaxed">
+                          Customer reports they did not receive the data bundle.
+                          Report this to SDH Admin for investigation.
+                        </p>
+                        <Button
+                          type="button"
+                          variant="destructive"
+                          size="sm"
+                          className="w-full text-xs font-medium gap-1.5  h-8"
+                        >
+                          <AlertCircle className="size-3.5" />
+                          <span>Report Not Received</span>
+                        </Button>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </ScrollArea>
 
@@ -1541,7 +1565,7 @@ export const AgentOrdersView: React.FC<AgentOrdersViewProps> = ({
                     className="text-xs font-bold gap-1.5 h-9 bg-emerald-600 hover:bg-emerald-700 cursor-pointer shadow-xs w-full"
                   >
                     <MessageCircle className="size-3.5" />
-                    <span>WhatsApp Customer</span>
+                    <span>Message Customer</span>
                   </Button>
                 </div>
               </DialogFooter>
