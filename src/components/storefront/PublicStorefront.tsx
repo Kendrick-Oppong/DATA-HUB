@@ -1301,8 +1301,8 @@ export const PublicStorefront: React.FC<PublicStorefrontProps> = ({
 
             {/* Completed State: Digital Receipt & Confirmation */}
             {checkoutStep === "completed" && completedOrder && (
-              <div className="p-8 sm:p-12 rounded-3xl bg-card border border-emerald-500/30 shadow-2xl text-center space-y-6 animate-in fade-in-50 zoom-in-95">
-                <div className="w-20 h-20 rounded-full bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 mx-auto flex items-center justify-center ring-8 ring-emerald-500/10">
+              <div className="p-8 sm:p-12 rounded-3xl bg-card border border-border shadow-lg text-center space-y-6 animate-in fade-in-50 zoom-in-95">
+                <div className="w-20 h-20 rounded-full bg-emerald-500/8 text-emerald-600 dark:text-emerald-400 mx-auto flex items-center justify-center">
                   <CheckCircle2 className="w-12 h-12" />
                 </div>
 
@@ -1327,7 +1327,7 @@ export const PublicStorefront: React.FC<PublicStorefrontProps> = ({
                 {/* Order Details Card */}
                 <div className="max-w-md mx-auto p-4 rounded-2xl bg-muted/40 border border-border/80 text-left space-y-2 text-xs">
                   <div className="flex justify-between items-center">
-                    <span className="text-muted-foreground">
+                    <span className="text-muted-foreground font-semibold">
                       Transaction Reference:
                     </span>
                     <div className="flex items-center gap-1 font-bold text-foreground">
@@ -1349,7 +1349,7 @@ export const PublicStorefront: React.FC<PublicStorefrontProps> = ({
                     </div>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-muted-foreground">
+                    <span className="text-muted-foreground font-semibold">
                       Carrier Switch:
                     </span>
                     <span className="font-bold text-foreground">
@@ -1357,13 +1357,13 @@ export const PublicStorefront: React.FC<PublicStorefrontProps> = ({
                     </span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-muted-foreground">Amount Paid:</span>
+                    <span className="text-muted-foreground font-semibold">Amount Paid:</span>
                     <span className="font-black text-foreground tabular-nums">
                       GH₵ {completedOrder.amount.toFixed(2)}
                     </span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-muted-foreground">Timestamp:</span>
+                    <span className="text-muted-foreground font-semibold">Timestamp:</span>
                     <span className="text-foreground">
                       {completedOrder.date}
                     </span>
