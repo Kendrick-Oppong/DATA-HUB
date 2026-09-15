@@ -315,19 +315,21 @@ export const Navbar: React.FC<NavbarProps> = ({
               <DropdownMenuTrigger
                 render={
                   <Button
-                    variant="ghost"
-                    className="relative flex size-8 cursor-pointer items-center justify-center rounded-full border border-primary/30 bg-primary/10 p-0 text-xs font-black text-primary shadow-2xs transition-all hover:scale-105 hover:border-primary/60 hover:bg-primary/20 active:scale-95"
+                    variant="outline"
+                    className="flex h-9 items-center gap-1.5 rounded-full border-border/80 px-2 shadow-2xs transition-all hover:bg-muted/60 cursor-pointer"
                     title={profileName}
                     aria-label="User profile menu"
                   />
                 }
               >
-                <span className="font-black text-xs tracking-tight uppercase">
-                  {profileInitials}
-                </span>
-                <span className="absolute -bottom-0.5 -right-0.5 flex size-2.5">
-                  <span className="size-2.5 rounded-full bg-emerald-500 ring-2 ring-card" />
-                </span>
+                <div className="relative flex size-7 items-center justify-center rounded-full bg-primary/10 text-xs font-black text-primary">
+                  <span>{profileInitials}</span>
+                  <span className="absolute -bottom-0.5 -right-0.5 flex size-2">
+                    <span className="size-2 rounded-full bg-emerald-500 ring-2 ring-card" />
+                  </span>
+                </div>
+
+                <ChevronDown className="size-3.5 text-muted-foreground" />
               </DropdownMenuTrigger>
 
               <DropdownMenuContent
