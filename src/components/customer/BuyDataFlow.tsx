@@ -611,16 +611,24 @@ export const BuyDataFlow: React.FC<BuyDataFlowProps> = ({
               </div>
             )}
 
-            {/* Pending Dispatch Warning / Debt Notice Banner */}
+            {/* Order Dispatch & Verification Notice Banner */}
             <div className="flex items-center justify-between rounded-2xl border border-amber-500/20 bg-amber-500/10 p-4 text-xs">
               <div className="flex items-center gap-3">
                 <SignalRail status="processing" size="sm" />
 
-                <div>
-                  <span className="font-semibold">Airtime / Credit Debt Notice: </span>
-                  <span>
-                    If you have unpaid credit or airtime debts, please settle them before placing new orders. Data cannot be delivered to numbers with outstanding balances.
-                  </span>
+                <div className="space-y-1">
+                  <div>
+                    <span className="font-bold text-foreground">Airtime Debt Notice: </span>
+                    <span>
+                      Settle unpaid credit/airtime loans first; orders cannot be delivered to numbers with outstanding carrier balances.
+                    </span>
+                  </div>
+                  <div>
+                    <span className="font-bold text-foreground">Verify Before Payment: </span>
+                    <span>
+                      Double-check recipient phone number and carrier network. Orders sent to wrong numbers cannot be refunded.
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
