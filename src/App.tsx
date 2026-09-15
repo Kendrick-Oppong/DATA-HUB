@@ -1139,6 +1139,11 @@ export default function App() {
                   orders={orders}
                   commissionBalance={commissionBalance}
                   onWithdrawSuccess={handleWithdrawSuccess}
+                  onUpdateOrders={(updatedOrders) => {
+                    setOrders(updatedOrders);
+                    saveToStorage("sdh_orders_v4", updatedOrders);
+                  }}
+                  onNavigateTab={handleTabChange}
                 />
               )}
             </>

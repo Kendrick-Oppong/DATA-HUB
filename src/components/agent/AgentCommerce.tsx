@@ -25,6 +25,7 @@ import {
   TelecomNetwork,
 } from "../../types";
 import { VerificationScreen } from "./VerificationScreen";
+import { AgentOrdersView } from "./AgentOrdersView";
 
 interface AgentCommerceProps {
   view:
@@ -40,6 +41,8 @@ interface AgentCommerceProps {
   commissionBalance: number;
   onWithdrawSuccess: (amount: number, reference: string) => void;
   onUpdateBundlePrice?: (bundleId: string, customPrice: number) => void;
+  onUpdateOrders?: (orders: Order[]) => void;
+  onNavigateTab?: (tab: string) => void;
 }
 
 export const AgentCommerce: React.FC<AgentCommerceProps> = ({
@@ -49,14 +52,9 @@ export const AgentCommerce: React.FC<AgentCommerceProps> = ({
   orders,
   commissionBalance,
   onWithdrawSuccess,
+  onUpdateOrders,
+  onNavigateTab,
 }) => {
-  // Store Orders State
-  const [orderFilterNet, setOrderFilterNet] = useState<string>("all");
-  const storeOrders = orders.filter((o) => o.agentMargin !== undefined);
-  const filteredOrders = storeOrders.filter(
-    (o) => orderFilterNet === "all" || o.network === orderFilterNet,
-  );
-
   // Pricing State
   const [customPrices, setCustomPrices] = useState<Record<string, number>>(
     () => {
@@ -167,86 +165,12 @@ export const AgentCommerce: React.FC<AgentCommerceProps> = ({
 
       {/* Store Orders View */}
       {view === "store-orders" && (
-        <div className="space-y-6">
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-4 border-b border-border">
-            <div>
-              <h1 className="text-2xl font-extrabold text-foreground tracking-tight flex items-center gap-2">
-                <ShoppingBag className="w-6 h-6 text-primary" />
-                <span>Storefront Customer Orders</span>
-              </h1>
-              <p className="text-xs text-muted-foreground mt-0.5">
-                Orders placed through your public store link with automatic
-                margin credit.
-              </p>
-            </div>
-
-            <div className="flex items-center gap-1.5">
-              {["all", "MTN", "Telecel", "AirtelTigo"].map((n) => (
-                <button
-                  key={n}
-                  onClick={() => setOrderFilterNet(n)}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-colors cursor-pointer ${
-                    orderFilterNet === n
-                      ? "bg-primary text-primary-foreground"
-                      : "bg-muted text-muted-foreground hover:text-foreground"
-                  }`}
-                >
-                  {n}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div className="p-6 rounded-3xl bg-card border border-border shadow-xs space-y-4">
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs">
-                <thead>
-                  <tr className="border-b border-border text-muted-foreground uppercase text-[10px] font-bold">
-                    <th className="pb-2">Reference</th>
-                    <th className="pb-2">Date</th>
-                    <th className="pb-2">Recipient Phone</th>
-                    <th className="pb-2">Package</th>
-                    <th className="pb-2 text-right">Retail Price</th>
-                    <th className="pb-2 text-right">Your Margin</th>
-                    <th className="pb-2 text-center">Status</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-border/60">
-                  {filteredOrders.map((o) => (
-                    <tr
-                      key={o.id}
-                      className="hover:bg-muted/30 transition-colors"
-                    >
-                      <td className="py-3 font-mono font-bold text-foreground">
-                        {o.reference}
-                      </td>
-                      <td className="py-3 text-muted-foreground tabular-nums">
-                        {o.date}
-                      </td>
-                      <td className="py-3 font-mono text-foreground font-semibold">
-                        {o.recipientPhone}
-                      </td>
-                      <td className="py-3 font-medium text-foreground">
-                        {o.productName}
-                      </td>
-                      <td className="py-3 text-right font-black text-foreground tabular-nums">
-                        GH₵ {o.amount.toFixed(2)}
-                      </td>
-                      <td className="py-3 text-right font-black text-emerald-600 dark:text-emerald-400 tabular-nums">
-                        +GH₵ {(o.agentMargin || 0).toFixed(2)}
-                      </td>
-                      <td className="py-3 text-center">
-                        <span className="px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 text-[10px] font-bold">
-                          {o.status.toUpperCase()}
-                        </span>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
+        <AgentOrdersView
+          orders={orders}
+          storeConfig={storeConfig}
+          onUpdateOrders={onUpdateOrders}
+          onNavigateTab={onNavigateTab}
+        />
       )}
 
       {/* VIEW: PRICING & MARGINS */}
