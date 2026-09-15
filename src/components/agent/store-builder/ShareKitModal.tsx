@@ -415,7 +415,7 @@ export const ShareKitModal: React.FC<ShareKitModalProps> = ({ open, onClose, sto
               type="button"
               onClick={shareOnWhatsApp}
               size="lg"
-              className="h-12 w-full gap-2 rounded-xl text-sm font-bold bg-emerald-600 hover:bg-emerald-700 text-white shadow-md cursor-pointer"
+              className="h-10 w-full gap-2 text-sm font-bold bg-emerald-600 hover:bg-emerald-700 text-white shadow-md cursor-pointer"
             >
               <MessageCircle className="size-4" />
               <span>Share to WhatsApp Status</span>
@@ -426,7 +426,7 @@ export const ShareKitModal: React.FC<ShareKitModalProps> = ({ open, onClose, sto
               onClick={handleDownload}
               variant="outline"
               size="lg"
-              className="h-12 w-full gap-2 rounded-xl text-sm font-bold shadow-xs cursor-pointer border-border hover:bg-muted"
+              className="h-10 w-full gap-2 text-sm font-bold shadow-xs cursor-pointer border-border hover:bg-muted"
             >
               <Download className="size-4" />
               <span>Download Flyer PNG</span>

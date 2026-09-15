@@ -159,15 +159,15 @@ export const CustomerWalletView: React.FC<CustomerWalletViewProps> = ({
           </span>
 
           <div className="mt-2 flex items-center gap-2 text-sm font-bold text-foreground">
-            <span className="rounded bg-amber-400 px-2 py-0.5 text-xs text-amber-950">
+            <span className="rounded-full bg-amber-400 px-2 py-0.5 text-xs text-amber-950">
               MTN
             </span>
 
-            <span className="rounded bg-red-600 px-2 py-0.5 text-xs text-white">
+            <span className="rounded-full bg-red-600 px-2 py-0.5 text-xs text-white">
               Telecel
             </span>
 
-            <span className="rounded bg-blue-600 px-2 py-0.5 text-xs text-white">
+            <span className="rounded-full bg-blue-600 px-2 py-0.5 text-xs text-white">
               AT
             </span>
           </div>
