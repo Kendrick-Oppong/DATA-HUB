@@ -578,14 +578,14 @@ export const CustomerProfileView: React.FC<CustomerProfileViewProps> = ({
                   htmlFor="input-digital-address"
                   className="text-xs font-bold"
                 >
-                  GhanaPost GPS Digital Address
+                  GPS Digital Address
                 </Label>
                 <Input
                   id="input-digital-address"
                   value={digitalAddress}
                   onChange={(e) => setDigitalAddress(e.target.value)}
-                  placeholder="e.g. GA-183-9021"
-                  className="uppercase font-mono"
+                  placeholder="Enter your GPS Digital Address"
+                  className="uppercase"
                 />
                 <p className="text-[11px] text-muted-foreground">
                   Used for utility prepaid meter verification and hardware
@@ -617,8 +617,8 @@ export const CustomerProfileView: React.FC<CustomerProfileViewProps> = ({
                   <span>Wallet & Transaction Security Password</span>
                 </h3>
                 <p className="text-xs text-muted-foreground mt-0.5">
-                  Your secret security password is required to authorize all wallet
-                  withdrawals, bulk purchases, and airtime top-ups.
+                  Your secret security password is required to authorize all
+                  wallet withdrawals, bulk purchases, and airtime top-ups.
                 </p>
               </div>
               {onOpenSecurityPins && (
@@ -651,7 +651,10 @@ export const CustomerProfileView: React.FC<CustomerProfileViewProps> = ({
             <form onSubmit={handleUpdatePin} className="space-y-5 max-w-2xl">
               {/* Row 1: Current Password */}
               <div className="space-y-2">
-                <Label htmlFor="current-password" className="text-xs font-bold text-foreground">
+                <Label
+                  htmlFor="current-password"
+                  className="text-xs font-bold text-foreground"
+                >
                   Current Password
                 </Label>
                 <div className="relative">
@@ -669,7 +672,9 @@ export const CustomerProfileView: React.FC<CustomerProfileViewProps> = ({
                     variant="ghost"
                     size="icon-xs"
                     onClick={() => setShowCurrentPin(!showCurrentPin)}
-                    aria-label={showCurrentPin ? "Hide password" : "Show password"}
+                    aria-label={
+                      showCurrentPin ? "Hide password" : "Show password"
+                    }
                     className="absolute right-2 top-2 size-6 text-muted-foreground hover:text-foreground cursor-pointer"
                   >
                     {showCurrentPin ? (
@@ -684,7 +689,10 @@ export const CustomerProfileView: React.FC<CustomerProfileViewProps> = ({
               {/* Row 2: New Password & Confirm Password */}
               <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
                 <div className="space-y-2">
-                  <Label htmlFor="new-password" className="text-xs font-bold text-foreground">
+                  <Label
+                    htmlFor="new-password"
+                    className="text-xs font-bold text-foreground"
+                  >
                     New Password
                   </Label>
                   <div className="relative">
@@ -702,7 +710,9 @@ export const CustomerProfileView: React.FC<CustomerProfileViewProps> = ({
                       variant="ghost"
                       size="icon-xs"
                       onClick={() => setShowNewPin(!showNewPin)}
-                      aria-label={showNewPin ? "Hide password" : "Show password"}
+                      aria-label={
+                        showNewPin ? "Hide password" : "Show password"
+                      }
                       className="absolute right-2 top-2 size-6 text-muted-foreground hover:text-foreground cursor-pointer"
                     >
                       {showNewPin ? (
@@ -715,7 +725,10 @@ export const CustomerProfileView: React.FC<CustomerProfileViewProps> = ({
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="confirm-password" className="text-xs font-bold text-foreground">
+                  <Label
+                    htmlFor="confirm-password"
+                    className="text-xs font-bold text-foreground"
+                  >
                     Confirm New Password
                   </Label>
                   <div className="relative">
@@ -732,8 +745,12 @@ export const CustomerProfileView: React.FC<CustomerProfileViewProps> = ({
                       type="button"
                       variant="ghost"
                       size="icon-xs"
-                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                      aria-label={showConfirmPassword ? "Hide password" : "Show password"}
+                      onClick={() =>
+                        setShowConfirmPassword(!showConfirmPassword)
+                      }
+                      aria-label={
+                        showConfirmPassword ? "Hide password" : "Show password"
+                      }
                       className="absolute right-2 top-2 size-6 text-muted-foreground hover:text-foreground cursor-pointer"
                     >
                       {showConfirmPassword ? (
@@ -747,7 +764,11 @@ export const CustomerProfileView: React.FC<CustomerProfileViewProps> = ({
               </div>
 
               <div className="flex justify-end border-t border-border/80 pt-4">
-                <Button type="submit" size="sm" className="font-bold text-xs gap-1.5 cursor-pointer">
+                <Button
+                  type="submit"
+                  size="sm"
+                  className="font-bold text-xs gap-1.5 cursor-pointer"
+                >
                   <Lock className="size-3.5" />
                   <span>Update Security Password</span>
                 </Button>
