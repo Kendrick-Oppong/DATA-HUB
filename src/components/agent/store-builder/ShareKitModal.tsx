@@ -37,8 +37,12 @@ export const ShareKitModal: React.FC<ShareKitModalProps> = ({ open, onClose, sto
   const [copiedCaption, setCopiedCaption] = useState(false);
   const [copiedLink, setCopiedLink] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const storeUrl = `smartdatahub.com/store/${store.handle}`;
-  const fullUrl = `https://${storeUrl}`;
+  const origin =
+    typeof window !== "undefined"
+      ? window.location.origin
+      : "https://smartdatahub.com";
+  const fullUrl = `${origin}/store/${store.handle || "store"}`;
+  const storeUrl = `smartdatahub.com/store/${store.handle || "store"}`;
 
   const themeColor = store.themeColor || "#2563eb";
 
@@ -370,24 +374,36 @@ export const ShareKitModal: React.FC<ShareKitModalProps> = ({ open, onClose, sto
                 </p>
               </div>
 
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleCopyLink}
-                className="h-8 shrink-0 text-xs font-bold gap-1.5 cursor-pointer"
-              >
-                {copiedLink ? (
-                  <>
-                    <Check className="size-3.5 text-emerald-600" />
-                    <span>Copied</span>
-                  </>
-                ) : (
-                  <>
-                    <Copy className="size-3.5" />
-                    <span>Copy</span>
-                  </>
-                )}
-              </Button>
+              <div className="flex items-center gap-1.5 shrink-0">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleCopyLink}
+                  className="h-8 text-xs font-bold gap-1.5 cursor-pointer"
+                >
+                  {copiedLink ? (
+                    <>
+                      <Check className="size-3.5 text-emerald-600" />
+                      <span>Copied</span>
+                    </>
+                  ) : (
+                    <>
+                      <Copy className="size-3.5" />
+                      <span>Copy</span>
+                    </>
+                  )}
+                </Button>
+                <a
+                  href={fullUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="h-8 px-2.5 rounded-lg border border-border bg-card hover:bg-muted text-foreground text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer shadow-2xs inline-flex"
+                  title="Open Storefront in new tab"
+                >
+                  <ExternalLink className="size-3.5" />
+                  <span className="hidden sm:inline">Open</span>
+                </a>
+              </div>
             </div>
           </div>
         </ScrollArea>

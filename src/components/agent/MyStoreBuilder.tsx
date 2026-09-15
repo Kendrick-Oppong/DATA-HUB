@@ -441,13 +441,15 @@ export const MyStoreBuilder: React.FC<MyStoreBuilderProps> = ({
               )}
               <span>{copiedLink ? "Copied" : "Copy"}</span>
             </button>
-            <button
-              onClick={onOpenStorefront}
-              className="px-3 py-1.5 rounded-xl bg-primary text-primary-foreground text-xs font-bold hover:bg-primary/90 transition-colors flex items-center gap-1.5 cursor-pointer shadow-2xs"
+            <a
+              href={storeUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-3 py-1.5 rounded-xl bg-primary text-primary-foreground text-xs font-bold hover:bg-primary/90 transition-colors flex items-center gap-1.5 cursor-pointer shadow-2xs inline-flex"
             >
               <ExternalLink className="w-3.5 h-3.5" />
               <span>Preview Storefront</span>
-            </button>
+            </a>
             <button
               onClick={() => setShareKitOpen(true)}
               className="px-3 py-1.5 rounded-xl border border-border bg-card text-xs font-bold hover:bg-muted transition-colors flex items-center gap-1.5 cursor-pointer shadow-2xs"
@@ -682,15 +684,15 @@ export const MyStoreBuilder: React.FC<MyStoreBuilderProps> = ({
                       <Eye className="w-4 h-4 text-primary" />
                       <span>Live Storefront Chip</span>
                     </CardTitle>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={onOpenStorefront}
-                      className="text-xs font-bold text-primary flex items-center gap-1 h-7 px-2"
+                    <a
+                      href={storeUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-xs font-bold text-primary flex items-center gap-1 h-7 px-2 hover:underline cursor-pointer inline-flex"
                     >
                       <span>Full View</span>
                       <ArrowUpRight className="w-3 h-3" />
-                    </Button>
+                    </a>
                   </div>
                   <CardDescription className="text-xs">
                     Interactive miniature preview of your public store header

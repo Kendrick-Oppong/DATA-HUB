@@ -64,10 +64,15 @@ export const AgentDashboard: React.FC<AgentDashboardProps> = ({
   // Withdraw Modal State
   const [withdrawModalOpen, setWithdrawModalOpen] = useState(false);
 
-  const storeUrl = `smartdatahub.com/store/${storeConfig.handle}`;
+  const origin =
+    typeof window !== "undefined"
+      ? window.location.origin
+      : "https://smartdatahub.com";
+  const fullStoreUrl = `${origin}/store/${storeConfig.handle || "store"}`;
+  const displayStoreUrl = `smartdatahub.com/store/${storeConfig.handle || "store"}`;
 
   const handleCopyLink = () => {
-    navigator.clipboard.writeText(`https://${storeUrl}`);
+    navigator.clipboard.writeText(fullStoreUrl);
     setCopiedLink(true);
     setTimeout(() => setCopiedLink(false), 2000);
   };
@@ -106,7 +111,7 @@ export const AgentDashboard: React.FC<AgentDashboardProps> = ({
           <div className="flex flex-wrap items-center gap-2 pt-1">
             <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-background border border-border text-xs">
               <span className="text-muted-foreground">URL:</span>
-              <span className="font-semibold text-foreground">{storeUrl}</span>
+              <span className="font-semibold text-foreground">{displayStoreUrl}</span>
             </div>
             <button
               onClick={handleCopyLink}
@@ -119,13 +124,15 @@ export const AgentDashboard: React.FC<AgentDashboardProps> = ({
               )}
               <span>{copiedLink ? "Copied" : "Copy"}</span>
             </button>
-            <button
-              onClick={onOpenStorefront}
-              className="px-3 py-1.5 rounded-xl bg-primary text-primary-foreground text-xs font-bold hover:bg-primary/90 transition-colors flex items-center gap-1.5 cursor-pointer shadow-2xs"
+            <a
+              href={fullStoreUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-3 py-1.5 rounded-xl bg-primary text-primary-foreground text-xs font-bold hover:bg-primary/90 transition-colors flex items-center gap-1.5 cursor-pointer shadow-2xs inline-flex"
             >
               <ExternalLink className="w-3.5 h-3.5" />
               <span>Preview Storefront</span>
-            </button>
+            </a>
           </div>
         </div>
 

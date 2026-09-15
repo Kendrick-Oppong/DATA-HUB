@@ -251,6 +251,26 @@ export default function App() {
     return () => window.removeEventListener("popstate", handlePopState);
   }, []);
 
+  // Real-time synchronization across browser tabs for store config & wallet
+  useEffect(() => {
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === "sdh_store_config" && e.newValue) {
+        try {
+          const parsed = JSON.parse(e.newValue);
+          setStoreConfig(parsed);
+        } catch {
+          // ignore
+        }
+      }
+      if (e.key === "sdh_wallet_balance" && e.newValue) {
+        const parsedVal = parseFloat(e.newValue);
+        if (!isNaN(parsedVal)) setWalletBalance(parsedVal);
+      }
+    };
+    window.addEventListener("storage", handleStorageChange);
+    return () => window.removeEventListener("storage", handleStorageChange);
+  }, []);
+
   // Nav helpers
   const navigateToPublic = (tab = "home") => {
     navigateTo({ type: "public", tab });
@@ -404,6 +424,14 @@ export default function App() {
   const [selectedReceiptOrder, setSelectedReceiptOrder] =
     useState<Order | null>(null);
   const [isCommandMenuOpen, setIsCommandMenuOpen] = useState(false);
+
+  const handleOpenStorefrontNewTab = useCallback(() => {
+    if (typeof window !== "undefined") {
+      const handle = storeConfig?.handle || "store";
+      const url = `${window.location.origin}/store/${handle}`;
+      window.open(url, "_blank", "noopener,noreferrer");
+    }
+  }, [storeConfig?.handle]);
 
   // Tab change within current dashboard
   const handleTabChange = (tab: string) => {
@@ -830,15 +858,16 @@ export default function App() {
   if (route.type === "storefront") {
     return (
       <div className="min-h-screen bg-background text-foreground flex flex-col selection:bg-primary/20">
-        <main className="flex-1 py-8 px-4 sm:px-6 w-full">
-          <PublicStorefront
-            storeConfig={storeConfig}
-            bundles={initialBundles}
-            onOrderCreated={handleOrderCreated}
-            onOpenReceipt={(order) => setSelectedReceiptOrder(order)}
-            onSwitchToSDH={() => navigateToPublic("home")}
-          />
-        </main>
+        <PublicStorefront
+          storeConfig={storeConfig}
+          bundles={initialBundles}
+          onOrderCreated={handleOrderCreated}
+          onOpenReceipt={(order) => setSelectedReceiptOrder(order)}
+          onSwitchToSDH={() => navigateToPublic("home")}
+          onUpdateStoreConfig={handleUpdateStoreConfig}
+          onNavigatePublicTab={navigateToPublic}
+          onNavigateToLegal={navigateToLegal}
+        />
 
         <ReceiptModal
           isOpen={!!selectedReceiptOrder}
@@ -1080,7 +1109,7 @@ export default function App() {
                 <AgentDashboard
                   storeConfig={storeConfig}
                   onNavigateTab={handleTabChange}
-                  onOpenStorefront={() => navigateTo({ type: "storefront" })}
+                  onOpenStorefront={handleOpenStorefrontNewTab}
                   orders={orders}
                   commissionBalance={commissionBalance}
                 />
@@ -1090,7 +1119,7 @@ export default function App() {
                 <MyStoreBuilder
                   storeConfig={storeConfig}
                   onUpdateStoreConfig={handleUpdateStoreConfig}
-                  onOpenStorefront={() => navigateTo({ type: "storefront" })}
+                  onOpenStorefront={handleOpenStorefrontNewTab}
                   bundles={initialBundles}
                   orders={orders}
                 />
