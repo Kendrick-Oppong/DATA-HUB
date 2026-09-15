@@ -1507,11 +1507,11 @@ export const AgentOrdersView: React.FC<AgentOrdersViewProps> = ({
                               reportingBeneficiary || reportedBeneficiary
                             }
                             onClick={handleReportBeneficiary}
-                            className="w-full text-xs font-bold gap-1.5 text-amber-700 dark:text-amber-300 hover:bg-amber-500/10 cursor-pointer h-8"
+                            className="w-full text-xs font-bold gap-1.5 text-amber-300 hover:bg-amber-500/10 cursor-pointer h-8"
                           >
                             {reportedBeneficiary ? (
                               <>
-                                <Check className="size-3.5 text-amber-700" />
+                                <Check className="size-3.5 text-amber-300" />
                                 <span>Submitted to Admin</span>
                               </>
                             ) : (
