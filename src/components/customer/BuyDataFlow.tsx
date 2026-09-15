@@ -55,11 +55,34 @@ export const BuyDataFlow: React.FC<BuyDataFlowProps> = ({
 
   const [selectedNetwork, setSelectedNetwork] =
     useState<TelecomNetwork>(initialNetwork);
-  const [selectedBundleId, setSelectedBundleId] = useState<string>(
-    initialBundleId ||
-      bundles.find((b) => b.network === initialNetwork)?.id ||
-      "mtn-5gb",
-  );
+  const [mtnTier, setMtnTier] = useState<"standard" | "xpress">(() => {
+    if (initialBundleId && initialBundleId.includes("xpress")) return "xpress";
+    return "standard";
+  });
+  const [atTier, setAtTier] = useState<"ishare" | "bigtime">(() => {
+    if (initialBundleId && initialBundleId.includes("bigtime")) return "bigtime";
+    return "ishare";
+  });
+  const [selectedBundleId, setSelectedBundleId] = useState<string>(() => {
+    if (initialBundleId) return initialBundleId;
+    if (initialNetwork === "MTN") {
+      return (
+        bundles.find(
+          (b) => b.network === "MTN" && (b.tier || "standard") === "standard",
+        )?.id || "mtn-5gb"
+      );
+    }
+    if (initialNetwork === "AirtelTigo") {
+      return (
+        bundles.find(
+          (b) => b.network === "AirtelTigo" && (b.tier || "ishare") === "ishare",
+        )?.id || "at-ishare-5gb"
+      );
+    }
+    return (
+      bundles.find((b) => b.network === initialNetwork)?.id || "telecel-5gb"
+    );
+  });
   const [recipientPhone, setRecipientPhone] = useState<string>("");
   const [paymentMethod, setPaymentMethod] = useState<
     "wallet" | "momo_mtn" | "momo_telecel" | "momo_at"
@@ -77,6 +100,61 @@ export const BuyDataFlow: React.FC<BuyDataFlowProps> = ({
   const [isVerifying, setIsVerifying] = useState(false);
   const [verificationMessage, setVerificationMessage] = useState<string>("");
 
+  useEffect(() => {
+    if (initialNetwork) {
+      setSelectedNetwork(initialNetwork);
+    }
+    if (initialBundleId) {
+      setSelectedBundleId(initialBundleId);
+      if (initialBundleId.includes("xpress")) {
+        setMtnTier("xpress");
+      } else if (initialBundleId.includes("mtn")) {
+        setMtnTier("standard");
+      }
+      if (initialBundleId.includes("bigtime")) {
+        setAtTier("bigtime");
+      } else if (initialBundleId.includes("ishare")) {
+        setAtTier("ishare");
+      }
+    }
+  }, [initialBundleId, initialNetwork]);
+
+  const handleTierChange = (newTier: "standard" | "xpress") => {
+    setMtnTier(newTier);
+    const curSize = currentBundle?.sizeGb;
+    const match =
+      bundles.find(
+        (b) =>
+          b.network === "MTN" &&
+          (b.tier || "standard") === newTier &&
+          b.sizeGb === curSize,
+      ) ||
+      bundles.find(
+        (b) => b.network === "MTN" && (b.tier || "standard") === newTier,
+      );
+    if (match) {
+      setSelectedBundleId(match.id);
+    }
+  };
+
+  const handleAtTierChange = (newTier: "ishare" | "bigtime") => {
+    setAtTier(newTier);
+    const curSize = currentBundle?.sizeGb;
+    const match =
+      bundles.find(
+        (b) =>
+          b.network === "AirtelTigo" &&
+          (b.tier || "ishare") === newTier &&
+          b.sizeGb === curSize,
+      ) ||
+      bundles.find(
+        (b) => b.network === "AirtelTigo" && (b.tier || "ishare") === newTier,
+      );
+    if (match) {
+      setSelectedBundleId(match.id);
+    }
+  };
+
   const steps = [
     { id: "network", label: "Network", icon: Wifi },
     { id: "recipient", label: "Recipient", icon: Smartphone },
@@ -84,9 +162,21 @@ export const BuyDataFlow: React.FC<BuyDataFlowProps> = ({
     { id: "review", label: "Review", icon: CheckCircle2 },
   ];
 
-  const filteredBundles = bundles.filter((b) => b.network === selectedNetwork);
+  const filteredBundles = bundles.filter((b) => {
+    if (b.network !== selectedNetwork) return false;
+    if (selectedNetwork === "MTN") {
+      return (b.tier || "standard") === mtnTier;
+    }
+    if (selectedNetwork === "AirtelTigo") {
+      return (b.tier || "ishare") === atTier;
+    }
+    return true; // Telecel: no tier option, regular picker
+  });
   const currentBundle =
-    bundles.find((b) => b.id === selectedBundleId) || filteredBundles[0];
+    filteredBundles.find((b) => b.id === selectedBundleId) ||
+    filteredBundles[0] ||
+    bundles.find((b) => b.network === selectedNetwork) ||
+    bundles[0];
 
   const handlePhoneChange = (val: string) => {
     setRecipientPhone(val);
@@ -94,7 +184,22 @@ export const BuyDataFlow: React.FC<BuyDataFlowProps> = ({
       const detected = detectGhanaNetwork(val);
       if (detected !== selectedNetwork) {
         setSelectedNetwork(detected);
-        const match = bundles.find((b) => b.network === detected);
+        let match: DataBundle | undefined;
+        if (detected === "MTN") {
+          match = bundles.find(
+            (b) =>
+              b.network === "MTN" &&
+              (b.tier || "standard") === mtnTier,
+          );
+        } else if (detected === "AirtelTigo") {
+          match = bundles.find(
+            (b) =>
+              b.network === "AirtelTigo" &&
+              (b.tier || "ishare") === atTier,
+          );
+        } else {
+          match = bundles.find((b) => b.network === detected);
+        }
         if (match) setSelectedBundleId(match.id);
       }
     }
@@ -190,13 +295,29 @@ export const BuyDataFlow: React.FC<BuyDataFlowProps> = ({
           step: "Order Authorized",
           timestamp: "10:00:01",
           status: "completed",
-          note: `Paid via ${paymentMethod.replace("_", " ")}`,
+          note: `Paid via ${paymentMethod.replace("_", " ")}${
+            selectedNetwork === "MTN"
+              ? ` · ${mtnTier === "xpress" ? "Xpress Priority Queue" : "Standard Queue"}`
+              : selectedNetwork === "AirtelTigo"
+              ? ` · ${atTier === "bigtime" ? "BigTime Non-Expiry" : "iShare Instant"}`
+              : ""
+          }`,
         },
         {
           step: "Core Gateway Dispatch",
           timestamp: "10:00:05",
           status: "completed",
-          note: `${selectedNetwork} Carrier Node`,
+          note: `${selectedNetwork} Carrier Node (${
+            selectedNetwork === "MTN"
+              ? mtnTier === "xpress"
+                ? "Fast-Track Priority Queue"
+                : "Standard EVD"
+              : selectedNetwork === "AirtelTigo"
+              ? atTier === "bigtime"
+                ? "BigTime Non-Expiry Rail"
+                : "iShare Instant Gateway"
+              : "Direct Telecel Switch"
+          })`,
         },
         {
           step: "Network Acknowledged",
@@ -322,7 +443,22 @@ export const BuyDataFlow: React.FC<BuyDataFlowProps> = ({
                       type="button"
                       onClick={() => {
                         setSelectedNetwork(net);
-                        const first = bundles.find((b) => b.network === net);
+                        let first: DataBundle | undefined;
+                        if (net === "MTN") {
+                          first = bundles.find(
+                            (b) =>
+                              b.network === "MTN" &&
+                              (b.tier || "standard") === mtnTier,
+                          );
+                        } else if (net === "AirtelTigo") {
+                          first = bundles.find(
+                            (b) =>
+                              b.network === "AirtelTigo" &&
+                              (b.tier || "ishare") === atTier,
+                          );
+                        } else {
+                          first = bundles.find((b) => b.network === net);
+                        }
                         if (first) setSelectedBundleId(first.id);
                       }}
                       className={`py-4 px-3 rounded-xl border text-center transition-all cursor-pointer ${
@@ -344,6 +480,150 @@ export const BuyDataFlow: React.FC<BuyDataFlowProps> = ({
                 },
               )}
             </div>
+
+            {/* MTN Delivery Option (Standard vs Xpress) */}
+            {selectedNetwork === "MTN" && (
+              <div className="space-y-2 pt-1">
+                <div className="flex items-center justify-between">
+                  <Label className="text-xs font-bold uppercase tracking-wider">
+                    MTN Delivery Option
+                  </Label>
+                  <span className="text-[11px] text-muted-foreground">
+                    Select delivery priority
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <button
+                    type="button"
+                    onClick={() => handleTierChange("standard")}
+                    className={`p-3.5 rounded-2xl border text-left transition-all cursor-pointer ${
+                      mtnTier === "standard"
+                        ? "border-amber-500 bg-amber-500/10 ring-2 ring-amber-500/25 shadow-xs"
+                        : "border-border bg-card hover:bg-muted/40"
+                    }`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="font-bold text-sm text-foreground flex items-center gap-1.5">
+                        <span className="size-2 rounded-full bg-amber-500" />
+                        Standard
+                      </div>
+                      {mtnTier === "standard" && (
+                        <Check className="size-4 text-amber-600 dark:text-amber-400 stroke-3" />
+                      )}
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Regular MTN bundles · standard validity
+                    </p>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => handleTierChange("xpress")}
+                    className={`p-3.5 rounded-2xl border text-left transition-all cursor-pointer ${
+                      mtnTier === "xpress"
+                        ? "border-amber-500 bg-amber-500/10 ring-2 ring-amber-500/25 shadow-xs"
+                        : "border-border bg-card hover:bg-muted/40"
+                    }`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="font-bold text-sm text-foreground flex items-center gap-1.5">
+                        <span className="size-2 rounded-full bg-amber-500 animate-pulse" />
+                        Xpress
+                        <span className="text-[9px] font-black uppercase px-1.5 py-0.2 rounded-full bg-amber-500 text-amber-950">
+                          Priority
+                        </span>
+                      </div>
+                      {mtnTier === "xpress" && (
+                        <Check className="size-4 text-amber-600 dark:text-amber-400 stroke-3" />
+                      )}
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Express delivery · priority queue
+                    </p>
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* AirtelTigo / AT Option (iShare vs BigTime) */}
+            {selectedNetwork === "AirtelTigo" && (
+              <div className="space-y-2 pt-1">
+                <div className="flex items-center justify-between">
+                  <Label className="text-xs font-bold uppercase tracking-wider">
+                    AT Data Option
+                  </Label>
+                  <span className="text-[11px] text-muted-foreground">
+                    Select bundle category
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <button
+                    type="button"
+                    onClick={() => handleAtTierChange("ishare")}
+                    className={`p-3.5 rounded-2xl border text-left transition-all cursor-pointer ${
+                      atTier === "ishare"
+                        ? "border-blue-500 bg-blue-500/10 ring-2 ring-blue-500/25 shadow-xs"
+                        : "border-border bg-card hover:bg-muted/40"
+                    }`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="font-bold text-sm text-foreground flex items-center gap-1.5">
+                        <span className="size-2 rounded-full bg-blue-500" />
+                        iShare
+                      </div>
+                      {atTier === "ishare" && (
+                        <Check className="size-4 text-blue-600 dark:text-blue-400 stroke-3" />
+                      )}
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Instant delivery · standard validity
+                    </p>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => handleAtTierChange("bigtime")}
+                    className={`p-3.5 rounded-2xl border text-left transition-all cursor-pointer ${
+                      atTier === "bigtime"
+                        ? "border-blue-500 bg-blue-500/10 ring-2 ring-blue-500/25 shadow-xs"
+                        : "border-border bg-card hover:bg-muted/40"
+                    }`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="font-bold text-sm text-foreground flex items-center gap-1.5">
+                        <span className="size-2 rounded-full bg-blue-500" />
+                        BigTime
+                        <span className="text-[9px] font-black uppercase px-1.5 py-0.2 rounded-full bg-blue-500/20 text-blue-800 dark:text-blue-300">
+                          No Expiry
+                        </span>
+                      </div>
+                      {atTier === "bigtime" && (
+                        <Check className="size-4 text-blue-600 dark:text-blue-400 stroke-3" />
+                      )}
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Bulk data · never expires
+                    </p>
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Pending Dispatch Warning / Debt Notice Banner */}
+            <div className="flex items-center justify-between rounded-2xl border border-amber-500/20 bg-amber-500/10 p-4 text-xs">
+              <div className="flex items-center gap-3">
+                <SignalRail status="processing" size="sm" />
+
+                <div>
+                  <span className="font-semibold">Airtime / Credit Debt Notice: </span>
+                  <span>
+                    If you have unpaid credit or airtime debts, please settle them before placing new orders. Data cannot be delivered to numbers with outstanding balances.
+                  </span>
+                </div>
+              </div>
+            </div>
           </CardContent>
         </Card>
       )}
@@ -357,13 +637,123 @@ export const BuyDataFlow: React.FC<BuyDataFlowProps> = ({
                   Choose Data Bundle
                 </Label>
                 <p className="text-xs text-muted-foreground mt-1">
-                  Select a data package for {selectedNetwork}.
+                  Select a data package for {selectedNetwork}
+                  {selectedNetwork === "MTN" && ` (${mtnTier === "xpress" ? "Xpress Priority" : "Standard"})`}
+                  {selectedNetwork === "AirtelTigo" && ` (${atTier === "bigtime" ? "BigTime Non-Expiry" : "iShare Instant"})`}.
                 </p>
               </div>
               <Badge variant="outline" className="text-xs !bg-background">
                 {filteredBundles.length} packages
               </Badge>
             </div>
+
+            {/* MTN Tier Switcher */}
+            {selectedNetwork === "MTN" && (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 p-1 rounded-2xl bg-muted/40 border border-border">
+                <button
+                  type="button"
+                  onClick={() => handleTierChange("standard")}
+                  className={`p-3 rounded-xl text-left transition-all cursor-pointer ${
+                    mtnTier === "standard"
+                      ? "bg-card text-foreground shadow-xs border border-border"
+                      : "text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="font-bold text-xs flex items-center gap-1.5">
+                      <span className="size-2 rounded-full bg-amber-500" />
+                      Standard
+                    </div>
+                    {mtnTier === "standard" && (
+                      <span className="text-[10px] font-semibold text-primary">Active</span>
+                    )}
+                  </div>
+                  <p className="text-[11px] text-muted-foreground mt-0.5">
+                    Regular MTN bundles · standard validity
+                  </p>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => handleTierChange("xpress")}
+                  className={`p-3 rounded-xl text-left transition-all cursor-pointer ${
+                    mtnTier === "xpress"
+                      ? "bg-card text-foreground shadow-xs border border-border"
+                      : "text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-1.5 font-bold text-xs">
+                      <span className="size-2 rounded-full bg-amber-500 animate-pulse" />
+                      Xpress
+                      <span className="text-[9px] font-black uppercase px-1.5 py-0.2 rounded-full bg-amber-500/20 text-amber-800 dark:text-amber-300">
+                        Priority Queue
+                      </span>
+                    </div>
+                    {mtnTier === "xpress" && (
+                      <span className="text-[10px] font-semibold text-primary">Active</span>
+                    )}
+                  </div>
+                  <p className="text-[11px] text-muted-foreground mt-0.5">
+                    Express delivery · priority queue
+                  </p>
+                </button>
+              </div>
+            )}
+
+            {/* AirtelTigo / AT Tier Switcher */}
+            {selectedNetwork === "AirtelTigo" && (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 p-1 rounded-2xl bg-muted/40 border border-border">
+                <button
+                  type="button"
+                  onClick={() => handleAtTierChange("ishare")}
+                  className={`p-3 rounded-xl text-left transition-all cursor-pointer ${
+                    atTier === "ishare"
+                      ? "bg-card text-foreground shadow-xs border border-border"
+                      : "text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="font-bold text-xs flex items-center gap-1.5">
+                      <span className="size-2 rounded-full bg-blue-500" />
+                      iShare
+                    </div>
+                    {atTier === "ishare" && (
+                      <span className="text-[10px] font-semibold text-primary">Active</span>
+                    )}
+                  </div>
+                  <p className="text-[11px] text-muted-foreground mt-0.5">
+                    Instant delivery · standard validity
+                  </p>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => handleAtTierChange("bigtime")}
+                  className={`p-3 rounded-xl text-left transition-all cursor-pointer ${
+                    atTier === "bigtime"
+                      ? "bg-card text-foreground shadow-xs border border-border"
+                      : "text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-1.5 font-bold text-xs">
+                      <span className="size-2 rounded-full bg-blue-500" />
+                      BigTime
+                      <span className="text-[9px] font-black uppercase px-1.5 py-0.2 rounded-full bg-blue-500/20 text-blue-800 dark:text-blue-300">
+                        No Expiry
+                      </span>
+                    </div>
+                    {atTier === "bigtime" && (
+                      <span className="text-[10px] font-semibold text-primary">Active</span>
+                    )}
+                  </div>
+                  <p className="text-[11px] text-muted-foreground mt-0.5">
+                    Bulk data · never expires
+                  </p>
+                </button>
+              </div>
+            )}
 
             {/* Input Mode Switcher */}
             <div className="flex items-center p-1 rounded-full bg-muted border border-border text-xs font-semibold w-fit">
@@ -414,11 +804,24 @@ export const BuyDataFlow: React.FC<BuyDataFlowProps> = ({
                           : "border-border bg-background hover:bg-muted/60"
                       }`}
                     >
-                      {b.isPopular && (
+                      {b.tier === "xpress" ? (
+                        <span className="absolute top-2 right-2 text-[9px] font-extrabold px-1.5 py-0.2 rounded-full bg-amber-500/20 text-amber-800 dark:text-amber-300 flex items-center gap-1">
+                          <span className="size-1.5 rounded-full bg-amber-500 animate-pulse" />
+                          Xpress
+                        </span>
+                      ) : b.tier === "bigtime" ? (
+                        <span className="absolute top-2 right-2 text-[9px] font-extrabold px-1.5 py-0.2 rounded-full bg-blue-500/20 text-blue-700 dark:text-blue-300">
+                          Never Expires
+                        </span>
+                      ) : b.tier === "ishare" ? (
+                        <span className="absolute top-2 right-2 text-[9px] font-extrabold px-1.5 py-0.2 rounded-full bg-blue-500/15 text-blue-700 dark:text-blue-300">
+                          iShare
+                        </span>
+                      ) : b.isPopular ? (
                         <span className="absolute top-2 right-2 text-[9px] font-bold px-1.5 py-0.2 rounded-full bg-amber-500/20 text-amber-900 dark:text-amber-300">
                           Popular
                         </span>
-                      )}
+                      ) : null}
                       <div>
                         <div className="text-base font-extrabold text-foreground">
                           {b.sizeLabel}
@@ -643,6 +1046,41 @@ export const BuyDataFlow: React.FC<BuyDataFlowProps> = ({
                   {currentBundle.name}
                 </span>
               </div>
+              {selectedNetwork === "MTN" && (
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground font-semibold">
+                    Delivery Option:
+                  </span>
+                  <span className="font-bold text-foreground flex items-center gap-1.5">
+                    {mtnTier === "xpress" ? (
+                      <span className="inline-flex items-center gap-1 text-amber-600 dark:text-amber-400 font-bold">
+                        <span className="size-1.5 rounded-full bg-amber-500 animate-pulse" />
+                        Xpress (Priority Queue)
+                      </span>
+                    ) : (
+                      "Standard Validity"
+                    )}
+                  </span>
+                </div>
+              )}
+              {selectedNetwork === "AirtelTigo" && (
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground font-semibold">
+                    Bundle Option:
+                  </span>
+                  <span className="font-bold text-foreground flex items-center gap-1.5">
+                    {atTier === "bigtime" ? (
+                      <span className="inline-flex items-center gap-1 text-blue-600 dark:text-blue-400 font-bold">
+                        BigTime (Bulk · Never Expires)
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center gap-1 text-blue-600 dark:text-blue-400 font-bold">
+                        iShare (Instant Delivery)
+                      </span>
+                    )}
+                  </span>
+                </div>
+              )}
               <div className="flex justify-between">
                 <span className="text-muted-foreground font-semibold">
                   Validity:

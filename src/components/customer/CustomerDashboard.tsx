@@ -8,7 +8,7 @@ import {
   FlagTriangleRight,
   ArrowRight,
 } from "lucide-react";
-import { Order, Transaction } from "../../types";
+import { Order, OrderStatus, Transaction } from "../../types";
 import { SignalRail } from "../common/SignalRail";
 import { Button } from "../ui/button";
 import {
@@ -27,6 +27,33 @@ import {
   TableCell,
 } from "../ui/table";
 import { ReportOrderModal } from "./ReportOrderModal";
+import { VerifyPaymentModal } from "./VerifyPaymentModal";
+
+// Date formatter for table (YYYY-MM-DD HH:mm)
+function formatOrderDate(dateStr: string): string {
+  if (!dateStr) return "—";
+  try {
+    const trimmed = dateStr.trim();
+    const parseable = trimmed.includes("T")
+      ? trimmed
+      : trimmed.replace(" ", "T");
+    const d = new Date(parseable);
+    if (!isNaN(d.getTime())) {
+      const year = d.getFullYear();
+      const month = String(d.getMonth() + 1).padStart(2, "0");
+      const day = String(d.getDate()).padStart(2, "0");
+      const hours = String(d.getHours()).padStart(2, "0");
+      const minutes = String(d.getMinutes()).padStart(2, "0");
+      return `${year}-${month}-${day} ${hours}:${minutes}`;
+    }
+    if (/^\d{4}-\d{2}-\d{2}[ T]\d{2}:\d{2}/.test(trimmed)) {
+      return trimmed.replace("T", " ").slice(0, 16);
+    }
+    return dateStr;
+  } catch {
+    return dateStr;
+  }
+}
 
 interface CustomerDashboardProps {
   walletBalance: number;
@@ -36,6 +63,7 @@ interface CustomerDashboardProps {
   transactions: Transaction[];
   onOpenReceipt: (order: Order) => void;
   onRepeatOrder: (order: Order) => void;
+  onUpdateOrders?: (orders: Order[]) => void;
 }
 
 export const CustomerDashboard: React.FC<CustomerDashboardProps> = ({
@@ -45,9 +73,14 @@ export const CustomerDashboard: React.FC<CustomerDashboardProps> = ({
   orders,
   onOpenReceipt,
   onRepeatOrder,
+  onUpdateOrders,
 }) => {
   const [reportModalOpen, setReportModalOpen] = useState(false);
   const [selectedOrderForReport, setSelectedOrderForReport] =
+    useState<Order | null>(null);
+
+  const [verifyModalOpen, setVerifyModalOpen] = useState(false);
+  const [selectedOrderForVerify, setSelectedOrderForVerify] =
     useState<Order | null>(null);
 
   const pendingOrders = orders.filter((o) => o.status === "processing");
@@ -66,6 +99,49 @@ export const CustomerDashboard: React.FC<CustomerDashboardProps> = ({
   const handleReportSubmitted = (report: any) => {
     console.log("Report submitted:", report);
     handleCloseReportModal();
+  };
+
+  const handleOpenVerifyModal = (order: Order) => {
+    setSelectedOrderForVerify(order);
+    setVerifyModalOpen(true);
+  };
+
+  const handleCloseVerifyModal = () => {
+    setVerifyModalOpen(false);
+    setSelectedOrderForVerify(null);
+  };
+
+  const handlePaymentVerified = (orderId: string, paystackRef: string) => {
+    const timeNow = new Date().toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+    });
+
+    const updatedOrders = orders.map((o) => {
+      if (o.id === orderId) {
+        return {
+          ...o,
+          status: "processing" as OrderStatus,
+          isPaymentVerified: true,
+          paystackReference: paystackRef,
+          deliveryTimeline: [
+            ...(o.deliveryTimeline || []),
+            {
+              step: "Payment Verified via Paystack",
+              timestamp: timeNow,
+              status: "completed" as const,
+              note: `Verified (${paystackRef}). Dispatched to network core.`,
+            },
+          ],
+        };
+      }
+      return o;
+    });
+
+    if (onUpdateOrders) {
+      onUpdateOrders(updatedOrders);
+    }
   };
 
   return (
@@ -327,8 +403,8 @@ export const CustomerDashboard: React.FC<CustomerDashboardProps> = ({
                       {order.recipientPhone}
                     </TableCell>
 
-                    <TableCell className="text-xs tabular-nums">
-                      {order.date}
+                    <TableCell className="text-xs tabular-nums text-muted-foreground whitespace-nowrap">
+                      {formatOrderDate(order.date)}
                     </TableCell>
 
                     <TableCell className="text-right text-xs font-black tabular-nums text-foreground">
@@ -337,32 +413,61 @@ export const CustomerDashboard: React.FC<CustomerDashboardProps> = ({
 
                     <TableCell className="text-center">
                       <div className="flex items-center justify-center gap-1.5">
-                        <span
-                          className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase ${
-                            order.status === "delivered"
-                              ? "bg-emerald-500/15 text-emerald-700 dark:text-emerald-400"
-                              : order.status === "processing"
-                                ? "bg-amber-500/15 text-amber-700 dark:text-amber-400"
-                                : "bg-red-500/15 text-red-600 dark:text-red-400"
-                          }`}
-                        >
-                          <span
-                            className={`size-1.5 rounded-full ${
-                              order.status === "delivered"
-                                ? "bg-emerald-500"
-                                : order.status === "processing"
-                                  ? "bg-amber-500"
-                                  : "bg-red-500"
-                            }`}
-                          />
-
-                          {order.status}
-                        </span>
+                        {order.status === "delivered" && (
+                          <span className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30">
+                            <span className="size-1.5 rounded-full bg-emerald-500" />
+                            Delivered
+                          </span>
+                        )}
+                        {order.status === "processing" && (
+                          <span className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase bg-amber-500/15 text-amber-700 dark:text-amber-400 border border-amber-500/30">
+                            <span className="size-1.5 rounded-full bg-amber-500 animate-pulse" />
+                            Processing
+                          </span>
+                        )}
+                        {order.status === "waiting" && (
+                          <span className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase bg-sky-500/15 text-sky-700 dark:text-sky-400 border border-sky-500/30">
+                            <span className="size-1.5 rounded-full bg-sky-500" />
+                            Waiting
+                          </span>
+                        )}
+                        {(order.status === "pending" ||
+                          order.status === "pending_payment") && (
+                          <span className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase bg-purple-500/15 text-purple-700 dark:text-purple-400 border border-purple-500/30">
+                            <span className="size-1.5 rounded-full bg-purple-500 animate-pulse" />
+                            Pending
+                          </span>
+                        )}
+                        {order.status === "failed" && (
+                          <span className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase bg-red-500/15 text-red-600 dark:text-red-400 border border-red-500/30">
+                            <span className="size-1.5 rounded-full bg-red-500" />
+                            Failed
+                          </span>
+                        )}
+                        {order.status === "refunded" && (
+                          <span className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase bg-muted text-muted-foreground border border-border">
+                            <span className="size-1.5 rounded-full bg-muted-foreground/50" />
+                            Refunded
+                          </span>
+                        )}
                       </div>
                     </TableCell>
 
                     <TableCell className="text-right">
                       <div className="flex items-center justify-end gap-1.5">
+                        {(order.status === "pending" ||
+                          order.status === "pending_payment") && (
+                          <Button
+                            variant="default"
+                            size="sm"
+                            onClick={() => handleOpenVerifyModal(order)}
+                            className="h-7 rounded-full px-2.5 text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white shadow-xs inline-flex items-center gap-1 cursor-pointer"
+                          >
+                            <ShieldCheck className="size-3.5" />
+                            <span>Verify Payment</span>
+                          </Button>
+                        )}
+
                         <Button
                           variant="outline"
                           size="sm"
@@ -400,6 +505,14 @@ export const CustomerDashboard: React.FC<CustomerDashboardProps> = ({
         onClose={handleCloseReportModal}
         order={selectedOrderForReport}
         onReportSubmitted={handleReportSubmitted}
+      />
+
+      {/* Verify Paystack Payment Modal */}
+      <VerifyPaymentModal
+        isOpen={verifyModalOpen}
+        onClose={handleCloseVerifyModal}
+        order={selectedOrderForVerify}
+        onPaymentVerified={handlePaymentVerified}
       />
     </div>
   );

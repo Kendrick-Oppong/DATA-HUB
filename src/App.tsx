@@ -1020,6 +1020,7 @@ export default function App() {
                   transactions={transactions}
                   onOpenReceipt={(order) => setSelectedReceiptOrder(order)}
                   onRepeatOrder={handleRepeatOrder}
+                  onUpdateOrders={setOrders}
                 />
               )}
 
@@ -1088,6 +1089,7 @@ export default function App() {
                   onOpenSecurityPins={() => setIsSecurityPinsOpen(true)}
                   user={user}
                   onUpdateUser={handleUpdateUser}
+                  onUpdateOrders={setOrders}
                 />
               )}
             </>

@@ -51,6 +51,32 @@ interface AgentDashboardProps {
   commissionBalance: number;
 }
 
+// Date formatter for table (YYYY-MM-DD HH:mm)
+function formatOrderDate(dateStr: string): string {
+  if (!dateStr) return "—";
+  try {
+    const trimmed = dateStr.trim();
+    const parseable = trimmed.includes("T")
+      ? trimmed
+      : trimmed.replace(" ", "T");
+    const d = new Date(parseable);
+    if (!isNaN(d.getTime())) {
+      const year = d.getFullYear();
+      const month = String(d.getMonth() + 1).padStart(2, "0");
+      const day = String(d.getDate()).padStart(2, "0");
+      const hours = String(d.getHours()).padStart(2, "0");
+      const minutes = String(d.getMinutes()).padStart(2, "0");
+      return `${year}-${month}-${day} ${hours}:${minutes}`;
+    }
+    if (/^\d{4}-\d{2}-\d{2}[ T]\d{2}:\d{2}/.test(trimmed)) {
+      return trimmed.replace("T", " ").slice(0, 16);
+    }
+    return dateStr;
+  } catch {
+    return dateStr;
+  }
+}
+
 export const AgentDashboard: React.FC<AgentDashboardProps> = ({
   storeConfig,
   onNavigateTab,
@@ -420,8 +446,8 @@ export const AgentDashboard: React.FC<AgentDashboardProps> = ({
                     <TableCell className="text-xs">
                       {order.recipientPhone}
                     </TableCell>
-                    <TableCell className="text-xs tabular-nums">
-                      {order.date}
+                    <TableCell className="text-xs tabular-nums text-muted-foreground whitespace-nowrap">
+                      {formatOrderDate(order.date)}
                     </TableCell>
                     <TableCell className="text-right text-xs font-black tabular-nums text-foreground">
                       GH₵ {order.amount.toFixed(2)}
@@ -431,26 +457,43 @@ export const AgentDashboard: React.FC<AgentDashboardProps> = ({
                     </TableCell>
                     <TableCell className="text-center">
                       <div className="flex items-center justify-center gap-1.5">
-                        <span
-                          className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase ${
-                            order.status === "delivered"
-                              ? "bg-emerald-500/15 text-emerald-700 dark:text-emerald-400"
-                              : order.status === "processing"
-                                ? "bg-amber-500/15 text-amber-700 dark:text-amber-400"
-                                : "bg-red-500/15 text-red-600 dark:text-red-400"
-                          }`}
-                        >
-                          <span
-                            className={`size-1.5 rounded-full ${
-                              order.status === "delivered"
-                                ? "bg-emerald-500"
-                                : order.status === "processing"
-                                  ? "bg-amber-500"
-                                  : "bg-red-500"
-                            }`}
-                          />
-                          {order.status}
-                        </span>
+                        {order.status === "delivered" && (
+                          <span className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30">
+                            <span className="size-1.5 rounded-full bg-emerald-500" />
+                            Delivered
+                          </span>
+                        )}
+                        {order.status === "processing" && (
+                          <span className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase bg-amber-500/15 text-amber-700 dark:text-amber-400 border border-amber-500/30">
+                            <span className="size-1.5 rounded-full bg-amber-500 animate-pulse" />
+                            Processing
+                          </span>
+                        )}
+                        {order.status === "waiting" && (
+                          <span className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase bg-sky-500/15 text-sky-700 dark:text-sky-400 border border-sky-500/30">
+                            <span className="size-1.5 rounded-full bg-sky-500" />
+                            Waiting
+                          </span>
+                        )}
+                        {(order.status === "pending" ||
+                          order.status === "pending_payment") && (
+                          <span className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase bg-purple-500/15 text-purple-700 dark:text-purple-400 border border-purple-500/30">
+                            <span className="size-1.5 rounded-full bg-purple-500 animate-pulse" />
+                            Pending
+                          </span>
+                        )}
+                        {order.status === "failed" && (
+                          <span className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase bg-red-500/15 text-red-600 dark:text-red-400 border border-red-500/30">
+                            <span className="size-1.5 rounded-full bg-red-500" />
+                            Failed
+                          </span>
+                        )}
+                        {order.status === "refunded" && (
+                          <span className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase bg-muted text-muted-foreground border border-border">
+                            <span className="size-1.5 rounded-full bg-muted-foreground/50" />
+                            Refunded
+                          </span>
+                        )}
                       </div>
                     </TableCell>
                   </TableRow>

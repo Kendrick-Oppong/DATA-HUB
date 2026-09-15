@@ -16,7 +16,9 @@ export interface UserAccount {
 export type TelecomNetwork = "MTN" | "Telecel" | "AirtelTigo";
 
 export type OrderStatus =
+  | "waiting"
   | "processing"
+  | "pending"
   | "delivered"
   | "failed"
   | "refunded"
@@ -57,6 +59,7 @@ export interface DataBundle {
   agentPrice?: number; // agent customized price
   category: "non_expiry" | "turbonet" | "special" | "sika";
   isPopular?: boolean;
+  tier?: "standard" | "xpress" | "ishare" | "bigtime";
 }
 
 export interface Order {
@@ -84,6 +87,8 @@ export interface Order {
   voucherSerial?: string;
   meterNumber?: string;
   meterToken?: string;
+  paystackReference?: string;
+  isPaymentVerified?: boolean;
 }
 
 export interface Transaction {
