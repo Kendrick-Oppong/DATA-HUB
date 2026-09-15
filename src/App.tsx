@@ -147,28 +147,18 @@ function parsePathToRoute(pathname: string, search = ""): AppRoute {
 }
 
 export default function App() {
-  // Theme state (supports 6 themes: light, dark, sunset-amber, emerald-matrix, royal-indigo, ruby-red)
+  // Theme state (supports 4 themes: light, dark, sunset-amber, ruby-red)
   const [theme, setTheme] = useState<AppTheme>(() => {
     return (localStorage.getItem("sdh_theme") as AppTheme) || "ruby-red";
   });
 
   useEffect(() => {
     const root = document.documentElement;
-    root.classList.remove(
-      "dark",
-      "theme-sunset-amber",
-      "theme-emerald-matrix",
-      "theme-royal-indigo",
-      "theme-ruby-red",
-    );
+    root.classList.remove("dark", "theme-sunset-amber", "theme-ruby-red");
     if (theme === "dark") {
       root.classList.add("dark");
     } else if (theme === "sunset-amber") {
       root.classList.add("dark", "theme-sunset-amber");
-    } else if (theme === "emerald-matrix") {
-      root.classList.add("dark", "theme-emerald-matrix");
-    } else if (theme === "royal-indigo") {
-      root.classList.add("dark", "theme-royal-indigo");
     } else if (theme === "ruby-red") {
       root.classList.add("dark", "theme-ruby-red");
     }

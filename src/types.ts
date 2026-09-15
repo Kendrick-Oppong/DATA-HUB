@@ -1,12 +1,6 @@
 export type UserRole = "public" | "customer" | "agent" | "admin" | "storefront";
 
-export type AppTheme =
-  | "light"
-  | "dark"
-  | "sunset-amber"
-  | "emerald-matrix"
-  | "royal-indigo"
-  | "ruby-red";
+export type AppTheme = "light" | "dark" | "sunset-amber" | "ruby-red";
 
 export interface UserAccount {
   id: string;
@@ -191,7 +185,12 @@ export interface AgentStoreConfig {
   promoCodes: PromoCode[];
   storeLogo?: string | null;
   whatsappChannelUrl?: string;
-  enabledNetworks?: (TelecomNetwork | "MTN_XPRESS" | "AT_BIGTIME" | "AT_ISHARE")[];
+  enabledNetworks?: (
+    | TelecomNetwork
+    | "MTN_XPRESS"
+    | "AT_BIGTIME"
+    | "AT_ISHARE"
+  )[];
   enabledServices?: {
     airtime?: boolean;
     checker?: boolean;

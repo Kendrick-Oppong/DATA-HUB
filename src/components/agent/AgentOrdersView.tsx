@@ -1425,102 +1425,107 @@ export const AgentOrdersView: React.FC<AgentOrdersViewProps> = ({
                     </div>
                   </div>
 
-                  {/* Order Actions (Re-push, Refund, Force Deliver) */}
-                  {(selectedOrder.status === "failed" ||
-                    selectedOrder.status === "processing" ||
-                    selectedOrder.status === "pending_payment") && (
-                    <div className="space-y-2 pt-1">
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
-                        Resolution Controls
-                      </span>
-                      <div className="flex flex-wrap items-center gap-2">
-                        {/* Re-push order if failed */}
-                        {selectedOrder.status === "failed" &&
-                          selectedOrder.source === "storefront" && (
-                            <Button
-                              type="button"
-                              onClick={() =>
-                                handleRepushOrder(selectedOrder.id)
-                              }
-                              className="flex-1 text-xs font-bold gap-1.5 h-9 bg-primary cursor-pointer shadow-xs"
-                            >
-                              <RefreshCw className="size-3.5" />
-                              <span>Re-push Order</span>
-                            </Button>
-                          )}
+                  {/* Order Actions (Re-push, Refund, Force Deliver, Verify Payment) */}
+                  <div className="space-y-2">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                      Resolution Controls
+                    </span>
+                    <div className="flex flex-wrap items-center gap-2">
+                      {/* Re-push order if failed */}
+                      {selectedOrder.status === "failed" &&
+                        selectedOrder.source === "storefront" && (
+                          <Button
+                            type="button"
+                            onClick={() => handleRepushOrder(selectedOrder.id)}
+                            className="flex-1 text-xs font-bold gap-1.5 h-9 bg-primary cursor-pointer shadow-xs"
+                          >
+                            <RefreshCw className="size-3.5" />
+                            <span>Re-push Order</span>
+                          </Button>
+                        )}
 
-                        {/* Refund customer if failed */}
-                        {selectedOrder.status === "failed" &&
-                          selectedOrder.source === "storefront" && (
-                            <Button
-                              type="button"
-                              variant="outline"
-                              onClick={() =>
-                                handleRefundOrder(selectedOrder.id)
-                              }
-                              className="flex-1 text-xs font-bold gap-1.5 h-9 text-destructive hover:bg-destructive/10 cursor-pointer"
-                            >
-                              <RotateCcw className="size-3.5" />
-                              <span>Refund Customer</span>
-                            </Button>
-                          )}
-
-                        {/* Force deliver if in-flight/pending */}
-                        {(selectedOrder.status === "processing" ||
-                          selectedOrder.status === "pending_payment") && (
+                      {/* Refund customer if failed */}
+                      {selectedOrder.status === "failed" &&
+                        selectedOrder.source === "storefront" && (
                           <Button
                             type="button"
                             variant="outline"
-                            onClick={() => handleForceDeliver(selectedOrder.id)}
-                            className="flex-1 text-xs font-bold gap-1.5 h-9 text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-950/20 cursor-pointer"
+                            onClick={() => handleRefundOrder(selectedOrder.id)}
+                            className="flex-1 text-xs font-bold gap-1.5 h-9 text-destructive hover:bg-destructive/10 cursor-pointer"
                           >
-                            <CheckCircle2 className="size-3.5" />
-                            <span>Force Deliver</span>
+                            <RotateCcw className="size-3.5" />
+                            <span>Refund Customer</span>
                           </Button>
                         )}
-                      </div>
-                    </div>
-                  )}
 
-                  {/* MTN Beneficiary Reporting Feature from sdh-next */}
-                  {selectedOrder.network === "MTN" &&
-                    selectedOrder.status !== "delivered" && (
-                      <div className="rounded-2xl border border-amber-500/20 bg-amber-500/5 p-3.5 space-y-2">
-                        <div className="flex items-center justify-between">
-                          <span className="text-xs font-bold text-amber-800 dark:text-amber-300 flex items-center gap-1.5">
-                            <Flag className="size-3.5" />
-                            MTN Beneficiary Whitelist
-                          </span>
-                        </div>
-                        <p className="text-[11px] text-muted-foreground leading-relaxed">
-                          {reportedBeneficiary
-                            ? `${selectedOrder.recipientPhone} has been submitted to SDH NOC Admin to whitelist on MTN upstream routing.`
-                            : `If MTN rejected dispatch because ${selectedOrder.recipientPhone} is unregistered or flagged, report it directly to SDH Admin.`}
-                        </p>
+                      {/* Force deliver if in-flight/pending */}
+                      {(selectedOrder.status === "processing" ||
+                        selectedOrder.status === "pending_payment") && (
                         <Button
                           type="button"
                           variant="outline"
-                          size="sm"
-                          disabled={reportingBeneficiary || reportedBeneficiary}
-                          onClick={handleReportBeneficiary}
-                          className="w-full text-xs font-bold gap-1.5 text-amber-700 dark:text-amber-300 hover:bg-amber-500/10 cursor-pointer h-8"
+                          onClick={() => handleForceDeliver(selectedOrder.id)}
+                          className="flex-1 text-xs font-bold gap-1.5 h-9 text-primary hover:bg-primary/10 cursor-pointer"
                         >
-                          {reportedBeneficiary ? (
-                            <>
-                              <Check className="size-3.5 text-emerald-600" />
-                              <span>Submitted to Admin</span>
-                            </>
-                          ) : (
-                            <>
-                              <Flag className="size-3.5" />
-                              <span>
-                                {reportingBeneficiary
-                                  ? "Submitting..."
-                                  : "Report Beneficiary Issue"}
-                              </span>
-                            </>
-                          )}
+                          <CheckCircle2 className="size-3.5" />
+                          <span>Force Deliver</span>
                         </Button>
+                      )}
+
+                      {/* Verify Payment */}
+                      <Button
+                        type="button"
+                        variant="outline"
+                        className="flex-1 text-xs font-bold gap-1.5 h-9 text-primary hover:bg-primary/10 cursor-pointer"
+                      >
+                        <ShieldCheck className="size-3.5" />
+                        <span>Verify Payment</span>
+                      </Button>
+                    </div>
+                  </div>
+
+                  {/* Report Beneficiary Problem */}
+                  {selectedOrder.network === "MTN" &&
+                    (selectedOrder.status === "failed" ||
+                      selectedOrder.status === "processing") && (
+                      <div className="space-y-2 pt-1">
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                          Beneficiary Issue
+                        </span>
+                        <div className="rounded-2xl border border-amber-500/20 bg-amber-500/5 p-3.5 space-y-2">
+                          <p className="text-[11px] text-muted-foreground leading-relaxed">
+                            If MTN refused this order because{" "}
+                            {selectedOrder.recipientPhone} isn't on the
+                            beneficiary list, send it to us and we'll add it
+                            upstream.
+                          </p>
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            disabled={
+                              reportingBeneficiary || reportedBeneficiary
+                            }
+                            onClick={handleReportBeneficiary}
+                            className="w-full text-xs font-bold gap-1.5 text-amber-700 dark:text-amber-300 hover:bg-amber-500/10 cursor-pointer h-8"
+                          >
+                            {reportedBeneficiary ? (
+                              <>
+                                <Check className="size-3.5 text-amber-700" />
+                                <span>Submitted to Admin</span>
+                              </>
+                            ) : (
+                              <>
+                                <Flag className="size-3.5" />
+                                <span>
+                                  {reportingBeneficiary
+                                    ? "Submitting..."
+                                    : "Report Beneficiary Problem"}
+                                </span>
+                              </>
+                            )}
+                          </Button>
+                        </div>
                       </div>
                     )}
                 </div>
@@ -1533,7 +1538,7 @@ export const AgentOrdersView: React.FC<AgentOrdersViewProps> = ({
                     type="button"
                     size="sm"
                     onClick={() => handleWhatsAppCustomer(selectedOrder)}
-                    className="text-xs font-bold gap-1.5 h-9 bg-emerald-600 hover:bg-emerald-700 text-white cursor-pointer shadow-xs w-full"
+                    className="text-xs font-bold gap-1.5 h-9 bg-emerald-600 hover:bg-emerald-700 cursor-pointer shadow-xs w-full"
                   >
                     <MessageCircle className="size-3.5" />
                     <span>WhatsApp Customer</span>
