@@ -415,7 +415,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
             {/* Reseller Callout for Customers */}
             {!isCollapsed && currentRole === "customer" && (
-              <div className="mt-2 flex flex-col gap-2  border border-primary/20 bg-primary/5 p-3">
+              <div className="mt-2 flex flex-col gap-2 rounded-2xl border border-primary/20 bg-primary/5 p-3">
                 <div className="flex items-center gap-1.5 text-xs font-bold text-foreground">
                   <Sparkles className="size-3.5 text-primary shrink-0" />
                   <span>Sell data in Ghana</span>
@@ -500,7 +500,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
                   {/* Reseller Callout for Customers */}
                   {currentRole === "customer" && (
-                    <div className="mt-2 flex flex-col gap-2  border border-primary/20 bg-primary/5 p-3">
+                    <div className="mt-2 flex flex-col gap-2 rounded-2xl border border-primary/20 bg-primary/5 p-3">
                       <div className="flex items-center gap-1.5 text-xs font-bold text-foreground">
                         <Sparkles className="size-3.5 text-primary shrink-0" />
                         <span>Sell data in Ghana</span>

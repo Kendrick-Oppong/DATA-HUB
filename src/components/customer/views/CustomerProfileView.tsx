@@ -27,15 +27,15 @@ import {
   RefreshCw,
   Clock,
   Radio,
+  BadgeCheck,
 } from "lucide-react";
 import { AppTheme, UserAccount, TelecomNetwork } from "../../../types";
 import { themeOptions } from "../../../lib/themes";
+import { SignalRail } from "../../common/SignalRail";
 import { Button } from "../../ui/button";
 import { Input } from "../../ui/input";
 import { Label } from "../../ui/label";
 import { Badge } from "../../ui/badge";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "../../ui/card";
-import { Separator } from "../../ui/separator";
 import { Switch } from "../../ui/switch";
 
 export interface CustomerProfileViewProps {
@@ -79,7 +79,7 @@ export const CustomerProfileView: React.FC<CustomerProfileViewProps> = ({
   // Profile fields state (initialized with current user or sensible defaults)
   const [fullName, setFullName] = useState(user?.name || "Kojo Mensah");
   const [displayName, setDisplayName] = useState(
-    user?.name ? user.name.split(" ")[0] : "Kojo"
+    user?.name ? user.name.split(" ")[0] : "Kojo",
   );
   const [email, setEmail] = useState(user?.email || "kojomensah94@gmail.com");
   const [phone, setPhone] = useState(user?.phone || "0244192834");
@@ -87,33 +87,40 @@ export const CustomerProfileView: React.FC<CustomerProfileViewProps> = ({
   const [region, setRegion] = useState("Greater Accra");
   const [digitalAddress, setDigitalAddress] = useState("GA-183-9021");
 
-  // PIN security states
+  // Security Password states
   const [currentPinInput, setCurrentPinInput] = useState("");
   const [newPinInput, setNewPinInput] = useState("");
   const [confirmPinInput, setConfirmPinInput] = useState("");
   const [showCurrentPin, setShowCurrentPin] = useState(false);
   const [showNewPin, setShowNewPin] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [pinError, setPinError] = useState<string | null>(null);
-  const [pinSuccessMessage, setPinSuccessMessage] = useState<string | null>(null);
+  const [pinSuccessMessage, setPinSuccessMessage] = useState<string | null>(
+    null,
+  );
 
   // Two-Factor Auth State
   const [twoFactorEnabled, setTwoFactorEnabled] = useState(true);
 
   // Telecom and checkout preferences
   const [defaultNetwork, setDefaultNetwork] = useState<TelecomNetwork>("MTN");
-  const [defaultRecipient, setDefaultRecipient] = useState(user?.phone || "0244192834");
+  const [defaultRecipient, setDefaultRecipient] = useState(
+    user?.phone || "0244192834",
+  );
   const [autoRetryGateways, setAutoRetryGateways] = useState(true);
   const [lowBalanceAlert, setLowBalanceAlert] = useState(true);
   const [lowBalanceThreshold, setLowBalanceThreshold] = useState("20.00");
 
-  //tification toggles
+  // Notification toggles
   const [notifySmsReceipts, setNotifySmsReceipts] = useState(true);
   const [notifyWhatsApp, setNotifyWhatsApp] = useState(true);
   const [notifyGatewayAlerts, setNotifyGatewayAlerts] = useState(true);
   const [notifyPromoDeals, setNotifyPromoDeals] = useState(false);
 
   // UI state banners
-  const [saveSuccessMessage, setSaveSuccessMessage] = useState<string | null>(null);
+  const [saveSuccessMessage, setSaveSuccessMessage] = useState<string | null>(
+    null,
+  );
   const [copiedField, setCopiedField] = useState<string | null>(null);
 
   // Active Sessions
@@ -124,7 +131,7 @@ export const CustomerProfileView: React.FC<CustomerProfileViewProps> = ({
       browser: "Google Chrome 134.0",
       location: "Accra, Ghana (Airport Residential)",
       ip: "102.176.64.12",
-      lastActive: "Activew",
+      lastActive: "Active Now",
       isCurrent: true,
     },
     {
@@ -148,13 +155,14 @@ export const CustomerProfileView: React.FC<CustomerProfileViewProps> = ({
   ]);
 
   // Compute initials
-  const initials = fullName
-    .trim()
-    .split(/\s+/)
-    .map((w) => w[0])
-    .join("")
-    .substring(0, 2)
-    .toUpperCase() || "KM";
+  const initials =
+    fullName
+      .trim()
+      .split(/\s+/)
+      .map((w) => w[0])
+      .join("")
+      .substring(0, 2)
+      .toUpperCase() || "KM";
 
   // Handle Save Profile
   const handleSaveProfile = (e: React.FormEvent) => {
@@ -167,7 +175,9 @@ export const CustomerProfileView: React.FC<CustomerProfileViewProps> = ({
         phone: phone,
       });
     }
-    setSaveSuccessMessage("Profile information and Ghana Card credentials synced with SDH.");
+    setSaveSuccessMessage(
+      "Profile information and Ghana Card credentials synced with SDH.",
+    );
     setTimeout(() => setSaveSuccessMessage(null), 3500);
   };
 
@@ -179,7 +189,9 @@ export const CustomerProfileView: React.FC<CustomerProfileViewProps> = ({
 
     const actualCurrentPin = user?.securityPin || "2026";
     if (currentPinInput !== actualCurrentPin) {
-      setPinError(`Incorrect current PIN. Default demo PIN is ${actualCurrentPin}.`);
+      setPinError(
+        `Incorrect current PIN. Default demo PIN is ${actualCurrentPin}.`,
+      );
       return;
     }
     if (newPinInput.length !== 4 || !/^\d{4}$/.test(newPinInput)) {
@@ -187,7 +199,7 @@ export const CustomerProfileView: React.FC<CustomerProfileViewProps> = ({
       return;
     }
     if (newPinInput !== confirmPinInput) {
-      setPinError("New PIN and confirmation PIN dot match.");
+      setPinError("New PIN and confirmation PIN do not match.");
       return;
     }
 
@@ -197,7 +209,9 @@ export const CustomerProfileView: React.FC<CustomerProfileViewProps> = ({
         securityPin: newPinInput,
       });
     }
-    setPinSuccessMessage(`Transaction Security PIN successfully updated to ${newPinInput}.`);
+    setPinSuccessMessage(
+      `Transaction Security PIN successfully updated to ${newPinInput}.`,
+    );
     setCurrentPinInput("");
     setNewPinInput("");
     setConfirmPinInput("");
@@ -218,7 +232,9 @@ export const CustomerProfileView: React.FC<CustomerProfileViewProps> = ({
 
   const handleRevokeAllOtherSessions = () => {
     setSessions((prev) => prev.filter((s) => s.isCurrent));
-    setSaveSuccessMessage("All other remote sessions were immediately revoked.");
+    setSaveSuccessMessage(
+      "All other remote sessions were immediately revoked.",
+    );
     setTimeout(() => setSaveSuccessMessage(null), 3000);
   };
 
@@ -229,7 +245,10 @@ export const CustomerProfileView: React.FC<CustomerProfileViewProps> = ({
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.setAttribute("href", url);
-    link.setAttribute("download", `SDH_Account_Statement_${fullName.replace(/\s+/g, "_")}.csv`);
+    link.setAttribute(
+      "download",
+      `SDH_Account_Statement_${fullName.replace(/\s+/g, "_")}.csv`,
+    );
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -238,14 +257,19 @@ export const CustomerProfileView: React.FC<CustomerProfileViewProps> = ({
   return (
     <div className="mx-auto max-w-5xl space-y-6 pb-12">
       {/* ============================================================ */}
-      {/* 1. TOP IDENTITY & HERO PROFILE HEADER CARD                   */}
+      {/* 1. TOP IDENTITY & HERO PROFILE HEADER CARD (Storefront Vibe) */}
       {/* ============================================================ */}
-      <div className="relative overflow-hidden rounded-3xl border border-border bg-gradient-to-br from-card via-card to-primary/5 p-6 shadow-xs sm:p-8">
-        <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+      <div className="relative overflow-hidden rounded-3xl border border-border/80 bg-card p-6 shadow-md transition-all sm:p-8 space-y-6">
+        {/* Ambient Gradient Background matching Storefront/StoreBuilder */}
+        <div className="absolute top-0 inset-x-0 h-32 pointer-events-none bg-gradient-to-br from-primary/20 via-primary/10 to-transparent" />
+        <div className="absolute -top-12 -right-12 size-40 rounded-full bg-primary/15 blur-2xl pointer-events-none" />
+        <div className="absolute -bottom-10 -left-10 size-36 rounded-full bg-emerald-500/10 blur-2xl pointer-events-none" />
+
+        <div className="relative flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
           {/* User info left */}
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
-            {/* Avatar with initials & badge */}
-            <div className="relative flex size-20 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-primary/80 font-black text-2xl text-primary-foreground shadow-md ring-4 ring-primary/20">
+            {/* Avatar with initials & glowing badge */}
+            <div className="relative flex size-20 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-primary/80 font-black text-2xl text-primary-foreground shadow-md ring-4 ring-card">
               <span>{initials}</span>
               <span
                 className="absolute -bottom-1 -right-1 flex size-6 items-center justify-center rounded-full bg-emerald-500 ring-2 ring-card shadow-xs"
@@ -256,29 +280,32 @@ export const CustomerProfileView: React.FC<CustomerProfileViewProps> = ({
             </div>
 
             {/* Title & Metadata */}
-            <div className="space-y-1">
+            <div className="space-y-1.5">
               <div className="flex flex-wrap items-center gap-2">
                 <h1 className="text-2xl font-black tracking-tight text-foreground sm:text-3xl">
                   {fullName}
                 </h1>
-                <Badge variant="default" className="bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border-emerald-500/30 gap-1 text-xs">
+                <Badge
+                  variant="outline"
+                  className="bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border-emerald-500/30 gap-1.5 text-xs font-extrabold py-0.5 px-2.5"
+                >
                   <ShieldCheck className="size-3.5" />
-                  Tier 2 • NIA Verified
+                  <span>Tier 2 • NIA Verified</span>
                 </Badge>
               </div>
 
-              <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted-foreground">
-                <span className="flex items-center gap-1">
-                  <Mail className="size-3.5 text-primary/70" />
-                  {email}
+              <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted-foreground font-medium">
+                <span className="flex items-center gap-1.5">
+                  <Mail className="size-3.5 text-primary" />
+                  <span>{email}</span>
                 </span>
-                <span className="flex items-center gap-1">
-                  <Smartphone className="size-3.5 text-primary/70" />
-                  {phone}
+                <span className="flex items-center gap-1.5">
+                  <Smartphone className="size-3.5 text-primary" />
+                  <span>{phone}</span>
                 </span>
-                <span className="flex items-center gap-1">
-                  <MapPin className="size-3.5 text-primary/70" />
-                  {region}, Ghana
+                <span className="flex items-center gap-1.5">
+                  <MapPin className="size-3.5 text-primary" />
+                  <span>{region}, Ghana</span>
                 </span>
               </div>
             </div>
@@ -286,7 +313,7 @@ export const CustomerProfileView: React.FC<CustomerProfileViewProps> = ({
 
           {/* Quick Metrics Strip */}
           <div className="grid grid-cols-2 gap-3 sm:flex sm:items-center">
-            <div className="rounded-2xl border border-border bg-card/80 p-3.5 shadow-2xs min-w-[120px]">
+            <div className="rounded-2xl border border-border/80 bg-background/80 backdrop-blur-xs p-3.5 shadow-2xs min-w-[130px]">
               <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
                 Wallet Balance
               </p>
@@ -300,29 +327,30 @@ export const CustomerProfileView: React.FC<CustomerProfileViewProps> = ({
                   variant="link"
                   size="sm"
                   onClick={onOpenFundWallet}
-                  className="h-auto p-0 mt-1 text-[11px] font-bold text-primary hover:underline justify-start"
+                  className="h-auto p-0 mt-1 text-[11px] font-extrabold text-primary hover:underline justify-start gap-1"
                 >
-                  + Fund Wallet
+                  <span>+ Fund Wallet</span>
                 </Button>
               )}
             </div>
 
-            <div className="rounded-2xl border border-border bg-card/80 p-3.5 shadow-2xs min-w-[110px]">
+            <div className="rounded-2xl border border-border/80 bg-background/80 backdrop-blur-xs p-3.5 shadow-2xs min-w-[120px]">
               <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
                 Delivered Orders
               </p>
               <p className="text-lg font-black text-foreground tabular-nums mt-0.5">
                 {totalOrdersCount}
               </p>
-              <p className="mt-1 text-[10px] font-semibold text-emerald-600 dark:text-emerald-400">
-                100% Fulfilled
-              </p>
+              <div className="mt-1 flex items-center gap-1 text-[10px] font-bold text-emerald-600 dark:text-emerald-400">
+                <BadgeCheck className="size-3" />
+                <span>100% Fulfilled</span>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Save / Feedbacktification */}
+      {/* Save / Feedback Notification */}
       {saveSuccessMessage && (
         <div className="flex items-center gap-3 rounded-2xl border border-emerald-500/30 bg-emerald-500/10 p-4 text-xs font-bold text-emerald-700 dark:text-emerald-400 animate-in fade-in">
           <CheckCircle2 className="size-4 shrink-0" />
@@ -331,47 +359,63 @@ export const CustomerProfileView: React.FC<CustomerProfileViewProps> = ({
       )}
 
       {/* ============================================================ */}
-      {/* 2. TABBED SUB-NAVIGATION                                     */}
+      {/* 2. TABBED SUB-NAVIGATION (Store Builder Pill Group Style)     */}
       {/* ============================================================ */}
-      <div className="flex items-center gap-1.5 overflow-x-auto border-b border-border pb-1-scrollbar">
+      <div className="flex items-center gap-2 overflow-x-auto rounded-2xl border border-border/80 bg-card/60 p-1.5 backdrop-blur-md shadow-2xs">
         <Button
           variant={activeSubTab === "personal" ? "default" : "ghost"}
           size="sm"
           onClick={() => setActiveSubTab("personal")}
-          className="rounded-xl font-bold text-xs"
+          className={`rounded-xl font-extrabold text-xs transition-all gap-2 px-3.5 py-2 ${
+            activeSubTab === "personal"
+              ? "bg-primary text-primary-foreground shadow-xs"
+              : "text-muted-foreground hover:text-foreground hover:bg-muted/60"
+          }`}
         >
           <User className="size-3.5" />
-          Personal & KYC
+          <span>Personal & KYC</span>
         </Button>
 
         <Button
           variant={activeSubTab === "security" ? "default" : "ghost"}
           size="sm"
           onClick={() => setActiveSubTab("security")}
-          className="rounded-xl font-bold text-xs"
+          className={`rounded-xl font-extrabold text-xs transition-all gap-2 px-3.5 py-2 ${
+            activeSubTab === "security"
+              ? "bg-primary text-primary-foreground shadow-xs"
+              : "text-muted-foreground hover:text-foreground hover:bg-muted/60"
+          }`}
         >
           <Lock className="size-3.5" />
-          Security & PIN
+          <span>Security & Password</span>
         </Button>
 
         <Button
           variant={activeSubTab === "telecom" ? "default" : "ghost"}
           size="sm"
           onClick={() => setActiveSubTab("telecom")}
-          className="rounded-xl font-bold text-xs"
+          className={`rounded-xl font-extrabold text-xs transition-all gap-2 px-3.5 py-2 ${
+            activeSubTab === "telecom"
+              ? "bg-primary text-primary-foreground shadow-xs"
+              : "text-muted-foreground hover:text-foreground hover:bg-muted/60"
+          }`}
         >
           <Sliders className="size-3.5" />
-          Telecom & Preferences
+          <span>Telecom & Preferences</span>
         </Button>
 
         <Button
           variant={activeSubTab === "notifications" ? "default" : "ghost"}
           size="sm"
           onClick={() => setActiveSubTab("notifications")}
-          className="rounded-xl font-bold text-xs"
+          className={`rounded-xl font-extrabold text-xs transition-all gap-2 px-3.5 py-2 ${
+            activeSubTab === "notifications"
+              ? "bg-primary text-primary-foreground shadow-xs"
+              : "text-muted-foreground hover:text-foreground hover:bg-muted/60"
+          }`}
         >
           <Bell className="size-3.5" />
-         Notifications & Statement
+          <span>Notifications & Statement</span>
         </Button>
       </div>
 
@@ -380,34 +424,42 @@ export const CustomerProfileView: React.FC<CustomerProfileViewProps> = ({
       {/* ============================================================ */}
       {activeSubTab === "personal" && (
         <div className="space-y-6">
-          {/* KYC Tier Banner */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 rounded-3xl border border-emerald-500/30 bg-emerald-500/10 p-5 text-xs">
-            <div className="flex items-start gap-3">
-              <div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 font-bold">
-                <ShieldCheck className="size-5" />
-              </div>
-              <div className="space-y-0.5">
-                <h2 className="text-sm font-black text-foreground">
-                  Tier 2 Verified Subscriber (NIA Ghana Card)
-                </h2>
-                <p className="text-muted-foreground">
-                  Your identity is authenticated with the National Identification Authority. Enjoy higher daily limits (GH₵ 5,000.00/day) and subsidized AFA farmer registration.
-                </p>
+          {/* Tier 2 Verified Subscriber (NIA Ghana Card) Banner */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 rounded-2xl border border-emerald-500/20 bg-emerald-500/10 p-4 text-xs">
+            <div className="flex items-center gap-3">
+              <SignalRail status="delivered" size="sm" />
+
+              <div>
+                <span className="font-semibold text-foreground">
+                  Tier 2 Verified Subscriber (NIA Ghana Card):{" "}
+                </span>
+                <span className="text-muted-foreground">
+                  Authenticated with National Identification Authority. Daily
+                  limits up to GH₵ 5,000.00.
+                </span>
               </div>
             </div>
-            <Badge variant="secondary" className="self-start sm:self-center text-[11px] px-2.5 py-1">
+
+            <Badge
+              variant="secondary"
+              className="shrink-0 self-start sm:self-center text-[10px] font-bold uppercase bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30"
+            >
               Active Tier
             </Badge>
           </div>
 
-          <form onSubmit={handleSaveProfile} className="rounded-3xl border border-border bg-card p-6 shadow-xs space-y-6">
+          <form
+            onSubmit={handleSaveProfile}
+            className="rounded-3xl border border-border/80 bg-card p-6 shadow-xs space-y-6"
+          >
             <div className="flex items-center justify-between border-b border-border/80 pb-4">
               <div>
                 <h3 className="text-sm font-extrabold text-foreground">
                   Legal Subscriber Identity
                 </h3>
                 <p className="text-xs text-muted-foreground">
-                  Official details associated with your mobile SIM registration and order receipts.
+                  Official details associated with your mobile SIM registration
+                  and order receipts.
                 </p>
               </div>
               <Button type="submit" size="sm" className="font-bold text-xs">
@@ -430,7 +482,10 @@ export const CustomerProfileView: React.FC<CustomerProfileViewProps> = ({
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="input-display-name" className="text-xs font-bold">
+                <Label
+                  htmlFor="input-display-name"
+                  className="text-xs font-bold"
+                >
                   Display / Nickname
                 </Label>
                 <Input
@@ -464,14 +519,17 @@ export const CustomerProfileView: React.FC<CustomerProfileViewProps> = ({
                   type="tel"
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
-                  className=" font-medium"
+                  className="font-medium"
                   required
                 />
               </div>
 
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <Label htmlFor="input-ghana-card" className="text-xs font-bold">
+                  <Label
+                    htmlFor="input-ghana-card"
+                    className="text-xs font-bold"
+                  >
                     Ghana Card PIN (NIA)
                   </Label>
                   <Button
@@ -490,7 +548,7 @@ export const CustomerProfileView: React.FC<CustomerProfileViewProps> = ({
                     id="input-ghana-card"
                     value={ghanaCard}
                     disabled
-                    className="bg-muted/40  font-bold cursor-not-allowed pr-24"
+                    className="bg-muted/40 font-bold cursor-not-allowed pr-24"
                   />
                   <span className="absolute right-3 top-2.5 flex items-center gap-1 rounded-md bg-emerald-500/15 px-2 py-0.5 text-[10px] font-bold text-emerald-700 dark:text-emerald-400">
                     <Check className="size-3" />
@@ -498,7 +556,8 @@ export const CustomerProfileView: React.FC<CustomerProfileViewProps> = ({
                   </span>
                 </div>
                 <p className="text-[11px] text-muted-foreground">
-                  Ghana Card numbers cannot be altered directly after verification. Contact support to update NIA records.
+                  Ghana Card numbers cannot be altered directly after
+                  verification. Contact support to update NIA records.
                 </p>
               </div>
 
@@ -515,7 +574,10 @@ export const CustomerProfileView: React.FC<CustomerProfileViewProps> = ({
               </div>
 
               <div className="space-y-2 sm:col-span-2">
-                <Label htmlFor="input-digital-address" className="text-xs font-bold">
+                <Label
+                  htmlFor="input-digital-address"
+                  className="text-xs font-bold"
+                >
                   GhanaPost GPS Digital Address
                 </Label>
                 <Input
@@ -523,10 +585,11 @@ export const CustomerProfileView: React.FC<CustomerProfileViewProps> = ({
                   value={digitalAddress}
                   onChange={(e) => setDigitalAddress(e.target.value)}
                   placeholder="e.g. GA-183-9021"
-                  className=" uppercase"
+                  className="uppercase font-mono"
                 />
                 <p className="text-[11px] text-muted-foreground">
-                  Used for utility prepaid meter verification and hardware dispatch.
+                  Used for utility prepaid meter verification and hardware
+                  dispatch.
                 </p>
               </div>
             </div>
@@ -545,16 +608,17 @@ export const CustomerProfileView: React.FC<CustomerProfileViewProps> = ({
       {/* ============================================================ */}
       {activeSubTab === "security" && (
         <div className="space-y-6">
-          {/* PIN Management Card */}
-          <div className="rounded-3xl border border-border bg-card p-6 shadow-xs space-y-6">
-            <div className="flex items-center justify-between border-b border-border/80 pb-4">
+          {/* Security Password Management Card */}
+          <div className="rounded-3xl border border-border/80 bg-card p-6 shadow-xs space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-border/80 pb-4">
               <div>
                 <h3 className="flex items-center gap-2 text-sm font-extrabold text-foreground">
                   <KeyRound className="size-4 text-primary" />
-                  <span>Wallet & Transaction Security PIN</span>
+                  <span>Wallet & Transaction Security Password</span>
                 </h3>
-                <p className="text-xs text-muted-foreground">
-                  Your 4-digit secret PIN is required to authorize all wallet withdrawals, bulk purchases, and airtime top-ups.
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  Your secret security password is required to authorize all wallet
+                  withdrawals, bulk purchases, and airtime top-ups.
                 </p>
               </div>
               {onOpenSecurityPins && (
@@ -562,10 +626,10 @@ export const CustomerProfileView: React.FC<CustomerProfileViewProps> = ({
                   variant="outline"
                   size="sm"
                   onClick={onOpenSecurityPins}
-                  className="text-xs font-semibold gap-1.5"
+                  className="text-xs font-semibold gap-1.5 shrink-0 self-start sm:self-center"
                 >
                   <KeyRound className="size-3.5 text-primary" />
-                  View PIN Reference
+                  <span>View Security Sheet</span>
                 </Button>
               )}
             </div>
@@ -584,94 +648,115 @@ export const CustomerProfileView: React.FC<CustomerProfileViewProps> = ({
               </div>
             )}
 
-            <form onSubmit={handleUpdatePin} className="space-y-5">
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <Label htmlFor="current-pin" className="text-xs font-bold">
-                      Current 4-Digit PIN
-                    </Label>
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="icon-xs"
-                      onClick={() => setShowCurrentPin(!showCurrentPin)}
-                      aria-label={showCurrentPin ? "Hide current PIN" : "Show current PIN"}
-                      className="size-6 text-muted-foreground hover:text-foreground"
-                    >
-                      {showCurrentPin ? <EyeOff className="size-3.5" /> : <Eye className="size-3.5" />}
-                    </Button>
-                  </div>
+            <form onSubmit={handleUpdatePin} className="space-y-5 max-w-2xl">
+              {/* Row 1: Current Password */}
+              <div className="space-y-2">
+                <Label htmlFor="current-password" className="text-xs font-bold text-foreground">
+                  Current Password
+                </Label>
+                <div className="relative">
                   <Input
-                    id="current-pin"
+                    id="current-password"
                     type={showCurrentPin ? "text" : "password"}
-                    maxLength={4}
-                    placeholder="e.g. 2026"
+                    placeholder="Enter current password"
                     value={currentPinInput}
-                    onChange={(e) => setCurrentPinInput(e.target.value.replace(/\D/g, ""))}
-                    className="text-center  text-base font-bold tracking-widest"
+                    onChange={(e) => setCurrentPinInput(e.target.value)}
+                    className="pr-10 font-medium text-sm"
                     required
                   />
-                  <p className="text-[10px] text-muted-foreground">Default demo PIN: 2026</p>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon-xs"
+                    onClick={() => setShowCurrentPin(!showCurrentPin)}
+                    aria-label={showCurrentPin ? "Hide password" : "Show password"}
+                    className="absolute right-2 top-2 size-6 text-muted-foreground hover:text-foreground cursor-pointer"
+                  >
+                    {showCurrentPin ? (
+                      <EyeOff className="size-3.5" />
+                    ) : (
+                      <Eye className="size-3.5" />
+                    )}
+                  </Button>
                 </div>
+              </div>
 
+              {/* Row 2: New Password & Confirm Password */}
+              <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
                 <div className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <Label htmlFor="new-pin" className="text-xs font-bold">
-                      New 4-Digit PIN
-                    </Label>
+                  <Label htmlFor="new-password" className="text-xs font-bold text-foreground">
+                    New Password
+                  </Label>
+                  <div className="relative">
+                    <Input
+                      id="new-password"
+                      type={showNewPin ? "text" : "password"}
+                      placeholder="Enter new password"
+                      value={newPinInput}
+                      onChange={(e) => setNewPinInput(e.target.value)}
+                      className="pr-10 font-medium text-sm"
+                      required
+                    />
                     <Button
                       type="button"
                       variant="ghost"
                       size="icon-xs"
                       onClick={() => setShowNewPin(!showNewPin)}
-                      aria-label={showNewPin ? "Hide new PIN" : "Show new PIN"}
-                      className="size-6 text-muted-foreground hover:text-foreground"
+                      aria-label={showNewPin ? "Hide password" : "Show password"}
+                      className="absolute right-2 top-2 size-6 text-muted-foreground hover:text-foreground cursor-pointer"
                     >
-                      {showNewPin ? <EyeOff className="size-3.5" /> : <Eye className="size-3.5" />}
+                      {showNewPin ? (
+                        <EyeOff className="size-3.5" />
+                      ) : (
+                        <Eye className="size-3.5" />
+                      )}
                     </Button>
                   </div>
-                  <Input
-                    id="new-pin"
-                    type={showNewPin ? "text" : "password"}
-                    maxLength={4}
-                    placeholder="Enter 4 digits"
-                    value={newPinInput}
-                    onChange={(e) => setNewPinInput(e.target.value.replace(/\D/g, ""))}
-                    className="text-center  text-base font-bold tracking-widest"
-                    required
-                  />
-                  <p className="text-[10px] text-muted-foreground">Choosen-sequential numbers</p>
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="confirm-pin" className="text-xs font-bold">
-                    Confirm New PIN
+                  <Label htmlFor="confirm-password" className="text-xs font-bold text-foreground">
+                    Confirm New Password
                   </Label>
-                  <Input
-                    id="confirm-pin"
-                    type="password"
-                    maxLength={4}
-                    placeholder="Re-enter 4 digits"
-                    value={confirmPinInput}
-                    onChange={(e) => setConfirmPinInput(e.target.value.replace(/\D/g, ""))}
-                    className="text-center  text-base font-bold tracking-widest"
-                    required
-                  />
-                  <p className="text-[10px] text-muted-foreground">Must match new PIN exactly</p>
+                  <div className="relative">
+                    <Input
+                      id="confirm-password"
+                      type={showConfirmPassword ? "text" : "password"}
+                      placeholder="Re-enter new password"
+                      value={confirmPinInput}
+                      onChange={(e) => setConfirmPinInput(e.target.value)}
+                      className="pr-10 font-medium text-sm"
+                      required
+                    />
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon-xs"
+                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      aria-label={showConfirmPassword ? "Hide password" : "Show password"}
+                      className="absolute right-2 top-2 size-6 text-muted-foreground hover:text-foreground cursor-pointer"
+                    >
+                      {showConfirmPassword ? (
+                        <EyeOff className="size-3.5" />
+                      ) : (
+                        <Eye className="size-3.5" />
+                      )}
+                    </Button>
+                  </div>
                 </div>
               </div>
 
               <div className="flex justify-end border-t border-border/80 pt-4">
-                <Button type="submit" size="sm" className="font-bold text-xs">
-                  Update Security PIN
+                <Button type="submit" size="sm" className="font-bold text-xs gap-1.5 cursor-pointer">
+                  <Lock className="size-3.5" />
+                  <span>Update Security Password</span>
                 </Button>
               </div>
             </form>
           </div>
 
           {/* Two-Factor Authentication Card */}
-          <div className="rounded-3xl border border-border bg-card p-6 shadow-xs space-y-4">
+          <div className="rounded-3xl border border-border/80 bg-card p-6 shadow-xs space-y-4">
             <div className="flex items-center justify-between">
               <div className="space-y-1">
                 <h3 className="flex items-center gap-2 text-sm font-extrabold text-foreground">
@@ -679,7 +764,8 @@ export const CustomerProfileView: React.FC<CustomerProfileViewProps> = ({
                   <span>Two-Factor Authentication (2FA via SMS OTP)</span>
                 </h3>
                 <p className="text-xs text-muted-foreground">
-                  Sends an instant one-time verification code to {phone} for logins from unrecognized devices or transfers over GH₵ 100.
+                  Sends an instant one-time verification code to {phone} for
+                  logins from unrecognized devices or transfers over GH₵ 100.
                 </p>
               </div>
 
@@ -690,7 +776,7 @@ export const CustomerProfileView: React.FC<CustomerProfileViewProps> = ({
                   setSaveSuccessMessage(
                     checked
                       ? "Two-factor authentication enabled via SMS OTP."
-                      : "Two-factor authentication disabled."
+                      : "Two-factor authentication disabled.",
                   );
                   setTimeout(() => setSaveSuccessMessage(null), 3000);
                 }}
@@ -700,7 +786,7 @@ export const CustomerProfileView: React.FC<CustomerProfileViewProps> = ({
           </div>
 
           {/* Active Sessions Card */}
-          <div className="rounded-3xl border border-border bg-card p-6 shadow-xs space-y-5">
+          <div className="rounded-3xl border border-border/80 bg-card p-6 shadow-xs space-y-5">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-border/80 pb-4">
               <div>
                 <h3 className="flex items-center gap-2 text-sm font-extrabold text-foreground">
@@ -708,7 +794,8 @@ export const CustomerProfileView: React.FC<CustomerProfileViewProps> = ({
                   <span>Active Verified Sessions</span>
                 </h3>
                 <p className="text-xs text-muted-foreground">
-                  Devices currently authorized to access your Smart Data Hub customer account.
+                  Devices currently authorized to access your Smart Data Hub
+                  customer account.
                 </p>
               </div>
 
@@ -726,12 +813,20 @@ export const CustomerProfileView: React.FC<CustomerProfileViewProps> = ({
 
             <div className="divide-y divide-border/60">
               {sessions.map((sess) => (
-                <div key={sess.id} className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 py-3.5">
+                <div
+                  key={sess.id}
+                  className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 py-3.5"
+                >
                   <div className="space-y-1">
                     <div className="flex items-center gap-2">
-                      <span className="font-bold text-xs text-foreground">{sess.device}</span>
+                      <span className="font-bold text-xs text-foreground">
+                        {sess.device}
+                      </span>
                       {sess.isCurrent ? (
-                        <Badge variant="default" className="bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border-emerald-500/30 text-[10px] py-0">
+                        <Badge
+                          variant="default"
+                          className="bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border-emerald-500/30 text-[10px] py-0"
+                        >
                           Current Device
                         </Badge>
                       ) : (
@@ -743,7 +838,7 @@ export const CustomerProfileView: React.FC<CustomerProfileViewProps> = ({
                     <p className="text-[11px] text-muted-foreground">
                       {sess.browser} • {sess.location} • IP: {sess.ip}
                     </p>
-                    <p className="text-[10px]  text-muted-foreground/80">
+                    <p className="text-[10px] text-muted-foreground/80">
                       Last seen: {sess.lastActive}
                     </p>
                   </div>
@@ -772,7 +867,7 @@ export const CustomerProfileView: React.FC<CustomerProfileViewProps> = ({
       {activeSubTab === "telecom" && (
         <div className="space-y-6">
           {/* Visual Theme Picker */}
-          <div className="rounded-3xl border border-border bg-card p-6 shadow-xs space-y-4">
+          <div className="rounded-3xl border border-border/80 bg-card p-6 shadow-xs space-y-4">
             <div className="flex items-center justify-between border-b border-border/80 pb-4">
               <div>
                 <h3 className="flex items-center gap-2 text-sm font-extrabold text-foreground">
@@ -780,7 +875,8 @@ export const CustomerProfileView: React.FC<CustomerProfileViewProps> = ({
                   <span>Color Theme & Display Styling</span>
                 </h3>
                 <p className="text-xs text-muted-foreground">
-                  Select your preferred color profile. Updates dynamically across your entire portal.
+                  Select your preferred color profile. Updates dynamically
+                  across your entire portal.
                 </p>
               </div>
               {onToggleTheme && (
@@ -811,8 +907,12 @@ export const CustomerProfileView: React.FC<CustomerProfileViewProps> = ({
                     }`}
                   >
                     <div className="flex w-full items-center justify-between mb-2">
-                      <span className={`size-4 rounded-full ${opt.dot} ring-1 ring-border shadow-xs`} />
-                      {isSelected && <Check className="size-3.5 text-primary" />}
+                      <span
+                        className={`size-4 rounded-full ${opt.dot} ring-1 ring-border shadow-xs`}
+                      />
+                      {isSelected && (
+                        <Check className="size-3.5 text-primary" />
+                      )}
                     </div>
                     <span className="text-xs font-bold text-foreground line-clamp-1">
                       {opt.name}
@@ -827,13 +927,14 @@ export const CustomerProfileView: React.FC<CustomerProfileViewProps> = ({
           </div>
 
           {/* Telecom Network Default */}
-          <div className="rounded-3xl border border-border bg-card p-6 shadow-xs space-y-5">
+          <div className="rounded-3xl border border-border/80 bg-card p-6 shadow-xs space-y-5">
             <div className="border-b border-border/80 pb-4">
               <h3 className="text-sm font-extrabold text-foreground">
                 Default Carrier & One-Click Checkout
               </h3>
               <p className="text-xs text-muted-foreground">
-                Pre-selected options when purchasing airtime and data bundles for faster dispatch.
+                Pre-selected options when purchasing airtime and data bundles
+                for faster dispatch.
               </p>
             </div>
 
@@ -843,51 +944,66 @@ export const CustomerProfileView: React.FC<CustomerProfileViewProps> = ({
                   Preferred Telecom Carrier
                 </Label>
                 <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-                  {(["MTN", "Telecel", "AirtelTigo"] as TelecomNetwork[]).map((net) => {
-                    const isSelected = defaultNetwork === net;
-                    return (
-                      <Button
-                        key={net}
-                        type="button"
-                        variant="outline"
-                        onClick={() => {
-                          setDefaultNetwork(net);
-                          setSaveSuccessMessage(`Default carrier set to ${net}.`);
-                          setTimeout(() => setSaveSuccessMessage(null), 2500);
-                        }}
-                        className={`flex items-center justify-start h-auto gap-3 rounded-2xl p-3 text-left transition-all whitespace-normal ${
-                          isSelected
-                            ? "border-primary bg-primary/10 ring-2 ring-primary/20 hover:bg-primary/15"
-                            : "border-border/80 hover:bg-muted/50"
-                        }`}
-                      >
-                        <div
-                          className={`size-8 rounded-xl flex items-center justify-center font-black text-xs shrink-0 ${
-                            net === "MTN"
-                              ? "bg-amber-400 text-amber-950"
-                              : net === "Telecel"
-                              ? "bg-red-500 text-white"
-                              : "bg-blue-600 text-white"
+                  {(["MTN", "Telecel", "AirtelTigo"] as TelecomNetwork[]).map(
+                    (net) => {
+                      const isSelected = defaultNetwork === net;
+                      return (
+                        <Button
+                          key={net}
+                          type="button"
+                          variant="outline"
+                          onClick={() => {
+                            setDefaultNetwork(net);
+                            setSaveSuccessMessage(
+                              `Default carrier set to ${net}.`,
+                            );
+                            setTimeout(() => setSaveSuccessMessage(null), 2500);
+                          }}
+                          className={`flex items-center justify-start h-auto gap-3 rounded-2xl p-3 text-left transition-all whitespace-normal ${
+                            isSelected
+                              ? "border-primary bg-primary/10 ring-2 ring-primary/20 hover:bg-primary/15"
+                              : "border-border/80 hover:bg-muted/50"
                           }`}
                         >
-                          {net[0]}
-                        </div>
-                        <div className="min-w-0 flex-1">
-                          <p className="text-xs font-bold text-foreground">{net}</p>
-                          <p className="text-[10px] text-muted-foreground">
-                            {net === "MTN" ? "MoMo & Turbonet" : net === "Telecel" ? "Telecel Cash" : "AT Money"}
-                          </p>
-                        </div>
-                        {isSelected && <Check className="size-4 text-primary shrink-0" />}
-                      </Button>
-                    );
-                  })}
+                          <div
+                            className={`size-8 rounded-xl flex items-center justify-center font-black text-xs shrink-0 ${
+                              net === "MTN"
+                                ? "bg-amber-400 text-amber-950"
+                                : net === "Telecel"
+                                  ? "bg-red-500 text-white"
+                                  : "bg-blue-600 text-white"
+                            }`}
+                          >
+                            {net[0]}
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <p className="text-xs font-bold text-foreground">
+                              {net}
+                            </p>
+                            <p className="text-[10px] text-muted-foreground">
+                              {net === "MTN"
+                                ? "MoMo & Turbonet"
+                                : net === "Telecel"
+                                  ? "Telecel Cash"
+                                  : "AT Money"}
+                            </p>
+                          </div>
+                          {isSelected && (
+                            <Check className="size-4 text-primary shrink-0" />
+                          )}
+                        </Button>
+                      );
+                    },
+                  )}
                 </div>
               </div>
 
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 pt-2">
                 <div className="space-y-2">
-                  <Label htmlFor="default-recipient" className="text-xs font-bold">
+                  <Label
+                    htmlFor="default-recipient"
+                    className="text-xs font-bold"
+                  >
                     Default Top-up Recipient Number
                   </Label>
                   <Input
@@ -896,7 +1012,6 @@ export const CustomerProfileView: React.FC<CustomerProfileViewProps> = ({
                     value={defaultRecipient}
                     onChange={(e) => setDefaultRecipient(e.target.value)}
                     placeholder="0244000000"
-                    className=""
                   />
                   <p className="text-[10px] text-muted-foreground">
                     Automatically fills recipient field during fast checkout.
@@ -904,7 +1019,10 @@ export const CustomerProfileView: React.FC<CustomerProfileViewProps> = ({
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="low-balance-thresh" className="text-xs font-bold">
+                  <Label
+                    htmlFor="low-balance-thresh"
+                    className="text-xs font-bold"
+                  >
                     Low Wallet Balance Alert (GH₵)
                   </Label>
                   <Input
@@ -913,7 +1031,7 @@ export const CustomerProfileView: React.FC<CustomerProfileViewProps> = ({
                     value={lowBalanceThreshold}
                     onChange={(e) => setLowBalanceThreshold(e.target.value)}
                     placeholder="20.00"
-                    className=" tabular-nums"
+                    className="tabular-nums"
                   />
                   <p className="text-[10px] text-muted-foreground">
                     Warns when balance dips below this amount.
@@ -924,14 +1042,15 @@ export const CustomerProfileView: React.FC<CustomerProfileViewProps> = ({
           </div>
 
           {/* Upstream Gateways & Auto-Retry */}
-          <div className="rounded-3xl border border-border bg-card p-6 shadow-xs space-y-4">
+          <div className="rounded-3xl border border-border/80 bg-card p-6 shadow-xs space-y-4">
             <div className="flex items-center justify-between">
               <div className="space-y-1">
                 <h3 className="text-sm font-extrabold text-foreground">
                   Carrier Gateway Auto-Failover
                 </h3>
                 <p className="text-xs text-muted-foreground">
-                  If primary upstream carrier gateway experiences latency &gt; 350ms, automatically re-route via secondary backup trunk.
+                  If primary upstream carrier gateway experiences latency &gt;
+                  350ms, automatically re-route via secondary backup trunk.
                 </p>
               </div>
 
@@ -951,23 +1070,27 @@ export const CustomerProfileView: React.FC<CustomerProfileViewProps> = ({
       {activeSubTab === "notifications" && (
         <div className="space-y-6">
           {/* Notification Preferences */}
-          <div className="rounded-3xl border border-border bg-card p-6 shadow-xs space-y-5">
+          <div className="rounded-3xl border border-border/80 bg-card p-6 shadow-xs space-y-5">
             <div className="border-b border-border/80 pb-4">
               <h3 className="flex items-center gap-2 text-sm font-extrabold text-foreground">
                 <Bell className="size-4 text-primary" />
                 <span>Alerts & Receipt Channels</span>
               </h3>
               <p className="text-xs text-muted-foreground">
-                Control how and where order fulfillment receipts and security alerts are dispatched.
+                Control how and where order fulfillment receipts and security
+                alerts are dispatched.
               </p>
             </div>
 
             <div className="divide-y divide-border/60">
               <div className="flex items-center justify-between py-3.5">
                 <div className="space-y-0.5">
-                  <span className="text-xs font-bold text-foreground">SMS Transaction Receipts</span>
+                  <span className="text-xs font-bold text-foreground">
+                    SMS Transaction Receipts
+                  </span>
                   <p className="text-[11px] text-muted-foreground">
-                    Instant SMS message with reference code upon successful data or airtime top-up.
+                    Instant SMS message with reference code upon successful data
+                    or airtime top-up.
                   </p>
                 </div>
                 <Switch
@@ -979,9 +1102,12 @@ export const CustomerProfileView: React.FC<CustomerProfileViewProps> = ({
 
               <div className="flex items-center justify-between py-3.5">
                 <div className="space-y-0.5">
-                  <span className="text-xs font-bold text-foreground">WhatsApp Order & PIN Delivery</span>
+                  <span className="text-xs font-bold text-foreground">
+                    WhatsApp Order & PIN Delivery
+                  </span>
                   <p className="text-[11px] text-muted-foreground">
-                    Delivers WAEC scratch card PINs and receipt links directly to your WhatsApp.
+                    Delivers WAEC scratch card PINs and receipt links directly
+                    to your WhatsApp.
                   </p>
                 </div>
                 <Switch
@@ -993,9 +1119,12 @@ export const CustomerProfileView: React.FC<CustomerProfileViewProps> = ({
 
               <div className="flex items-center justify-between py-3.5">
                 <div className="space-y-0.5">
-                  <span className="text-xs font-bold text-foreground">Carrier Maintenance & Downtime Alerts</span>
+                  <span className="text-xs font-bold text-foreground">
+                    Carrier Maintenance & Downtime Alerts
+                  </span>
                   <p className="text-[11px] text-muted-foreground">
-                    Notifies you when MTN, Telecel, or ECG upstream gateways report planned maintenance.
+                    Notifies you when MTN, Telecel, or ECG upstream gateways
+                    report planned maintenance.
                   </p>
                 </div>
                 <Switch
@@ -1007,9 +1136,12 @@ export const CustomerProfileView: React.FC<CustomerProfileViewProps> = ({
 
               <div className="flex items-center justify-between py-3.5">
                 <div className="space-y-0.5">
-                  <span className="text-xs font-bold text-foreground">Wholesale Rate Drops & Promo Credits</span>
+                  <span className="text-xs font-bold text-foreground">
+                    Wholesale Rate Drops & Promo Credits
+                  </span>
                   <p className="text-[11px] text-muted-foreground">
-                    Receive announcements when wholesale data bundle rates decrease or bonus credits are awarded.
+                    Receive announcements when wholesale data bundle rates
+                    decrease or bonus credits are awarded.
                   </p>
                 </div>
                 <Switch
@@ -1022,7 +1154,7 @@ export const CustomerProfileView: React.FC<CustomerProfileViewProps> = ({
           </div>
 
           {/* Account Statement Export */}
-          <div className="rounded-3xl border border-border bg-card p-6 shadow-xs space-y-4">
+          <div className="rounded-3xl border border-border/80 bg-card p-6 shadow-xs space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div className="space-y-1">
                 <h3 className="flex items-center gap-2 text-sm font-extrabold text-foreground">
@@ -1030,7 +1162,8 @@ export const CustomerProfileView: React.FC<CustomerProfileViewProps> = ({
                   <span>Download Ledger & Account Statement</span>
                 </h3>
                 <p className="text-xs text-muted-foreground">
-                  Export complete transaction history, wallet top-ups, and fulfilled carrier receipts in CSV format.
+                  Export complete transaction history, wallet top-ups, and
+                  fulfilled carrier receipts in CSV format.
                 </p>
               </div>
 
@@ -1055,7 +1188,9 @@ export const CustomerProfileView: React.FC<CustomerProfileViewProps> = ({
                   Account Freeze & Security Safeguard
                 </h3>
                 <p className="text-xs text-muted-foreground">
-                  If your phone is lost or stolen, you can temporarily freeze your wallet and SIM access to prevent unauthorized withdrawals.
+                  If your phone is lost or stolen, you can temporarily freeze
+                  your wallet and SIM access to prevent unauthorized
+                  withdrawals.
                 </p>
               </div>
             </div>
@@ -1065,7 +1200,9 @@ export const CustomerProfileView: React.FC<CustomerProfileViewProps> = ({
                 variant="outline"
                 size="sm"
                 onClick={() => {
-                  setSaveSuccessMessage("Emergency lock simulated: Wallet debits restricted.");
+                  setSaveSuccessMessage(
+                    "Emergency lock simulated: Wallet debits restricted.",
+                  );
                   setTimeout(() => setSaveSuccessMessage(null), 3500);
                 }}
                 className="text-xs font-bold text-destructive hover:bg-destructive/10 border-destructive/30"
