@@ -1,32 +1,49 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import {
+  SlidersHorizontal,
   Wallet,
-  ArrowDownLeft,
-  Plus,
-  CreditCard,
-  Download,
-  Search,
+  Coins,
   ArrowUpRight,
+  ArrowDownLeft,
+  Download,
+  Plus,
+  Search,
+  CreditCard,
   ShieldCheck,
   CheckCircle2,
-  Clock,
-  AlertCircle,
-  Coins,
-  Receipt,
-  FileSpreadsheet,
-  Filter,
-  ExternalLink,
-  ChevronRight,
-  Sparkles,
-  Smartphone,
+  Info,
   RotateCcw,
+  Receipt,
+  ChevronRight,
+  Smartphone,
 } from "lucide-react";
 import { Transaction } from "../../types";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "../ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "../ui/card";
 import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "../ui/tabs";
+import { Label } from "../ui/label";
+import {
+  Table,
+  TableHeader,
+  TableBody,
+  TableHead,
+  TableRow,
+  TableCell,
+} from "../ui/table";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
 import {
   Dialog,
   DialogContent,
@@ -35,6 +52,14 @@ import {
   DialogDescription,
   DialogFooter,
 } from "../ui/dialog";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "../ui/pagination";
 import { WithdrawModal } from "./WithdrawModal";
 
 interface AgentTransactionsWalletProps {
@@ -48,15 +73,17 @@ interface AgentTransactionsWalletProps {
 
 type FilterCategory =
   | "all"
-  | "in"
-  | "out"
   | "wallet_funding"
   | "purchase"
   | "commission"
   | "withdrawal"
   | "refund";
 
-export const AgentTransactionsWallet: React.FC<AgentTransactionsWalletProps> = ({
+const ITEMS_PER_PAGE = 8;
+
+export const AgentTransactionsWallet: React.FC<
+  AgentTransactionsWalletProps
+> = ({
   walletBalance,
   commissionBalance,
   transactions,
@@ -65,24 +92,32 @@ export const AgentTransactionsWallet: React.FC<AgentTransactionsWalletProps> = (
   onNavigateTab,
 }) => {
   const [filter, setFilter] = useState<FilterCategory>("all");
+  const [directionFilter, setDirectionFilter] = useState<string>("all");
+  const [statusFilter, setStatusFilter] = useState<string>("all");
   const [searchQuery, setSearchQuery] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
   const [isWithdrawOpen, setIsWithdrawOpen] = useState(false);
   const [selectedTx, setSelectedTx] = useState<Transaction | null>(null);
 
-  // Filtered transactions
+  // Reset pagination on filter changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filter, directionFilter, statusFilter, searchQuery]);
+
+  // Filtered transactions list
   const filteredTransactions = useMemo(() => {
     return transactions.filter((tx) => {
-      // Category / Type filter
-      if (filter === "in" && tx.type !== "credit") return false;
-      if (filter === "out" && tx.type !== "debit") return false;
-      if (
-        filter !== "all" &&
-        filter !== "in" &&
-        filter !== "out" &&
-        tx.category !== filter
-      ) {
+      // Category filter
+      if (filter !== "all" && tx.category !== filter) {
         return false;
       }
+
+      // Direction filter (In/Out)
+      if (directionFilter === "in" && tx.type !== "credit") return false;
+      if (directionFilter === "out" && tx.type !== "debit") return false;
+
+      // Status filter
+      if (statusFilter !== "all" && tx.status !== statusFilter) return false;
 
       // Search query filter
       if (searchQuery.trim()) {
@@ -98,7 +133,18 @@ export const AgentTransactionsWallet: React.FC<AgentTransactionsWalletProps> = (
 
       return true;
     });
-  }, [transactions, filter, searchQuery]);
+  }, [transactions, filter, directionFilter, statusFilter, searchQuery]);
+
+  // Pagination calculation
+  const totalPages = Math.max(
+    1,
+    Math.ceil(filteredTransactions.length / ITEMS_PER_PAGE),
+  );
+
+  const paginatedTransactions = useMemo(() => {
+    const start = (currentPage - 1) * ITEMS_PER_PAGE;
+    return filteredTransactions.slice(start, start + ITEMS_PER_PAGE);
+  }, [filteredTransactions, currentPage]);
 
   // Financial statistics
   const totalIn = useMemo(
@@ -106,7 +152,7 @@ export const AgentTransactionsWallet: React.FC<AgentTransactionsWalletProps> = (
       transactions
         .filter((tx) => tx.type === "credit" && tx.status === "completed")
         .reduce((sum, tx) => sum + tx.amount, 0),
-    [transactions]
+    [transactions],
   );
 
   const totalOut = useMemo(
@@ -114,12 +160,12 @@ export const AgentTransactionsWallet: React.FC<AgentTransactionsWalletProps> = (
       transactions
         .filter((tx) => tx.type === "debit" && tx.status === "completed")
         .reduce((sum, tx) => sum + tx.amount, 0),
-    [transactions]
+    [transactions],
   );
 
   const withdrawalsCount = useMemo(
     () => transactions.filter((tx) => tx.category === "withdrawal").length,
-    [transactions]
+    [transactions],
   );
 
   // CSV Export utility
@@ -164,7 +210,7 @@ export const AgentTransactionsWallet: React.FC<AgentTransactionsWalletProps> = (
     link.setAttribute("href", encodedUri);
     link.setAttribute(
       "download",
-      `sdh-agent-ledger-${new Date().toISOString().slice(0, 10)}.csv`
+      `sdh-agent-ledger-${new Date().toISOString().slice(0, 10)}.csv`,
     );
     document.body.appendChild(link);
     link.click();
@@ -177,32 +223,37 @@ export const AgentTransactionsWallet: React.FC<AgentTransactionsWalletProps> = (
       case "wallet_funding":
         return {
           label: "Wallet Top-up",
-          badgeBg: "bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border-emerald-500/20",
+          badgeBg:
+            "bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border-emerald-500/20",
           icon: Plus,
         };
       case "commission":
         return {
           label: "Store Profit",
-          badgeBg: "bg-teal-500/10 text-teal-700 dark:text-teal-300 border-teal-500/20",
+          badgeBg:
+            "bg-teal-500/10 text-teal-700 dark:text-teal-300 border-teal-500/20",
           icon: Coins,
         };
       case "withdrawal":
         return {
           label: "MoMo Payout",
-          badgeBg: "bg-amber-500/10 text-amber-800 dark:text-amber-300 border-amber-500/20",
+          badgeBg:
+            "bg-amber-500/10 text-amber-800 dark:text-amber-300 border-amber-500/20",
           icon: ArrowDownLeft,
         };
       case "refund":
         return {
           label: "Order Refund",
-          badgeBg: "bg-purple-500/10 text-purple-700 dark:text-purple-300 border-purple-500/20",
+          badgeBg:
+            "bg-purple-500/10 text-purple-700 dark:text-purple-300 border-purple-500/20",
           icon: RotateCcw,
         };
       case "purchase":
       default:
         return {
           label: "Wholesale Purchase",
-          badgeBg: "bg-blue-500/10 text-blue-700 dark:text-blue-300 border-blue-500/20",
+          badgeBg:
+            "bg-blue-500/10 text-blue-700 dark:text-blue-300 border-blue-500/20",
           icon: CreditCard,
         };
     }
@@ -210,305 +261,354 @@ export const AgentTransactionsWallet: React.FC<AgentTransactionsWalletProps> = (
 
   return (
     <div className="space-y-6">
-      {/* HEADER WITH TITLE & ACTION BUTTONS */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-border">
+      {/* PAGE HEADER (Exact Parity with AgentPricing / AgentBulkSms) */}
+      <div className="flex flex-col items-start justify-between gap-4 border-b border-border pb-4 sm:flex-row sm:items-center">
         <div>
-          <h1 className="text-2xl font-extrabold text-foreground tracking-tight flex items-center gap-2">
+          <h1 className="flex items-center gap-2 text-2xl font-extrabold tracking-tight text-foreground">
             <CreditCard className="size-6 text-primary" />
             <span>Wallet, Transactions &amp; Payouts</span>
           </h1>
-          <p className="text-xs text-muted-foreground mt-0.5">
-            Consolidated financial management: live wallet balance, instant MoMo withdrawals, and master audit ledger.
+          <p className="mt-0.5 text-xs text-muted-foreground">
+            Consolidated financial management: live wallet balance, instant MoMo
+            withdrawals, and master audit ledger.
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <Button
             variant="outline"
             size="sm"
             onClick={handleExportCsv}
-            className="h-9 gap-1.5 rounded-xl text-xs font-bold shadow-xs"
+            className="text-xs font-bold shadow-xs cursor-pointer gap-1.5 h-9"
           >
-            <Download className="size-3.5" />
+            <Download className="size-4 text-muted-foreground" />
             <span>Export CSV</span>
           </Button>
 
           <Button
             size="sm"
             onClick={onOpenFundWallet}
-            className="h-9 gap-1.5 rounded-xl bg-primary text-primary-foreground text-xs font-bold shadow-xs"
+            className="text-xs font-bold shadow-xs cursor-pointer gap-1.5 h-9 bg-primary text-primary-foreground"
           >
-            <Plus className="size-3.5" />
+            <Plus className="size-4" />
             <span>Fund Wallet</span>
           </Button>
 
           <Button
             size="sm"
             onClick={() => setIsWithdrawOpen(true)}
-            className="h-9 gap-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-xs"
+            className="text-xs font-bold shadow-xs cursor-pointer gap-1.5 h-9 bg-emerald-600 hover:bg-emerald-700 text-white"
           >
-            <ArrowDownLeft className="size-3.5" />
+            <ArrowDownLeft className="size-4" />
             <span>Withdraw MoMo</span>
           </Button>
         </div>
       </div>
 
-      {/* DUAL BALANCE HERO CARDS */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Card 1: Spendable Wallet Balance */}
-        <Card className="rounded-3xl border border-border shadow-xs overflow-hidden relative">
-          <CardHeader className="pb-3">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
-                <Wallet className="size-4 text-primary" />
-                <span>Spendable Wallet Balance</span>
-              </span>
-              <Badge variant="outline" className="text-[10px] font-bold bg-primary/10 text-primary border-primary/20">
-                Active Balance
-              </Badge>
-            </div>
-            <div className="mt-2">
-              <span className="text-3xl sm:text-4xl font-black text-foreground tracking-tight tabular-nums">
-                GH₵ {walletBalance.toFixed(2)}
-              </span>
-            </div>
-            <CardDescription className="text-xs mt-1">
-              Used automatically when placing data bundles, airtime, WAEC vouchers, and utility orders.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="pt-2">
-            <div className="flex items-center gap-3">
-              <Button
-                onClick={onOpenFundWallet}
-                className="h-10 px-4 rounded-xl gap-1.5 text-xs font-bold bg-primary text-primary-foreground shadow-xs"
-              >
-                <Plus className="size-4" />
-                <span>Fund via Mobile Money</span>
-              </Button>
-              {onNavigateTab && (
-                <Button
-                  variant="ghost"
-                  onClick={() => onNavigateTab("buy-data")}
-                  className="h-10 px-3 rounded-xl text-xs font-semibold text-muted-foreground hover:text-foreground"
-                >
-                  <span>Buy Data</span>
-                  <ChevronRight className="size-3.5 ml-1" />
-                </Button>
-              )}
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Card 2: Commission Profit Available */}
-        <Card className="rounded-3xl border border-border shadow-xs overflow-hidden relative bg-card">
-          <CardHeader className="pb-3">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
-                <Coins className="size-4 text-emerald-600 dark:text-emerald-400" />
-                <span>Withdrawable Commission Profit</span>
-              </span>
-              <Badge variant="outline" className="text-[10px] font-bold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20">
-                Ready to Cash Out
-              </Badge>
-            </div>
-            <div className="mt-2">
-              <span className="text-3xl sm:text-4xl font-black text-emerald-600 dark:text-emerald-400 tracking-tight tabular-nums">
-                GH₵ {commissionBalance.toFixed(2)}
-              </span>
-            </div>
-            <CardDescription className="text-xs mt-1">
-              Storefront sales margins earned automatically. Transferred directly to MTN MoMo or Telecel Cash.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="pt-2">
-            <div className="flex items-center gap-3">
-              <Button
-                onClick={() => setIsWithdrawOpen(true)}
-                disabled={commissionBalance < 5}
-                className="h-10 px-4 rounded-xl gap-1.5 text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white shadow-xs disabled:opacity-50"
-              >
-                <ArrowDownLeft className="size-4" />
-                <span>Cash Out to Mobile Money</span>
-              </Button>
-              <span className="text-[11px] text-muted-foreground">
-                Min: GH₵ 5.00 · 0% fee
-              </span>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* 3 SUMMARY TILES: MONEY IN, MONEY OUT, AUDITED TOTAL */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div className="p-4 rounded-2xl bg-card border border-border shadow-xs flex items-center justify-between">
-          <div className="space-y-1">
-            <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider block">
-              Total Inflow (Money In)
-            </span>
-            <span className="text-xl font-black text-emerald-600 dark:text-emerald-400 tabular-nums">
-              +GH₵ {totalIn.toFixed(2)}
-            </span>
-            <span className="text-[10px] text-muted-foreground block">
-              Top-ups, store profits, and refunds
-            </span>
-          </div>
-          <div className="size-10 rounded-2xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
-            <ArrowUpRight className="size-5" />
-          </div>
-        </div>
-
-        <div className="p-4 rounded-2xl bg-card border border-border shadow-xs flex items-center justify-between">
-          <div className="space-y-1">
-            <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider block">
-              Total Outflow (Money Out)
-            </span>
-            <span className="text-xl font-black text-foreground tabular-nums">
-              −GH₵ {totalOut.toFixed(2)}
-            </span>
-            <span className="text-[10px] text-muted-foreground block">
-              Wholesale purchases and MoMo payouts
-            </span>
-          </div>
-          <div className="size-10 rounded-2xl bg-red-500/10 text-red-600 dark:text-red-400 flex items-center justify-center">
-            <ArrowDownLeft className="size-5" />
-          </div>
-        </div>
-
-        <div className="p-4 rounded-2xl bg-card border border-border shadow-xs flex items-center justify-between">
-          <div className="space-y-1">
-            <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider block">
-              Ledger Events
-            </span>
-            <span className="text-xl font-black text-foreground tabular-nums">
-              {transactions.length} Total
-            </span>
-            <span className="text-[10px] text-muted-foreground block">
-              {withdrawalsCount} withdrawals recorded
-            </span>
-          </div>
-          <div className="size-10 rounded-2xl bg-primary/10 text-primary flex items-center justify-center">
-            <Receipt className="size-5" />
-          </div>
+      {/* POLICY BANNER (Exact Parity with AgentPricing Info Callout) */}
+      <div className="flex items-start gap-3 p-3.5 rounded-2xl bg-blue-500/10 border border-blue-500/20 text-xs">
+        <Info className="size-4 text-blue-600 dark:text-blue-400 shrink-0 mt-0.5" />
+        <div className="text-blue-800 dark:text-blue-300 space-y-0.5">
+          <span className="font-bold block">
+            Mobile Money Payouts &amp; Settlement Policy:
+          </span>
+          <span>
+            Withdrawals process instantly during operating hours (8:00 AM – 8:00
+            PM GMT). Requests outside these hours queue securely and dispatch at
+            8:00 AM the next morning. Each withdrawal requires OTP verification.
+          </span>
         </div>
       </div>
 
-      {/* HOW PAYOUTS WORK / POLICY DISCLOSURE */}
-      <Card className="rounded-3xl border border-border/80 bg-muted/20 shadow-xs">
-        <CardContent className="p-5">
-          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-            <div className="flex items-start gap-3">
-              <div className="size-9 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0 mt-0.5">
-                <ShieldCheck className="size-5" />
-              </div>
-              <div className="space-y-0.5">
-                <h4 className="text-xs font-bold text-foreground flex items-center gap-1.5">
-                  <span>How Mobile Money Payouts Work</span>
-                  <Badge variant="outline" className="text-[10px] font-semibold">
-                    Instant Bank Switch
-                  </Badge>
-                </h4>
-                <p className="text-xs text-muted-foreground max-w-2xl leading-relaxed">
-                  Withdrawals process instantly during operating hours (8:00 AM – 8:00 PM GMT). Requests outside these hours queue securely and dispatch at 8:00 AM the next morning. Each withdrawal requires OTP verification sent to your registered account.
-                </p>
-              </div>
+
+
+      {/* 4 STATS CARDS TILES (Exact Match of AgentPricing / AgentBulkSms Tiles) */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        {/* Spendable Wallet Balance */}
+        <div className="rounded-xl border border-border bg-card p-3.5 shadow-2xs">
+          <div className="flex items-center gap-2">
+            <div className="flex size-7 items-center justify-center rounded-lg bg-primary/10">
+              <Wallet className="size-3.5 text-primary" />
             </div>
-
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setIsWithdrawOpen(true)}
-              className="h-9 px-4 rounded-xl text-xs font-bold shrink-0"
-            >
-              <Smartphone className="size-3.5 mr-1.5 text-primary" />
-              <span>Request Payout</span>
-            </Button>
+            <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+              Spendable Wallet
+            </span>
           </div>
-        </CardContent>
-      </Card>
+          <p className="mt-2 text-xl font-black tabular-nums text-foreground">
+            GH₵ {walletBalance.toFixed(2)}
+          </p>
+          <p className="text-[10px] text-primary font-medium">
+            Active order balance
+          </p>
+        </div>
 
-      {/* MASTER TRANSACTIONS & PAYOUTS LEDGER */}
-      <Card className="rounded-3xl border border-border shadow-xs">
-        <CardHeader className="pb-4 border-b border-border">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        {/* Commission Balance */}
+        <div className="rounded-xl border border-border bg-card p-3.5 shadow-2xs">
+          <div className="flex items-center gap-2">
+            <div className="flex size-7 items-center justify-center rounded-lg bg-emerald-500/10">
+              <Coins className="size-3.5 text-emerald-600 dark:text-emerald-400" />
+            </div>
+            <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+              Commission Profit
+            </span>
+          </div>
+          <p className="mt-2 text-xl font-black tabular-nums text-emerald-600 dark:text-emerald-400">
+            GH₵ {commissionBalance.toFixed(2)}
+          </p>
+          <p className="text-[10px] text-emerald-600 dark:text-emerald-400 font-medium">
+            Ready to cash out (0% fee)
+          </p>
+        </div>
+
+        {/* Total Inflow */}
+        <div className="rounded-xl border border-border bg-card p-3.5 shadow-2xs">
+          <div className="flex items-center gap-2">
+            <div className="flex size-7 items-center justify-center rounded-lg bg-teal-500/10">
+              <ArrowUpRight className="size-3.5 text-teal-600 dark:text-teal-400" />
+            </div>
+            <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+              Total Inflow
+            </span>
+          </div>
+          <p className="mt-2 text-xl font-black tabular-nums text-foreground">
+            +GH₵ {totalIn.toFixed(2)}
+          </p>
+          <p className="text-[10px] text-teal-600 dark:text-teal-400 font-medium">
+            Top-ups &amp; profits
+          </p>
+        </div>
+
+        {/* Total Outflow */}
+        <div className="rounded-xl border border-border bg-card p-3.5 shadow-2xs">
+          <div className="flex items-center gap-2">
+            <div className="flex size-7 items-center justify-center rounded-lg bg-amber-500/10">
+              <ArrowDownLeft className="size-3.5 text-amber-600 dark:text-amber-400" />
+            </div>
+            <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+              Total Outflow
+            </span>
+          </div>
+          <p className="mt-2 text-xl font-black tabular-nums text-foreground">
+            −GH₵ {totalOut.toFixed(2)}
+          </p>
+          <p className="text-[10px] text-amber-600 dark:text-amber-400 font-medium">
+            {withdrawalsCount} MoMo payouts
+          </p>
+        </div>
+      </div>
+
+      {/* MASTER TRANSACTIONS & PAYOUTS CARD (Exact Match of AgentPricing Card & Table Structure) */}
+      <Card className="border-border shadow-xs">
+        <CardHeader className="border-b border-border pb-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
-              <CardTitle className="text-base font-bold text-foreground">
+              <CardTitle className="flex items-center gap-2 text-base font-extrabold text-foreground">
                 Consolidated Financial Ledger
               </CardTitle>
-              <CardDescription className="text-xs">
-                Real-time chronological log of all top-ups, bundle purchases, store profits, and MoMo withdrawals
+              <CardDescription className="mt-1 text-xs">
+                Real-time chronological log of all top-ups, bundle purchases,
+                store profits, and MoMo withdrawals
               </CardDescription>
             </div>
+          </div>
+        </CardHeader>
 
-            {/* Live Search Input */}
-            <div className="relative w-full md:w-72">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+        {/* Search + Filters Box (Exact match of AgentPricing) */}
+        <div className="border-b border-border bg-muted/20 p-4 space-y-4">
+          {/* Search input */}
+          <div className="space-y-1.5">
+            <Label
+              htmlFor="tx-search"
+              className="text-[10px] font-bold uppercase text-muted-foreground"
+            >
+              Search ledger history
+            </Label>
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
               <Input
+                id="tx-search"
                 type="text"
-                placeholder="Search reference, channel, note..."
+                placeholder="Search by reference code, description, channel, or amount (e.g. TX1024, MoMo, GH₵ 50)..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-9 h-9 rounded-xl text-xs bg-background"
+                className="h-10 bg-background pl-9 text-xs"
               />
             </div>
           </div>
 
-          {/* Filter Pills */}
-          <div className="flex flex-wrap items-center gap-1.5 pt-3">
-            {[
-              { id: "all", label: "All Events" },
-              { id: "in", label: "Money In (+)" },
-              { id: "out", label: "Money Out (−)" },
-              { id: "withdrawal", label: "Withdrawals / Payouts" },
-              { id: "wallet_funding", label: "Wallet Top-ups" },
-              { id: "commission", label: "Store Profits" },
-              { id: "purchase", label: "Purchases" },
-              { id: "refund", label: "Refunds" },
-            ].map((tab) => (
-              <Button
-                key={tab.id}
-                variant={filter === tab.id ? "default" : "outline"}
-                size="sm"
-                onClick={() => setFilter(tab.id as FilterCategory)}
-                className={`h-7 px-3 text-[11px] font-bold rounded-lg transition-all ${
-                  filter === tab.id
-                    ? "shadow-xs"
-                    : "text-muted-foreground hover:text-foreground"
-                }`}
-              >
-                {tab.label}
-              </Button>
-            ))}
-          </div>
-        </CardHeader>
+          {/* Filters Box */}
+          <div className="rounded-xl border border-border bg-background p-3 space-y-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <SlidersHorizontal className="size-3.5 text-muted-foreground" />
+                <span className="text-[10px] font-bold uppercase text-muted-foreground">
+                  Ledger filters
+                </span>
+              </div>
+              {(searchQuery ||
+                filter !== "all" ||
+                directionFilter !== "all" ||
+                statusFilter !== "all") && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => {
+                    setSearchQuery("");
+                    setFilter("all");
+                    setDirectionFilter("all");
+                    setStatusFilter("all");
+                  }}
+                  className="h-6 px-2 text-[10px] font-bold text-primary cursor-pointer bg-transparent hover:!bg-transparent hover:text-primary"
+                >
+                  Reset filters
+                </Button>
+              )}
+            </div>
 
-        <CardContent className="p-0">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+              {/* Category Select */}
+              <div className="space-y-1.5">
+                <Label
+                  htmlFor="filter-category"
+                  className="text-[10px] font-semibold text-muted-foreground"
+                >
+                  Event Category
+                </Label>
+                <Select
+                  value={filter}
+                  onValueChange={(val) => setFilter(val as FilterCategory)}
+                >
+                  <SelectTrigger
+                    id="filter-category"
+                    className="h-9 w-full text-xs"
+                  >
+                    <SelectValue placeholder="All Categories" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Categories</SelectItem>
+                    <SelectItem value="wallet_funding">
+                      Wallet Top-ups
+                    </SelectItem>
+                    <SelectItem value="commission">Store Profits</SelectItem>
+                    <SelectItem value="purchase">
+                      Wholesale Purchases
+                    </SelectItem>
+                    <SelectItem value="withdrawal">MoMo Payouts</SelectItem>
+                    <SelectItem value="refund">Order Refunds</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Direction Select */}
+              <div className="space-y-1.5">
+                <Label
+                  htmlFor="filter-direction"
+                  className="text-[10px] font-semibold text-muted-foreground"
+                >
+                  Flow Direction
+                </Label>
+                <Select
+                  value={directionFilter}
+                  onValueChange={setDirectionFilter}
+                >
+                  <SelectTrigger
+                    id="filter-direction"
+                    className="h-9 w-full text-xs"
+                  >
+                    <SelectValue placeholder="All Flows" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Flows</SelectItem>
+                    <SelectItem value="in">Money In (+)</SelectItem>
+                    <SelectItem value="out">Money Out (−)</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Status Select */}
+              <div className="space-y-1.5">
+                <Label
+                  htmlFor="filter-status"
+                  className="text-[10px] font-semibold text-muted-foreground"
+                >
+                  Transaction Status
+                </Label>
+                <Select value={statusFilter} onValueChange={setStatusFilter}>
+                  <SelectTrigger
+                    id="filter-status"
+                    className="h-9 w-full text-xs"
+                  >
+                    <SelectValue placeholder="All Statuses" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Statuses</SelectItem>
+                    <SelectItem value="completed">Completed</SelectItem>
+                    <SelectItem value="pending">Processing</SelectItem>
+                    <SelectItem value="failed">Failed</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* TRANSACTIONS TABLE (Exact Match of AgentPricing & AgentBulkSms Table) */}
+        <div className="rounded-xl border border-border overflow-hidden bg-card">
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs">
-              <thead>
-                <tr className="border-b border-border bg-muted/30 text-muted-foreground font-bold text-[10px] uppercase">
-                  <th className="py-3 px-4">Transaction / Type</th>
-                  <th className="py-3 px-3">Reference</th>
-                  <th className="py-3 px-3">Channel / MoMo</th>
-                  <th className="py-3 px-3 text-right">Amount</th>
-                  <th className="py-3 px-3 text-right">Balance After</th>
-                  <th className="py-3 px-3 text-center">Status</th>
-                  <th className="py-3 px-4 text-right">Date &amp; Time</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border">
-                {filteredTransactions.length > 0 ? (
-                  filteredTransactions.map((tx) => {
+            <Table className="w-full text-xs">
+              <TableHeader>
+                <TableRow className="border-b border-border bg-muted/40 hover:bg-muted/40">
+                  <TableHead className="h-10 px-4 text-left font-bold text-muted-foreground uppercase text-[10px]">
+                    Transaction &amp; Category
+                  </TableHead>
+                  <TableHead className="h-10 px-3 text-left font-bold text-muted-foreground uppercase text-[10px]">
+                    Reference Code
+                  </TableHead>
+                  <TableHead className="h-10 px-3 text-left font-bold text-muted-foreground uppercase text-[10px]">
+                    Channel / Switch
+                  </TableHead>
+                  <TableHead className="h-10 px-3 text-right font-bold text-muted-foreground uppercase text-[10px]">
+                    Amount
+                  </TableHead>
+                  <TableHead className="h-10 px-3 text-right font-bold text-muted-foreground uppercase text-[10px]">
+                    Balance After
+                  </TableHead>
+                  <TableHead className="h-10 px-3 text-center font-bold text-muted-foreground uppercase text-[10px]">
+                    Status
+                  </TableHead>
+                  <TableHead className="h-10 px-4 text-right font-bold text-muted-foreground uppercase text-[10px]">
+                    Date &amp; Time
+                  </TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody className="divide-y divide-border/60">
+                {paginatedTransactions.length === 0 ? (
+                  <TableRow>
+                    <TableCell
+                      colSpan={7}
+                      className="h-32 text-center text-muted-foreground"
+                    >
+                      <p className="text-sm font-semibold">
+                        No transactions match your filter criteria.
+                      </p>
+                      <p className="text-xs mt-1">
+                        Try changing or clearing your search keywords.
+                      </p>
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  paginatedTransactions.map((tx) => {
                     const meta = getCategoryMeta(tx.category, tx.type);
                     const IconComp = meta.icon;
                     const isCredit = tx.type === "credit";
 
                     return (
-                      <tr
+                      <TableRow
                         key={tx.id}
                         onClick={() => setSelectedTx(tx)}
-                        className="hover:bg-muted/30 transition-colors cursor-pointer group"
+                        className="hover:bg-muted/30 transition-colors cursor-pointer"
                       >
-                        <td className="py-3 px-4">
+                        <TableCell className="py-3 px-4">
                           <div className="flex items-center gap-3">
                             <div
                               className={`size-8 rounded-xl flex items-center justify-center shrink-0 ${
@@ -534,17 +634,17 @@ export const AgentTransactionsWallet: React.FC<AgentTransactionsWalletProps> = (
                               </span>
                             </div>
                           </div>
-                        </td>
+                        </TableCell>
 
-                        <td className="py-3 px-3 font-semibold text-foreground">
+                        <TableCell className="py-3 px-3 font-semibold text-foreground">
                           {tx.reference}
-                        </td>
+                        </TableCell>
 
-                        <td className="py-3 px-3 text-muted-foreground">
+                        <TableCell className="py-3 px-3 text-muted-foreground">
                           {tx.channel || "SDH Switch"}
-                        </td>
+                        </TableCell>
 
-                        <td className="py-3 px-3 text-right font-black tabular-nums">
+                        <TableCell className="py-3 px-3 text-right font-black tabular-nums">
                           <span
                             className={
                               isCredit
@@ -554,71 +654,120 @@ export const AgentTransactionsWallet: React.FC<AgentTransactionsWalletProps> = (
                           >
                             {isCredit ? "+" : "−"}GH₵ {tx.amount.toFixed(2)}
                           </span>
-                        </td>
+                        </TableCell>
 
-                        <td className="py-3 px-3 text-right font-semibold text-muted-foreground tabular-nums">
+                        <TableCell className="py-3 px-3 text-right font-semibold text-muted-foreground tabular-nums">
                           {tx.balanceAfter != null
                             ? `GH₵ ${tx.balanceAfter.toFixed(2)}`
                             : "—"}
-                        </td>
+                        </TableCell>
 
-                        <td className="py-3 px-3 text-center">
+                        <TableCell className="py-3 px-3 text-center">
                           <Badge
                             variant="outline"
                             className={`text-[10px] font-bold ${
                               tx.status === "completed"
                                 ? "bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border-emerald-500/30"
                                 : tx.status === "pending"
-                                ? "bg-amber-500/10 text-amber-700 dark:text-amber-300 border-amber-500/30"
-                                : "bg-red-500/10 text-red-700 dark:text-red-300 border-red-500/30"
+                                  ? "bg-amber-500/10 text-amber-700 dark:text-amber-300 border-amber-500/30"
+                                  : "bg-red-500/10 text-red-700 dark:text-red-300 border-red-500/30"
                             }`}
                           >
                             {tx.status === "completed"
                               ? "Completed"
                               : tx.status === "pending"
-                              ? "Processing"
-                              : "Failed"}
+                                ? "Processing"
+                                : "Failed"}
                           </Badge>
-                        </td>
+                        </TableCell>
 
-                        <td className="py-3 px-4 text-right text-muted-foreground whitespace-nowrap">
+                        <TableCell className="py-3 px-4 text-right text-muted-foreground whitespace-nowrap">
                           {tx.date}
-                        </td>
-                      </tr>
+                        </TableCell>
+                      </TableRow>
                     );
                   })
-                ) : (
-                  <tr>
-                    <td colSpan={7} className="py-12 text-center text-muted-foreground">
-                      <div className="max-w-sm mx-auto space-y-2">
-                        <Receipt className="size-8 text-muted-foreground/50 mx-auto" />
-                        <p className="font-semibold text-foreground text-sm">No transactions match your filters</p>
-                        <p className="text-xs text-muted-foreground">
-                          Try searching for a different reference code, or reset your filters to view all ledger history.
-                        </p>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => {
-                            setFilter("all");
-                            setSearchQuery("");
-                          }}
-                          className="mt-2 text-xs font-bold rounded-xl"
-                        >
-                          Reset Filters
-                        </Button>
-                      </div>
-                    </td>
-                  </tr>
                 )}
-              </tbody>
-            </table>
+              </TableBody>
+            </Table>
           </div>
-        </CardContent>
+
+          {/* PAGINATION FOOTER (Exact Match of AgentPricing) */}
+          <div className="flex items-center justify-between p-4 border-t border-border">
+            <p className="text-xs text-muted-foreground">
+              Showing {(currentPage - 1) * ITEMS_PER_PAGE + 1} to{" "}
+              {Math.min(
+                currentPage * ITEMS_PER_PAGE,
+                filteredTransactions.length,
+              )}{" "}
+              of {filteredTransactions.length} transactions
+            </p>
+
+            <Pagination className="w-auto mx-0">
+              <PaginationContent>
+                <PaginationItem>
+                  <PaginationPrevious
+                    onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                    className={`cursor-pointer h-8 text-xs ${
+                      currentPage === 1 ? "pointer-events-none opacity-50" : ""
+                    }`}
+                  />
+                </PaginationItem>
+
+                {Array.from({ length: totalPages }, (_, i) => i + 1)
+                  .filter(
+                    (p) =>
+                      p === 1 ||
+                      p === totalPages ||
+                      Math.abs(p - currentPage) <= 1,
+                  )
+                  .map((p, idx, arr) => {
+                    const showEllipsis = idx > 0 && p - arr[idx - 1] > 1;
+                    return (
+                      <React.Fragment key={p}>
+                        {showEllipsis && (
+                          <PaginationItem>
+                            <span className="px-2 text-xs text-muted-foreground">
+                              ...
+                            </span>
+                          </PaginationItem>
+                        )}
+                        <PaginationItem>
+                          <PaginationLink
+                            onClick={() => setCurrentPage(p)}
+                            isActive={currentPage === p}
+                            className="cursor-pointer h-8 w-8 text-xs"
+                          >
+                            {p}
+                          </PaginationLink>
+                        </PaginationItem>
+                      </React.Fragment>
+                    );
+                  })}
+
+                <PaginationItem>
+                  <PaginationNext
+                    onClick={() =>
+                      setCurrentPage((p) => Math.min(totalPages, p + 1))
+                    }
+                    className={`cursor-pointer h-8 text-xs ${
+                      currentPage === totalPages
+                        ? "pointer-events-none opacity-50"
+                        : ""
+                    }`}
+                  />
+                </PaginationItem>
+              </PaginationContent>
+            </Pagination>
+          </div>
+        </div>
       </Card>
 
       {/* TRANSACTION DETAILS DIALOG */}
-      <Dialog open={!!selectedTx} onOpenChange={(open) => !open && setSelectedTx(null)}>
+      <Dialog
+        open={!!selectedTx}
+        onOpenChange={(open) => !open && setSelectedTx(null)}
+      >
         <DialogContent className="max-w-md rounded-3xl p-6">
           <DialogHeader className="pb-3 border-b border-border">
             <DialogTitle className="text-lg font-extrabold text-foreground flex items-center gap-2">
@@ -662,31 +811,45 @@ export const AgentTransactionsWallet: React.FC<AgentTransactionsWalletProps> = (
 
               <div className="space-y-2.5 divide-y divide-border/60">
                 <div className="flex justify-between pt-2">
-                  <span className="text-muted-foreground font-semibold">Reference ID</span>
-                  <span className="font-bold text-foreground">{selectedTx.reference}</span>
+                  <span className="text-muted-foreground font-semibold">
+                    Reference ID
+                  </span>
+                  <span className="font-bold text-foreground">
+                    {selectedTx.reference}
+                  </span>
                 </div>
 
                 <div className="flex justify-between pt-2">
-                  <span className="text-muted-foreground font-semibold">Category</span>
+                  <span className="text-muted-foreground font-semibold">
+                    Category
+                  </span>
                   <span className="font-bold text-foreground capitalize">
                     {selectedTx.category.replace("_", " ")}
                   </span>
                 </div>
 
                 <div className="flex justify-between pt-2">
-                  <span className="text-muted-foreground font-semibold">Payment Channel</span>
-                  <span className="font-bold text-foreground">{selectedTx.channel}</span>
+                  <span className="text-muted-foreground font-semibold">
+                    Payment Channel
+                  </span>
+                  <span className="font-bold text-foreground">
+                    {selectedTx.channel}
+                  </span>
                 </div>
 
                 <div className="flex justify-between pt-2">
-                  <span className="text-muted-foreground font-semibold">Processing Fee</span>
+                  <span className="text-muted-foreground font-semibold">
+                    Processing Fee
+                  </span>
                   <span className="font-bold text-foreground">
                     GH₵ {(selectedTx.fee || 0).toFixed(2)} (0%)
                   </span>
                 </div>
 
                 <div className="flex justify-between pt-2">
-                  <span className="text-muted-foreground font-semibold">Balance After</span>
+                  <span className="text-muted-foreground font-semibold">
+                    Balance After
+                  </span>
                   <span className="font-bold text-foreground">
                     {selectedTx.balanceAfter != null
                       ? `GH₵ ${selectedTx.balanceAfter.toFixed(2)}`
@@ -695,8 +858,12 @@ export const AgentTransactionsWallet: React.FC<AgentTransactionsWalletProps> = (
                 </div>
 
                 <div className="flex justify-between pt-2">
-                  <span className="text-muted-foreground font-semibold">Timestamp</span>
-                  <span className="font-bold text-foreground">{selectedTx.date}</span>
+                  <span className="text-muted-foreground font-semibold">
+                    Timestamp
+                  </span>
+                  <span className="font-bold text-foreground">
+                    {selectedTx.date}
+                  </span>
                 </div>
 
                 <div className="pt-2">
