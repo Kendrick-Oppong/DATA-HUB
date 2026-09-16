@@ -36,7 +36,9 @@ export const AgentBuyAirtimeFlow: React.FC<AgentBuyAirtimeFlowProps> = ({
   const [recipientPhone, setRecipientPhone] = useState<string>("");
   const [amount, setAmount] = useState<number>(20);
   const [customAmount, setCustomAmount] = useState<string>("");
-  const [paymentMethod, setPaymentMethod] = useState<"wallet" | "momo_mtn">("wallet");
+  const [paymentMethod, setPaymentMethod] = useState<"wallet" | "momo_mtn">(
+    "wallet",
+  );
   const [completedOrder, setCompletedOrder] = useState<Order | null>(null);
 
   const quickAmounts = [5, 10, 20, 50, 100, 200];
@@ -61,18 +63,24 @@ export const AgentBuyAirtimeFlow: React.FC<AgentBuyAirtimeFlowProps> = ({
 
   const validateStep = (currentStep: string): boolean => {
     switch (currentStep) {
-      case "network": return !!network;
-      case "amount": return finalAmount > 0;
-      case "recipient": return recipientPhone.length >= 10;
-      case "review": return paymentMethod !== "wallet" || walletBalance >= agentCost;
-      default: return true;
+      case "network":
+        return !!network;
+      case "amount":
+        return finalAmount > 0;
+      case "recipient":
+        return recipientPhone.length >= 10;
+      case "review":
+        return paymentMethod !== "wallet" || walletBalance >= agentCost;
+      default:
+        return true;
     }
   };
 
   const handleNext = () => {
     if (!validateStep(step)) {
       if (step === "amount") alert("Please select or enter a valid amount.");
-      if (step === "recipient") alert("Please enter a valid 10-digit phone number.");
+      if (step === "recipient")
+        alert("Please enter a valid 10-digit phone number.");
       if (step === "review")
         alert("Insufficient wallet balance. Please choose Mobile Money.");
       return;
@@ -109,7 +117,11 @@ export const AgentBuyAirtimeFlow: React.FC<AgentBuyAirtimeFlowProps> = ({
       agentMargin: 0,
       deliveryTimeline: [
         { step: "Order Placed", timestamp: "10:00:01", status: "completed" },
-        { step: "E-Load Dispatched", timestamp: "10:00:03", status: "completed" },
+        {
+          step: "E-Load Dispatched",
+          timestamp: "10:00:03",
+          status: "completed",
+        },
         {
           step: "Balance Credited",
           timestamp: "10:00:08",
@@ -138,7 +150,8 @@ export const AgentBuyAirtimeFlow: React.FC<AgentBuyAirtimeFlowProps> = ({
             <span>Buy Airtime Top-up</span>
           </h1>
           <p className="text-xs text-muted-foreground mt-0.5">
-            Instant electronic credit to any Ghana SIM card with 0% transaction fee.
+            Instant electronic credit to any Ghana SIM card with 0% transaction
+            fee.
           </p>
         </div>
         <SignalRail status="online" size="sm" label="E-Load Active" />
@@ -148,9 +161,9 @@ export const AgentBuyAirtimeFlow: React.FC<AgentBuyAirtimeFlowProps> = ({
       <div className="flex items-start gap-3 p-3.5 rounded-2xl bg-blue-500/10 border border-blue-500/20 text-xs">
         <Info className="w-4 h-4 text-blue-600 dark:text-blue-400 shrink-0 mt-0.5" />
         <span className="text-blue-800 dark:text-blue-300">
-          <span className="font-bold">Face value pricing.</span> Airtime is sold at cost — GH₵10
-          of credit costs GH₵10. There is no agent margin on airtime; it is offered as a
-          convenience service for your customers.
+          <span className="font-bold">Face value pricing.</span> Airtime is sold
+          at cost — GH₵10 of credit costs GH₵10. There is no agent margin on
+          airtime; it is offered as a convenience service for your customers.
         </span>
       </div>
 
@@ -220,25 +233,29 @@ export const AgentBuyAirtimeFlow: React.FC<AgentBuyAirtimeFlowProps> = ({
             </div>
 
             <div className="grid grid-cols-3 gap-3">
-              {(["MTN", "Telecel", "AirtelTigo"] as TelecomNetwork[]).map((net) => (
-                <button
-                  key={net}
-                  type="button"
-                  onClick={() => setNetwork(net)}
-                  className={`py-4 px-3 rounded-xl border text-center transition-all cursor-pointer ${
-                    network === net
-                      ? net === "MTN"
-                        ? "bg-amber-400 text-amber-950 border-amber-500 ring-2 ring-amber-500/30 font-bold"
-                        : net === "Telecel"
-                          ? "bg-red-600 text-white border-red-700 ring-2 ring-red-500/30 font-bold"
-                          : "bg-blue-600 text-white border-blue-700 ring-2 ring-blue-500/30 font-bold"
-                      : "border-border bg-muted/40 hover:bg-muted text-foreground"
-                  }`}
-                >
-                  <div className="text-sm font-extrabold">{net}</div>
-                  <div className="text-[10px] mt-1 opacity-85">Instant EVD</div>
-                </button>
-              ))}
+              {(["MTN", "Telecel", "AirtelTigo"] as TelecomNetwork[]).map(
+                (net) => (
+                  <button
+                    key={net}
+                    type="button"
+                    onClick={() => setNetwork(net)}
+                    className={`py-4 px-3 rounded-xl border text-center transition-all cursor-pointer ${
+                      network === net
+                        ? net === "MTN"
+                          ? "bg-amber-400 text-amber-950 border-amber-500 ring-2 ring-amber-500/30 font-bold"
+                          : net === "Telecel"
+                            ? "bg-red-600 text-white border-red-700 ring-2 ring-red-500/30 font-bold"
+                            : "bg-blue-600 text-white border-blue-700 ring-2 ring-blue-500/30 font-bold"
+                        : "border-border bg-muted/40 hover:bg-muted text-foreground"
+                    }`}
+                  >
+                    <div className="text-sm font-extrabold">{net}</div>
+                    <div className="text-[10px] mt-1 opacity-85">
+                      Instant EVD
+                    </div>
+                  </button>
+                ),
+              )}
             </div>
 
             {/* Notice banner */}
@@ -247,17 +264,21 @@ export const AgentBuyAirtimeFlow: React.FC<AgentBuyAirtimeFlowProps> = ({
                 <SignalRail status="processing" size="sm" />
                 <div className="space-y-1">
                   <div>
-                    <span className="font-bold text-foreground">Airtime Debt Notice: </span>
+                    <span className="font-bold text-foreground">
+                      Airtime Debt Notice:{" "}
+                    </span>
                     <span>
-                      Settle unpaid credit/airtime loans first; orders cannot be delivered to
-                      numbers with outstanding carrier balances.
+                      Settle unpaid credit/airtime loans first; orders cannot be
+                      delivered to numbers with outstanding carrier balances.
                     </span>
                   </div>
                   <div>
-                    <span className="font-bold text-foreground">Verify Before Payment: </span>
+                    <span className="font-bold text-foreground">
+                      Verify Before Payment:{" "}
+                    </span>
                     <span>
-                      Double-check recipient phone number and carrier network. Orders sent to
-                      wrong numbers cannot be refunded.
+                      Double-check recipient phone number and carrier network.
+                      Orders sent to wrong numbers cannot be refunded.
                     </span>
                   </div>
                 </div>
@@ -316,7 +337,9 @@ export const AgentBuyAirtimeFlow: React.FC<AgentBuyAirtimeFlowProps> = ({
 
             {finalAmount > 0 && (
               <div className="p-3 rounded-xl bg-muted/40 border border-border space-y-1">
-                <div className="text-xs text-muted-foreground">Selected Amount:</div>
+                <div className="text-xs text-muted-foreground">
+                  Selected Amount:
+                </div>
                 <div className="text-xl font-black text-foreground tabular-nums">
                   GH₵ {finalAmount.toFixed(2)}
                 </div>
@@ -384,18 +407,28 @@ export const AgentBuyAirtimeFlow: React.FC<AgentBuyAirtimeFlowProps> = ({
 
             <div className="p-4 rounded-xl bg-muted/40 border border-border space-y-3 text-xs">
               <div className="flex justify-between">
-                <span className="text-muted-foreground font-semibold">Network:</span>
-                <span className="font-bold text-foreground">{network} Ghana</span>
+                <span className="text-muted-foreground font-semibold">
+                  Network:
+                </span>
+                <span className="font-bold text-foreground">
+                  {network} Ghana
+                </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-muted-foreground font-semibold">Amount:</span>
+                <span className="text-muted-foreground font-semibold">
+                  Amount:
+                </span>
                 <span className="font-bold text-foreground tabular-nums">
                   GH₵ {finalAmount.toFixed(2)}
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-muted-foreground font-semibold">Recipient:</span>
-                <span className="font-bold text-foreground">{recipientPhone}</span>
+                <span className="text-muted-foreground font-semibold">
+                  Recipient:
+                </span>
+                <span className="font-bold text-foreground">
+                  {recipientPhone}
+                </span>
               </div>
 
               {/* Agent pricing summary */}
@@ -431,7 +464,9 @@ export const AgentBuyAirtimeFlow: React.FC<AgentBuyAirtimeFlowProps> = ({
                   }`}
                 >
                   <div>
-                    <div className="text-xs font-bold text-foreground">SDH Wallet Balance</div>
+                    <div className="text-xs font-bold text-foreground">
+                      SDH Wallet Balance
+                    </div>
                     <div className="text-[11px] font-medium text-foreground tabular-nums">
                       Available: GH₵ {walletBalance.toFixed(2)}
                     </div>
@@ -448,8 +483,12 @@ export const AgentBuyAirtimeFlow: React.FC<AgentBuyAirtimeFlowProps> = ({
                   }`}
                 >
                   <div>
-                    <div className="text-xs font-bold text-foreground">Direct Mobile Money</div>
-                    <div className="text-[11px] font-medium text-foreground">USSD PIN Prompt</div>
+                    <div className="text-xs font-bold text-foreground">
+                      Direct Mobile Money
+                    </div>
+                    <div className="text-[11px] font-medium text-foreground">
+                      USSD PIN Prompt
+                    </div>
                   </div>
                   <span className="text-xs font-bold">Push to Phone</span>
                 </button>
@@ -458,7 +497,8 @@ export const AgentBuyAirtimeFlow: React.FC<AgentBuyAirtimeFlowProps> = ({
 
             {paymentMethod === "wallet" && walletBalance < agentCost && (
               <div className="p-3 rounded-xl bg-destructive/10 border border-destructive/30 text-destructive text-xs font-semibold">
-                Insufficient wallet balance. Please choose Mobile Money or fund your wallet.
+                Insufficient wallet balance. Please choose Mobile Money or fund
+                your wallet.
               </div>
             )}
           </CardContent>
@@ -477,7 +517,8 @@ export const AgentBuyAirtimeFlow: React.FC<AgentBuyAirtimeFlowProps> = ({
                 Processing Airtime Recharge...
               </h3>
               <p className="text-xs text-muted-foreground mt-1">
-                Dispatching GH₵ {finalAmount.toFixed(2)} to {recipientPhone} via {network}.
+                Dispatching GH₵ {finalAmount.toFixed(2)} to {recipientPhone} via{" "}
+                {network}.
               </p>
             </div>
             <SignalRail
@@ -498,17 +539,22 @@ export const AgentBuyAirtimeFlow: React.FC<AgentBuyAirtimeFlowProps> = ({
               <CheckCircle2 className="w-10 h-10" />
             </div>
             <div>
-              <h3 className="text-xl font-bold text-foreground">Airtime Credited!</h3>
+              <h3 className="text-xl font-bold text-foreground">
+                Airtime Credited!
+              </h3>
               <p className="text-xs text-muted-foreground mt-1">
-                <strong>GH₵ {completedOrder.amount.toFixed(2)}</strong> successfully dispatched
-                to <strong>{completedOrder.recipientPhone}</strong>.
+                <strong>GH₵ {completedOrder.amount.toFixed(2)}</strong>{" "}
+                successfully dispatched to{" "}
+                <strong>{completedOrder.recipientPhone}</strong>.
               </p>
             </div>
 
             <div className="p-4 rounded-xl bg-muted/40 border border-border text-xs space-y-2 text-left">
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Order Reference:</span>
-                <span className="font-bold text-foreground">{completedOrder.reference}</span>
+                <span className="font-bold text-foreground">
+                  {completedOrder.reference}
+                </span>
               </div>
               <div className="flex justify-between">
                 <span className="text-muted-foreground">You paid:</span>
@@ -559,7 +605,11 @@ export const AgentBuyAirtimeFlow: React.FC<AgentBuyAirtimeFlowProps> = ({
       {step !== "processing" && step !== "success" && (
         <div className="flex gap-3">
           {step !== "network" && (
-            <Button variant="outline" onClick={handleBack} className="flex-1 h-10">
+            <Button
+              variant="outline"
+              onClick={handleBack}
+              className="flex-1 h-10"
+            >
               <ArrowLeft className="w-4 h-4 mr-2" />
               Back
             </Button>

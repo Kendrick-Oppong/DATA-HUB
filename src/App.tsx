@@ -60,6 +60,7 @@ import { AgentBuyDataFlow } from "./components/agent/AgentBuyDataFlow";
 import { AgentBuyAirtimeFlow } from "./components/agent/AgentBuyAirtimeFlow";
 import { AgentAfaFlow } from "./components/agent/AgentAfaFlow";
 import { AgentResultsCheckerFlow } from "./components/agent/AgentResultsCheckerFlow";
+import { AgentUtilitiesFlow } from "./components/agent/AgentUtilitiesFlow";
 
 // Admin Ops Console
 import { AdminOperations } from "./components/admin/AdminOperations";
@@ -1151,6 +1152,14 @@ export default function App() {
                   checkers={checkers}
                   walletBalance={walletBalance}
                   orders={orders}
+                  onOrderCreated={handleOrderCreated}
+                  onOpenReceipt={(order) => setSelectedReceiptOrder(order)}
+                />
+              )}
+
+              {activeTab === "utilities" && (
+                <AgentUtilitiesFlow
+                  walletBalance={walletBalance}
                   onOrderCreated={handleOrderCreated}
                   onOpenReceipt={(order) => setSelectedReceiptOrder(order)}
                 />

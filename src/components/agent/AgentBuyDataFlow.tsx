@@ -359,7 +359,7 @@ export const AgentBuyDataFlow: React.FC<AgentBuyDataFlowProps> = ({
 
       {/* Step Indicator */}
       {step !== "processing" && step !== "success" && (
-        <Card className="border-border shadow-xs">
+        <Card className="border-border shadow-xs p-0">
           <CardContent className="p-4">
             <div className="flex items-center justify-between gap-2">
               {steps.map((s, idx) => {
