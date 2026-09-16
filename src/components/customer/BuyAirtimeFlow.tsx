@@ -250,15 +250,21 @@ export const BuyAirtimeFlow: React.FC<BuyAirtimeFlowProps> = ({
 
                 <div className="space-y-1">
                   <div>
-                    <span className="font-bold text-foreground">Airtime Debt Notice: </span>
+                    <span className="font-bold text-foreground">
+                      Airtime Debt Notice:{" "}
+                    </span>
                     <span>
-                      Settle unpaid credit/airtime loans first; orders cannot be delivered to numbers with outstanding carrier balances.
+                      Settle unpaid credit/airtime loans first; orders cannot be
+                      delivered to numbers with outstanding carrier balances.
                     </span>
                   </div>
                   <div>
-                    <span className="font-bold text-foreground">Verify Before Payment: </span>
+                    <span className="font-bold text-foreground">
+                      Verify Before Payment:{" "}
+                    </span>
                     <span>
-                      Double-check recipient phone number and carrier network. Orders sent to wrong numbers cannot be refunded.
+                      Double-check recipient phone number and carrier network.
+                      Orders sent to wrong numbers cannot be refunded.
                     </span>
                   </div>
                 </div>
@@ -330,13 +336,13 @@ export const BuyAirtimeFlow: React.FC<BuyAirtimeFlowProps> = ({
 
       {step === "recipient" && (
         <Card className="border-border shadow-xs">
-          <CardContent className="p-6 space-y-4">
+          <CardContent className="p-6 space-y-5">
             <div>
               <Label className="text-xs font-bold uppercase tracking-wider">
-                Recipient Phone Number
+                Recipient & Payment
               </Label>
               <p className="text-xs text-muted-foreground mt-1">
-                Enter the 10-digit Ghana mobile number to receive the airtime.
+                Enter the recipient's phone number and choose payment method.
               </p>
             </div>
 
@@ -363,6 +369,60 @@ export const BuyAirtimeFlow: React.FC<BuyAirtimeFlowProps> = ({
                 </p>
               )}
             </div>
+
+            <div className="space-y-3">
+              <Label className="text-xs font-bold">
+                Payment Method: <span>{paymentMethod}</span>
+              </Label>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                <button
+                  type="button"
+                  onClick={() => setPaymentMethod("wallet")}
+                  className={`p-3 rounded-xl border text-left flex items-center justify-between transition-all cursor-pointer ${
+                    paymentMethod === "wallet"
+                      ? "bg-primary/60 text-primary-foreground border-primary shadow-xs"
+                      : "border-border bg-background hover:bg-muted text-foreground"
+                  }`}
+                >
+                  <div>
+                    <div className="text-xs font-bold text-foreground">
+                      SDH Wallet Balance
+                    </div>
+                    <div className="text-[11px] text-foreground tabular-nums">
+                      Available: GH₵ {walletBalance.toFixed(2)}
+                    </div>
+                  </div>
+                  <span className="text-xs font-bold">Instant</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setPaymentMethod("momo_mtn")}
+                  className={`p-3 rounded-xl border text-left flex items-center justify-between transition-all cursor-pointer ${
+                    paymentMethod === "momo_mtn"
+                      ? "bg-primary/60 text-primary-foreground border-primary shadow-xs"
+                      : "border-border bg-background hover:bg-muted text-foreground"
+                  }`}
+                >
+                  <div>
+                    <div className="text-xs font-bold text-foreground">
+                      Direct Mobile Money
+                    </div>
+                    <div className="text-[11px] text-foreground">
+                      USSD PIN Prompt
+                    </div>
+                  </div>
+                  <span className="text-xs font-bold">Push</span>
+                </button>
+              </div>
+            </div>
+
+            {paymentMethod === "wallet" && walletBalance < finalAmount && (
+              <div className="p-3 rounded-xl bg-destructive/10 border border-destructive/30 text-destructive text-xs font-semibold">
+                Insufficient wallet balance. Please choose Mobile Money or fund
+                your wallet.
+              </div>
+            )}
           </CardContent>
         </Card>
       )}
@@ -372,10 +432,10 @@ export const BuyAirtimeFlow: React.FC<BuyAirtimeFlowProps> = ({
           <CardContent className="p-6 space-y-5">
             <div>
               <Label className="text-xs font-bold uppercase tracking-wider">
-                Review & Payment
+                Review Your Order
               </Label>
               <p className="text-xs text-muted-foreground mt-1">
-                Verify your order details and choose payment method.
+                Verify all details before completing your purchase.
               </p>
             </div>
 
@@ -404,62 +464,17 @@ export const BuyAirtimeFlow: React.FC<BuyAirtimeFlowProps> = ({
                   {recipientPhone}
                 </span>
               </div>
-            </div>
-
-            <div className="space-y-3">
-              <Label className="text-xs font-bold">
-                Payment Method: <span>{paymentMethod} </span>
-              </Label>
-
-              <div className="space-y-2">
-                <button
-                  type="button"
-                  onClick={() => setPaymentMethod("wallet")}
-                  className={`w-full p-3 rounded-xl border text-left flex items-center justify-between transition-all cursor-pointer ${
-                    paymentMethod === "wallet"
-                      ? "bg-primary/60 text-primary-foreground border-primary shadow-xs"
-                      : "border-border bg-background hover:bg-muted text-foreground"
-                  }`}
-                >
-                  <div>
-                    <div className="text-xs font-bold text-foreground">
-                      SDH Wallet Balance
-                    </div>
-                    <div className="text-[11px] font-medium text-foreground tabular-nums">
-                      Available: GH₵ {walletBalance.toFixed(2)}
-                    </div>
-                  </div>
-                  <span className="text-xs font-bold">Instant</span>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => setPaymentMethod("momo_mtn")}
-                  className={`w-full p-3 rounded-xl border text-left flex items-center justify-between transition-all cursor-pointer ${
-                    paymentMethod === "momo_mtn"
-                      ? "bg-primary/60 text-primary-foreground border-primary shadow-xs"
-                      : "border-border bg-background hover:bg-muted text-foreground"
-                  }`}
-                >
-                  <div>
-                    <div className="text-xs font-bold text-foreground">
-                      Direct Mobile Money
-                    </div>
-                    <div className="text-[11px] font-medium text-foreground">
-                      USSD PIN Prompt
-                    </div>
-                  </div>
-                  <span className="text-xs font-bold">Push to Phone</span>
-                </button>
+              <div className="flex justify-between">
+                <span className="text-muted-foreground font-semibold">
+                  Payment Method:
+                </span>
+                <span className="font-bold text-foreground">
+                  {paymentMethod === "wallet"
+                    ? "SDH Wallet Balance"
+                    : "Direct Mobile Money"}
+                </span>
               </div>
             </div>
-
-            {paymentMethod === "wallet" && walletBalance < finalAmount && (
-              <div className="p-3 rounded-xl bg-destructive/10 border border-destructive/30 text-destructive text-xs font-semibold">
-                Insufficient wallet balance. Please choose Mobile Money or fund
-                your wallet.
-              </div>
-            )}
           </CardContent>
         </Card>
       )}
