@@ -14,6 +14,7 @@ import {
   SlidersHorizontal,
   ShieldCheck,
   RotateCcw,
+  Wallet,
 } from "lucide-react";
 import { ResultCheckerProduct, Order } from "../../types";
 import { Button, buttonVariants } from "../ui/button";
@@ -350,33 +351,61 @@ export const ResultsCheckerFlow: React.FC<ResultsCheckerFlowProps> = ({
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <div className="rounded-2xl border border-border bg-card p-5 shadow-xs">
-          <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-            Checker Types
-          </span>
-
-          <div className="mt-1 text-3xl font-black tabular-nums text-foreground">
-            {checkers.length}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <div className="rounded-xl border border-border bg-card p-3.5 shadow-2xs">
+          <div className="flex items-center gap-2">
+            <div className="flex size-7 items-center justify-center rounded-lg bg-purple-500/10">
+              <GraduationCap className="size-3.5 text-purple-600 dark:text-purple-400" />
+            </div>
+            <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+              Checker Types
+            </span>
           </div>
-
-          <p className="mt-1 text-[11px] text-muted-foreground">
-            WAEC, BECE, University
-          </p>
+          <p className="mt-2 text-xl font-black tabular-nums text-foreground">{checkers.length}</p>
+          <p className="text-[10px] text-muted-foreground font-medium">WAEC, BECE, University</p>
         </div>
 
-        <div className="rounded-2xl border border-border bg-card p-5 shadow-xs">
-          <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-            Delivered
-          </span>
-
-          <div className="mt-1 text-3xl font-black tabular-nums text-foreground">
-            {allCheckerOrders.length}
+        <div className="rounded-xl border border-border bg-card p-3.5 shadow-2xs">
+          <div className="flex items-center gap-2">
+            <div className="flex size-7 items-center justify-center rounded-lg bg-emerald-500/10">
+              <CheckCircle2 className="size-3.5 text-emerald-600 dark:text-emerald-400" />
+            </div>
+            <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+              Delivered
+            </span>
           </div>
+          <p className="mt-2 text-xl font-black tabular-nums text-foreground">{allCheckerOrders.length}</p>
+          <p className="text-[10px] text-muted-foreground font-medium">Total vouchers purchased</p>
+        </div>
 
-          <p className="mt-1 text-[11px] text-muted-foreground">
-            Total vouchers purchased
+        <div className="rounded-xl border border-border bg-card p-3.5 shadow-2xs">
+          <div className="flex items-center gap-2">
+            <div className="flex size-7 items-center justify-center rounded-lg bg-primary/10">
+              <Ticket className="size-3.5 text-primary" />
+            </div>
+            <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+              In Stock
+            </span>
+          </div>
+          <p className="mt-2 text-xl font-black tabular-nums text-foreground">
+            {checkers.reduce((sum, c) => sum + c.stockCount, 0)}
           </p>
+          <p className="text-[10px] text-muted-foreground font-medium">Vouchers available</p>
+        </div>
+
+        <div className="rounded-xl border border-border bg-card p-3.5 shadow-2xs">
+          <div className="flex items-center gap-2">
+            <div className="flex size-7 items-center justify-center rounded-lg bg-amber-500/10">
+              <Wallet className="size-3.5 text-amber-600 dark:text-amber-400" />
+            </div>
+            <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+              Total Spent
+            </span>
+          </div>
+          <p className="mt-2 text-xl font-black tabular-nums text-foreground">
+            GH₵ {allCheckerOrders.reduce((sum, o) => sum + o.amount, 0).toFixed(2)}
+          </p>
+          <p className="text-[10px] text-muted-foreground font-medium">Across all purchases</p>
         </div>
       </div>
 
@@ -433,11 +462,10 @@ export const ResultsCheckerFlow: React.FC<ResultsCheckerFlowProps> = ({
                         <div
                           key={item.id}
                           onClick={() => setSelectedCheckerId(item.id)}
-                          className={`p-4 rounded-2xl border transition-all cursor-pointer flex flex-col justify-between ${
-                            isSelected
-                              ? "border-primary bg-primary/10 ring-2 ring-primary/30 shadow-xs"
-                              : "border-border bg-card hover:bg-muted/50"
-                          }`}
+                          className={`p-4 rounded-2xl border transition-all cursor-pointer flex flex-col justify-between ${isSelected
+                            ? "border-primary bg-primary/10 ring-2 ring-primary/30 shadow-xs"
+                            : "border-border bg-card hover:bg-muted/50"
+                            }`}
                         >
                           <div>
                             <div className="flex justify-between items-center mb-1">
@@ -898,7 +926,7 @@ export const ResultsCheckerFlow: React.FC<ResultsCheckerFlowProps> = ({
                       {(() => {
                         const cfg =
                           checkerStatusConfig[
-                            order.status as keyof typeof checkerStatusConfig
+                          order.status as keyof typeof checkerStatusConfig
                           ] ?? checkerStatusConfig.delivered;
                         return (
                           <span

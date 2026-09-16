@@ -89,7 +89,7 @@ const REGIONS = [
 ];
 
 const APPS_PER_PAGE = 5;
-const AFA_FEE = 50.0;
+const AFA_FEE = 18.0;
 
 // Date-time formatter (YYYY-MM-DD HH:mm)
 const formatDateTime = (dateStr: string): string => {
@@ -1194,11 +1194,10 @@ export const AfaRegistrationFlow: React.FC<AfaRegistrationFlowProps> = ({
                         </p>
 
                         <p
-                          className={`mt-0.5 text-[9px] font-semibold ${
-                            hasSufficientBalance
+                          className={`mt-0.5 text-[9px] font-semibold ${hasSufficientBalance
                               ? " dark:text-emerald-400"
                               : "text-rose-600 dark:text-rose-400"
-                          }`}
+                            }`}
                         >
                           Wallet: GH₵ {walletBalance.toFixed(2)}
                         </p>

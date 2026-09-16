@@ -66,11 +66,11 @@ import { PaginationHelper } from "../customer/views/PaginationHelper";
 import { SignalRail } from "../common/SignalRail";
 
 const NETWORK_ACCENT: Record<TelecomNetwork, { solid: string; short: string }> =
-  {
-    MTN: { solid: "bg-amber-400", short: "MTN" },
-    Telecel: { solid: "bg-red-600", short: "TGL" },
-    AirtelTigo: { solid: "bg-blue-600", short: "ATG" },
-  };
+{
+  MTN: { solid: "bg-amber-400", short: "MTN" },
+  Telecel: { solid: "bg-red-600", short: "TGL" },
+  AirtelTigo: { solid: "bg-blue-600", short: "ATG" },
+};
 
 export interface UnifiedAgentOrder extends Order {
   source: "storefront" | "direct";
@@ -296,18 +296,18 @@ export const AgentOrdersView: React.FC<AgentOrdersViewProps> = ({
       const delivered = updated.map((o) =>
         o.id === orderId
           ? {
-              ...o,
-              status: "delivered" as const,
-              deliveryTimeline: [
-                ...(o.deliveryTimeline || []),
-                {
-                  step: "Delivered to Beneficiary",
-                  timestamp: new Date().toLocaleTimeString("en-GB"),
-                  status: "completed" as const,
-                  note: "Telecom confirmation acknowledged",
-                },
-              ],
-            }
+            ...o,
+            status: "delivered" as const,
+            deliveryTimeline: [
+              ...(o.deliveryTimeline || []),
+              {
+                step: "Delivered to Beneficiary",
+                timestamp: new Date().toLocaleTimeString("en-GB"),
+                status: "completed" as const,
+                note: "Telecom confirmation acknowledged",
+              },
+            ],
+          }
           : o,
       );
       onUpdateOrders(delivered);
@@ -475,67 +475,61 @@ export const AgentOrdersView: React.FC<AgentOrdersViewProps> = ({
       {/* 2. STATS CARDS (normal static cards) */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {/* Tile 1: All Orders */}
-        <div className="p-4 rounded-2xl bg-card border border-border text-left shadow-2xs">
-          <div className="w-9 h-9 rounded-xl bg-primary/10 text-primary flex items-center justify-center mb-2">
-            <Receipt className="w-5 h-5" />
+        <div className="rounded-xl border border-border bg-card p-3.5 shadow-2xs">
+          <div className="flex items-center gap-2">
+            <div className="flex size-7 items-center justify-center rounded-lg bg-primary/10">
+              <Receipt className="size-3.5 text-primary" />
+            </div>
+            <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+              All Orders
+            </span>
           </div>
-          <div className="text-xl font-black tabular-nums text-foreground">
-            {totalCount}
-          </div>
-          <div className="font-bold text-xs text-foreground">All Orders</div>
-          <div className="text-[10px] text-muted-foreground">
-            Storefront & direct sales
-          </div>
+          <p className="mt-2 text-xl font-black tabular-nums text-foreground">{totalCount}</p>
+          <p className="text-[10px] text-muted-foreground font-medium">Storefront & direct sales</p>
         </div>
 
         {/* Tile 2: Revenue Delivered */}
-        <div className="p-4 rounded-2xl bg-card border border-border text-left shadow-2xs">
-          <div className="w-9 h-9 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mb-2">
-            <TrendingUp className="w-5 h-5" />
+        <div className="rounded-xl border border-border bg-card p-3.5 shadow-2xs">
+          <div className="flex items-center gap-2">
+            <div className="flex size-7 items-center justify-center rounded-lg bg-emerald-500/10">
+              <TrendingUp className="size-3.5 text-emerald-600 dark:text-emerald-400" />
+            </div>
+            <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+              Revenue
+            </span>
           </div>
-          <div className="text-xl font-black tabular-nums text-foreground">
-            GH₵ {deliveredRevenue.toFixed(2)}
-          </div>
-          <div className="font-bold text-xs text-foreground">
-            Delivered Revenue
-          </div>
-          <div className="text-[10px] text-emerald-600 dark:text-emerald-400 font-medium">
-            {deliveredCount} fulfilled
-          </div>
+          <p className="mt-2 text-xl font-black tabular-nums text-foreground">GH₵ {deliveredRevenue.toFixed(2)}</p>
+          <p className="text-[10px] text-emerald-600 dark:text-emerald-400 font-medium">{deliveredCount} fulfilled</p>
         </div>
 
         {/* Tile 3: Commission Earned */}
-        <div className="p-4 rounded-2xl bg-card border border-border text-left shadow-2xs">
-          <div className="w-9 h-9 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center mb-2">
-            <DollarSign className="w-5 h-5" />
+        <div className="rounded-xl border border-border bg-card p-3.5 shadow-2xs">
+          <div className="flex items-center gap-2">
+            <div className="flex size-7 items-center justify-center rounded-lg bg-amber-500/10">
+              <DollarSign className="size-3.5 text-amber-600 dark:text-amber-400" />
+            </div>
+            <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+              Commission
+            </span>
           </div>
-          <div className="text-xl font-black tabular-nums text-emerald-600 dark:text-emerald-400">
-            +GH₵ {earnedCommission.toFixed(2)}
-          </div>
-          <div className="font-bold text-xs text-foreground">
-            Commission Earned
-          </div>
-          <div className="text-[10px] text-muted-foreground">
-            Instant wallet credits
-          </div>
+          <p className="mt-2 text-xl font-black tabular-nums text-emerald-600 dark:text-emerald-400">+GH₵ {earnedCommission.toFixed(2)}</p>
+          <p className="text-[10px] text-muted-foreground font-medium">Instant wallet credits</p>
         </div>
 
         {/* Tile 4: Needs Attention */}
-        <div className="p-4 rounded-2xl bg-card border border-border text-left shadow-2xs">
-          <div className="w-9 h-9 rounded-xl bg-red-500/10 text-red-600 dark:text-red-400 flex items-center justify-center mb-2">
-            <AlertCircle className="w-5 h-5" />
+        <div className="rounded-xl border border-border bg-card p-3.5 shadow-2xs">
+          <div className="flex items-center gap-2">
+            <div className="flex size-7 items-center justify-center rounded-lg bg-red-500/10">
+              <AlertCircle className="size-3.5 text-red-600 dark:text-red-400" />
+            </div>
+            <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+              Attention
+            </span>
           </div>
-          <div className="text-xl font-black tabular-nums text-foreground">
-            {needsAttentionCount}
-          </div>
-          <div className="font-bold text-xs text-foreground">
-            Needs Attention
-          </div>
-          <div className="text-[10px] text-destructive font-medium">
-            {needsAttentionCount > 0
-              ? `${needsAttentionCount} failed or refunded`
-              : "All orders healthy"}
-          </div>
+          <p className="mt-2 text-xl font-black tabular-nums text-foreground">{needsAttentionCount}</p>
+          <p className="text-[10px] text-destructive font-medium">
+            {needsAttentionCount > 0 ? `${needsAttentionCount} failed or refunded` : "All orders healthy"}
+          </p>
         </div>
       </div>
 
@@ -812,13 +806,12 @@ export const AgentOrdersView: React.FC<AgentOrdersViewProps> = ({
                         <div className="flex items-center gap-2.5">
                           {/* Carrier Badge */}
                           <span
-                            className={`rounded-full px-2 py-0.5 text-[10px] font-bold shrink-0 ${
-                              order.network === "MTN"
+                            className={`rounded-full px-2 py-0.5 text-[10px] font-bold shrink-0 ${order.network === "MTN"
                                 ? "bg-amber-400 text-amber-950"
                                 : order.network === "Telecel"
                                   ? "bg-red-600 text-white"
                                   : "bg-blue-600 text-white"
-                            }`}
+                              }`}
                           >
                             {order.network}
                           </span>
@@ -958,9 +951,9 @@ export const AgentOrdersView: React.FC<AgentOrdersViewProps> = ({
                 {filteredOrders.length === 0
                   ? 0
                   : Math.min(
-                      currentPage * ORDERS_PER_PAGE,
-                      filteredOrders.length,
-                    )}
+                    currentPage * ORDERS_PER_PAGE,
+                    filteredOrders.length,
+                  )}
               </span>{" "}
               of{" "}
               <span className="font-bold text-foreground">
@@ -998,13 +991,12 @@ export const AgentOrdersView: React.FC<AgentOrdersViewProps> = ({
                 <div className="relative flex items-center justify-between gap-4">
                   <div className="flex items-center gap-3">
                     <span
-                      className={`flex size-11 shrink-0 items-center justify-center rounded-2xl font-black text-xs shadow-sm ${
-                        selectedOrder.network === "MTN"
+                      className={`flex size-11 shrink-0 items-center justify-center rounded-2xl font-black text-xs shadow-sm ${selectedOrder.network === "MTN"
                           ? "bg-amber-400 text-amber-950"
                           : selectedOrder.network === "Telecel"
                             ? "bg-red-600 text-white"
                             : "bg-blue-600 text-white"
-                      }`}
+                        }`}
                     >
                       {selectedOrder.network.slice(0, 3).toUpperCase()}
                     </span>
@@ -1134,7 +1126,7 @@ export const AgentOrdersView: React.FC<AgentOrdersViewProps> = ({
                       {(() => {
                         const a =
                           NETWORK_ACCENT[
-                            selectedOrder.network as TelecomNetwork
+                          selectedOrder.network as TelecomNetwork
                           ] ?? NETWORK_ACCENT.MTN;
                         const timeline = selectedOrder.deliveryTimeline || [];
                         const completedCount = timeline.filter(
@@ -1176,11 +1168,10 @@ export const AgentOrdersView: React.FC<AgentOrdersViewProps> = ({
                               />
                             </div>
                             <div
-                              className={`flex size-7 shrink-0 items-center justify-center rounded-lg transition-colors ${
-                                selectedOrder.status === "delivered"
+                              className={`flex size-7 shrink-0 items-center justify-center rounded-lg transition-colors ${selectedOrder.status === "delivered"
                                   ? "bg-emerald-500 text-white"
                                   : "bg-muted border border-border text-muted-foreground"
-                              }`}
+                                }`}
                             >
                               {selectedOrder.status === "delivered" ? (
                                 <Check className="size-3" />
@@ -1257,15 +1248,14 @@ export const AgentOrdersView: React.FC<AgentOrdersViewProps> = ({
                               {/* Left: connector + dot */}
                               <div className="flex flex-col items-center shrink-0 w-6">
                                 <div
-                                  className={`relative flex size-6 items-center justify-center rounded-full border-2 shrink-0 transition-all ${
-                                    isCompleted
+                                  className={`relative flex size-6 items-center justify-center rounded-full border-2 shrink-0 transition-all ${isCompleted
                                       ? "bg-primary border-primary text-primary-foreground"
                                       : isCurrent
                                         ? "bg-background border-primary text-primary"
                                         : isFailed
                                           ? "bg-red-500/10 border-red-500 text-red-500"
                                           : "bg-muted border-border text-muted-foreground"
-                                  }`}
+                                    }`}
                                 >
                                   {isCurrent && (
                                     <span className="absolute inset-0 rounded-full animate-ping bg-primary/20" />
@@ -1286,9 +1276,8 @@ export const AgentOrdersView: React.FC<AgentOrdersViewProps> = ({
                                 </div>
                                 {!isLast && (
                                   <div
-                                    className={`w-0.5 flex-1 my-1 min-h-[1.25rem] ${
-                                      isCompleted ? "bg-primary" : "bg-border"
-                                    }`}
+                                    className={`w-0.5 flex-1 my-1 min-h-[1.25rem] ${isCompleted ? "bg-primary" : "bg-border"
+                                      }`}
                                   />
                                 )}
                               </div>
@@ -1298,15 +1287,14 @@ export const AgentOrdersView: React.FC<AgentOrdersViewProps> = ({
                               >
                                 <div className="flex flex-wrap items-center justify-between gap-2">
                                   <p
-                                    className={`text-xs font-bold ${
-                                      isCompleted
+                                    className={`text-xs font-bold ${isCompleted
                                         ? "text-foreground"
                                         : isCurrent
                                           ? "text-primary"
                                           : isFailed
                                             ? "text-red-600"
                                             : "text-muted-foreground"
-                                    }`}
+                                      }`}
                                   >
                                     {item.step}
                                     {isCurrent && (
@@ -1317,9 +1305,8 @@ export const AgentOrdersView: React.FC<AgentOrdersViewProps> = ({
                                     )}
                                   </p>
                                   <span
-                                    className={`text-[9px] font-semibold text-muted-foreground tabular-nums ${
-                                      isPending ? "italic" : ""
-                                    }`}
+                                    className={`text-[9px] font-semibold text-muted-foreground tabular-nums ${isPending ? "italic" : ""
+                                      }`}
                                   >
                                     {item.timestamp}
                                   </span>
@@ -1442,11 +1429,10 @@ export const AgentOrdersView: React.FC<AgentOrdersViewProps> = ({
                         Your Commission:
                       </span>
                       <span
-                        className={`tabular-nums font-black ${
-                          selectedOrder.status === "refunded"
+                        className={`tabular-nums font-black ${selectedOrder.status === "refunded"
                             ? "text-muted-foreground"
                             : "text-emerald-600 dark:text-emerald-400"
-                        }`}
+                          }`}
                       >
                         {selectedOrder.status === "refunded"
                           ? "— (Reversed)"
@@ -1491,16 +1477,16 @@ export const AgentOrdersView: React.FC<AgentOrdersViewProps> = ({
                       {/* Force deliver if in-flight/pending */}
                       {(selectedOrder.status === "processing" ||
                         selectedOrder.status === "pending_payment") && (
-                        <Button
-                          type="button"
-                          variant="outline"
-                          onClick={() => handleForceDeliver(selectedOrder.id)}
-                          className="flex-1 text-xs font-bold gap-1.5 h-9 text-primary hover:bg-primary/10 cursor-pointer"
-                        >
-                          <CheckCircle2 className="size-3.5" />
-                          <span>Force Deliver</span>
-                        </Button>
-                      )}
+                          <Button
+                            type="button"
+                            variant="outline"
+                            onClick={() => handleForceDeliver(selectedOrder.id)}
+                            className="flex-1 text-xs font-bold gap-1.5 h-9 text-primary hover:bg-primary/10 cursor-pointer"
+                          >
+                            <CheckCircle2 className="size-3.5" />
+                            <span>Force Deliver</span>
+                          </Button>
+                        )}
 
                       {/* Verify Payment */}
                       <Button

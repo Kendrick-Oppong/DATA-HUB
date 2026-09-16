@@ -123,7 +123,7 @@ export const AGENT_NAV: NavGroup[] = [
       { id: "store-orders", label: "Orders", icon: Clock },
       { id: "buy-data", label: "Buy Data", icon: Wifi },
       { id: "buy-airtime", label: "Buy Airtime", icon: PhoneCall },
-      { id: "afa", label: "AFA Registration", icon: ShieldCheck },
+      { id: "afa", label: "AFA Registration", icon: ShieldCheck, badge: "Subsidized" },
       { id: "results-checker", label: "Results Checker", icon: GraduationCap },
       { id: "utilities", label: "Utilities & Bills", icon: Zap },
       { id: "bulk-sms", label: "Bulk SMS", icon: Send },
