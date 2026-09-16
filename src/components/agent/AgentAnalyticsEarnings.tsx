@@ -26,7 +26,13 @@ import {
   Store,
 } from "lucide-react";
 import { Order, DataBundle } from "../../types";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "../ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "../ui/card";
 import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
@@ -159,7 +165,8 @@ export const AgentAnalyticsEarnings: React.FC<AgentAnalyticsEarningsProps> = ({
   const [period, setPeriod] = useState<"7d" | "30d" | "all">("7d");
   const [activeTab, setActiveTab] = useState<string>("overview");
   const [isWithdrawModalOpen, setIsWithdrawModalOpen] = useState(false);
-  const [selectedCommission, setSelectedCommission] = useState<CommissionLedgerItem | null>(null);
+  const [selectedCommission, setSelectedCommission] =
+    useState<CommissionLedgerItem | null>(null);
 
   // Table filtering & pagination for Commission Ledger (Matching Bulk SMS Audit Ledger)
   const [commSearch, setCommSearch] = useState("");
@@ -173,64 +180,89 @@ export const AgentAnalyticsEarnings: React.FC<AgentAnalyticsEarningsProps> = ({
   // Delivered orders calculation
   const deliveredOrders = useMemo(
     () => orders.filter((o) => o.status === "delivered"),
-    [orders]
+    [orders],
   );
 
   // Total sales volume calculation
   const totalSales = useMemo(
     () => deliveredOrders.reduce((sum, o) => sum + (o.amount || 0), 0),
-    [deliveredOrders]
+    [deliveredOrders],
   );
 
   // Total commissions earned across delivered orders
   const lifetimeCommissions = useMemo(
-    () => deliveredOrders.reduce((sum, o) => sum + (o.agentMargin || o.amount * 0.08 || 2.5), 0),
-    [deliveredOrders]
+    () =>
+      deliveredOrders.reduce(
+        (sum, o) => sum + (o.agentMargin || o.amount * 0.08 || 2.5),
+        0,
+      ),
+    [deliveredOrders],
   );
 
   // This month's estimated commissions
   const thisMonthCommissions = useMemo(() => {
     const currentYearMonth = new Date().toISOString().slice(0, 7);
-    const thisMonthOrders = deliveredOrders.filter((o) => (o.date || "").startsWith(currentYearMonth));
+    const thisMonthOrders = deliveredOrders.filter((o) =>
+      (o.date || "").startsWith(currentYearMonth),
+    );
     return thisMonthOrders.length > 0
-      ? thisMonthOrders.reduce((sum, o) => sum + (o.agentMargin || o.amount * 0.08 || 2.5), 0)
+      ? thisMonthOrders.reduce(
+          (sum, o) => sum + (o.agentMargin || o.amount * 0.08 || 2.5),
+          0,
+        )
       : Math.round(lifetimeCommissions * 0.42);
   }, [deliveredOrders, lifetimeCommissions]);
 
   // Previous month estimated commissions for MoM comparison
-  const lastMonthCommissions = Math.max(1, Math.round(thisMonthCommissions * 0.82));
-  const momGrowth = Math.round(((thisMonthCommissions - lastMonthCommissions) / lastMonthCommissions) * 100);
+  const lastMonthCommissions = Math.max(
+    1,
+    Math.round(thisMonthCommissions * 0.82),
+  );
+  const momGrowth = Math.round(
+    ((thisMonthCommissions - lastMonthCommissions) / lastMonthCommissions) *
+      100,
+  );
 
   // Delivery success rate
   const settledOrders = useMemo(
-    () => orders.filter((o) => o.status === "delivered" || o.status === "failed"),
-    [orders]
+    () =>
+      orders.filter((o) => o.status === "delivered" || o.status === "failed"),
+    [orders],
   );
-  const deliveryRate = settledOrders.length > 0
-    ? Math.round((deliveredOrders.length / settledOrders.length) * 100)
-    : 99.4;
+  const deliveryRate =
+    settledOrders.length > 0
+      ? Math.round((deliveredOrders.length / settledOrders.length) * 100)
+      : 99.4;
 
   // Average order value
-  const avgOrderValue = deliveredOrders.length > 0
-    ? totalSales / deliveredOrders.length
-    : 45.0;
+  const avgOrderValue =
+    deliveredOrders.length > 0 ? totalSales / deliveredOrders.length : 45.0;
 
   // Network volume & profit breakdown
   const networkBreakdown = useMemo(() => {
-    const counts: Record<string, { orders: number; sales: number; profit: number }> = {
+    const counts: Record<
+      string,
+      { orders: number; sales: number; profit: number }
+    > = {
       MTN: { orders: 0, sales: 0, profit: 0 },
       Telecel: { orders: 0, sales: 0, profit: 0 },
       AT: { orders: 0, sales: 0, profit: 0 },
     };
 
     deliveredOrders.forEach((o) => {
-      const netKey = o.network === "MTN" ? "MTN" : o.network === "Telecel" ? "Telecel" : "AT";
+      const netKey =
+        o.network === "MTN"
+          ? "MTN"
+          : o.network === "Telecel"
+            ? "Telecel"
+            : "AT";
       counts[netKey].orders += 1;
       counts[netKey].sales += o.amount || 0;
       counts[netKey].profit += o.agentMargin || (o.amount || 0) * 0.08 || 2.5;
     });
 
-    const totalSalesVol = Object.values(counts).reduce((s, c) => s + c.sales, 0) || 1;
+    const totalSalesVol =
+      Object.values(counts).reduce((s, c) => s + c.sales, 0) || 1;
 
     return [
       {
@@ -243,7 +275,11 @@ export const AgentAnalyticsEarnings: React.FC<AgentAnalyticsEarningsProps> = ({
         orders: counts.MTN.orders || 148,
         sales: counts.MTN.sales || 3180.0,
         profit: counts.MTN.profit || 265.5,
-        share: Math.round(((counts.MTN.sales || 3180) / (totalSalesVol > 1 ? totalSalesVol : 4820)) * 100),
+        share: Math.round(
+          ((counts.MTN.sales || 3180) /
+            (totalSalesVol > 1 ? totalSalesVol : 4820)) *
+            100,
+        ),
       },
       {
         network: "Telecel Ghana",
@@ -255,7 +291,11 @@ export const AgentAnalyticsEarnings: React.FC<AgentAnalyticsEarningsProps> = ({
         orders: counts.Telecel.orders || 58,
         sales: counts.Telecel.sales || 1160.0,
         profit: counts.Telecel.profit || 98.0,
-        share: Math.round(((counts.Telecel.sales || 1160) / (totalSalesVol > 1 ? totalSalesVol : 4820)) * 100),
+        share: Math.round(
+          ((counts.Telecel.sales || 1160) /
+            (totalSalesVol > 1 ? totalSalesVol : 4820)) *
+            100,
+        ),
       },
       {
         network: "AirtelTigo AT",
@@ -267,7 +307,11 @@ export const AgentAnalyticsEarnings: React.FC<AgentAnalyticsEarningsProps> = ({
         orders: counts.AT.orders || 26,
         sales: counts.AT.sales || 480.0,
         profit: counts.AT.profit || 42.5,
-        share: Math.round(((counts.AT.sales || 480) / (totalSalesVol > 1 ? totalSalesVol : 4820)) * 100),
+        share: Math.round(
+          ((counts.AT.sales || 480) /
+            (totalSalesVol > 1 ? totalSalesVol : 4820)) *
+            100,
+        ),
       },
     ];
   }, [deliveredOrders]);
@@ -340,11 +384,46 @@ export const AgentAnalyticsEarnings: React.FC<AgentAnalyticsEarningsProps> = ({
 
   // Top bundles ranking
   const topBundles = [
-    { name: "MTN 10GB Non-Expiry", network: "MTN", orders: 184, revenue: 15640, profitPerUnit: 4.5, profitTotal: 828 },
-    { name: "MTN 5GB Non-Expiry", network: "MTN", orders: 142, revenue: 6035, profitPerUnit: 2.5, profitTotal: 355 },
-    { name: "Telecel 15GB Special", network: "Telecel", orders: 76, revenue: 6840, profitPerUnit: 5.0, profitTotal: 380 },
-    { name: "MTN 20GB Turbonet", network: "MTN", orders: 64, revenue: 8960, profitPerUnit: 7.0, profitTotal: 448 },
-    { name: "AT 10GB Big Time", network: "AT", orders: 38, revenue: 2660, profitPerUnit: 3.5, profitTotal: 133 },
+    {
+      name: "MTN 10GB Non-Expiry",
+      network: "MTN",
+      orders: 184,
+      revenue: 15640,
+      profitPerUnit: 4.5,
+      profitTotal: 828,
+    },
+    {
+      name: "MTN 5GB Non-Expiry",
+      network: "MTN",
+      orders: 142,
+      revenue: 6035,
+      profitPerUnit: 2.5,
+      profitTotal: 355,
+    },
+    {
+      name: "Telecel 15GB Special",
+      network: "Telecel",
+      orders: 76,
+      revenue: 6840,
+      profitPerUnit: 5.0,
+      profitTotal: 380,
+    },
+    {
+      name: "MTN 20GB Turbonet",
+      network: "MTN",
+      orders: 64,
+      revenue: 8960,
+      profitPerUnit: 7.0,
+      profitTotal: 448,
+    },
+    {
+      name: "AT 10GB Big Time",
+      network: "AT",
+      orders: 38,
+      revenue: 2660,
+      profitPerUnit: 3.5,
+      profitTotal: 133,
+    },
   ];
   const maxBundleRevenue = Math.max(...topBundles.map((b) => b.revenue));
 
@@ -390,7 +469,13 @@ export const AgentAnalyticsEarnings: React.FC<AgentAnalyticsEarningsProps> = ({
 
       return matchNetwork && matchStatus && matchTier && matchSearch;
     });
-  }, [allCommissions, networkFilter, statusFilter, marginTierFilter, commSearch]);
+  }, [
+    allCommissions,
+    networkFilter,
+    statusFilter,
+    marginTierFilter,
+    commSearch,
+  ]);
 
   const hasActiveFilters =
     commSearch !== "" ||
@@ -406,10 +491,13 @@ export const AgentAnalyticsEarnings: React.FC<AgentAnalyticsEarningsProps> = ({
     setCommPage(1);
   };
 
-  const totalCommPages = Math.max(1, Math.ceil(filteredCommissions.length / COMM_PER_PAGE));
+  const totalCommPages = Math.max(
+    1,
+    Math.ceil(filteredCommissions.length / COMM_PER_PAGE),
+  );
   const paginatedCommissions = filteredCommissions.slice(
     (commPage - 1) * COMM_PER_PAGE,
-    commPage * COMM_PER_PAGE
+    commPage * COMM_PER_PAGE,
   );
 
   const copyToClipboard = (text: string) => {
@@ -441,54 +529,23 @@ export const AgentAnalyticsEarnings: React.FC<AgentAnalyticsEarningsProps> = ({
           </h1>
 
           <p className="text-[12px] text-muted-foreground">
-            Real-time telecom dispatch volume, wholesale margin accruals, customer rush activity, and carrier market share. Direct customer orders auto-settle to your balance.
+            Real-time telecom volume, margins, rush activity, and carrier share.
           </p>
 
-          {/* Time Period Filter Pills & Quick Actions */}
-          <div className="flex flex-wrap items-center gap-2 pt-1">
-            <div className="inline-flex rounded-xl border border-border bg-background/80 p-1 shadow-2xs">
-              {(
-                [
-                  ["7d", "7 Days"],
-                  ["30d", "30 Days"],
-                  ["all", "All Time"],
-                ] as const
-              ).map(([key, label]) => (
-                <Button
-                  key={key}
-                  variant={period === key ? "default" : "ghost"}
-                  size="sm"
-                  onClick={() => setPeriod(key)}
-                  className={`h-7 rounded-lg px-3 text-xs font-bold transition-all ${
-                    period === key ? "shadow-xs" : "text-muted-foreground hover:text-foreground"
-                  }`}
-                >
-                  {label}
-                </Button>
-              ))}
-            </div>
-
-            <Button
-              size="sm"
-              onClick={() => setIsWithdrawModalOpen(true)}
-              className="h-9 px-3.5 rounded-xl bg-primary text-primary-foreground text-xs font-bold hover:bg-primary/90 transition-colors flex items-center gap-1.5 cursor-pointer shadow-2xs"
-            >
-              <Coins className="size-3.5" />
-              <span>Withdraw Profit</span>
-            </Button>
-
-            {onNavigateTab && (
+          {/* Quick Actions */}
+          {onNavigateTab && (
+            <div className="pt-1">
               <Button
                 variant="outline"
                 size="sm"
                 onClick={() => onNavigateTab("pricing")}
-                className="h-9 px-3 rounded-xl border border-border bg-card text-xs font-bold hover:bg-muted transition-colors flex items-center gap-1.5 cursor-pointer shadow-2xs"
+                className="h-9 px-3 border border-border !bg-background/50 text-xs font-bold hover:!bg-muted transition-colors flex items-center gap-1.5 cursor-pointer shadow-2xs"
               >
                 <Sliders className="size-3.5 text-amber-500" />
                 <span>Adjust Margins</span>
               </Button>
-            )}
-          </div>
+            </div>
+          )}
         </div>
 
         {/* Right side Commission & Balance Control Card */}
@@ -498,7 +555,7 @@ export const AgentAnalyticsEarnings: React.FC<AgentAnalyticsEarningsProps> = ({
               Available to Cash Out
             </span>
             <div className="flex items-baseline gap-2">
-              <span className="text-2xl sm:text-3xl font-black text-emerald-600 dark:text-emerald-400 tabular-nums">
+              <span className="text-2xl sm:text-3xl font-black text-emerald-600 dark:text-emerald-400 ">
                 GH₵ {commissionBalance.toFixed(2)}
               </span>
             </div>
@@ -508,12 +565,11 @@ export const AgentAnalyticsEarnings: React.FC<AgentAnalyticsEarningsProps> = ({
           </div>
 
           <Button
+            size="sm"
             onClick={() => setIsWithdrawModalOpen(true)}
-            disabled={commissionBalance < 5}
-            className="h-11 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-xs gap-1.5 shrink-0 disabled:opacity-50 cursor-pointer"
+            className="h-9 px-3.5 text-xs font-bold transition-colors flex items-center gap-1.5 cursor-pointer shadow-2xs"
           >
-            <ArrowDownLeft className="size-4" />
-            <span>Cash Out</span>
+            <span>Withdraw Profit</span>
           </Button>
         </div>
       </div>
@@ -532,7 +588,7 @@ export const AgentAnalyticsEarnings: React.FC<AgentAnalyticsEarningsProps> = ({
               Sales Volume (GMV)
             </span>
           </div>
-          <p className="mt-2 text-xl font-black tabular-nums text-foreground">
+          <p className="mt-2 text-xl font-black  text-foreground">
             GH₵ {totalSales > 0 ? totalSales.toFixed(2) : "4,820.00"}
           </p>
           <p className="text-[10px] text-emerald-600 dark:text-emerald-400 font-medium">
@@ -550,7 +606,7 @@ export const AgentAnalyticsEarnings: React.FC<AgentAnalyticsEarningsProps> = ({
               Profit Margin
             </span>
           </div>
-          <p className="mt-2 text-xl font-black tabular-nums text-emerald-600 dark:text-emerald-400">
+          <p className="mt-2 text-xl font-black  text-emerald-600 dark:text-emerald-400">
             +GH₵ {thisMonthCommissions.toFixed(2)}
           </p>
           <p className="text-[10px] text-emerald-600 dark:text-emerald-400 font-medium">
@@ -568,7 +624,7 @@ export const AgentAnalyticsEarnings: React.FC<AgentAnalyticsEarningsProps> = ({
               Delivered Orders
             </span>
           </div>
-          <p className="mt-2 text-xl font-black tabular-nums text-foreground">
+          <p className="mt-2 text-xl font-black  text-foreground">
             {deliveredOrders.length > 0 ? deliveredOrders.length : 218}
           </p>
           <p className="text-[10px] text-muted-foreground font-medium">
@@ -586,7 +642,7 @@ export const AgentAnalyticsEarnings: React.FC<AgentAnalyticsEarningsProps> = ({
               Avg. Order Basket
             </span>
           </div>
-          <p className="mt-2 text-xl font-black tabular-nums text-foreground">
+          <p className="mt-2 text-xl font-black  text-foreground">
             GH₵ {avgOrderValue.toFixed(2)}
           </p>
           <p className="text-[10px] text-muted-foreground font-medium">
@@ -649,15 +705,54 @@ export const AgentAnalyticsEarnings: React.FC<AgentAnalyticsEarningsProps> = ({
         {/* ========================================================================= */}
         {/* TAB 1: SALES & REVENUE TRENDS (Exact Store Builder Visual Style)          */}
         {/* ========================================================================= */}
-        <TabsContent value="overview" className="space-y-6 animate-in fade-in-50">
+        <TabsContent
+          value="overview"
+          className="space-y-6 animate-in fade-in-50"
+        >
           {/* ── Revenue & Net Margin Trajectory Bar Chart (Exact Orders per day style) ── */}
           <div className="rounded-2xl border border-border bg-card p-5 shadow-xs">
-            <div className="mb-5 flex items-center justify-between">
-              <h3 className="text-sm font-extrabold text-foreground">
-                Revenue &amp; Net Margin Trajectory ({period === "7d" ? "last 7 days" : period === "30d" ? "last 30 days" : "recent months"})
-              </h3>
-              <div className="text-[10px] font-bold text-muted-foreground tabular-nums">
-                Peak: GH₵ {maxTrendSales}
+            <div className="mb-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div>
+                <h3 className="text-sm font-extrabold text-foreground">
+                  Revenue &amp; Net Margin Trajectory
+                </h3>
+                <p className="text-xs text-muted-foreground">
+                  {period === "7d"
+                    ? "Daily volume & profit breakdown for the last 7 days"
+                    : period === "30d"
+                      ? "Weekly volume & profit breakdown for the last 30 days"
+                      : "Monthly volume & profit breakdown for all time"}
+                </p>
+              </div>
+
+              <div className="flex flex-wrap items-center gap-3">
+                <div className="inline-flex rounded-xl border border-border bg-background/80 p-1 shadow-2xs">
+                  {(
+                    [
+                      ["7d", "7 Days"],
+                      ["30d", "30 Days"],
+                      ["all", "All Time"],
+                    ] as const
+                  ).map(([key, label]) => (
+                    <Button
+                      key={key}
+                      variant={period === key ? "default" : "ghost"}
+                      size="sm"
+                      onClick={() => setPeriod(key)}
+                      className={`h-7 rounded-lg px-3 text-xs font-bold transition-all ${
+                        period === key
+                          ? "shadow-xs"
+                          : "text-muted-foreground hover:text-foreground"
+                      }`}
+                    >
+                      {label}
+                    </Button>
+                  ))}
+                </div>
+
+                <div className="hidden sm:block text-[10px] font-bold text-muted-foreground bg-muted/40 px-2.5 py-1 rounded-lg border border-border">
+                  Peak: GH₵ {maxTrendSales}
+                </div>
               </div>
             </div>
 
@@ -702,11 +797,15 @@ export const AgentAnalyticsEarnings: React.FC<AgentAnalyticsEarningsProps> = ({
             <div className="mt-4 flex items-center gap-4 text-[10px]">
               <div className="flex items-center gap-1.5">
                 <div className="size-2.5 rounded-sm bg-primary/80" />
-                <span className="text-muted-foreground">Net Margin (Profit)</span>
+                <span className="text-muted-foreground">
+                  Net Margin (Profit)
+                </span>
               </div>
               <div className="flex items-center gap-1.5">
                 <div className="size-2.5 rounded-sm bg-muted" />
-                <span className="text-muted-foreground">Wholesale Cost (Sales)</span>
+                <span className="text-muted-foreground">
+                  Wholesale Cost (Sales)
+                </span>
               </div>
             </div>
           </div>
@@ -724,7 +823,7 @@ export const AgentAnalyticsEarnings: React.FC<AgentAnalyticsEarningsProps> = ({
                 <div className="space-y-2.5">
                   {dayOfWeekData.map((h, i) => (
                     <div key={i} className="flex items-center gap-3">
-                      <span className="w-24 shrink-0 text-[10px] font-semibold tabular-nums text-muted-foreground">
+                      <span className="w-24 shrink-0 text-[10px] font-semibold  text-muted-foreground">
                         {h.label}
                       </span>
 
@@ -739,7 +838,7 @@ export const AgentAnalyticsEarnings: React.FC<AgentAnalyticsEarningsProps> = ({
                         </div>
                       </div>
 
-                      <span className="w-8 shrink-0 text-right text-[10px] font-bold text-foreground tabular-nums">
+                      <span className="w-8 shrink-0 text-right text-[10px] font-bold text-foreground ">
                         {h.count}
                       </span>
                     </div>
@@ -764,7 +863,7 @@ export const AgentAnalyticsEarnings: React.FC<AgentAnalyticsEarningsProps> = ({
                       <span className="text-[10px] font-semibold text-muted-foreground">
                         total
                       </span>
-                      <span className="text-lg font-black text-foreground tabular-nums">
+                      <span className="text-lg font-black text-foreground ">
                         {retentionTotal}
                       </span>
                     </div>
@@ -773,7 +872,9 @@ export const AgentAnalyticsEarnings: React.FC<AgentAnalyticsEarningsProps> = ({
                   {/* Legend */}
                   <div className="w-full space-y-1.5">
                     {retentionSlices.map((item, i) => {
-                      const pct = ((item.count / retentionTotal) * 100).toFixed(0);
+                      const pct = ((item.count / retentionTotal) * 100).toFixed(
+                        0,
+                      );
                       return (
                         <div key={i} className="flex items-center gap-2">
                           <div className="flex min-w-0 items-center gap-1.5">
@@ -786,10 +887,10 @@ export const AgentAnalyticsEarnings: React.FC<AgentAnalyticsEarningsProps> = ({
                           </div>
 
                           <div className="flex shrink-0 items-center gap-2 text-[9px]">
-                            <span className="tabular-nums font-bold text-muted-foreground">
+                            <span className=" font-bold text-muted-foreground">
                               {pct}%
                             </span>
-                            <span className="tabular-nums font-bold text-foreground">
+                            <span className=" font-bold text-foreground">
                               {item.count}
                             </span>
                           </div>
@@ -806,77 +907,70 @@ export const AgentAnalyticsEarnings: React.FC<AgentAnalyticsEarningsProps> = ({
         {/* ========================================================================= */}
         {/* TAB 2: COMMISSIONS & MARGINS (Store Builder Look)                         */}
         {/* ========================================================================= */}
-        <TabsContent value="commissions" className="space-y-6 animate-in fade-in-50">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* Left: Profit Generated by Telecom Carrier */}
-            <div className="rounded-2xl border border-border bg-card p-5 shadow-xs lg:col-span-1">
-              <h3 className="mb-1 text-sm font-extrabold text-foreground">
+        <TabsContent
+          value="commissions"
+          className="space-y-6 animate-in fade-in-50"
+        >
+          {/* Profit by Telecom Carrier */}
+          <div className="flex flex-col justify-between rounded-2xl border border-border bg-card p-5 shadow-xs">
+            <div>
+              <h3 className="mb-4 flex items-center gap-2 text-sm font-extrabold text-foreground">
+                <Radio className="size-4" />
                 Profit by Telecom Carrier
               </h3>
-              <p className="text-xs text-muted-foreground mb-4">
-                Net margin distribution across cellular networks
-              </p>
 
-              <div className="space-y-4">
+              <div className="space-y-2.5">
                 {networkBreakdown.map((net) => (
-                  <div key={net.code} className="space-y-1.5">
-                    <div className="flex items-center justify-between text-xs">
-                      <div className="flex items-center gap-2">
-                        <span className={`inline-block px-1.5 py-0.5 rounded text-[10px] font-bold ${net.colorBg} ${net.colorText}`}>
-                          {net.code}
-                        </span>
-                        <span className="font-semibold text-foreground">{net.network}</span>
-                      </div>
-                      <div className="text-right">
-                        <span className="font-bold text-emerald-600 dark:text-emerald-400 tabular-nums">
-                          +GH₵ {net.profit.toFixed(2)}
-                        </span>
-                        <span className="text-muted-foreground text-[10px] ml-1">({net.share}%)</span>
+                  <div key={net.code} className="flex items-center gap-3">
+                    <span className="w-32 shrink-0 text-[10px] font-semibold text-muted-foreground">
+                      {net.network}
+                    </span>
+
+                    <div className="relative flex-1">
+                      <div className="h-5 w-full overflow-hidden rounded-lg bg-muted/40">
+                        <div
+                          className={`h-full rounded-lg ${net.barColor} transition-all duration-700`}
+                          style={{ width: `${net.share}%` }}
+                        />
                       </div>
                     </div>
-                    <div className="w-full h-2 rounded-full bg-muted overflow-hidden">
-                      <div
-                        className={`h-full rounded-full ${net.barColor}`}
-                        style={{ width: `${net.share}%` }}
-                      />
-                    </div>
+
+                    <span className="w-20 shrink-0 text-right text-[10px] font-bold text-emerald-600 dark:text-emerald-400">
+                      +GH₵ {net.profit.toFixed(2)}
+                    </span>
                   </div>
                 ))}
-
-                <div className="pt-3 border-t border-border flex items-center justify-between text-xs">
-                  <span className="font-semibold text-muted-foreground">Total Period Profit:</span>
-                  <span className="text-sm font-black text-emerald-600 dark:text-emerald-400 tabular-nums">
-                    +GH₵ {thisMonthCommissions.toFixed(2)}
-                  </span>
-                </div>
               </div>
             </div>
+          </div>
 
-            {/* Right: Tier Progress & Rewards Integration */}
-            <div className="lg:col-span-2">
-              <TierProgressCard
-                currentTier="Tier 2 Gold Merchant"
-                tierRate={0.45}
-                nextTier="Tier 3 Platinum"
-                progressPercent={72}
-                currentScore={1425.5}
-                goalScore={2000}
-                storeProfit={thisMonthCommissions}
-                commission={commissionBalance}
-                referrals={155.5}
-                referralsExcluded={0}
-                customers={deliveredOrders.length || 145}
-                referralCount={12}
-                deliveredPercent={`${deliveryRate}%`}
-              />
-            </div>
+          {/* Tier Progress & Rewards Integration */}
+          <div className="rounded-2xl border border-border bg-card p-5 shadow-xs">
+            <TierProgressCard
+              currentTier="Tier 2 Gold Merchant"
+              tierRate={0.45}
+              nextTier="Tier 3 Platinum"
+              progressPercent={72}
+              currentScore={1425.5}
+              goalScore={2000}
+              storeProfit={thisMonthCommissions}
+              commission={commissionBalance}
+              referrals={155.5}
+              referralsExcluded={0}
+              customers={deliveredOrders.length || 145}
+              referralCount={12}
+              deliveredPercent={`${deliveryRate}%`}
+            />
           </div>
         </TabsContent>
 
         {/* ========================================================================= */}
         {/* TAB 3: CARRIER MARKET SHARE (Store Builder Look)                          */}
         {/* ========================================================================= */}
-        <TabsContent value="networks" className="space-y-6 animate-in fade-in-50">
+        <TabsContent
+          value="networks"
+          className="space-y-6 animate-in fade-in-50"
+        >
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Visual Donut Chart */}
             <div className="rounded-2xl border border-border bg-card p-5 shadow-xs lg:col-span-1">
@@ -900,7 +994,7 @@ export const AgentAnalyticsEarnings: React.FC<AgentAnalyticsEarningsProps> = ({
                     <span className="text-[10px] font-semibold text-muted-foreground">
                       total
                     </span>
-                    <span className="text-sm font-black text-foreground tabular-nums">
+                    <span className="text-sm font-black text-foreground ">
                       GH₵ {totalSales.toFixed(0)}
                     </span>
                   </div>
@@ -909,12 +1003,19 @@ export const AgentAnalyticsEarnings: React.FC<AgentAnalyticsEarningsProps> = ({
                 {/* Legend */}
                 <div className="w-full space-y-2">
                   {networkBreakdown.map((net, i) => (
-                    <div key={net.code} className="flex items-center justify-between text-xs">
+                    <div
+                      key={net.code}
+                      className="flex items-center justify-between text-xs"
+                    >
                       <div className="flex items-center gap-1.5">
-                        <span className={`size-2 shrink-0 rounded-full ${PIE_COLORS_TW[i % PIE_COLORS_TW.length]}`} />
-                        <span className="font-semibold text-foreground">{net.network}</span>
+                        <span
+                          className={`size-2 shrink-0 rounded-full ${PIE_COLORS_TW[i % PIE_COLORS_TW.length]}`}
+                        />
+                        <span className="font-semibold text-foreground">
+                          {net.network}
+                        </span>
                       </div>
-                      <span className="font-bold tabular-nums text-foreground">
+                      <span className="font-bold  text-foreground">
                         {net.share}% ({net.orders} orders)
                       </span>
                     </div>
@@ -924,7 +1025,7 @@ export const AgentAnalyticsEarnings: React.FC<AgentAnalyticsEarningsProps> = ({
             </div>
 
             {/* Carrier Performance Comparison Cards */}
-            <div className="lg:col-span-2 space-y-4">
+            <div className="lg:col-span-2 space-y-4 bg-card p-5 shadow-xs rounded-2xl border border-border">
               {networkBreakdown.map((net) => (
                 <div
                   key={net.code}
@@ -938,16 +1039,19 @@ export const AgentAnalyticsEarnings: React.FC<AgentAnalyticsEarningsProps> = ({
                           net.code === "MTN"
                             ? "bg-amber-400/20 text-amber-900 dark:text-amber-300 border-amber-400/40"
                             : net.code === "Telecel"
-                            ? "bg-red-500/20 text-red-700 dark:text-red-300 border-red-500/40"
-                            : "bg-blue-500/20 text-blue-700 dark:text-blue-300 border-blue-500/40"
+                              ? "bg-red-500/20 text-red-700 dark:text-red-300 border-red-500/40"
+                              : "bg-blue-500/20 text-blue-700 dark:text-blue-300 border-blue-500/40"
                         }`}
                       >
                         {net.code} Network
                       </Badge>
-                      <span className="text-xs font-bold text-foreground">{net.network}</span>
+                      <span className="text-xs font-bold text-foreground">
+                        {net.network}
+                      </span>
                     </div>
                     <p className="text-xs text-muted-foreground">
-                      {net.orders} successfully delivered orders · GH₵ {net.sales.toFixed(2)} total sales
+                      {net.orders} successfully delivered orders · GH₵{" "}
+                      {net.sales.toFixed(2)} total sales
                     </p>
                   </div>
 
@@ -956,7 +1060,7 @@ export const AgentAnalyticsEarnings: React.FC<AgentAnalyticsEarningsProps> = ({
                       <span className="text-[10px] uppercase font-bold text-muted-foreground block">
                         Net Margin
                       </span>
-                      <span className="text-lg font-black text-emerald-600 dark:text-emerald-400 tabular-nums">
+                      <span className="text-lg font-black text-emerald-600 dark:text-emerald-400 ">
                         +GH₵ {net.profit.toFixed(2)}
                       </span>
                     </div>
@@ -965,7 +1069,7 @@ export const AgentAnalyticsEarnings: React.FC<AgentAnalyticsEarningsProps> = ({
                       <span className="text-[10px] uppercase font-bold text-muted-foreground block">
                         Market Share
                       </span>
-                      <span className="text-lg font-black text-foreground tabular-nums">
+                      <span className="text-lg font-black text-foreground ">
                         {net.share}%
                       </span>
                     </div>
@@ -979,7 +1083,10 @@ export const AgentAnalyticsEarnings: React.FC<AgentAnalyticsEarningsProps> = ({
         {/* ========================================================================= */}
         {/* TAB 4: PEAK RUSH HOURS (Store Builder Look)                               */}
         {/* ========================================================================= */}
-        <TabsContent value="activity" className="space-y-6 animate-in fade-in-50">
+        <TabsContent
+          value="activity"
+          className="space-y-6 animate-in fade-in-50"
+        >
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Hourly Rush Times Curve (Styled like Busiest hours from store builder) */}
             <div className="flex flex-col justify-between rounded-2xl border border-border bg-card p-5 shadow-xs lg:col-span-2">
@@ -995,7 +1102,7 @@ export const AgentAnalyticsEarnings: React.FC<AgentAnalyticsEarningsProps> = ({
                 <div className="space-y-2.5">
                   {hourlyData.map((h, i) => (
                     <div key={i} className="flex items-center gap-3">
-                      <span className="w-24 shrink-0 text-[10px] font-semibold tabular-nums text-muted-foreground">
+                      <span className="w-24 shrink-0 text-[10px] font-semibold  text-muted-foreground">
                         {h.label}
                       </span>
 
@@ -1010,7 +1117,7 @@ export const AgentAnalyticsEarnings: React.FC<AgentAnalyticsEarningsProps> = ({
                         </div>
                       </div>
 
-                      <span className="w-8 shrink-0 text-right text-[10px] font-bold text-foreground tabular-nums">
+                      <span className="w-8 shrink-0 text-right text-[10px] font-bold text-foreground ">
                         {h.count}
                       </span>
                     </div>
@@ -1019,7 +1126,12 @@ export const AgentAnalyticsEarnings: React.FC<AgentAnalyticsEarningsProps> = ({
               </div>
 
               <div className="mt-4 p-3.5 rounded-xl bg-muted/40 border border-border text-xs text-muted-foreground leading-relaxed">
-                <strong className="text-foreground">Peak Rush Window:</strong> Heaviest customer order traffic hits between <strong className="text-foreground">12:00 PM – 2:00 PM</strong> and <strong className="text-foreground">4:00 PM – 6:00 PM</strong>. Keep your float funded to handle automated fulfillment.
+                <strong className="text-foreground">Peak Rush Window:</strong>{" "}
+                Heaviest customer order traffic hits between{" "}
+                <strong className="text-foreground">12:00 PM – 2:00 PM</strong>{" "}
+                and{" "}
+                <strong className="text-foreground">4:00 PM – 6:00 PM</strong>.
+                Keep your float funded to handle automated fulfillment.
               </div>
             </div>
 
@@ -1035,21 +1147,33 @@ export const AgentAnalyticsEarnings: React.FC<AgentAnalyticsEarningsProps> = ({
               <div className="space-y-3">
                 <div className="space-y-1.5">
                   <div className="flex justify-between text-xs">
-                    <span className="font-semibold text-foreground">EVD Delivery Rate</span>
-                    <span className="font-bold text-emerald-600 dark:text-emerald-400 tabular-nums">{deliveryRate}%</span>
+                    <span className="font-semibold text-foreground">
+                      EVD Delivery Rate
+                    </span>
+                    <span className="font-bold text-emerald-600 dark:text-emerald-400 ">
+                      {deliveryRate}%
+                    </span>
                   </div>
-                  <div className="w-full h-2 rounded-full bg-muted overflow-hidden">
-                    <div className="bg-emerald-500 h-full rounded-full" style={{ width: `${deliveryRate}%` }} />
+                  <div className="h-5 w-full overflow-hidden rounded-lg bg-muted/40">
+                    <div
+                      className="h-full rounded-lg bg-emerald-500 transition-all duration-700"
+                      style={{ width: `${deliveryRate}%` }}
+                    />
                   </div>
                 </div>
 
                 <div className="space-y-1.5">
                   <div className="flex justify-between text-xs">
-                    <span className="font-semibold text-foreground">Average Dispatch Speed</span>
-                    <span className="font-bold text-primary tabular-nums">4.2 seconds</span>
+                    <span className="font-semibold text-foreground">
+                      Average Dispatch Speed
+                    </span>
+                    <span className="font-bold text-primary ">4.2 seconds</span>
                   </div>
-                  <div className="w-full h-2 rounded-full bg-muted overflow-hidden">
-                    <div className="bg-primary h-full rounded-full" style={{ width: "92%" }} />
+                  <div className="h-5 w-full overflow-hidden rounded-lg bg-muted/40">
+                    <div
+                      className="h-full rounded-lg bg-primary/75 transition-all duration-700"
+                      style={{ width: "92%" }}
+                    />
                   </div>
                 </div>
               </div>
@@ -1060,7 +1184,8 @@ export const AgentAnalyticsEarnings: React.FC<AgentAnalyticsEarningsProps> = ({
                   <span>Licensed Telco Routing</span>
                 </span>
                 <p className="text-muted-foreground text-[11px] leading-relaxed">
-                  All transactions run directly through carrier-approved EVD switches with instant reversal protection.
+                  All transactions run directly through carrier-approved EVD
+                  switches with instant reversal protection.
                 </p>
               </div>
             </div>
@@ -1071,71 +1196,62 @@ export const AgentAnalyticsEarnings: React.FC<AgentAnalyticsEarningsProps> = ({
         {/* TAB 5: BUNDLE RANKINGS & COMMISSIONS TABLE                                */}
         {/* (Exact layout of All Bulk SMS Campaigns & Audit Ledger table)              */}
         {/* ========================================================================= */}
-        <TabsContent value="bundles" className="space-y-6 animate-in fade-in-50">
+        <TabsContent
+          value="bundles"
+          className="space-y-6 animate-in fade-in-50"
+        >
           {/* Top 5 Bundles Visual Chart */}
-          <div className="rounded-2xl border border-border bg-card p-5 shadow-xs">
-            <div className="mb-4 flex items-center justify-between">
-              <div>
-                <h3 className="text-sm font-extrabold text-foreground">
-                  Top-Selling Bundles Performance
-                </h3>
-                <p className="text-xs text-muted-foreground">
-                  Comparison of gross revenue vs cumulative profit per bundle package
-                </p>
+          <div className="flex flex-col justify-between rounded-2xl border border-border bg-card p-5 shadow-xs">
+            <div>
+              <div className="mb-4 flex items-center justify-between">
+                <div>
+                  <h3 className="text-sm font-extrabold text-foreground flex items-center gap-2">
+                    <Tag className="size-4" />
+                    Top-Selling Bundles Performance
+                  </h3>
+                  <p className="text-xs text-muted-foreground">
+                    Comparison of gross revenue vs cumulative profit per bundle
+                    package
+                  </p>
+                </div>
+                {onNavigateTab && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => onNavigateTab("pricing")}
+                    className="text-xs font-bold gap-1.5 rounded-xl shadow-2xs cursor-pointer"
+                  >
+                    <Sliders className="size-3.5 text-amber-500" />
+                    <span>Adjust Pricing</span>
+                  </Button>
+                )}
               </div>
-              {onNavigateTab && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => onNavigateTab("pricing")}
-                  className="text-xs font-bold gap-1.5 rounded-xl shadow-2xs cursor-pointer"
-                >
-                  <Sliders className="size-3.5 text-amber-500" />
-                  <span>Adjust Pricing</span>
-                </Button>
-              )}
-            </div>
 
-            <div className="space-y-3">
-              {topBundles.map((b, i) => {
-                const pct = Math.round((b.revenue / maxBundleRevenue) * 100);
-                return (
-                  <div key={i} className="p-3 rounded-2xl bg-muted/30 border border-border/80 space-y-2">
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 text-xs">
-                      <div className="flex items-center gap-2">
-                        <Badge
-                          variant="outline"
-                          className={`text-[10px] font-bold ${
-                            b.network === "MTN"
-                              ? "bg-amber-400/20 text-amber-900 dark:text-amber-300 border-amber-400/40"
-                              : b.network === "Telecel"
-                              ? "bg-red-500/20 text-red-700 dark:text-red-300 border-red-500/40"
-                              : "bg-blue-500/20 text-blue-700 dark:text-blue-300 border-blue-500/40"
-                          }`}
-                        >
-                          {b.network}
-                        </Badge>
-                        <span className="font-bold text-foreground">{b.name}</span>
-                        <span className="text-muted-foreground text-[11px]">({b.orders} orders)</span>
+              <div className="space-y-2.5">
+                {topBundles.map((b, i) => {
+                  const pct = Math.round((b.revenue / maxBundleRevenue) * 100);
+                  return (
+                    <div key={i} className="flex items-center gap-3">
+                      <span className="w-40 shrink-0 text-[10px] font-semibold text-muted-foreground">
+                        {b.name}
+                      </span>
+
+                      <div className="relative flex-1">
+                        <div className="h-5 w-full overflow-hidden rounded-lg bg-muted/40">
+                          <div
+                            className="h-full rounded-lg bg-primary/75 transition-all duration-700"
+                            style={{ width: `${pct}%` }}
+                          />
+                        </div>
                       </div>
-                      <div className="flex items-center gap-3">
-                        <span className="font-black text-foreground tabular-nums">
-                          GH₵ {b.revenue.toLocaleString()}
-                        </span>
-                        <span className="font-bold text-emerald-600 dark:text-emerald-400 tabular-nums">
-                          +GH₵ {b.profitTotal.toFixed(2)} profit
-                        </span>
-                      </div>
+
+                      <span className="w-20 shrink-0 text-right text-[10px] font-bold text-emerald-600 dark:text-emerald-400">
+                        +GH₵ {b.profitTotal.toFixed(2)}
+                      </span>
                     </div>
-                    <div className="w-full h-2 rounded-full bg-muted overflow-hidden">
-                      <div
-                        className="h-full rounded-full bg-primary"
-                        style={{ width: `${pct}%` }}
-                      />
-                    </div>
-                  </div>
-                );
-              })}
+                  );
+                })}
+              </div>
             </div>
           </div>
 
@@ -1152,7 +1268,8 @@ export const AgentAnalyticsEarnings: React.FC<AgentAnalyticsEarningsProps> = ({
                     <span>Itemized Profit &amp; Commissions Ledger</span>
                   </CardTitle>
                   <CardDescription className="mt-1 text-xs">
-                    Comprehensive audit log of order fulfillments, retail markups, recipient phones, and wallet settlement credits.
+                    Comprehensive audit log of order fulfillments, retail
+                    markups, recipient phones, and wallet settlement credits.
                   </CardDescription>
                 </div>
               </div>
@@ -1237,7 +1354,9 @@ export const AgentAnalyticsEarnings: React.FC<AgentAnalyticsEarningsProps> = ({
                           <SelectItem value="credited">
                             Credited to Wallet ({allCommissions.length})
                           </SelectItem>
-                          <SelectItem value="pending">Pending Settle (0)</SelectItem>
+                          <SelectItem value="pending">
+                            Pending Settle (0)
+                          </SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
@@ -1298,9 +1417,15 @@ export const AgentAnalyticsEarnings: React.FC<AgentAnalyticsEarningsProps> = ({
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="all">All margin amounts</SelectItem>
-                          <SelectItem value="high">High Margin (&ge; GH₵ 4.00)</SelectItem>
-                          <SelectItem value="standard">Standard Margin (&lt; GH₵ 4.00)</SelectItem>
+                          <SelectItem value="all">
+                            All margin amounts
+                          </SelectItem>
+                          <SelectItem value="high">
+                            High Margin (&ge; GH₵ 4.00)
+                          </SelectItem>
+                          <SelectItem value="standard">
+                            Standard Margin (&lt; GH₵ 4.00)
+                          </SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
@@ -1385,8 +1510,8 @@ export const AgentAnalyticsEarnings: React.FC<AgentAnalyticsEarningsProps> = ({
                                 comm.network === "MTN"
                                   ? "bg-amber-400 text-amber-950"
                                   : comm.network === "Telecel"
-                                  ? "bg-red-600 text-white"
-                                  : "bg-blue-600 text-white"
+                                    ? "bg-red-600 text-white"
+                                    : "bg-blue-600 text-white"
                               }`}
                             >
                               {comm.network}
@@ -1414,7 +1539,7 @@ export const AgentAnalyticsEarnings: React.FC<AgentAnalyticsEarningsProps> = ({
 
                         {/* Recipient */}
                         <TableCell className="text-xs">
-                          <div className="font-semibold text-foreground tabular-nums">
+                          <div className="font-semibold text-foreground ">
                             {comm.recipientPhone}
                           </div>
                           <div className="text-[10px] text-muted-foreground">
@@ -1423,12 +1548,12 @@ export const AgentAnalyticsEarnings: React.FC<AgentAnalyticsEarningsProps> = ({
                         </TableCell>
 
                         {/* Customer Paid */}
-                        <TableCell className="text-right text-xs font-semibold text-muted-foreground tabular-nums">
+                        <TableCell className="text-right text-xs font-semibold text-muted-foreground ">
                           GH₵ {comm.amount.toFixed(2)}
                         </TableCell>
 
                         {/* Agent Profit */}
-                        <TableCell className="text-right text-xs font-bold tabular-nums text-emerald-600 dark:text-emerald-400">
+                        <TableCell className="text-right text-xs font-bold  text-emerald-600 dark:text-emerald-400">
                           +GH₵ {comm.profit.toFixed(2)}
                         </TableCell>
 
@@ -1518,8 +1643,8 @@ export const AgentAnalyticsEarnings: React.FC<AgentAnalyticsEarningsProps> = ({
                       selectedCommission.network === "MTN"
                         ? "bg-amber-400 text-amber-950"
                         : selectedCommission.network === "Telecel"
-                        ? "bg-red-600 text-white"
-                        : "bg-blue-600 text-white"
+                          ? "bg-red-600 text-white"
+                          : "bg-blue-600 text-white"
                     }`}
                   >
                     {selectedCommission.network}
@@ -1543,7 +1668,7 @@ export const AgentAnalyticsEarnings: React.FC<AgentAnalyticsEarningsProps> = ({
                     <CheckCircle2 className="size-4 text-emerald-600 dark:text-emerald-400" />
                     Settled &amp; Credited to Wallet
                   </span>
-                  <span className="font-black text-emerald-600 dark:text-emerald-400 text-sm tabular-nums">
+                  <span className="font-black text-emerald-600 dark:text-emerald-400 text-sm ">
                     +GH₵ {selectedCommission.profit.toFixed(2)}
                   </span>
                 </div>
@@ -1551,28 +1676,50 @@ export const AgentAnalyticsEarnings: React.FC<AgentAnalyticsEarningsProps> = ({
                 {/* Details Breakdown */}
                 <div className="space-y-2.5 rounded-2xl border border-border bg-muted/20 p-4">
                   <div className="flex justify-between items-center">
-                    <span className="text-muted-foreground">Product Bundle</span>
-                    <span className="font-bold text-foreground">{selectedCommission.productName}</span>
+                    <span className="text-muted-foreground">
+                      Product Bundle
+                    </span>
+                    <span className="font-bold text-foreground">
+                      {selectedCommission.productName}
+                    </span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-muted-foreground">Recipient Number</span>
-                    <span className="font-bold text-foreground tabular-nums">{selectedCommission.recipientPhone}</span>
+                    <span className="text-muted-foreground">
+                      Recipient Number
+                    </span>
+                    <span className="font-bold text-foreground ">
+                      {selectedCommission.recipientPhone}
+                    </span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-muted-foreground">Settlement Date</span>
-                    <span className="font-semibold text-foreground">{selectedCommission.date}</span>
+                    <span className="text-muted-foreground">
+                      Settlement Date
+                    </span>
+                    <span className="font-semibold text-foreground">
+                      {selectedCommission.date}
+                    </span>
                   </div>
                   <div className="pt-2 border-t border-border flex justify-between items-center">
-                    <span className="text-muted-foreground">Customer Paid (Gross)</span>
-                    <span className="font-semibold text-foreground tabular-nums">GH₵ {selectedCommission.amount.toFixed(2)}</span>
+                    <span className="text-muted-foreground">
+                      Customer Paid (Gross)
+                    </span>
+                    <span className="font-semibold text-foreground ">
+                      GH₵ {selectedCommission.amount.toFixed(2)}
+                    </span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-muted-foreground">Wholesale Platform Cost</span>
-                    <span className="font-semibold text-foreground tabular-nums">GH₵ {selectedCommission.cost.toFixed(2)}</span>
+                    <span className="text-muted-foreground">
+                      Wholesale Platform Cost
+                    </span>
+                    <span className="font-semibold text-foreground ">
+                      GH₵ {selectedCommission.cost.toFixed(2)}
+                    </span>
                   </div>
                   <div className="pt-2 border-t border-border flex justify-between items-center">
-                    <span className="font-bold text-foreground">Net Reseller Commission</span>
-                    <span className="font-black text-emerald-600 dark:text-emerald-400 text-sm tabular-nums">
+                    <span className="font-bold text-foreground">
+                      Net Reseller Commission
+                    </span>
+                    <span className="font-black text-emerald-600 dark:text-emerald-400 text-sm ">
                       +GH₵ {selectedCommission.profit.toFixed(2)}
                     </span>
                   </div>
