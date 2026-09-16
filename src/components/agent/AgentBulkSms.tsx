@@ -612,7 +612,10 @@ export const AgentBulkSms: React.FC<AgentBulkSmsProps> = ({
     const realList = Object.values(map);
     // If order history is fresh or small, supplement with realistic sample customer contacts
     const countAll = Math.max(145, realList.length);
-    const countRepeat = Math.max(58, realList.filter((c) => c.count > 1).length);
+    const countRepeat = Math.max(
+      58,
+      realList.filter((c) => c.count > 1).length,
+    );
     const countInactive = Math.max(
       42,
       realList.filter((c) => c.count === 1).length,
@@ -813,7 +816,10 @@ export const AgentBulkSms: React.FC<AgentBulkSmsProps> = ({
   // Request new Sender ID
   const handleRequestSenderId = (e: React.FormEvent) => {
     e.preventDefault();
-    const clean = newSenderInput.toUpperCase().trim().replace(/[^A-Z0-9]/g, "");
+    const clean = newSenderInput
+      .toUpperCase()
+      .trim()
+      .replace(/[^A-Z0-9]/g, "");
     if (clean.length < 3 || clean.length > 11) {
       return;
     }
@@ -1013,7 +1019,7 @@ export const AgentBulkSms: React.FC<AgentBulkSmsProps> = ({
             <div className="flex size-7 items-center justify-center rounded-lg bg-primary/10">
               <Receipt className="size-3.5 text-primary" />
             </div>
-            <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+            <span className="text-[10px] font-bold uppercase  text-muted-foreground">
               All Campaigns
             </span>
           </div>
@@ -1031,7 +1037,7 @@ export const AgentBulkSms: React.FC<AgentBulkSmsProps> = ({
             <div className="flex size-7 items-center justify-center rounded-lg bg-emerald-500/10">
               <TrendingUp className="size-3.5 text-emerald-600 dark:text-emerald-400" />
             </div>
-            <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+            <span className="text-[10px] font-bold uppercase  text-muted-foreground">
               Recipients
             </span>
           </div>
@@ -1049,7 +1055,7 @@ export const AgentBulkSms: React.FC<AgentBulkSmsProps> = ({
             <div className="flex size-7 items-center justify-center rounded-lg bg-amber-500/10">
               <DollarSign className="size-3.5 text-amber-600 dark:text-amber-400" />
             </div>
-            <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+            <span className="text-[10px] font-bold uppercase  text-muted-foreground">
               Campaign Spend
             </span>
           </div>
@@ -1067,7 +1073,7 @@ export const AgentBulkSms: React.FC<AgentBulkSmsProps> = ({
             <div className="flex size-7 items-center justify-center rounded-lg bg-primary/10">
               <ShieldCheck className="size-3.5 text-primary" />
             </div>
-            <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+            <span className="text-[10px] font-bold uppercase  text-muted-foreground">
               Sender IDs
             </span>
           </div>
@@ -1103,7 +1109,7 @@ export const AgentBulkSms: React.FC<AgentBulkSmsProps> = ({
             <div className="space-y-1.5">
               <Label
                 htmlFor="sms-search"
-                className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground"
+                className="text-[10px] font-bold uppercase  text-muted-foreground"
               >
                 Search campaigns
               </Label>
@@ -1128,7 +1134,7 @@ export const AgentBulkSms: React.FC<AgentBulkSmsProps> = ({
               <div className="mb-3 flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <SlidersHorizontal className="size-3.5 text-muted-foreground" />
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                  <span className="text-[10px] font-bold uppercase  text-muted-foreground">
                     Campaign filters
                   </span>
                 </div>
@@ -1260,25 +1266,25 @@ export const AgentBulkSms: React.FC<AgentBulkSmsProps> = ({
           <Table>
             <TableHeader>
               <TableRow className="hover:bg-transparent">
-                <TableHead className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                <TableHead className="text-[10px] font-bold uppercase  text-muted-foreground">
                   Campaign & Sender ID
                 </TableHead>
-                <TableHead className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                <TableHead className="text-[10px] font-bold uppercase  text-muted-foreground">
                   Audience & Target
                 </TableHead>
-                <TableHead className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                <TableHead className="text-[10px] font-bold uppercase  text-muted-foreground">
                   Message Preview
                 </TableHead>
-                <TableHead className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                <TableHead className="text-[10px] font-bold uppercase  text-muted-foreground">
                   Pages & Units
                 </TableHead>
-                <TableHead className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground text-right">
+                <TableHead className="text-[10px] font-bold uppercase  text-muted-foreground text-right">
                   Cost
                 </TableHead>
-                <TableHead className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground text-center">
+                <TableHead className="text-[10px] font-bold uppercase  text-muted-foreground text-center">
                   Status
                 </TableHead>
-                <TableHead className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                <TableHead className="text-[10px] font-bold uppercase  text-muted-foreground">
                   When
                 </TableHead>
                 <TableHead className="text-right"></TableHead>
@@ -1511,7 +1517,8 @@ export const AgentBulkSms: React.FC<AgentBulkSmsProps> = ({
                     </Badge>
                   </div>
                   <DialogDescription className="mt-0.5 text-left text-xs">
-                    Dispatch promotional messages directly to customer handsets across all networks.
+                    Dispatch promotional messages directly to customer handsets
+                    across all networks.
                   </DialogDescription>
                 </div>
               </div>
@@ -1529,9 +1536,12 @@ export const AgentBulkSms: React.FC<AgentBulkSmsProps> = ({
               <div className="rounded-2xl border border-border bg-card shadow-xs overflow-hidden">
                 <div className="px-5 py-3.5 border-b border-border bg-muted/30 flex items-center justify-between">
                   <div>
-                    <h3 className="text-sm font-bold text-foreground">Campaign Details</h3>
+                    <h3 className="text-sm font-bold text-foreground">
+                      Campaign Details
+                    </h3>
                     <p className="text-xs text-muted-foreground mt-0.5">
-                      Assign a reference title and choose your registered Sender ID.
+                      Assign a reference title and choose your registered Sender
+                      ID.
                     </p>
                   </div>
                   <Badge variant="outline" className="text-[10px] font-bold">
@@ -1545,7 +1555,7 @@ export const AgentBulkSms: React.FC<AgentBulkSmsProps> = ({
                     <div className="space-y-1.5">
                       <Label
                         htmlFor="campaign-title"
-                        className="text-xs font-bold uppercase tracking-wider text-muted-foreground"
+                        className="text-xs font-medium uppercase  text-muted-foreground"
                       >
                         Campaign Reference Title
                       </Label>
@@ -1567,20 +1577,22 @@ export const AgentBulkSms: React.FC<AgentBulkSmsProps> = ({
                       <div className="flex items-center justify-between">
                         <Label
                           htmlFor="campaign-sender"
-                          className="text-xs font-bold uppercase tracking-wider text-muted-foreground"
+                          className="text-xs font-medium uppercase  text-muted-foreground"
                         >
-                          Alphanumeric Sender ID
+                          Sender ID
                         </Label>
-                        <button
+                        <Button
                           type="button"
+                          variant="link"
+                          size="sm"
+                          className="h-3 text-xs"
                           onClick={() => {
                             setShowComposeModal(false);
                             setShowSenderModal(true);
                           }}
-                          className="text-xs font-bold text-primary hover:underline cursor-pointer"
                         >
                           + Register New
-                        </button>
+                        </Button>
                       </div>
                       <Select
                         value={composeSender}
@@ -1588,7 +1600,7 @@ export const AgentBulkSms: React.FC<AgentBulkSmsProps> = ({
                       >
                         <SelectTrigger
                           id="campaign-sender"
-                          className="h-10 text-xs font-bold"
+                          className="!h-10 text-xs w-full"
                         >
                           <SelectValue />
                         </SelectTrigger>
@@ -1597,7 +1609,7 @@ export const AgentBulkSms: React.FC<AgentBulkSmsProps> = ({
                             <SelectItem
                               key={s.id}
                               value={s.id}
-                              className="font-bold text-xs"
+                              className="text-xs"
                             >
                               {s.id}{" "}
                               <span className="text-[10px] text-muted-foreground font-normal">
@@ -1621,7 +1633,9 @@ export const AgentBulkSms: React.FC<AgentBulkSmsProps> = ({
               <div className="rounded-2xl border border-border bg-card shadow-xs overflow-hidden">
                 <div className="px-5 py-3.5 border-b border-border bg-muted/30 flex items-center justify-between">
                   <div>
-                    <h3 className="text-sm font-bold text-foreground">Target Recipients</h3>
+                    <h3 className="text-sm font-bold text-foreground">
+                      Target Recipients
+                    </h3>
                     <p className="text-xs text-muted-foreground mt-0.5">
                       Select customer groups or paste custom phone numbers.
                     </p>
@@ -1634,7 +1648,7 @@ export const AgentBulkSms: React.FC<AgentBulkSmsProps> = ({
                 <div className="p-5 space-y-5">
                   {/* Target Audience Segment Selection */}
                   <div className="space-y-2.5">
-                    <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                    <Label className="text-xs font-medium uppercase  text-muted-foreground">
                       Select Customer Segment
                     </Label>
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
@@ -1671,39 +1685,46 @@ export const AgentBulkSms: React.FC<AgentBulkSmsProps> = ({
                         const Icon = aud.icon;
                         const isSelected = composeAudience === aud.id;
                         return (
-                          <button
+                          <Button
                             key={aud.id}
                             type="button"
+                            variant={isSelected ? "default" : "outline"}
                             onClick={() => handleSelectAudience(aud.id as any)}
-                            className={`p-3 rounded-xl border text-left transition-all cursor-pointer flex flex-col justify-between gap-1.5 ${
+                            className={`h-auto py-3 rounded-xl font-bold text-xs flex flex-col items-center justify-center gap-1.5 transition-all cursor-pointer ${
                               isSelected
-                                ? "border-primary bg-primary/10 ring-2 ring-primary/30 shadow-xs"
-                                : "border-border bg-card hover:bg-muted/50"
+                                ? "shadow-xs"
+                                : "bg-card hover:bg-muted"
                             }`}
                           >
-                            <div className="flex items-center justify-between">
+                            <div className="flex items-center justify-between w-full px-1">
                               <Icon
                                 className={`size-4 ${
-                                  isSelected ? "text-primary" : "text-muted-foreground"
+                                  isSelected
+                                    ? "text-primary-foreground"
+                                    : "text-muted-foreground"
                                 }`}
                               />
                               <span
                                 className={`text-xs font-black tabular-nums ${
-                                  isSelected ? "text-primary" : "text-foreground"
+                                  isSelected
+                                    ? "text-primary-foreground"
+                                    : "text-foreground"
                                 }`}
                               >
                                 {aud.count}
                               </span>
                             </div>
-                            <div>
-                              <div className="text-xs font-bold text-foreground">
+                            <div className="text-center">
+                              <p className="text-xs font-bold text-foreground">
                                 {aud.label}
-                              </div>
-                              <div className="text-[10px] text-muted-foreground">
+                              </p>
+                              <p
+                                className={`text-[10px] ${isSelected ? "text-foreground" : " text-muted-foreground "}`}
+                              >
                                 {aud.sub}
-                              </div>
+                              </p>
                             </div>
-                          </button>
+                          </Button>
                         );
                       })}
                     </div>
@@ -1714,13 +1735,14 @@ export const AgentBulkSms: React.FC<AgentBulkSmsProps> = ({
                     <div className="flex items-center justify-between">
                       <Label
                         htmlFor="recipients-box"
-                        className="text-xs font-bold uppercase tracking-wider text-muted-foreground"
+                        className="text-xs font-medium uppercase  text-muted-foreground"
                       >
                         Recipient Phone Numbers
                       </Label>
                       <div className="flex items-center gap-2">
-                        <span className="text-xs font-bold text-primary tabular-nums">
-                          {parsedRecipients.valid.length} valid number{parsedRecipients.valid.length !== 1 ? "s" : ""}
+                        <span className="text-xs font-bold text-emerald-600 tabular-nums">
+                          {parsedRecipients.valid.length} valid number
+                          {parsedRecipients.valid.length !== 1 ? "s" : ""}
                         </span>
                         {composeRecipientsText.trim() && (
                           <button
@@ -1729,7 +1751,7 @@ export const AgentBulkSms: React.FC<AgentBulkSmsProps> = ({
                               setComposeRecipientsText("");
                               setComposeAudience("custom");
                             }}
-                            className="text-xs font-bold text-destructive hover:underline cursor-pointer"
+                            className="text-xs font-semibold text-destructive hover:underline cursor-pointer"
                           >
                             Clear
                           </button>
@@ -1740,7 +1762,9 @@ export const AgentBulkSms: React.FC<AgentBulkSmsProps> = ({
                     <ScrollArea className="h-[150px] w-full rounded-xl border border-border bg-background">
                       <Textarea
                         id="recipients-box"
-                        placeholder={"0244123456\n0559876543\n0201122334\nOr paste comma-separated Ghanaian numbers"}
+                        placeholder={
+                          "0244123456\n0559876543\n0201122334\nOr paste comma-separated numbers"
+                        }
                         value={composeRecipientsText}
                         onChange={(e) => {
                           setComposeRecipientsText(e.target.value);
@@ -1752,10 +1776,17 @@ export const AgentBulkSms: React.FC<AgentBulkSmsProps> = ({
                     </ScrollArea>
 
                     <div className="flex flex-wrap items-center justify-between gap-1 text-[11px] text-muted-foreground">
-                      <span>Ghanaian format: 024, 055, 020, 027 or 233... (auto-normalized)</span>
+                      <span>
+                        Ghanaian format: 024, 055, 020, 027 or 233...
+                        (auto-normalized)
+                      </span>
                       {parsedRecipients.duplicatesCount > 0 && (
                         <span className="text-amber-600 dark:text-amber-400 font-semibold">
-                          {parsedRecipients.duplicatesCount} duplicate{parsedRecipients.duplicatesCount !== 1 ? "s" : ""} deduplicated
+                          {parsedRecipients.duplicatesCount} duplicate
+                          {parsedRecipients.duplicatesCount !== 1
+                            ? "s"
+                            : ""}{" "}
+                          deduplicated
                         </span>
                       )}
                     </div>
@@ -1767,7 +1798,9 @@ export const AgentBulkSms: React.FC<AgentBulkSmsProps> = ({
               <div className="rounded-2xl border border-border bg-card shadow-xs overflow-hidden">
                 <div className="px-5 py-3.5 border-b border-border bg-muted/30 flex items-center justify-between">
                   <div>
-                    <h3 className="text-sm font-bold text-foreground">Message Composition</h3>
+                    <h3 className="text-sm font-bold text-foreground">
+                      Message Composition
+                    </h3>
                     <p className="text-xs text-muted-foreground mt-0.5">
                       Pick a quick template or compose your promotional message.
                     </p>
@@ -1781,7 +1814,7 @@ export const AgentBulkSms: React.FC<AgentBulkSmsProps> = ({
                   {/* Quick Templates Pill Grid (Structured like Sell Result Checker quantity pills) */}
                   <div className="space-y-2.5">
                     <div className="flex items-center justify-between">
-                      <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                      <Label className="text-xs font-medium uppercase  text-muted-foreground">
                         Quick Templates (Auto-inserts your store link)
                       </Label>
                       <span className="text-xs font-semibold text-primary">
@@ -1798,7 +1831,9 @@ export const AgentBulkSms: React.FC<AgentBulkSmsProps> = ({
                             variant={isSelected ? "default" : "outline"}
                             onClick={() => handleApplyTemplate(tpl)}
                             className={`h-10 rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
-                              isSelected ? "shadow-xs" : "bg-card hover:bg-muted"
+                              isSelected
+                                ? "shadow-xs"
+                                : "bg-card hover:bg-muted"
                             }`}
                           >
                             <Sparkles className="size-3.5 shrink-0 text-primary" />
@@ -1808,7 +1843,8 @@ export const AgentBulkSms: React.FC<AgentBulkSmsProps> = ({
                       })}
                     </div>
                     <p className="text-[11px] leading-relaxed text-muted-foreground">
-                      Select a preset template or compose your custom message in the box below.
+                      Select a preset template or compose your custom message in
+                      the box below.
                     </p>
                   </div>
 
@@ -1817,7 +1853,7 @@ export const AgentBulkSms: React.FC<AgentBulkSmsProps> = ({
                     <div className="flex items-center justify-between">
                       <Label
                         htmlFor="sms-message"
-                        className="text-xs font-bold uppercase tracking-wider text-muted-foreground"
+                        className="text-xs font-medium uppercase  text-muted-foreground"
                       >
                         SMS Message Body
                       </Label>
@@ -1849,12 +1885,17 @@ export const AgentBulkSms: React.FC<AgentBulkSmsProps> = ({
                       {messagePageStats.isGsm ? (
                         <span className="text-muted-foreground flex items-center gap-1.5 font-medium">
                           <Check className="size-3.5 text-emerald-600 dark:text-emerald-400 shrink-0" />
-                          <span>Standard GSM-7 encoding (160 chars/page capacity)</span>
+                          <span>
+                            Standard GSM-7 encoding (160 chars/page capacity)
+                          </span>
                         </span>
                       ) : (
                         <span className="text-amber-600 dark:text-amber-400 font-bold flex items-center gap-1.5">
                           <AlertCircle className="size-3.5 text-amber-500 shrink-0" />
-                          <span>Contains emojis or special symbols (UCS-2: 70 chars/page)</span>
+                          <span>
+                            Contains emojis or special symbols (UCS-2: 70
+                            chars/page)
+                          </span>
                         </span>
                       )}
                       <span className="text-muted-foreground font-semibold tabular-nums">
@@ -1868,9 +1909,12 @@ export const AgentBulkSms: React.FC<AgentBulkSmsProps> = ({
               {/* 4. Campaign Financial & Debit Ledger Card */}
               <div className="rounded-2xl border border-border bg-card shadow-xs overflow-hidden">
                 <div className="px-5 py-3.5 border-b border-border bg-muted/30">
-                  <h3 className="text-sm font-bold text-foreground">Billing Summary</h3>
+                  <h3 className="text-sm font-bold text-foreground">
+                    Billing Summary
+                  </h3>
                   <p className="text-xs text-muted-foreground mt-0.5">
-                    Calculated at official wholesale rates and debited from your agent wallet.
+                    Calculated at official wholesale rates and debited from your
+                    agent wallet.
                   </p>
                 </div>
                 <div className="p-5 space-y-3 text-xs">
@@ -1903,7 +1947,9 @@ export const AgentBulkSms: React.FC<AgentBulkSmsProps> = ({
                   </div>
 
                   <div className="flex justify-between items-center pt-2.5 border-t border-border">
-                    <span className="text-foreground font-bold">Total Campaign Cost:</span>
+                    <span className="text-foreground font-bold">
+                      Total Campaign Cost:
+                    </span>
                     <span className="tabular-nums font-black text-primary text-base">
                       GH₵ {estimatedCampaignCost.toFixed(2)}
                     </span>
@@ -1917,7 +1963,9 @@ export const AgentBulkSms: React.FC<AgentBulkSmsProps> = ({
                   </div>
 
                   <div className="flex justify-between items-center">
-                    <span className="text-muted-foreground">Balance After Dispatch:</span>
+                    <span className="text-muted-foreground">
+                      Balance After Dispatch:
+                    </span>
                     <span
                       className={`font-bold tabular-nums ${
                         walletRemaining >= 0
@@ -1933,7 +1981,9 @@ export const AgentBulkSms: React.FC<AgentBulkSmsProps> = ({
                   <div className="p-3 rounded-xl bg-primary/5 border border-primary/10 text-[11px] text-muted-foreground flex items-center gap-2 mt-2">
                     <Info className="size-4 text-primary shrink-0" />
                     <span>
-                      Charged directly from your agent wallet. Any undelivered or rejected handset is auto-refunded to your wallet instantaneously.
+                      Charged directly from your agent wallet. Any undelivered
+                      or rejected handset is auto-refunded to your wallet
+                      instantaneously.
                     </span>
                   </div>
                 </div>
@@ -1946,9 +1996,14 @@ export const AgentBulkSms: React.FC<AgentBulkSmsProps> = ({
             <Button
               type="submit"
               form="bulk-sms-form"
-              disabled={isSending || recipientCount === 0 || !composeMessage.trim() || walletRemaining < 0}
+              disabled={
+                isSending ||
+                recipientCount === 0 ||
+                !composeMessage.trim() ||
+                walletRemaining < 0
+              }
               size="lg"
-              className="h-12 sm:h-13 w-full gap-2 rounded-2xl text-base font-extrabold shadow-md bg-primary text-primary-foreground hover:bg-primary/90 cursor-pointer disabled:opacity-50 flex items-center justify-center"
+              className="h-10 w-full font-semibold"
             >
               {isSending ? (
                 <>
@@ -1958,7 +2013,7 @@ export const AgentBulkSms: React.FC<AgentBulkSmsProps> = ({
               ) : (
                 <>
                   <span>Authorize GH₵ {estimatedCampaignCost.toFixed(2)}</span>
-                  <ArrowRight className="size-4 sm:size-5 stroke-3" />
+                  <ArrowRight className="size-4 stroke-3" />
                 </>
               )}
             </Button>
@@ -2105,7 +2160,7 @@ export const AgentBulkSms: React.FC<AgentBulkSmsProps> = ({
 
                   {/* Delivery Route Path */}
                   <div className="rounded-xl border border-border bg-muted/20 p-3">
-                    <p className="text-[10px] font-bold uppercase text-muted-foreground tracking-wider mb-2.5">
+                    <p className="text-[10px] font-bold uppercase text-muted-foreground  mb-2.5">
                       SMS Transmission Route
                     </p>
                     <div className="flex items-center gap-1.5">
@@ -2135,7 +2190,9 @@ export const AgentBulkSms: React.FC<AgentBulkSmsProps> = ({
                           className="absolute inset-y-0 left-0 bg-primary transition-all duration-700 rounded-full"
                           style={{
                             width:
-                              selectedCampaign.status === "sent" ? "100%" : "60%",
+                              selectedCampaign.status === "sent"
+                                ? "100%"
+                                : "60%",
                           }}
                         />
                       </div>
@@ -2156,7 +2213,7 @@ export const AgentBulkSms: React.FC<AgentBulkSmsProps> = ({
                     <div className="mt-1.5 flex justify-between text-[9px] text-muted-foreground">
                       <span>Agent Portal</span>
                       <span>SDH Switch</span>
-                      <span>Arkesel Gateway</span>
+                      <span>Carrier Gateway</span>
                       <span>Handsets</span>
                     </div>
                   </div>
@@ -2164,7 +2221,7 @@ export const AgentBulkSms: React.FC<AgentBulkSmsProps> = ({
                   {/* Signal Dispatch Timeline */}
                   <div className="space-y-4">
                     <div>
-                      <p className="text-[10px] mb-3 font-bold uppercase text-muted-foreground tracking-wider">
+                      <p className="text-[10px] mb-3 font-bold uppercase text-muted-foreground ">
                         Signal Dispatch Timeline
                       </p>
 
@@ -2212,7 +2269,8 @@ export const AgentBulkSms: React.FC<AgentBulkSmsProps> = ({
                           const isFailed = item.status === "failed";
                           const isLast =
                             idx ===
-                            (selectedCampaign.deliveryTimeline || []).length - 1;
+                            (selectedCampaign.deliveryTimeline || []).length -
+                              1;
                           return (
                             <div key={idx} className="flex gap-3">
                               <div className="flex flex-col items-center shrink-0 w-6">
@@ -2289,7 +2347,7 @@ export const AgentBulkSms: React.FC<AgentBulkSmsProps> = ({
                   {/* Message Content Box */}
                   <div className="space-y-1.5">
                     <div className="flex items-center justify-between">
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                      <span className="text-[10px] font-bold uppercase  text-muted-foreground">
                         Message Content Dispatched
                       </span>
                       <Button
@@ -2418,7 +2476,7 @@ export const AgentBulkSms: React.FC<AgentBulkSmsProps> = ({
                   {selectedCampaign.failedCount &&
                   selectedCampaign.failedCount > 0 ? (
                     <div className="space-y-2">
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                      <span className="text-[10px] font-bold uppercase  text-muted-foreground">
                         Resolution Controls
                       </span>
                       <Button
@@ -2440,25 +2498,12 @@ export const AgentBulkSms: React.FC<AgentBulkSmsProps> = ({
               </ScrollArea>
 
               {/* Fixed Footer */}
-              <DialogFooter className="shrink-0 border-t border-border bg-muted/40 p-4">
-                <div className="flex items-center gap-2 w-full">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={() => {
-                      setSelectedCampaign(null);
-                      setComposeMessage(selectedCampaign.message);
-                      setShowComposeModal(true);
-                    }}
-                    className="flex-1 text-xs font-bold gap-1.5 h-9 cursor-pointer"
-                  >
-                    <Send className="size-3.5 text-primary" />
-                    <span>Send Similar Campaign</span>
-                  </Button>
+              <DialogFooter className="shrink-0 border-t border-border bg-muted/40 p-0">
+                <div className="flex gap-2 px-6 py-4 pb-6 w-full">
                   <Button
                     type="button"
                     onClick={() => setSelectedCampaign(null)}
-                    className="text-xs font-bold h-9 px-5 cursor-pointer"
+                    className="text-xs  w-full font-bold h-9 px-5 cursor-pointer"
                   >
                     Close
                   </Button>
@@ -2482,112 +2527,114 @@ export const AgentBulkSms: React.FC<AgentBulkSmsProps> = ({
                   Alphanumeric Sender IDs
                 </DialogTitle>
                 <DialogDescription className="text-xs mt-0.5">
-                  Register up to 11 uppercase characters. Messages will appear on customer phones under your brand name.
+                  Register up to 11 uppercase characters. Messages will appear
+                  on customer phones under your brand name.
                 </DialogDescription>
               </div>
             </div>
           </DialogHeader>
 
-          <ScrollArea className="min-h-0 flex-1 overflow-hidden">
-            <div className="p-5 sm:p-6 space-y-5">
-              {/* List of active sender IDs */}
-              <div className="space-y-2.5">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                    Approved Sender Names
+          {/* Fixed Registration Form at Top */}
+          <div className="shrink-0 border-b border-border bg-muted/20 p-4">
+            <form
+              id="sender-id-form"
+              onSubmit={handleRequestSenderId}
+              className="space-y-2"
+            >
+              <div className="flex items-center gap-2">
+                <Label className="text-xs font-medium uppercase  text-muted-foreground">
+                  Register New Sender ID
+                </Label>
+              </div>
+              <div className="space-y-1.5">
+                <Input
+                  type="text"
+                  maxLength={11}
+                  required
+                  placeholder="e.g. KWESIDATA"
+                  value={newSenderInput}
+                  onChange={(e) =>
+                    setNewSenderInput(
+                      e.target.value
+                        .toUpperCase()
+                        .replace(/[^A-Z0-9]/g, "")
+                        .slice(0, 11),
+                    )
+                  }
+                  className="uppercase text-xs h-10 bg-background"
+                />
+                <div className="flex justify-between text-[11px] text-muted-foreground">
+                  <span>3–11 alphanumeric characters, no spaces</span>
+                  <span className="font-semibold tabular-nums">
+                    {newSenderInput.length}/11
                   </span>
-                  <Badge variant="outline" className="text-[10px] font-bold">
-                    NCA Verified
-                  </Badge>
-                </div>
-                <div className="space-y-2">
-                  {senderIds.map((s) => (
-                    <div
-                      key={s.id}
-                      className="p-3.5 rounded-2xl border border-border bg-card flex items-center justify-between shadow-2xs"
-                    >
-                      <div>
-                        <div className="font-extrabold text-sm text-foreground">
-                          {s.id}
-                        </div>
-                        <div className="text-xs text-muted-foreground mt-0.5">
-                          {s.note || "Approved for broadcast dispatch"}
-                        </div>
-                      </div>
-                      <Badge
-                        variant="secondary"
-                        className="border-emerald-500/30 bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 text-[10px] font-bold"
-                      >
-                        Active
-                      </Badge>
-                    </div>
-                  ))}
                 </div>
               </div>
+            </form>
+          </div>
 
-              {/* Registration Form */}
-              <form onSubmit={handleRequestSenderId} className="space-y-3.5 pt-2 border-t border-border">
-                <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                  Register New Sender ID
+          {/* Scrollable List of Sender IDs */}
+          <ScrollArea className="min-h-0 flex-1 overflow-hidden">
+            <div className="p-5 sm:p-6 space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-medium uppercase  text-muted-foreground">
+                  Approved Sender Names
                 </span>
-                <div className="space-y-1.5">
-                  <Input
-                    type="text"
-                    maxLength={11}
-                    required
-                    placeholder="e.g. KWESIDATA"
-                    value={newSenderInput}
-                    onChange={(e) =>
-                      setNewSenderInput(
-                        e.target.value
-                          .toUpperCase()
-                          .replace(/[^A-Z0-9]/g, "")
-                          .slice(0, 11),
-                      )
-                    }
-                    className="uppercase font-bold text-xs h-10 bg-background"
-                  />
-                  <div className="flex justify-between text-[11px] text-muted-foreground">
-                    <span>3–11 alphanumeric characters, no spaces</span>
-                    <span className="font-semibold tabular-nums">{newSenderInput.length}/11</span>
+                <Badge variant="outline" className="text-[10px] font-bold">
+                  NCA Verified
+                </Badge>
+              </div>
+              <div className="space-y-2">
+                {senderIds.map((s) => (
+                  <div
+                    key={s.id}
+                    className="p-3.5 rounded-xl border border-border bg-card flex items-center justify-between shadow-2xs"
+                  >
+                    <div>
+                      <div className="font-extrabold text-sm text-foreground">
+                        {s.id}
+                      </div>
+                      <div className="text-xs text-muted-foreground mt-0.5">
+                        {s.note || "Approved for broadcast dispatch"}
+                      </div>
+                    </div>
+                    <Badge
+                      variant="secondary"
+                      className="border-emerald-500/30 bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 text-[10px] font-bold"
+                    >
+                      Active
+                    </Badge>
                   </div>
-                </div>
-
-                <Button
-                  type="submit"
-                  disabled={requestingSender || newSenderInput.length < 3}
-                  className="w-full text-xs font-bold gap-1.5 h-10 bg-primary cursor-pointer disabled:opacity-50 rounded-xl shadow-xs"
-                >
-                  {requestingSender ? (
-                    <>
-                      <Loader2 className="size-4 animate-spin" />
-                      <span>Registering with NCA Switch...</span>
-                    </>
-                  ) : (
-                    <>
-                      <Plus className="size-4" />
-                      <span>Submit Sender ID for Approval</span>
-                    </>
-                  )}
-                </Button>
-              </form>
+                ))}
+              </div>
             </div>
           </ScrollArea>
 
-          <DialogFooter className="shrink-0 border-t border-border p-4 bg-muted/30">
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={() => setShowSenderModal(false)}
-              className="w-full text-xs font-bold cursor-pointer h-9 rounded-xl"
-            >
-              Done
-            </Button>
+          {/* Footer */}
+          <DialogFooter className="shrink-0 border-t border-border bg-muted/40 p-0">
+            <div className="flex items-center gap-2 px-6 py-4 pb-6 w-full">
+              <Button
+                type="submit"
+                form="sender-id-form"
+                disabled={requestingSender || newSenderInput.length < 3}
+                className="w-full text-xs font-bold gap-1.5 h-9 bg-primary cursor-pointer disabled:opacity-50"
+              >
+                {requestingSender ? (
+                  <>
+                    <Loader2 className="size-4 animate-spin" />
+                    <span>Registering...</span>
+                  </>
+                ) : (
+                  <>
+                    <Plus className="size-4" />
+                    <span>Submit for Approval</span>
+                  </>
+                )}
+              </Button>
+            </div>
           </DialogFooter>
         </DialogContent>
       </Dialog>
     </div>
   );
 };
-

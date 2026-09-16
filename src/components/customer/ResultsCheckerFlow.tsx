@@ -361,8 +361,12 @@ export const ResultsCheckerFlow: React.FC<ResultsCheckerFlowProps> = ({
               Checker Types
             </span>
           </div>
-          <p className="mt-2 text-xl font-black tabular-nums text-foreground">{checkers.length}</p>
-          <p className="text-[10px] text-muted-foreground font-medium">WAEC, BECE, University</p>
+          <p className="mt-2 text-xl font-black tabular-nums text-foreground">
+            {checkers.length}
+          </p>
+          <p className="text-[10px] text-muted-foreground font-medium">
+            WAEC, BECE, University
+          </p>
         </div>
 
         <div className="rounded-xl border border-border bg-card p-3.5 shadow-2xs">
@@ -374,8 +378,12 @@ export const ResultsCheckerFlow: React.FC<ResultsCheckerFlowProps> = ({
               Delivered
             </span>
           </div>
-          <p className="mt-2 text-xl font-black tabular-nums text-foreground">{allCheckerOrders.length}</p>
-          <p className="text-[10px] text-muted-foreground font-medium">Total vouchers purchased</p>
+          <p className="mt-2 text-xl font-black tabular-nums text-foreground">
+            {allCheckerOrders.length}
+          </p>
+          <p className="text-[10px] text-muted-foreground font-medium">
+            Total vouchers purchased
+          </p>
         </div>
 
         <div className="rounded-xl border border-border bg-card p-3.5 shadow-2xs">
@@ -390,7 +398,9 @@ export const ResultsCheckerFlow: React.FC<ResultsCheckerFlowProps> = ({
           <p className="mt-2 text-xl font-black tabular-nums text-foreground">
             {checkers.reduce((sum, c) => sum + c.stockCount, 0)}
           </p>
-          <p className="text-[10px] text-muted-foreground font-medium">Vouchers available</p>
+          <p className="text-[10px] text-muted-foreground font-medium">
+            Vouchers available
+          </p>
         </div>
 
         <div className="rounded-xl border border-border bg-card p-3.5 shadow-2xs">
@@ -403,9 +413,12 @@ export const ResultsCheckerFlow: React.FC<ResultsCheckerFlowProps> = ({
             </span>
           </div>
           <p className="mt-2 text-xl font-black tabular-nums text-foreground">
-            GH₵ {allCheckerOrders.reduce((sum, o) => sum + o.amount, 0).toFixed(2)}
+            GH₵{" "}
+            {allCheckerOrders.reduce((sum, o) => sum + o.amount, 0).toFixed(2)}
           </p>
-          <p className="text-[10px] text-muted-foreground font-medium">Across all purchases</p>
+          <p className="text-[10px] text-muted-foreground font-medium">
+            Across all purchases
+          </p>
         </div>
       </div>
 
@@ -455,43 +468,66 @@ export const ResultsCheckerFlow: React.FC<ResultsCheckerFlowProps> = ({
                   className="space-y-6"
                 >
                   {/* Voucher Catalog Grid */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    {checkers.map((item) => {
-                      const isSelected = selectedCheckerId === item.id;
-                      return (
-                        <div
-                          key={item.id}
-                          onClick={() => setSelectedCheckerId(item.id)}
-                          className={`p-4 rounded-2xl border transition-all cursor-pointer flex flex-col justify-between ${isSelected
-                            ? "border-primary bg-primary/10 ring-2 ring-primary/30 shadow-xs"
-                            : "border-border bg-card hover:bg-muted/50"
+                  <div className="space-y-2">
+                    <Label
+                      id="checker-catalog-label"
+                      className="text-xs font-bold uppercase tracking-wider text-muted-foreground"
+                    >
+                      Select checker type
+                    </Label>
+                    <div
+                      id="checker-catalog"
+                      role="radiogroup"
+                      aria-labelledby="checker-catalog-label"
+                      className="grid grid-cols-1 sm:grid-cols-2 gap-3"
+                    >
+                      {checkers.map((item) => {
+                        const isSelected = selectedCheckerId === item.id;
+                        return (
+                          <div
+                            key={item.id}
+                            role="radio"
+                            aria-checked={isSelected}
+                            tabIndex={0}
+                            onClick={() => setSelectedCheckerId(item.id)}
+                            onKeyDown={(e) => {
+                              if (e.key === "Enter" || e.key === " ") {
+                                e.preventDefault();
+                                setSelectedCheckerId(item.id);
+                              }
+                            }}
+                            className={`p-4 rounded-2xl border transition-all cursor-pointer flex flex-col justify-between ${
+                              isSelected
+                                ? "border-primary bg-primary/10 ring-2 ring-primary/30 shadow-xs"
+                                : "border-border bg-card hover:bg-muted/50"
                             }`}
-                        >
-                          <div>
-                            <div className="flex justify-between items-center mb-1">
-                              <span className="text-[10px] uppercase font-bold px-2 py-0.5 rounded bg-muted text-foreground">
-                                {item.examBody}
+                          >
+                            <div>
+                              <div className="flex justify-between items-center mb-1">
+                                <span className="text-[10px] uppercase font-bold px-2 py-0.5 rounded bg-muted text-foreground">
+                                  {item.examBody}
+                                </span>
+                              </div>
+                              <h3 className="font-bold text-sm text-foreground">
+                                {item.title}
+                              </h3>
+                              <p className="text-xs text-muted-foreground mt-1 line-clamp-2">
+                                {item.description}
+                              </p>
+                            </div>
+
+                            <div className="pt-3 mt-3 border-t border-border flex justify-between items-center">
+                              <span className="text-xs font-semibold text-muted-foreground">
+                                Unit Price:
+                              </span>
+                              <span className="text-base font-black text-foreground tabular-nums">
+                                GH₵ {item.price.toFixed(2)}
                               </span>
                             </div>
-                            <h3 className="font-bold text-sm text-foreground">
-                              {item.title}
-                            </h3>
-                            <p className="text-xs text-muted-foreground mt-1 line-clamp-2">
-                              {item.description}
-                            </p>
                           </div>
-
-                          <div className="pt-3 mt-3 border-t border-border flex justify-between items-center">
-                            <span className="text-xs font-semibold text-muted-foreground">
-                              Unit Price:
-                            </span>
-                            <span className="text-base font-black text-foreground tabular-nums">
-                              GH₵ {item.price.toFixed(2)}
-                            </span>
-                          </div>
-                        </div>
-                      );
-                    })}
+                        );
+                      })}
+                    </div>
                   </div>
 
                   {/* Purchase Details */}
@@ -519,7 +555,11 @@ export const ResultsCheckerFlow: React.FC<ResultsCheckerFlowProps> = ({
                       {/* Quantity */}
                       <div className="space-y-3">
                         <div className="flex items-center justify-between gap-3">
-                          <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                          <Label
+                            id="checker-quantity-label"
+                            htmlFor="checker-quantity-presets"
+                            className="text-xs font-bold uppercase tracking-wider text-muted-foreground"
+                          >
                             Number of vouchers
                           </Label>
 
@@ -529,13 +569,19 @@ export const ResultsCheckerFlow: React.FC<ResultsCheckerFlowProps> = ({
                         </div>
 
                         {/* Quick quantity presets */}
-                        <div className="grid grid-cols-4 gap-2">
+                        <div
+                          id="checker-quantity-presets"
+                          className="grid grid-cols-4 gap-2"
+                          role="group"
+                          aria-labelledby="checker-quantity-label"
+                        >
                           {[1, 2, 5, 10].map((qty) => (
                             <Button
                               key={qty}
                               type="button"
                               variant={quantity === qty ? "default" : "outline"}
                               onClick={() => setQuantityInput(String(qty))}
+                              aria-pressed={quantity === qty}
                               className="h-10 rounded-xl font-bold text-xs"
                             >
                               {qty}
@@ -557,6 +603,8 @@ export const ResultsCheckerFlow: React.FC<ResultsCheckerFlowProps> = ({
                             type="number"
                             min={1}
                             max={99}
+                            aria-valuemin={1}
+                            aria-valuemax={99}
                             value={quantityInput}
                             onChange={(e) => setQuantityInput(e.target.value)}
                             placeholder="Enter quantity"
@@ -589,6 +637,7 @@ export const ResultsCheckerFlow: React.FC<ResultsCheckerFlowProps> = ({
                           id="checker-phone"
                           type="tel"
                           required
+                          aria-required="true"
                           value={recipientPhone}
                           onChange={(e) => setRecipientPhone(e.target.value)}
                           placeholder="024 419 2834"
@@ -796,6 +845,7 @@ export const ResultsCheckerFlow: React.FC<ResultsCheckerFlowProps> = ({
                   value={checkerSearch}
                   onChange={(e) => setCheckerSearch(e.target.value)}
                   className="h-10 bg-background pl-9 text-xs"
+                  aria-label="Search checker orders"
                 />
               </div>
             </div>
@@ -926,7 +976,7 @@ export const ResultsCheckerFlow: React.FC<ResultsCheckerFlowProps> = ({
                       {(() => {
                         const cfg =
                           checkerStatusConfig[
-                          order.status as keyof typeof checkerStatusConfig
+                            order.status as keyof typeof checkerStatusConfig
                           ] ?? checkerStatusConfig.delivered;
                         return (
                           <span
@@ -999,7 +1049,10 @@ export const ResultsCheckerFlow: React.FC<ResultsCheckerFlowProps> = ({
                   <DialogTitle className="text-left text-base font-extrabold tracking-tight">
                     Voucher Serial &amp; PIN
                   </DialogTitle>
-                  <Badge variant="secondary" className="border-primary/20 bg-primary/15 px-2 py-0 text-[10px] font-bold text-primary">
+                  <Badge
+                    variant="secondary"
+                    className="border-primary/20 bg-primary/15 px-2 py-0 text-[10px] font-bold text-primary"
+                  >
                     Instant Delivery
                   </Badge>
                 </div>
@@ -1015,8 +1068,12 @@ export const ResultsCheckerFlow: React.FC<ResultsCheckerFlowProps> = ({
             <div className="p-5 sm:p-6 space-y-6">
               {/* Product row */}
               <div className="flex items-center justify-between text-xs">
-                <span className="text-muted-foreground font-semibold">Product</span>
-                <span className="font-bold text-foreground">{voucherViewOrder.productName}</span>
+                <span className="text-muted-foreground font-semibold">
+                  Product
+                </span>
+                <span className="font-bold text-foreground">
+                  {voucherViewOrder.productName}
+                </span>
               </div>
 
               {/* Voucher Purchased header */}
@@ -1024,8 +1081,12 @@ export const ResultsCheckerFlow: React.FC<ResultsCheckerFlowProps> = ({
                 <div className="flex items-center gap-2">
                   <CheckCircle2 className="w-5 h-5 text-emerald-500" />
                   <div>
-                    <h3 className="font-bold text-sm text-foreground">Voucher Purchased &amp; Verified</h3>
-                    <p className="text-xs text-muted-foreground">Order Ref: {voucherViewOrder.reference}</p>
+                    <h3 className="font-bold text-sm text-foreground">
+                      Voucher Purchased &amp; Verified
+                    </h3>
+                    <p className="text-xs text-muted-foreground">
+                      Order Ref: {voucherViewOrder.reference}
+                    </p>
                   </div>
                 </div>
                 <span className="text-xs px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 font-bold">
@@ -1046,7 +1107,11 @@ export const ResultsCheckerFlow: React.FC<ResultsCheckerFlowProps> = ({
                     onClick={() => setDialogRevealed(!dialogRevealed)}
                     className="text-xs font-semibold gap-1.5"
                   >
-                    {dialogRevealed ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+                    {dialogRevealed ? (
+                      <EyeOff className="w-3.5 h-3.5" />
+                    ) : (
+                      <Eye className="w-3.5 h-3.5" />
+                    )}
                     {dialogRevealed ? "Mask Code" : "Reveal PIN"}
                   </Button>
                 </div>
@@ -1065,7 +1130,9 @@ export const ResultsCheckerFlow: React.FC<ResultsCheckerFlowProps> = ({
                       Voucher PIN:
                     </span>
                     <span className="font-mono text-base font-extrabold text-primary tabular-nums">
-                      {dialogRevealed ? voucherViewOrder.voucherCode : "•••• - •••• - ••••"}
+                      {dialogRevealed
+                        ? voucherViewOrder.voucherCode
+                        : "•••• - •••• - ••••"}
                     </span>
                   </div>
                 </div>
@@ -1083,7 +1150,11 @@ export const ResultsCheckerFlow: React.FC<ResultsCheckerFlowProps> = ({
                   ) : (
                     <Copy className="w-4 h-4 mr-2" />
                   )}
-                  <span>{voucherCopied ? "Copied to Clipboard" : "Copy Serial & PIN"}</span>
+                  <span>
+                    {voucherCopied
+                      ? "Copied to Clipboard"
+                      : "Copy Serial & PIN"}
+                  </span>
                 </Button>
                 <a
                   href="https://ghana.waecdirect.org"
@@ -1102,7 +1173,9 @@ export const ResultsCheckerFlow: React.FC<ResultsCheckerFlowProps> = ({
           <DialogFooter className="m-0 shrink-0 rounded-none border-t border-border bg-muted/30 px-5 py-3 sm:justify-center">
             <div className="flex items-center justify-center gap-2 text-xs font-medium text-muted-foreground">
               <ShieldCheck className="size-4 shrink-0 text-emerald-600 dark:text-emerald-400" />
-              <span className="text-[11px]">Secured by Smart Data Hub · Authentic WAEC &amp; BECE Stock</span>
+              <span className="text-[11px]">
+                Secured by Smart Data Hub · Authentic WAEC &amp; BECE Stock
+              </span>
             </div>
           </DialogFooter>
         </DialogContent>
