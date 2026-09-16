@@ -1168,8 +1168,11 @@ export default function App() {
               {(activeTab === "store-orders" ||
                 activeTab === "pricing" ||
                 activeTab === "analytics" ||
+                activeTab === "earnings" ||
                 activeTab === "bulk-sms" ||
                 activeTab === "withdraw" ||
+                activeTab === "wallet" ||
+                activeTab === "transactions" ||
                 activeTab === "verify") && (
                   <AgentCommerce
                     view={activeTab as any}
@@ -1177,6 +1180,9 @@ export default function App() {
                     bundles={initialBundles}
                     orders={orders}
                     commissionBalance={commissionBalance}
+                    walletBalance={walletBalance}
+                    transactions={transactions}
+                    onOpenFundWallet={() => setIsFundWalletOpen(true)}
                     onWithdrawSuccess={handleWithdrawSuccess}
                     onUpdateOrders={(updatedOrders) => {
                       setOrders(updatedOrders);

@@ -132,17 +132,24 @@ export const AGENT_NAV: NavGroup[] = [
   {
     group: "Earnings",
     items: [
-      { id: "analytics", label: "Analytics", icon: BarChart2 },
-      { id: "earnings", label: "Earnings", icon: TrendingUp },
-      { id: "withdraw", label: "Withdraw", icon: DollarSign },
+      {
+        id: "analytics",
+        altIds: ["earnings"],
+        label: "Analytics",
+        icon: BarChart2,
+      },
       { id: "pricing", label: "Pricing", icon: Sliders },
     ],
   },
   {
     group: "Account",
     items: [
-      { id: "wallet", label: "Wallet", icon: Wallet },
-      { id: "transactions", label: "Transactions", icon: CreditCard },
+      {
+        id: "transactions",
+        altIds: ["wallet", "withdraw"],
+        label: "Transactions",
+        icon: CreditCard,
+      },
       { id: "customers", label: "Customers", icon: Users },
       {
         id: "notifications",

@@ -431,30 +431,31 @@ export const WithdrawModal: React.FC<WithdrawModalProps> = ({
                 </div>
 
                 <div className="flex gap-2">
-                  <button
+                  <Button
                     type="button"
+                    variant="outline"
                     onClick={handleResetWithdrawal}
-                    className="flex-1 py-3 rounded-xl border border-border bg-muted text-foreground font-bold text-xs hover:bg-muted/80 transition-all cursor-pointer"
+                    className="flex-1 h-11 rounded-xl font-bold text-xs"
                   >
                     Cancel
-                  </button>
-                  <button
+                  </Button>
+                  <Button
                     type="submit"
                     disabled={isVerifyingOtp || otpCode.length !== 6}
-                    className="flex-1 py-3 rounded-xl bg-primary text-primary-foreground font-bold text-xs hover:bg-primary/90 transition-all flex items-center justify-center gap-2 shadow-md cursor-pointer disabled:opacity-50"
+                    className="flex-1 h-11 rounded-xl bg-primary text-primary-foreground font-bold text-xs flex items-center justify-center gap-2 shadow-md"
                   >
                     {isVerifyingOtp ? (
                       <>
-                        <Loader2 className="w-4 h-4 animate-spin" />
+                        <Loader2 className="size-4 animate-spin" />
                         <span>Verifying...</span>
                       </>
                     ) : (
                       <>
                         <span>Confirm Withdrawal</span>
-                        <ArrowRight className="w-4 h-4" />
+                        <ArrowRight className="size-4" />
                       </>
                     )}
-                  </button>
+                  </Button>
                 </div>
               </form>
             )}
@@ -479,6 +480,13 @@ export const WithdrawModal: React.FC<WithdrawModalProps> = ({
                     <strong>{withdrawSuccessInfo.ref}</strong>).
                   </p>
                 </div>
+
+                <Button
+                  onClick={handleResetWithdrawal}
+                  className="w-full h-11 rounded-xl font-bold text-xs bg-primary text-primary-foreground shadow-xs"
+                >
+                  Done
+                </Button>
               </div>
             )}
           </div>
