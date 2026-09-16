@@ -10,12 +10,17 @@ import {
   ArrowRight,
   Search,
   Ticket,
+  Plus,
+  SlidersHorizontal,
+  ShieldCheck,
+  RotateCcw,
 } from "lucide-react";
 import { ResultCheckerProduct, Order } from "../../types";
-import { SignalRail } from "../common/SignalRail";
 import { Button, buttonVariants } from "../ui/button";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
+import { Badge } from "../ui/badge";
+import { ScrollArea } from "../ui/scroll-area";
 import {
   Select,
   SelectContent,
@@ -124,6 +129,9 @@ export const ResultsCheckerFlow: React.FC<ResultsCheckerFlowProps> = ({
   const [voucherViewOrder, setVoucherViewOrder] = useState<Order | null>(null);
   const [dialogRevealed, setDialogRevealed] = useState(false);
   const [voucherCopied, setVoucherCopied] = useState(false);
+
+  // Buy Checker Modal State
+  const [isBuyCheckerOpen, setIsBuyCheckerOpen] = useState(false);
 
   const currentChecker =
     checkers.find((c) => c.id === selectedCheckerId) || checkers[0];
@@ -318,346 +326,498 @@ export const ResultsCheckerFlow: React.FC<ResultsCheckerFlowProps> = ({
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between pb-4 border-b border-border">
+      {/* Top Header */}
+      <div className="flex flex-col items-start justify-between gap-4 border-b border-border pb-4 sm:flex-row sm:items-center">
         <div>
-          <h1 className="text-2xl font-extrabold text-foreground tracking-tight flex items-center gap-2">
-            <GraduationCap className="w-6 h-6 text-purple-600" />
+          <h1 className="flex items-center gap-2 text-2xl font-extrabold tracking-tight text-foreground">
+            <GraduationCap className="size-6 text-purple-600" />
             <span>Results Checkers & Admission Vouchers</span>
           </h1>
-          <p className="text-xs text-muted-foreground mt-0.5">
+
+          <p className="mt-0.5 text-xs text-muted-foreground">
             Instant delivery of authentic WAEC, BECE Placement, and University
             application scratch codes.
           </p>
         </div>
-        <SignalRail status="online" size="sm" label="WAEC Server Sync" />
+
+        <Button
+          onClick={() => setIsBuyCheckerOpen(true)}
+          className="text-xs font-bold shadow-sm cursor-pointer"
+        >
+          <Plus className="size-4 stroke-3" />
+          Buy Checker
+        </Button>
       </div>
 
-      {!purchasedOrder ? (
-        <form onSubmit={handlePurchase} className="space-y-6">
-          {/* Voucher Catalog Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            {checkers.map((item) => {
-              const isSelected = selectedCheckerId === item.id;
-              return (
-                <div
-                  key={item.id}
-                  onClick={() => setSelectedCheckerId(item.id)}
-                  className={`p-4 rounded-2xl border transition-all cursor-pointer flex flex-col justify-between ${
-                    isSelected
-                      ? "border-primary bg-primary/10 ring-2 ring-primary/30 shadow-xs"
-                      : "border-border bg-card hover:bg-muted/50"
-                  }`}
-                >
-                  <div>
-                    <div className="flex justify-between items-center mb-1">
-                      <span className="text-[10px] uppercase font-bold px-2 py-0.5 rounded bg-muted text-foreground">
-                        {item.examBody}
-                      </span>
-                    </div>
-                    <h3 className="font-bold text-sm text-foreground">
-                      {item.title}
-                    </h3>
-                    <p className="text-xs text-muted-foreground mt-1 line-clamp-2">
-                      {item.description}
-                    </p>
-                  </div>
+      {/* Stats Cards */}
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div className="rounded-2xl border border-border bg-card p-5 shadow-xs">
+          <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+            Checker Types
+          </span>
 
-                  <div className="pt-3 mt-3 border-t border-border flex justify-between items-center">
-                    <span className="text-xs font-semibold text-muted-foreground">
-                      Unit Price:
-                    </span>
-                    <span className="text-base font-black text-foreground tabular-nums">
-                      GH₵ {item.price.toFixed(2)}
-                    </span>
-                  </div>
-                </div>
-              );
-            })}
+          <div className="mt-1 text-3xl font-black tabular-nums text-foreground">
+            {checkers.length}
           </div>
 
-          {/* Purchase Details */}
-          <div className="rounded-2xl border border-border bg-card shadow-xs overflow-hidden">
-            {/* Header */}
-            <div className="px-5 py-4 border-b border-border bg-muted/30">
-              <div className="flex items-center justify-between gap-3">
-                <div>
-                  <h3 className="text-sm font-bold text-foreground">
-                    Voucher details
-                  </h3>
-                  <p className="text-xs text-muted-foreground mt-0.5">
-                    Choose how many vouchers you need and where to send them.
-                  </p>
+          <p className="mt-1 text-[11px] text-muted-foreground">
+            WAEC, BECE, University
+          </p>
+        </div>
+
+        <div className="rounded-2xl border border-border bg-card p-5 shadow-xs">
+          <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+            Delivered
+          </span>
+
+          <div className="mt-1 text-3xl font-black tabular-nums text-foreground">
+            {allCheckerOrders.length}
+          </div>
+
+          <p className="mt-1 text-[11px] text-muted-foreground">
+            Total vouchers purchased
+          </p>
+        </div>
+      </div>
+
+      {/* ============ BUY CHECKER MODAL ============ */}
+      <Dialog open={isBuyCheckerOpen} onOpenChange={setIsBuyCheckerOpen}>
+        <DialogContent className="flex h-[90vh] max-h-[90vh] sm:max-w-xl flex-col gap-0 overflow-hidden rounded-3xl border border-border bg-card p-0 shadow-2xl">
+          {/* Header */}
+          <DialogHeader className="relative shrink-0 overflow-hidden border-b border-border bg-gradient-to-br from-primary/10 via-card to-amber-500/10 p-5 sm:p-6">
+            <div className="absolute -right-12 -top-12 size-32 rounded-full bg-primary/5" />
+            <div className="absolute -bottom-16 left-1/3 size-40 rounded-full bg-amber-500/5" />
+
+            <div className="relative flex items-center justify-between gap-4">
+              <div className="flex items-center gap-3">
+                <div className="flex size-11 shrink-0 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-sm">
+                  <Ticket className="size-5" />
                 </div>
 
-                <div className="text-xs font-semibold text-muted-foreground tabular-nums">
-                  GH₵ {currentChecker.price.toFixed(2)} each
-                </div>
-              </div>
-            </div>
+                <div className="min-w-0">
+                  <div className="flex items-center gap-2">
+                    <DialogTitle className="text-left text-base font-extrabold tracking-tight">
+                      Buy Result Checker Voucher
+                    </DialogTitle>
 
-            <div className="p-5 space-y-6">
-              {/* Quantity */}
-              <div className="space-y-3">
-                <div className="flex items-center justify-between gap-3">
-                  <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                    Number of vouchers
-                  </Label>
-
-                  <span className="text-xs font-semibold text-primary tabular-nums">
-                    {quantity} voucher{quantity !== 1 ? "s" : ""}
-                  </span>
-                </div>
-
-                {/* Quick quantity presets */}
-                <div className="grid grid-cols-4 gap-2">
-                  {[1, 2, 5, 10].map((qty) => (
-                    <Button
-                      key={qty}
-                      type="button"
-                      variant={quantity === qty ? "default" : "outline"}
-                      onClick={() => setQuantityInput(String(qty))}
-                      className="h-10 rounded-xl font-bold text-xs"
+                    <Badge
+                      variant="secondary"
+                      className="border-primary/20 bg-primary/15 px-2 py-0 text-[10px] font-bold text-primary"
                     >
-                      {qty}
-                    </Button>
-                  ))}
+                      Instant Delivery
+                    </Badge>
+                  </div>
+
+                  <DialogDescription className="mt-0.5 text-left text-xs">
+                    Select a checker type, quantity, and delivery phone number
+                  </DialogDescription>
                 </div>
-
-                {/* Custom quantity */}
-                <div className="space-y-2">
-                  <Label
-                    htmlFor="custom-quantity"
-                    className="text-[11px] font-semibold text-muted-foreground"
-                  >
-                    Or enter a custom quantity
-                  </Label>
-
-                  <Input
-                    id="custom-quantity"
-                    type="number"
-                    min={1}
-                    max={99}
-                    value={quantityInput}
-                    onChange={(e) => setQuantityInput(e.target.value)}
-                    placeholder="Enter quantity"
-                    className="h-10 rounded-xl text-sm font-medium tabular-nums"
-                  />
-                </div>
-
-                <p className="text-[11px] leading-relaxed text-muted-foreground">
-                  Choose a preset above or enter any quantity from 1 to 99.
-                </p>
-              </div>
-
-              {/* Phone */}
-              <div className="space-y-3">
-                <div className="flex items-center justify-between gap-3">
-                  <Label
-                    htmlFor="checker-phone"
-                    className="text-xs font-bold uppercase tracking-wider text-muted-foreground"
-                  >
-                    Delivery phone number
-                  </Label>
-
-                  <span className="text-[10px] font-medium text-muted-foreground">
-                    SMS delivery
-                  </span>
-                </div>
-
-                <Input
-                  id="checker-phone"
-                  type="tel"
-                  required
-                  value={recipientPhone}
-                  onChange={(e) => setRecipientPhone(e.target.value)}
-                  placeholder="024 419 2834"
-                  className="h-11 rounded-xl text-sm font-medium tabular-nums"
-                />
-
-                <p className="text-[11px] leading-relaxed text-muted-foreground">
-                  Your voucher details will be sent to this number after
-                  payment.
-                </p>
               </div>
             </div>
+          </DialogHeader>
 
-            {/* Summary */}
-            <div className="border-t border-border bg-muted/20 px-5 py-4">
-              <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                <div>
-                  <p className="text-xs font-medium text-muted-foreground">
-                    Total amount
-                  </p>
+          {/* Scrollable Modal Body */}
+          <ScrollArea className="min-h-0 flex-1 overflow-hidden">
+            <div className="p-5 sm:p-6">
+              {!purchasedOrder ? (
+                <form
+                  id="buy-checker-form"
+                  onSubmit={handlePurchase}
+                  className="space-y-6"
+                >
+                  {/* Voucher Catalog Grid */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    {checkers.map((item) => {
+                      const isSelected = selectedCheckerId === item.id;
+                      return (
+                        <div
+                          key={item.id}
+                          onClick={() => setSelectedCheckerId(item.id)}
+                          className={`p-4 rounded-2xl border transition-all cursor-pointer flex flex-col justify-between ${
+                            isSelected
+                              ? "border-primary bg-primary/10 ring-2 ring-primary/30 shadow-xs"
+                              : "border-border bg-card hover:bg-muted/50"
+                          }`}
+                        >
+                          <div>
+                            <div className="flex justify-between items-center mb-1">
+                              <span className="text-[10px] uppercase font-bold px-2 py-0.5 rounded bg-muted text-foreground">
+                                {item.examBody}
+                              </span>
+                            </div>
+                            <h3 className="font-bold text-sm text-foreground">
+                              {item.title}
+                            </h3>
+                            <p className="text-xs text-muted-foreground mt-1 line-clamp-2">
+                              {item.description}
+                            </p>
+                          </div>
 
-                  <div className="mt-0.5 flex items-baseline gap-2">
-                    <span className="text-2xl font-black text-foreground tabular-nums">
-                      GH₵ {totalPrice.toFixed(2)}
-                    </span>
+                          <div className="pt-3 mt-3 border-t border-border flex justify-between items-center">
+                            <span className="text-xs font-semibold text-muted-foreground">
+                              Unit Price:
+                            </span>
+                            <span className="text-base font-black text-foreground tabular-nums">
+                              GH₵ {item.price.toFixed(2)}
+                            </span>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
 
-                    <span className="text-xs font-medium text-muted-foreground">
-                      for {quantity} voucher{quantity !== 1 ? "s" : ""}
+                  {/* Purchase Details */}
+                  <div className="rounded-2xl border border-border bg-card shadow-xs overflow-hidden">
+                    {/* Header */}
+                    <div className="px-5 py-4 border-b border-border bg-muted/30">
+                      <div className="flex items-center justify-between gap-3">
+                        <div>
+                          <h3 className="text-sm font-bold text-foreground">
+                            Voucher details
+                          </h3>
+                          <p className="text-xs text-muted-foreground mt-0.5">
+                            Choose how many vouchers you need and where to send
+                            them.
+                          </p>
+                        </div>
+
+                        <div className="text-xs font-semibold text-muted-foreground tabular-nums">
+                          GH₵ {currentChecker.price.toFixed(2)} each
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="p-5 space-y-6">
+                      {/* Quantity */}
+                      <div className="space-y-3">
+                        <div className="flex items-center justify-between gap-3">
+                          <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                            Number of vouchers
+                          </Label>
+
+                          <span className="text-xs font-semibold text-primary tabular-nums">
+                            {quantity} voucher{quantity !== 1 ? "s" : ""}
+                          </span>
+                        </div>
+
+                        {/* Quick quantity presets */}
+                        <div className="grid grid-cols-4 gap-2">
+                          {[1, 2, 5, 10].map((qty) => (
+                            <Button
+                              key={qty}
+                              type="button"
+                              variant={quantity === qty ? "default" : "outline"}
+                              onClick={() => setQuantityInput(String(qty))}
+                              className="h-10 rounded-xl font-bold text-xs"
+                            >
+                              {qty}
+                            </Button>
+                          ))}
+                        </div>
+
+                        {/* Custom quantity */}
+                        <div className="space-y-2">
+                          <Label
+                            htmlFor="custom-quantity"
+                            className="text-[11px] font-semibold text-muted-foreground"
+                          >
+                            Or enter a custom quantity
+                          </Label>
+
+                          <Input
+                            id="custom-quantity"
+                            type="number"
+                            min={1}
+                            max={99}
+                            value={quantityInput}
+                            onChange={(e) => setQuantityInput(e.target.value)}
+                            placeholder="Enter quantity"
+                            className="h-10 rounded-xl text-sm font-medium tabular-nums"
+                          />
+                        </div>
+
+                        <p className="text-[11px] leading-relaxed text-muted-foreground">
+                          Choose a preset above or enter any quantity from 1 to
+                          99.
+                        </p>
+                      </div>
+
+                      {/* Phone */}
+                      <div className="space-y-3">
+                        <div className="flex items-center justify-between gap-3">
+                          <Label
+                            htmlFor="checker-phone"
+                            className="text-xs font-bold uppercase tracking-wider text-muted-foreground"
+                          >
+                            Delivery phone number
+                          </Label>
+
+                          <span className="text-[10px] font-medium text-muted-foreground">
+                            SMS delivery
+                          </span>
+                        </div>
+
+                        <Input
+                          id="checker-phone"
+                          type="tel"
+                          required
+                          value={recipientPhone}
+                          onChange={(e) => setRecipientPhone(e.target.value)}
+                          placeholder="024 419 2834"
+                          className="h-11 rounded-xl text-sm font-medium tabular-nums"
+                        />
+
+                        <p className="text-[11px] leading-relaxed text-muted-foreground">
+                          Your voucher details will be sent to this number after
+                          payment.
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Summary */}
+                    <div className="border-t border-border bg-muted/20 px-5 py-4">
+                      <div>
+                        <p className="text-xs font-medium text-muted-foreground">
+                          Total amount
+                        </p>
+
+                        <div className="mt-0.5 flex items-baseline gap-2">
+                          <span className="text-2xl font-black text-foreground tabular-nums">
+                            GH₵ {totalPrice.toFixed(2)}
+                          </span>
+
+                          <span className="text-xs font-medium text-muted-foreground">
+                            for {quantity} voucher{quantity !== 1 ? "s" : ""}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </form>
+              ) : (
+                /* Masked Voucher Card Result */
+                <div className="p-6 rounded-3xl bg-card border border-border shadow-xl space-y-6">
+                  <div className="flex items-center justify-between pb-4 border-b border-border">
+                    <div className="flex items-center gap-2">
+                      <CheckCircle2 className="w-6 h-6 text-emerald-500" />
+                      <div>
+                        <h3 className="font-bold text-base text-foreground">
+                          Voucher Purchased & Verified
+                        </h3>
+                        <p className="text-xs text-muted-foreground">
+                          Order Ref: {purchasedOrder.reference}
+                        </p>
+                      </div>
+                    </div>
+                    <span className="text-xs px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 font-bold">
+                      Ready for WAEC
                     </span>
                   </div>
-                </div>
 
+                  {/* Sealed Security Scratch Card UI */}
+                  <div className="p-6 rounded-2xl bg-gradient-to-br from-amber-500/15 via-muted/60 to-purple-500/15 border border-border space-y-4">
+                    <div className="flex justify-between items-center">
+                      <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                        Authentic E-Voucher Card
+                      </span>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setRevealed(!revealed)}
+                        className="text-xs font-semibold"
+                      >
+                        {revealed ? (
+                          <EyeOff className="w-3.5 h-3.5 mr-1.5" />
+                        ) : (
+                          <Eye className="w-3.5 h-3.5 mr-1.5" />
+                        )}
+                        <span>{revealed ? "Mask Code" : "Reveal PIN"}</span>
+                      </Button>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div className="p-3 bg-card rounded-xl border border-border">
+                        <span className="text-[10px] uppercase font-bold text-muted-foreground block">
+                          Serial Number:
+                        </span>
+                        <span className="font-mono text-base font-extrabold text-primary tabular-nums">
+                          {purchasedOrder.voucherSerial}
+                        </span>
+                      </div>
+
+                      <div className="p-3 bg-card rounded-xl border border-border">
+                        <span className="text-[10px] uppercase font-bold text-muted-foreground block">
+                          Voucher PIN:
+                        </span>
+                        <span className="font-mono text-base font-extrabold text-primary tabular-nums">
+                          {revealed
+                            ? purchasedOrder.voucherCode
+                            : "•••• - •••• - ••••"}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex flex-wrap gap-3">
+                    <Button
+                      variant="outline"
+                      onClick={handleCopyVoucher}
+                      className="flex-1"
+                    >
+                      {copied ? (
+                        <Check className="w-4 h-4 mr-2 text-emerald-500" />
+                      ) : (
+                        <Copy className="w-4 h-4 mr-2" />
+                      )}
+                      <span>
+                        {copied ? "Copied to Clipboard" : "Copy Serial & PIN"}
+                      </span>
+                    </Button>
+
+                    <a
+                      href="https://ghana.waecdirect.org"
+                      target="_blank"
+                      rel="noreferrer"
+                      className={`${buttonVariants({ variant: "default" })} flex-1 bg-primary`}
+                    >
+                      <span>Check on WAEC Portal</span>
+                      <ExternalLink className="w-3.5 h-3.5 ml-2" />
+                    </a>
+                  </div>
+                </div>
+              )}
+            </div>
+          </ScrollArea>
+
+          {/* Fixed action button — mirrors Fund Wallet modal */}
+          <div className="shrink-0 border-t border-border bg-card p-4 sm:px-6">
+            {!purchasedOrder ? (
+              <div className="w-full">
                 <Button
                   type="submit"
-                  className="h-9 w-full sm:w-auto px-4 font-bold shadow-sm"
+                  form="buy-checker-form"
+                  size="lg"
+                  className="h-12 flex-1 gap-2 rounded-xl w-full text-sm font-bold shadow-md"
                 >
-                  Pay & Reveal Voucher
+                  <span>Pay & Reveal Voucher</span>
                   <ArrowRight className="size-4" />
                 </Button>
               </div>
-            </div>
-          </div>
-        </form>
-      ) : (
-        /* Masked Voucher Card Result */
-        <div className="p-6 sm:p-8 rounded-3xl bg-card border border-border shadow-xl space-y-6">
-          <div className="flex items-center justify-between pb-4 border-b border-border">
-            <div className="flex items-center gap-2">
-              <CheckCircle2 className="w-6 h-6 text-emerald-500" />
-              <div>
-                <h3 className="font-bold text-base text-foreground">
-                  Voucher Purchased & Verified
-                </h3>
-                <p className="text-xs text-muted-foreground">
-                  Order Ref: {purchasedOrder.reference}
-                </p>
-              </div>
-            </div>
-            <span className="text-xs px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 font-bold">
-              Ready for WAEC
-            </span>
-          </div>
-
-          {/* Sealed Security Scratch Card UI */}
-          <div className="p-6 rounded-2xl bg-gradient-to-br from-amber-500/15 via-muted/60 to-purple-500/15 border border-border space-y-4">
-            <div className="flex justify-between items-center">
-              <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                Authentic E-Voucher Card
-              </span>
+            ) : (
               <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={() => setRevealed(!revealed)}
-                className="text-xs font-semibold"
+                size="lg"
+                onClick={() => {
+                  setPurchasedOrder(null);
+                  setRevealed(false);
+                  setIsBuyCheckerOpen(false);
+                }}
+                className="h-12 w-full gap-2 rounded-xl text-sm font-bold shadow-md"
               >
-                {revealed ? (
-                  <EyeOff className="w-3.5 h-3.5 mr-1.5" />
-                ) : (
-                  <Eye className="w-3.5 h-3.5 mr-1.5" />
-                )}
-                <span>{revealed ? "Mask Code" : "Reveal PIN"}</span>
+                Close
               </Button>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="p-3 bg-card rounded-xl border border-border">
-                <span className="text-[10px] uppercase font-bold text-muted-foreground block">
-                  Serial Number:
-                </span>
-                <span className="font-mono text-base font-extrabold text-foreground tabular-nums">
-                  {purchasedOrder.voucherSerial}
-                </span>
-              </div>
-
-              <div className="p-3 bg-card rounded-xl border border-border">
-                <span className="text-[10px] uppercase font-bold text-muted-foreground block">
-                  Voucher PIN:
-                </span>
-                <span className="font-mono text-base font-extrabold text-primary tracking-wider tabular-nums">
-                  {revealed ? purchasedOrder.voucherCode : "•••• - •••• - ••••"}
-                </span>
-              </div>
-            </div>
+            )}
           </div>
 
-          <div className="flex flex-wrap gap-3">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleCopyVoucher}
-              className="flex-1"
-            >
-              {copied ? (
-                <Check className="w-4 h-4 mr-2 text-emerald-500" />
-              ) : (
-                <Copy className="w-4 h-4 mr-2" />
-              )}
-              <span>
-                {copied ? "Copied to Clipboard" : "Copy Serial & PIN"}
+          {/* Trust footer — mirrors Fund Wallet modal */}
+          <DialogFooter className="m-0 shrink-0 rounded-none border-t border-border bg-muted/30 px-5 py-3 sm:justify-center">
+            <div className="flex items-center justify-center gap-2 text-xs font-medium text-muted-foreground">
+              <ShieldCheck className="size-4 shrink-0 text-emerald-600 dark:text-emerald-400" />
+              <span className="text-[11px]">
+                Secured by Smart Data Hub · Authentic WAEC &amp; BECE Stock
               </span>
-            </Button>
-
-            <a
-              href="https://ghana.waecdirect.org"
-              target="_blank"
-              rel="noreferrer"
-              className={`${buttonVariants({ variant: "default" })} flex-1 bg-primary`}
-            >
-              <span>Check on WAEC Portal</span>
-              <ExternalLink className="w-3.5 h-3.5 ml-2" />
-            </a>
-
-            <Button
-              onClick={() => {
-                setPurchasedOrder(null);
-                setRevealed(false);
-              }}
-            >
-              Buy Another
-            </Button>
-          </div>
-        </div>
-      )}
+            </div>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* ============ MY CHECKER ORDERS TABLE ============ */}
       <Card className="border-border shadow-xs">
-        <CardHeader className="pb-3 border-b border-border">
-          <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-            <div>
-              <CardTitle className="text-base font-extrabold text-foreground flex items-center gap-2">
-                <span>My Checker Orders</span>
-              </CardTitle>
+        <CardHeader className="border-b border-border pb-4">
+          <div>
+            <CardTitle className="flex items-center gap-2 text-base font-extrabold text-foreground">
+              <span>My Checker Orders</span>
+            </CardTitle>
 
-              <CardDescription className="text-xs">
-                Authentic WAEC / BECE voucher purchases with serial & PIN
-                retrieval.
-              </CardDescription>
-            </div>
-
-            <div className="flex flex-col sm:flex-row gap-2 w-full lg:w-auto">
-              {/* Search */}
-              <div className="relative w-full sm:w-72">
-                <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 size-3.5 text-muted-foreground" />
-
-                <Input
-                  type="text"
-                  placeholder="Search ref, product, phone..."
-                  value={checkerSearch}
-                  onChange={(e) => setCheckerSearch(e.target.value)}
-                  className="h-9 pl-8 text-xs"
-                />
-              </div>
-
-              {/* Status filter */}
-              <Select value={checkerStatus} onValueChange={setCheckerStatus}>
-                <SelectTrigger className="!h-9 w-full sm:w-36 text-xs">
-                  <SelectValue placeholder="Filter status" />
-                </SelectTrigger>
-
-                <SelectContent>
-                  <SelectItem value="all">All statuses</SelectItem>
-                  <SelectItem value="delivered">Delivered</SelectItem>
-                  <SelectItem value="processing">Processing</SelectItem>
-                  <SelectItem value="failed">Failed</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+            <CardDescription className="mt-1 text-xs">
+              Authentic WAEC / BECE voucher purchases with serial & PIN
+              retrieval.
+            </CardDescription>
           </div>
         </CardHeader>
+
+        {/* Checker Search + Filters */}
+        <div className="border-b border-border bg-muted/20 p-4">
+          <div className="space-y-4">
+            {/* Search */}
+            <div className="space-y-1.5">
+              <Label
+                htmlFor="checker-search"
+                className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground"
+              >
+                Search checker orders
+              </Label>
+
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+
+                <Input
+                  id="checker-search"
+                  type="text"
+                  placeholder="Reference, product, phone, or serial..."
+                  value={checkerSearch}
+                  onChange={(e) => setCheckerSearch(e.target.value)}
+                  className="h-10 bg-background pl-9 text-xs"
+                />
+              </div>
+            </div>
+
+            {/* Filters */}
+            <div className="rounded-xl border border-border bg-background p-3">
+              <div className="mb-3 flex items-center gap-2">
+                <SlidersHorizontal className="size-3.5 text-muted-foreground" />
+
+                <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                  Order filters
+                </span>
+              </div>
+
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                {/* Status */}
+                <div className="space-y-1.5">
+                  <Label
+                    htmlFor="checker-status"
+                    className="text-[10px] font-semibold text-muted-foreground"
+                  >
+                    Order status
+                  </Label>
+
+                  <Select
+                    value={checkerStatus}
+                    onValueChange={setCheckerStatus}
+                  >
+                    <SelectTrigger
+                      id="checker-status"
+                      className="h-9 w-full text-xs"
+                    >
+                      <SelectValue />
+                    </SelectTrigger>
+
+                    <SelectContent>
+                      <SelectItem value="all">All statuses</SelectItem>
+
+                      <SelectItem value="delivered">Delivered</SelectItem>
+
+                      <SelectItem value="processing">Processing</SelectItem>
+
+                      <SelectItem value="failed">Failed</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
 
         <CardContent className="p-0">
           <Table>

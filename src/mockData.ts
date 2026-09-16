@@ -415,7 +415,7 @@ export const INITIAL_CHECKERS: ResultCheckerProduct[] = [
     id: "waec-wassce",
     title: "WASSCE Result Checker 2026",
     examBody: "WAEC",
-    price: 24.0,
+    price: 12.0,
     stockCount: 420,
     description:
       "Instant serial & PIN code to check WASSCE school and private results on waecdirect.org",
@@ -424,7 +424,7 @@ export const INITIAL_CHECKERS: ResultCheckerProduct[] = [
     id: "cssps-bece",
     title: "BECE Placement Checker 2026",
     examBody: "CSSPS",
-    price: 15.0,
+    price: 10.0,
     stockCount: 810,
     description:
       "Computerized School Selection and Placement System (CSSPS) Senior High Placement voucher",
