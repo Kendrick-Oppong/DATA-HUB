@@ -58,6 +58,7 @@ import { MyStoreBuilder } from "./components/agent/MyStoreBuilder";
 import { AgentCommerce } from "./components/agent/AgentCommerce";
 import { AgentBuyDataFlow } from "./components/agent/AgentBuyDataFlow";
 import { AgentBuyAirtimeFlow } from "./components/agent/AgentBuyAirtimeFlow";
+import { AgentAfaFlow } from "./components/agent/AgentAfaFlow";
 
 // Admin Ops Console
 import { AdminOperations } from "./components/admin/AdminOperations";
@@ -1134,6 +1135,14 @@ export default function App() {
                   walletBalance={walletBalance}
                   onOrderCreated={handleOrderCreated}
                   onOpenReceipt={(order) => setSelectedReceiptOrder(order)}
+                />
+              )}
+
+              {activeTab === "afa" && (
+                <AgentAfaFlow
+                  walletBalance={walletBalance}
+                  onApplicationSubmitted={handleAfaSubmitted}
+                  applications={afaApplications}
                 />
               )}
 
