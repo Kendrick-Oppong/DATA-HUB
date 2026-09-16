@@ -14,7 +14,8 @@ import {
   SlidersHorizontal,
   ShieldCheck,
   RotateCcw,
-  Wallet,
+  TrendingUp,
+  DollarSign,
 } from "lucide-react";
 import { ResultCheckerProduct, Order } from "../../types";
 import { Button, buttonVariants } from "../ui/button";
@@ -62,7 +63,7 @@ import {
   PaginationPrevious,
 } from "../ui/pagination";
 
-interface ResultsCheckerFlowProps {
+interface AgentResultsCheckerFlowProps {
   checkers: ResultCheckerProduct[];
   walletBalance: number;
   orders?: Order[];
@@ -70,12 +71,11 @@ interface ResultsCheckerFlowProps {
   onOpenReceipt: (order: Order) => void;
 }
 
-// Date-time formatter for the "When" column (e.g. "2026-09-12 19:44")
+const AGENT_COMMISSION = 5.0; // GH₵5 per voucher sold
+
 const formatDateTime = (dateStr: string): string => {
   if (!dateStr) return "";
-  const d = new Date(
-    dateStr.includes("T") ? dateStr : dateStr.replace(" ", "T"),
-  );
+  const d = new Date(dateStr.includes("T") ? dateStr : dateStr.replace(" ", "T"));
   if (isNaN(d.getTime())) return dateStr;
   const year = d.getFullYear();
   const month = String(d.getMonth() + 1).padStart(2, "0");
@@ -85,7 +85,7 @@ const formatDateTime = (dateStr: string): string => {
   return `${year}-${month}-${day} ${hours}:${mins}`;
 };
 
-export const ResultsCheckerFlow: React.FC<ResultsCheckerFlowProps> = ({
+export const AgentResultsCheckerFlow: React.FC<AgentResultsCheckerFlowProps> = ({
   checkers,
   walletBalance,
   orders = [],
@@ -109,69 +109,66 @@ export const ResultsCheckerFlow: React.FC<ResultsCheckerFlowProps> = ({
       className: "bg-red-500/15 text-red-600 dark:text-red-400",
     },
   } as const;
+
   const CHECKERS_PER_PAGE = 5;
 
   const [selectedCheckerId, setSelectedCheckerId] = useState<string>(
     checkers[0]?.id || "waec-wassce",
   );
   const [quantityInput, setQuantityInput] = useState<string>("1");
-  const [recipientPhone, setRecipientPhone] = useState<string>("0244192834");
+  const [recipientPhone, setRecipientPhone] = useState<string>("");
   const [purchasedOrder, setPurchasedOrder] = useState<Order | null>(null);
   const [revealed, setRevealed] = useState<boolean>(false);
   const [copied, setCopied] = useState<boolean>(false);
-
   const [checkerStatus, setCheckerStatus] = useState("all");
-
-  // Checker Orders Table State
   const [checkerSearch, setCheckerSearch] = useState("");
   const [checkerPage, setCheckerPage] = useState(1);
-
-  // Voucher View Dialog State
   const [voucherViewOrder, setVoucherViewOrder] = useState<Order | null>(null);
   const [dialogRevealed, setDialogRevealed] = useState(false);
   const [voucherCopied, setVoucherCopied] = useState(false);
-
-  // Buy Checker Modal State
   const [isBuyCheckerOpen, setIsBuyCheckerOpen] = useState(false);
 
-  const currentChecker =
-    checkers.find((c) => c.id === selectedCheckerId) || checkers[0];
+  const currentChecker = checkers.find((c) => c.id === selectedCheckerId) || checkers[0];
 
-  // Manual quantity with safe clamping (1 - 99)
   const parsedQty = parseInt(quantityInput, 10);
-  const quantity =
-    isNaN(parsedQty) || parsedQty < 1 ? 1 : Math.min(parsedQty, 99);
-  const totalPrice = Number((currentChecker.price * quantity).toFixed(2));
+  const quantity = isNaN(parsedQty) || parsedQty < 1 ? 1 : Math.min(parsedQty, 99);
 
-  // Reset pagination when search changes
+  // Agent pays wholesale (or retail if no wholesale set), earns commission
+  const agentUnitCost = currentChecker?.wholesalePrice ?? currentChecker?.price ?? 0;
+  const retailUnitPrice = currentChecker?.price ?? 0;
+  const commissionPerUnit = retailUnitPrice - agentUnitCost;
+  const totalAgentCost = Number((agentUnitCost * quantity).toFixed(2));
+  const totalCommission = Number((commissionPerUnit * quantity).toFixed(2));
+
   useEffect(() => {
     setCheckerPage(1);
   }, [checkerSearch, checkerStatus]);
 
-  // All checker orders (search-filtered, newest first)
   const allCheckerOrders = orders.filter((o) => o.serviceType === "checker");
+
+  // Stats derived from orders
+  const deliveredOrders = allCheckerOrders.filter((o) => o.status === "delivered");
+  const vouchersSold = deliveredOrders.length;
+  const commissionEarned = deliveredOrders.reduce(
+    (sum, o) => sum + (o.agentMargin ?? AGENT_COMMISSION),
+    0,
+  );
+
   const checkerOrders = allCheckerOrders
     .filter((o) => {
       const q = checkerSearch.toLowerCase().trim();
-
       const matchesSearch =
         !q ||
         o.reference.toLowerCase().includes(q) ||
         o.productName.toLowerCase().includes(q) ||
         o.recipientPhone.includes(q) ||
         (o.voucherSerial || "").toLowerCase().includes(q);
-
-      const matchesStatus =
-        checkerStatus === "all" || o.status === checkerStatus;
-
+      const matchesStatus = checkerStatus === "all" || o.status === checkerStatus;
       return matchesSearch && matchesStatus;
     })
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
-  const totalCheckerPages = Math.max(
-    1,
-    Math.ceil(checkerOrders.length / CHECKERS_PER_PAGE),
-  );
+  const totalCheckerPages = Math.max(1, Math.ceil(checkerOrders.length / CHECKERS_PER_PAGE));
   const paginatedCheckerOrders = checkerOrders.slice(
     (checkerPage - 1) * CHECKERS_PER_PAGE,
     checkerPage * CHECKERS_PER_PAGE,
@@ -179,14 +176,12 @@ export const ResultsCheckerFlow: React.FC<ResultsCheckerFlowProps> = ({
 
   const handlePurchase = (e: React.FormEvent) => {
     e.preventDefault();
-    if (walletBalance < totalPrice) {
+    if (walletBalance < totalAgentCost) {
       alert("Insufficient wallet balance. Please fund your wallet.");
       return;
     }
     if (quantity > currentChecker.stockCount) {
-      alert(
-        `Only ${currentChecker.stockCount} vouchers left in stock for ${currentChecker.title}.`,
-      );
+      alert(`Only ${currentChecker.stockCount} vouchers left in stock for ${currentChecker.title}.`);
       return;
     }
 
@@ -198,17 +193,15 @@ export const ResultsCheckerFlow: React.FC<ResultsCheckerFlowProps> = ({
       id: `ord-chk-${Date.now()}`,
       reference: ref,
       date: new Date().toISOString().replace("T", " ").slice(0, 16),
-      customerName: "Kojo Mensah",
+      customerName: "Agent Purchase",
       recipientPhone,
       network: "MTN",
       serviceType: "checker",
-      productName:
-        quantity > 1
-          ? `${currentChecker.title} (${quantity}x)`
-          : currentChecker.title,
-      amount: totalPrice,
+      productName: quantity > 1 ? `${currentChecker.title} (${quantity}x)` : currentChecker.title,
+      amount: totalAgentCost,
       paymentMethod: "wallet",
       status: "delivered",
+      agentMargin: totalCommission,
       voucherSerial: randomSerial,
       voucherCode: randomPin,
       deliveryTimeline: [
@@ -255,56 +248,39 @@ export const ResultsCheckerFlow: React.FC<ResultsCheckerFlowProps> = ({
     setVoucherCopied(false);
   };
 
-  // Pagination renderer — identical to CustomerWalletOrders
   const renderPagination = (
     currentPage: number,
     totalPages: number,
     setPage: (page: number) => void,
   ) => {
     if (totalPages <= 1) return null;
-
     const pages: (number | string)[] = [];
     if (totalPages <= 7) {
       for (let i = 1; i <= totalPages; i++) pages.push(i);
     } else {
       pages.push(1);
       if (currentPage > 3) pages.push("...");
-      for (
-        let i = Math.max(2, currentPage - 1);
-        i <= Math.min(totalPages - 1, currentPage + 1);
-        i++
-      ) {
+      for (let i = Math.max(2, currentPage - 1); i <= Math.min(totalPages - 1, currentPage + 1); i++) {
         pages.push(i);
       }
       if (currentPage < totalPages - 2) pages.push("...");
       pages.push(totalPages);
     }
-
     return (
       <Pagination className="pt-4">
         <PaginationContent>
           <PaginationItem>
             <PaginationPrevious
               onClick={() => setPage(Math.max(1, currentPage - 1))}
-              className={
-                currentPage === 1
-                  ? "pointer-events-none opacity-50"
-                  : "cursor-pointer"
-              }
+              className={currentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
             />
           </PaginationItem>
           {pages.map((p, idx) =>
             p === "..." ? (
-              <PaginationItem key={`dots-${idx}`}>
-                <PaginationEllipsis />
-              </PaginationItem>
+              <PaginationItem key={`dots-${idx}`}><PaginationEllipsis /></PaginationItem>
             ) : (
               <PaginationItem key={p}>
-                <PaginationLink
-                  onClick={() => setPage(p as number)}
-                  isActive={currentPage === p}
-                  className="cursor-pointer"
-                >
+                <PaginationLink onClick={() => setPage(p as number)} isActive={currentPage === p} className="cursor-pointer">
                   {p}
                 </PaginationLink>
               </PaginationItem>
@@ -313,11 +289,7 @@ export const ResultsCheckerFlow: React.FC<ResultsCheckerFlowProps> = ({
           <PaginationItem>
             <PaginationNext
               onClick={() => setPage(Math.min(totalPages, currentPage + 1))}
-              className={
-                currentPage === totalPages
-                  ? "pointer-events-none opacity-50"
-                  : "cursor-pointer"
-              }
+              className={currentPage === totalPages ? "pointer-events-none opacity-50" : "cursor-pointer"}
             />
           </PaginationItem>
         </PaginationContent>
@@ -327,118 +299,99 @@ export const ResultsCheckerFlow: React.FC<ResultsCheckerFlowProps> = ({
 
   return (
     <div className="space-y-6">
-      {/* Top Header */}
+      {/* Page Header */}
       <div className="flex flex-col items-start justify-between gap-4 border-b border-border pb-4 sm:flex-row sm:items-center">
         <div>
           <h1 className="flex items-center gap-2 text-2xl font-extrabold tracking-tight text-foreground">
             <GraduationCap className="size-6 text-purple-600" />
             <span>Results Checkers & Admission Vouchers</span>
           </h1>
-
           <p className="mt-0.5 text-xs text-muted-foreground">
-            Instant delivery of authentic WAEC, BECE Placement, and University
-            application scratch codes.
+            Sell authentic WAEC and BECE vouchers. You pay wholesale and earn GH₵{AGENT_COMMISSION.toFixed(2)} commission per voucher delivered.
           </p>
         </div>
-
-        <Button
-          onClick={() => setIsBuyCheckerOpen(true)}
-          className="text-xs font-bold shadow-sm cursor-pointer"
-        >
+        <Button onClick={() => setIsBuyCheckerOpen(true)} className="text-xs font-bold shadow-sm cursor-pointer">
           <Plus className="size-4 stroke-3" />
-          Buy Checker
+          Sell a Voucher
         </Button>
       </div>
 
+      {/* Agent pricing banner */}
+      <div className="flex items-start gap-3 p-3.5 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-xs">
+        <TrendingUp className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
+        <span className="text-emerald-800 dark:text-emerald-300">
+          <span className="font-bold">Agent pricing active.</span> You pay GH₵{(checkers[0]?.wholesalePrice ?? 18).toFixed(2)} wholesale per voucher (retail GH₵{(checkers[0]?.price ?? 23).toFixed(2)}) and earn{" "}
+          <span className="font-bold">+GH₵{AGENT_COMMISSION.toFixed(2)} commission</span> on every voucher delivered.
+        </span>
+      </div>
+
       {/* Stats Cards */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        <div className="rounded-xl border border-border bg-card p-3.5 shadow-2xs">
-          <div className="flex items-center gap-2">
-            <div className="flex size-7 items-center justify-center rounded-lg bg-purple-500/10">
-              <GraduationCap className="size-3.5 text-purple-600 dark:text-purple-400" />
-            </div>
-            <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
-              Checker Types
-            </span>
-          </div>
-          <p className="mt-2 text-xl font-black tabular-nums text-foreground">{checkers.length}</p>
-          <p className="text-[10px] text-muted-foreground font-medium">WAEC, BECE, University</p>
-        </div>
-
-        <div className="rounded-xl border border-border bg-card p-3.5 shadow-2xs">
-          <div className="flex items-center gap-2">
-            <div className="flex size-7 items-center justify-center rounded-lg bg-emerald-500/10">
-              <CheckCircle2 className="size-3.5 text-emerald-600 dark:text-emerald-400" />
-            </div>
-            <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
-              Delivered
-            </span>
-          </div>
-          <p className="mt-2 text-xl font-black tabular-nums text-foreground">{allCheckerOrders.length}</p>
-          <p className="text-[10px] text-muted-foreground font-medium">Total vouchers purchased</p>
-        </div>
-
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
         <div className="rounded-xl border border-border bg-card p-3.5 shadow-2xs">
           <div className="flex items-center gap-2">
             <div className="flex size-7 items-center justify-center rounded-lg bg-primary/10">
               <Ticket className="size-3.5 text-primary" />
             </div>
             <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
-              In Stock
+              Vouchers Sold
             </span>
           </div>
-          <p className="mt-2 text-xl font-black tabular-nums text-foreground">
-            {checkers.reduce((sum, c) => sum + c.stockCount, 0)}
-          </p>
-          <p className="text-[10px] text-muted-foreground font-medium">Vouchers available</p>
+          <p className="mt-2 text-xl font-black tabular-nums text-foreground">{vouchersSold}</p>
+          <p className="text-[10px] text-muted-foreground font-medium">Delivered to customers</p>
         </div>
 
         <div className="rounded-xl border border-border bg-card p-3.5 shadow-2xs">
           <div className="flex items-center gap-2">
-            <div className="flex size-7 items-center justify-center rounded-lg bg-amber-500/10">
-              <Wallet className="size-3.5 text-amber-600 dark:text-amber-400" />
+            <div className="flex size-7 items-center justify-center rounded-lg bg-emerald-500/10">
+              <DollarSign className="size-3.5 text-emerald-600 dark:text-emerald-400" />
             </div>
             <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
-              Total Spent
+              Commission
             </span>
           </div>
-          <p className="mt-2 text-xl font-black tabular-nums text-foreground">
-            GH₵ {allCheckerOrders.reduce((sum, o) => sum + o.amount, 0).toFixed(2)}
+          <p className="mt-2 text-xl font-black tabular-nums text-emerald-600 dark:text-emerald-400">
+            +GH₵ {commissionEarned.toFixed(2)}
           </p>
-          <p className="text-[10px] text-muted-foreground font-medium">Across all purchases</p>
+          <p className="text-[10px] text-muted-foreground font-medium">GH₵{AGENT_COMMISSION.toFixed(2)} per voucher</p>
+        </div>
+
+        <div className="rounded-xl border border-border bg-card p-3.5 shadow-2xs">
+          <div className="flex items-center gap-2">
+            <div className="flex size-7 items-center justify-center rounded-lg bg-purple-500/10">
+              <GraduationCap className="size-3.5 text-purple-600 dark:text-purple-400" />
+            </div>
+            <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+              Products
+            </span>
+          </div>
+          <p className="mt-2 text-xl font-black tabular-nums text-foreground">{checkers.length}</p>
+          <p className="text-[10px] text-muted-foreground font-medium">WAEC, BECE available</p>
         </div>
       </div>
 
-      {/* ============ BUY CHECKER MODAL ============ */}
+      {/* ============ SELL VOUCHER MODAL ============ */}
       <Dialog open={isBuyCheckerOpen} onOpenChange={setIsBuyCheckerOpen}>
         <DialogContent className="flex h-[90vh] max-h-[90vh] sm:max-w-xl flex-col gap-0 overflow-hidden rounded-3xl border border-border bg-card p-0 shadow-2xl">
           {/* Header */}
           <DialogHeader className="relative shrink-0 overflow-hidden border-b border-border bg-gradient-to-br from-primary/10 via-card to-amber-500/10 p-5 sm:p-6">
             <div className="absolute -right-12 -top-12 size-32 rounded-full bg-primary/5" />
             <div className="absolute -bottom-16 left-1/3 size-40 rounded-full bg-amber-500/5" />
-
             <div className="relative flex items-center justify-between gap-4">
               <div className="flex items-center gap-3">
                 <div className="flex size-11 shrink-0 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-sm">
                   <Ticket className="size-5" />
                 </div>
-
                 <div className="min-w-0">
                   <div className="flex items-center gap-2">
                     <DialogTitle className="text-left text-base font-extrabold tracking-tight">
-                      Buy Result Checker Voucher
+                      Sell Result Checker Voucher
                     </DialogTitle>
-
-                    <Badge
-                      variant="secondary"
-                      className="border-primary/20 bg-primary/15 px-2 py-0 text-[10px] font-bold text-primary"
-                    >
-                      Instant Delivery
+                    <Badge variant="secondary" className="border-emerald-500/20 bg-emerald-500/15 px-2 py-0 text-[10px] font-bold text-emerald-700 dark:text-emerald-400">
+                      Agent Pricing
                     </Badge>
                   </div>
-
                   <DialogDescription className="mt-0.5 text-left text-xs">
-                    Select a checker type, quantity, and delivery phone number
+                    Select a checker type, quantity, and customer delivery number
                   </DialogDescription>
                 </div>
               </div>
@@ -449,22 +402,20 @@ export const ResultsCheckerFlow: React.FC<ResultsCheckerFlowProps> = ({
           <ScrollArea className="min-h-0 flex-1 overflow-hidden">
             <div className="p-5 sm:p-6">
               {!purchasedOrder ? (
-                <form
-                  id="buy-checker-form"
-                  onSubmit={handlePurchase}
-                  className="space-y-6"
-                >
+                <form id="sell-checker-form" onSubmit={handlePurchase} className="space-y-6">
                   {/* Voucher Catalog Grid */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     {checkers.map((item) => {
                       const isSelected = selectedCheckerId === item.id;
+                      const wholesale = item.wholesalePrice ?? item.price;
+                      const commission = item.price - wholesale;
                       return (
                         <div
                           key={item.id}
                           onClick={() => setSelectedCheckerId(item.id)}
                           className={`p-4 rounded-2xl border transition-all cursor-pointer flex flex-col justify-between ${isSelected
-                            ? "border-primary bg-primary/10 ring-2 ring-primary/30 shadow-xs"
-                            : "border-border bg-card hover:bg-muted/50"
+                              ? "border-primary bg-primary/10 ring-2 ring-primary/30 shadow-xs"
+                              : "border-border bg-card hover:bg-muted/50"
                             }`}
                         >
                           <div>
@@ -473,21 +424,31 @@ export const ResultsCheckerFlow: React.FC<ResultsCheckerFlowProps> = ({
                                 {item.examBody}
                               </span>
                             </div>
-                            <h3 className="font-bold text-sm text-foreground">
-                              {item.title}
-                            </h3>
-                            <p className="text-xs text-muted-foreground mt-1 line-clamp-2">
-                              {item.description}
-                            </p>
+                            <h3 className="font-bold text-sm text-foreground">{item.title}</h3>
+                            <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{item.description}</p>
                           </div>
 
-                          <div className="pt-3 mt-3 border-t border-border flex justify-between items-center">
-                            <span className="text-xs font-semibold text-muted-foreground">
-                              Unit Price:
-                            </span>
-                            <span className="text-base font-black text-foreground tabular-nums">
-                              GH₵ {item.price.toFixed(2)}
-                            </span>
+                          <div className="pt-3 mt-3 border-t border-border space-y-1">
+                            <div className="flex justify-between items-center">
+                              <span className="text-xs font-semibold text-muted-foreground">Your cost:</span>
+                              <span className="text-base font-black text-foreground tabular-nums">
+                                GH₵ {wholesale.toFixed(2)}
+                              </span>
+                            </div>
+                            <div className="flex justify-between items-center">
+                              <span className="text-xs text-muted-foreground">Retail:</span>
+                              <span className="text-xs text-muted-foreground tabular-nums line-through">
+                                GH₵ {item.price.toFixed(2)}
+                              </span>
+                            </div>
+                            {commission > 0 && (
+                              <div className="flex justify-between items-center">
+                                <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400">Earn:</span>
+                                <span className="text-xs font-black text-emerald-600 dark:text-emerald-400 tabular-nums">
+                                  +GH₵ {commission.toFixed(2)}
+                                </span>
+                              </div>
+                            )}
                           </div>
                         </div>
                       );
@@ -496,21 +457,21 @@ export const ResultsCheckerFlow: React.FC<ResultsCheckerFlowProps> = ({
 
                   {/* Purchase Details */}
                   <div className="rounded-2xl border border-border bg-card shadow-xs overflow-hidden">
-                    {/* Header */}
                     <div className="px-5 py-4 border-b border-border bg-muted/30">
                       <div className="flex items-center justify-between gap-3">
                         <div>
-                          <h3 className="text-sm font-bold text-foreground">
-                            Voucher details
-                          </h3>
+                          <h3 className="text-sm font-bold text-foreground">Voucher details</h3>
                           <p className="text-xs text-muted-foreground mt-0.5">
-                            Choose how many vouchers you need and where to send
-                            them.
+                            Choose quantity and customer delivery number.
                           </p>
                         </div>
-
-                        <div className="text-xs font-semibold text-muted-foreground tabular-nums">
-                          GH₵ {currentChecker.price.toFixed(2)} each
+                        <div className="text-right">
+                          <div className="text-xs font-semibold text-muted-foreground tabular-nums line-through">
+                            GH₵ {retailUnitPrice.toFixed(2)} retail
+                          </div>
+                          <div className="text-xs font-black text-primary tabular-nums">
+                            GH₵ {agentUnitCost.toFixed(2)} your cost
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -522,13 +483,10 @@ export const ResultsCheckerFlow: React.FC<ResultsCheckerFlowProps> = ({
                           <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
                             Number of vouchers
                           </Label>
-
                           <span className="text-xs font-semibold text-primary tabular-nums">
                             {quantity} voucher{quantity !== 1 ? "s" : ""}
                           </span>
                         </div>
-
-                        {/* Quick quantity presets */}
                         <div className="grid grid-cols-4 gap-2">
                           {[1, 2, 5, 10].map((qty) => (
                             <Button
@@ -542,16 +500,10 @@ export const ResultsCheckerFlow: React.FC<ResultsCheckerFlowProps> = ({
                             </Button>
                           ))}
                         </div>
-
-                        {/* Custom quantity */}
                         <div className="space-y-2">
-                          <Label
-                            htmlFor="custom-quantity"
-                            className="text-[11px] font-semibold text-muted-foreground"
-                          >
+                          <Label htmlFor="custom-quantity" className="text-[11px] font-semibold text-muted-foreground">
                             Or enter a custom quantity
                           </Label>
-
                           <Input
                             id="custom-quantity"
                             type="number"
@@ -563,28 +515,19 @@ export const ResultsCheckerFlow: React.FC<ResultsCheckerFlowProps> = ({
                             className="h-10 rounded-xl text-sm font-medium tabular-nums"
                           />
                         </div>
-
                         <p className="text-[11px] leading-relaxed text-muted-foreground">
-                          Choose a preset above or enter any quantity from 1 to
-                          99.
+                          Choose a preset or enter any quantity from 1 to 99.
                         </p>
                       </div>
 
-                      {/* Phone */}
+                      {/* Customer phone */}
                       <div className="space-y-3">
                         <div className="flex items-center justify-between gap-3">
-                          <Label
-                            htmlFor="checker-phone"
-                            className="text-xs font-bold uppercase tracking-wider text-muted-foreground"
-                          >
-                            Delivery phone number
+                          <Label htmlFor="checker-phone" className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                            Customer delivery number
                           </Label>
-
-                          <span className="text-[10px] font-medium text-muted-foreground">
-                            SMS delivery
-                          </span>
+                          <span className="text-[10px] font-medium text-muted-foreground">SMS delivery</span>
                         </div>
-
                         <Input
                           id="checker-phone"
                           type="tel"
@@ -594,47 +537,43 @@ export const ResultsCheckerFlow: React.FC<ResultsCheckerFlowProps> = ({
                           placeholder="024 419 2834"
                           className="h-11 rounded-xl text-sm font-medium tabular-nums"
                         />
-
                         <p className="text-[11px] leading-relaxed text-muted-foreground">
-                          Your voucher details will be sent to this number after
-                          payment.
+                          Voucher PIN & serial will be sent to this number after purchase.
                         </p>
                       </div>
                     </div>
 
-                    {/* Summary */}
-                    <div className="border-t border-border bg-muted/20 px-5 py-4">
-                      <div>
-                        <p className="text-xs font-medium text-muted-foreground">
-                          Total amount
-                        </p>
-
-                        <div className="mt-0.5 flex items-baseline gap-2">
-                          <span className="text-2xl font-black text-foreground tabular-nums">
-                            GH₵ {totalPrice.toFixed(2)}
-                          </span>
-
-                          <span className="text-xs font-medium text-muted-foreground">
-                            for {quantity} voucher{quantity !== 1 ? "s" : ""}
-                          </span>
-                        </div>
+                    {/* Agent pricing summary */}
+                    <div className="border-t border-border bg-muted/20 px-5 py-4 space-y-2">
+                      <div className="flex justify-between text-xs text-muted-foreground">
+                        <span>Retail price ({quantity}x):</span>
+                        <span className="tabular-nums line-through">GH₵ {(retailUnitPrice * quantity).toFixed(2)}</span>
                       </div>
+                      <div className="flex justify-between text-sm font-extrabold text-foreground">
+                        <span>Your cost (wholesale):</span>
+                        <span className="text-primary tabular-nums">GH₵ {totalAgentCost.toFixed(2)}</span>
+                      </div>
+                      {totalCommission > 0 && (
+                        <div className="flex justify-between text-xs font-bold text-emerald-600 dark:text-emerald-400">
+                          <span className="flex items-center gap-1">
+                            <TrendingUp className="w-3 h-3" />
+                            Commission earned on delivery:
+                          </span>
+                          <span className="tabular-nums">+GH₵ {totalCommission.toFixed(2)}</span>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </form>
               ) : (
-                /* Masked Voucher Card Result */
+                /* Voucher success card */
                 <div className="p-6 rounded-3xl bg-card border border-border shadow-xl space-y-6">
                   <div className="flex items-center justify-between pb-4 border-b border-border">
                     <div className="flex items-center gap-2">
                       <CheckCircle2 className="w-6 h-6 text-emerald-500" />
                       <div>
-                        <h3 className="font-bold text-base text-foreground">
-                          Voucher Purchased & Verified
-                        </h3>
-                        <p className="text-xs text-muted-foreground">
-                          Order Ref: {purchasedOrder.reference}
-                        </p>
+                        <h3 className="font-bold text-base text-foreground">Voucher Purchased & Verified</h3>
+                        <p className="text-xs text-muted-foreground">Order Ref: {purchasedOrder.reference}</p>
                       </div>
                     </div>
                     <span className="text-xs px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 font-bold">
@@ -642,7 +581,16 @@ export const ResultsCheckerFlow: React.FC<ResultsCheckerFlowProps> = ({
                     </span>
                   </div>
 
-                  {/* Sealed Security Scratch Card UI */}
+                  {/* Commission earned callout */}
+                  {(purchasedOrder.agentMargin ?? 0) > 0 && (
+                    <div className="flex items-center gap-3 p-3.5 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-xs">
+                      <TrendingUp className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                      <span className="text-emerald-800 dark:text-emerald-300">
+                        <span className="font-bold">+GH₵ {purchasedOrder.agentMargin!.toFixed(2)} commission</span> earned on this order and credited to your account.
+                      </span>
+                    </div>
+                  )}
+
                   <div className="p-6 rounded-2xl bg-gradient-to-br from-amber-500/15 via-muted/60 to-purple-500/15 border border-border space-y-4">
                     <div className="flex justify-between items-center">
                       <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
@@ -655,54 +603,31 @@ export const ResultsCheckerFlow: React.FC<ResultsCheckerFlowProps> = ({
                         onClick={() => setRevealed(!revealed)}
                         className="text-xs font-semibold"
                       >
-                        {revealed ? (
-                          <EyeOff className="w-3.5 h-3.5 mr-1.5" />
-                        ) : (
-                          <Eye className="w-3.5 h-3.5 mr-1.5" />
-                        )}
+                        {revealed ? <EyeOff className="w-3.5 h-3.5 mr-1.5" /> : <Eye className="w-3.5 h-3.5 mr-1.5" />}
                         <span>{revealed ? "Mask Code" : "Reveal PIN"}</span>
                       </Button>
                     </div>
-
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div className="p-3 bg-card rounded-xl border border-border">
-                        <span className="text-[10px] uppercase font-bold text-muted-foreground block">
-                          Serial Number:
-                        </span>
+                        <span className="text-[10px] uppercase font-bold text-muted-foreground block">Serial Number:</span>
                         <span className=" text-base font-extrabold text-primary tabular-nums">
                           {purchasedOrder.voucherSerial}
                         </span>
                       </div>
-
                       <div className="p-3 bg-card rounded-xl border border-border">
-                        <span className="text-[10px] uppercase font-bold text-muted-foreground block">
-                          Voucher PIN:
-                        </span>
+                        <span className="text-[10px] uppercase font-bold text-muted-foreground block">Voucher PIN:</span>
                         <span className=" text-base font-extrabold text-primary tabular-nums">
-                          {revealed
-                            ? purchasedOrder.voucherCode
-                            : "•••• - •••• - ••••"}
+                          {revealed ? purchasedOrder.voucherCode : "•••• - •••• - ••••"}
                         </span>
                       </div>
                     </div>
                   </div>
 
                   <div className="flex flex-wrap gap-3">
-                    <Button
-                      variant="outline"
-                      onClick={handleCopyVoucher}
-                      className="flex-1"
-                    >
-                      {copied ? (
-                        <Check className="w-4 h-4 mr-2 text-emerald-500" />
-                      ) : (
-                        <Copy className="w-4 h-4 mr-2" />
-                      )}
-                      <span>
-                        {copied ? "Copied to Clipboard" : "Copy Serial & PIN"}
-                      </span>
+                    <Button variant="outline" onClick={handleCopyVoucher} className="flex-1">
+                      {copied ? <Check className="w-4 h-4 mr-2 text-emerald-500" /> : <Copy className="w-4 h-4 mr-2" />}
+                      <span>{copied ? "Copied to Clipboard" : "Copy Serial & PIN"}</span>
                     </Button>
-
                     <a
                       href="https://ghana.waecdirect.org"
                       target="_blank"
@@ -718,17 +643,17 @@ export const ResultsCheckerFlow: React.FC<ResultsCheckerFlowProps> = ({
             </div>
           </ScrollArea>
 
-          {/* Fixed action button — mirrors Fund Wallet modal */}
+          {/* Fixed action button */}
           <div className="shrink-0 border-t border-border bg-card p-4 sm:px-6">
             {!purchasedOrder ? (
-              <div className="w-full">
+              <div className="flex">
                 <Button
                   type="submit"
-                  form="buy-checker-form"
+                  form="sell-checker-form"
                   size="lg"
-                  className="h-12 flex-1 gap-2 rounded-xl w-full text-sm font-bold shadow-md"
+                  className="h-12 flex-1 gap-2 rounded-xl text-sm font-bold shadow-md"
                 >
-                  <span>Pay & Reveal Voucher</span>
+                  <span>Pay GH₵ {totalAgentCost.toFixed(2)} & Get Voucher</span>
                   <ArrowRight className="size-4" />
                 </Button>
               </div>
@@ -747,7 +672,7 @@ export const ResultsCheckerFlow: React.FC<ResultsCheckerFlowProps> = ({
             )}
           </div>
 
-          {/* Trust footer — mirrors Fund Wallet modal */}
+          {/* Trust footer */}
           <DialogFooter className="m-0 shrink-0 rounded-none border-t border-border bg-muted/30 px-5 py-3 sm:justify-center">
             <div className="flex items-center justify-center gap-2 text-xs font-medium text-muted-foreground">
               <ShieldCheck className="size-4 shrink-0 text-emerald-600 dark:text-emerald-400" />
@@ -759,36 +684,28 @@ export const ResultsCheckerFlow: React.FC<ResultsCheckerFlowProps> = ({
         </DialogContent>
       </Dialog>
 
-      {/* ============ MY CHECKER ORDERS TABLE ============ */}
+      {/* ============ VOUCHER SALES TABLE ============ */}
       <Card className="border-border shadow-xs">
         <CardHeader className="border-b border-border pb-4">
           <div>
             <CardTitle className="flex items-center gap-2 text-base font-extrabold text-foreground">
-              <span>My Checker Orders</span>
+              <span>Voucher Sales Ledger</span>
             </CardTitle>
-
             <CardDescription className="mt-1 text-xs">
-              Authentic WAEC / BECE voucher purchases with serial & PIN
-              retrieval.
+              All checker voucher sales with serial, PIN retrieval, and commission earned.
             </CardDescription>
           </div>
         </CardHeader>
 
-        {/* Checker Search + Filters */}
+        {/* Search + Filters */}
         <div className="border-b border-border bg-muted/20 p-4">
           <div className="space-y-4">
-            {/* Search */}
             <div className="space-y-1.5">
-              <Label
-                htmlFor="checker-search"
-                className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground"
-              >
-                Search checker orders
+              <Label htmlFor="checker-search" className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                Search voucher sales
               </Label>
-
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-
                 <Input
                   id="checker-search"
                   type="text"
@@ -800,44 +717,24 @@ export const ResultsCheckerFlow: React.FC<ResultsCheckerFlowProps> = ({
               </div>
             </div>
 
-            {/* Filters */}
             <div className="rounded-xl border border-border bg-background p-3">
               <div className="mb-3 flex items-center gap-2">
                 <SlidersHorizontal className="size-3.5 text-muted-foreground" />
-
-                <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
-                  Order filters
-                </span>
+                <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Order filters</span>
               </div>
-
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                {/* Status */}
                 <div className="space-y-1.5">
-                  <Label
-                    htmlFor="checker-status"
-                    className="text-[10px] font-semibold text-muted-foreground"
-                  >
+                  <Label htmlFor="checker-status" className="text-[10px] font-semibold text-muted-foreground">
                     Order status
                   </Label>
-
-                  <Select
-                    value={checkerStatus}
-                    onValueChange={setCheckerStatus}
-                  >
-                    <SelectTrigger
-                      id="checker-status"
-                      className="h-9 w-full text-xs"
-                    >
+                  <Select value={checkerStatus} onValueChange={setCheckerStatus}>
+                    <SelectTrigger id="checker-status" className="h-9 w-full text-xs">
                       <SelectValue />
                     </SelectTrigger>
-
                     <SelectContent>
                       <SelectItem value="all">All statuses</SelectItem>
-
                       <SelectItem value="delivered">Delivered</SelectItem>
-
                       <SelectItem value="processing">Processing</SelectItem>
-
                       <SelectItem value="failed">Failed</SelectItem>
                     </SelectContent>
                   </Select>
@@ -855,7 +752,8 @@ export const ResultsCheckerFlow: React.FC<ResultsCheckerFlowProps> = ({
                 <TableHead>Product</TableHead>
                 <TableHead>Send To</TableHead>
                 <TableHead>Voucher</TableHead>
-                <TableHead className="text-right">Total</TableHead>
+                <TableHead className="text-right">Paid</TableHead>
+                <TableHead className="text-right">Commission</TableHead>
                 <TableHead className="text-center">Status</TableHead>
                 <TableHead className="text-right">When</TableHead>
               </TableRow>
@@ -863,10 +761,7 @@ export const ResultsCheckerFlow: React.FC<ResultsCheckerFlowProps> = ({
             <TableBody>
               {paginatedCheckerOrders.length === 0 ? (
                 <TableRow>
-                  <TableCell
-                    colSpan={7}
-                    className="text-center py-10 text-muted-foreground"
-                  >
+                  <TableCell colSpan={8} className="text-center py-10 text-muted-foreground">
                     <div className="flex flex-col items-center justify-center space-y-2">
                       {checkerSearch ? (
                         <Search className="w-8 h-8 text-muted-foreground/40" />
@@ -874,22 +769,15 @@ export const ResultsCheckerFlow: React.FC<ResultsCheckerFlowProps> = ({
                         <Ticket className="w-8 h-8 text-muted-foreground/40" />
                       )}
                       <p className="text-sm font-bold text-foreground">
-                        {checkerSearch
-                          ? "No matching checker orders"
-                          : "No checker orders yet"}
+                        {checkerSearch ? "No matching voucher sales" : "No voucher sales yet"}
                       </p>
                       <p className="text-xs text-muted-foreground">
                         {checkerSearch
                           ? "Try a different reference, product, or phone number."
-                          : "Purchase a result checker above to see it here."}
+                          : "Sell a result checker above to see it here."}
                       </p>
                       {checkerSearch && (
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => setCheckerSearch("")}
-                          className="mt-2 text-xs"
-                        >
+                        <Button variant="outline" size="sm" onClick={() => setCheckerSearch("")} className="mt-2 text-xs">
                           Clear Search
                         </Button>
                       )}
@@ -899,15 +787,9 @@ export const ResultsCheckerFlow: React.FC<ResultsCheckerFlowProps> = ({
               ) : (
                 paginatedCheckerOrders.map((order) => (
                   <TableRow key={order.id} className="hover:bg-muted/40">
-                    <TableCell className=" text-xs text-muted-foreground">
-                      {order.reference}
-                    </TableCell>
-                    <TableCell className="font-bold text-xs text-foreground">
-                      {order.productName}
-                    </TableCell>
-                    <TableCell className=" text-xs text-muted-foreground">
-                      {order.recipientPhone}
-                    </TableCell>
+                    <TableCell className=" text-xs text-muted-foreground">{order.reference}</TableCell>
+                    <TableCell className="font-bold text-xs text-foreground">{order.productName}</TableCell>
+                    <TableCell className=" text-xs text-muted-foreground">{order.recipientPhone}</TableCell>
                     <TableCell>
                       <Button
                         variant="outline"
@@ -922,19 +804,23 @@ export const ResultsCheckerFlow: React.FC<ResultsCheckerFlowProps> = ({
                     <TableCell className="text-right font-black text-foreground tabular-nums text-xs">
                       GH₵ {order.amount.toFixed(2)}
                     </TableCell>
+                    <TableCell className="text-right tabular-nums text-xs">
+                      {order.status === "delivered" ? (
+                        <span className="font-black text-emerald-600 dark:text-emerald-400">
+                          +GH₵ {(order.agentMargin ?? AGENT_COMMISSION).toFixed(2)}
+                        </span>
+                      ) : (
+                        <span className="text-muted-foreground font-medium">—</span>
+                      )}
+                    </TableCell>
                     <TableCell className="text-center">
                       {(() => {
                         const cfg =
-                          checkerStatusConfig[
-                          order.status as keyof typeof checkerStatusConfig
-                          ] ?? checkerStatusConfig.delivered;
+                          checkerStatusConfig[order.status as keyof typeof checkerStatusConfig] ??
+                          checkerStatusConfig.delivered;
                         return (
-                          <span
-                            className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold ${cfg.className}`}
-                          >
-                            <span
-                              className={`w-1.5 h-1.5 rounded-full ${cfg.dot}`}
-                            />
+                          <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold ${cfg.className}`}>
+                            <span className={`w-1.5 h-1.5 rounded-full ${cfg.dot}`} />
                             {cfg.label}
                           </span>
                         );
@@ -949,29 +835,19 @@ export const ResultsCheckerFlow: React.FC<ResultsCheckerFlowProps> = ({
             </TableBody>
           </Table>
 
-          {/* Pagination footer — count left, controls right (same as CustomerWalletOrders) */}
           <div className="flex items-center justify-between gap-4 border-t border-border px-4 py-3">
             <span className="text-xs text-muted-foreground shrink-0">
               Showing{" "}
               <span className="font-bold text-foreground">
-                {Math.min(
-                  checkerPage * CHECKERS_PER_PAGE,
-                  checkerOrders.length,
-                )}
+                {Math.min(checkerPage * CHECKERS_PER_PAGE, checkerOrders.length)}
               </span>{" "}
               of{" "}
-              <span className="font-bold text-foreground">
-                {checkerOrders.length}
-              </span>{" "}
-              checker orders
+              <span className="font-bold text-foreground">{checkerOrders.length}</span>{" "}
+              sales
             </span>
             {checkerOrders.length > CHECKERS_PER_PAGE && (
               <div className="flex justify-end">
-                {renderPagination(
-                  checkerPage,
-                  totalCheckerPages,
-                  setCheckerPage,
-                )}
+                {renderPagination(checkerPage, totalCheckerPages, setCheckerPage)}
               </div>
             )}
           </div>
@@ -979,12 +855,7 @@ export const ResultsCheckerFlow: React.FC<ResultsCheckerFlowProps> = ({
       </Card>
 
       {/* ============ VOUCHER VIEW & COPY DIALOG ============ */}
-      <Dialog
-        open={!!voucherViewOrder}
-        onOpenChange={(open) => {
-          if (!open) setVoucherViewOrder(null);
-        }}
-      >
+      <Dialog open={!!voucherViewOrder} onOpenChange={(open) => { if (!open) setVoucherViewOrder(null); }}>
         <DialogContent className="flex max-h-[90vh] sm:max-w-xl flex-col gap-0 overflow-hidden rounded-3xl border border-border bg-card p-0 shadow-2xl">
           {/* Header */}
           <DialogHeader className="relative shrink-0 overflow-hidden border-b border-border bg-gradient-to-br from-primary/10 via-card to-amber-500/10 p-5 sm:p-6">
@@ -999,8 +870,8 @@ export const ResultsCheckerFlow: React.FC<ResultsCheckerFlowProps> = ({
                   <DialogTitle className="text-left text-base font-extrabold tracking-tight">
                     Voucher Serial &amp; PIN
                   </DialogTitle>
-                  <Badge variant="secondary" className="border-primary/20 bg-primary/15 px-2 py-0 text-[10px] font-bold text-primary">
-                    Instant Delivery
+                  <Badge variant="secondary" className="border-emerald-500/20 bg-emerald-500/15 px-2 py-0 text-[10px] font-bold text-emerald-700 dark:text-emerald-400">
+                    Agent Pricing
                   </Badge>
                 </div>
                 <DialogDescription className="mt-0.5 text-left text-xs font-mono">
@@ -1019,7 +890,7 @@ export const ResultsCheckerFlow: React.FC<ResultsCheckerFlowProps> = ({
                 <span className="font-bold text-foreground">{voucherViewOrder.productName}</span>
               </div>
 
-              {/* Voucher Purchased header */}
+              {/* Voucher header */}
               <div className="flex items-center justify-between pb-3 border-b border-border">
                 <div className="flex items-center gap-2">
                   <CheckCircle2 className="w-5 h-5 text-emerald-500" />
@@ -1032,6 +903,16 @@ export const ResultsCheckerFlow: React.FC<ResultsCheckerFlowProps> = ({
                   Ready for WAEC
                 </span>
               </div>
+
+              {/* Commission callout for agent */}
+              {voucherViewOrder.status === "delivered" && (voucherViewOrder.agentMargin ?? 0) > 0 && (
+                <div className="flex items-center gap-3 p-3.5 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-xs">
+                  <TrendingUp className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                  <span className="text-emerald-800 dark:text-emerald-300">
+                    <span className="font-bold">+GH₵ {voucherViewOrder.agentMargin!.toFixed(2)} commission</span> earned on this order.
+                  </span>
+                </div>
+              )}
 
               {/* Scratch card */}
               <div className="p-5 rounded-2xl bg-gradient-to-br from-amber-500/15 via-muted/60 to-purple-500/15 border border-border space-y-4">
@@ -1073,11 +954,7 @@ export const ResultsCheckerFlow: React.FC<ResultsCheckerFlowProps> = ({
 
               {/* Action buttons */}
               <div className="flex flex-wrap gap-3">
-                <Button
-                  variant="outline"
-                  onClick={handleCopyDialogVoucher}
-                  className="flex-1"
-                >
+                <Button variant="outline" onClick={handleCopyDialogVoucher} className="flex-1">
                   {voucherCopied ? (
                     <Check className="w-4 h-4 mr-2 text-emerald-500" />
                   ) : (

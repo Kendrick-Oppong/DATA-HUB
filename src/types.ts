@@ -97,12 +97,12 @@ export interface Transaction {
   date: string;
   type: "credit" | "debit";
   category:
-    | "wallet_funding"
-    | "purchase"
-    | "commission"
-    | "withdrawal"
-    | "refund"
-    | "promo_credit";
+  | "wallet_funding"
+  | "purchase"
+  | "commission"
+  | "withdrawal"
+  | "refund"
+  | "promo_credit";
   amount: number;
   fee: number;
   balanceAfter: number;
@@ -116,6 +116,7 @@ export interface ResultCheckerProduct {
   title: string;
   examBody: "WAEC" | "CSSPS" | "UNIVERSITY" | "NOVDEC";
   price: number;
+  wholesalePrice?: number; // agent cost — retail is price, commission = price - wholesalePrice
   stockCount: number;
   description: string;
 }
@@ -141,11 +142,11 @@ export interface Complaint {
   ticketNumber: string;
   orderReference?: string;
   category:
-    | "delivery_delay"
-    | "failed_recharge"
-    | "wrong_number"
-    | "momo_debit_no_credit"
-    | "general";
+  | "delivery_delay"
+  | "failed_recharge"
+  | "wrong_number"
+  | "momo_debit_no_credit"
+  | "general";
   subject: string;
   status: "open" | "investigating" | "resolved" | "closed";
   priority: "low" | "medium" | "high" | "urgent";

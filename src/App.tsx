@@ -59,6 +59,7 @@ import { AgentCommerce } from "./components/agent/AgentCommerce";
 import { AgentBuyDataFlow } from "./components/agent/AgentBuyDataFlow";
 import { AgentBuyAirtimeFlow } from "./components/agent/AgentBuyAirtimeFlow";
 import { AgentAfaFlow } from "./components/agent/AgentAfaFlow";
+import { AgentResultsCheckerFlow } from "./components/agent/AgentResultsCheckerFlow";
 
 // Admin Ops Console
 import { AdminOperations } from "./components/admin/AdminOperations";
@@ -400,7 +401,7 @@ export default function App() {
     loadFromStorage("sdh_afa_apps", mockAfaApplications),
   );
   const [checkers, setCheckers] = useState<ResultCheckerProduct[]>(() =>
-    loadFromStorage("sdh_checkers", mockResultCheckers),
+    loadFromStorage("sdh_checkers_v2", mockResultCheckers),
   );
   const [gateways, setGateways] = useState<TelecomGateway[]>(() =>
     loadFromStorage("sdh_gateways", mockGateways),
@@ -657,7 +658,7 @@ export default function App() {
       return c;
     });
     setCheckers(updated);
-    saveToStorage("sdh_checkers", updated);
+    saveToStorage("sdh_checkers_v2", updated);
   };
 
   // Update Store Config (Agent)
@@ -1143,6 +1144,15 @@ export default function App() {
                   walletBalance={walletBalance}
                   onApplicationSubmitted={handleAfaSubmitted}
                   applications={afaApplications}
+                />
+              )}
+              {activeTab === "results-checker" && (
+                <AgentResultsCheckerFlow
+                  checkers={checkers}
+                  walletBalance={walletBalance}
+                  orders={orders}
+                  onOrderCreated={handleOrderCreated}
+                  onOpenReceipt={(order) => setSelectedReceiptOrder(order)}
                 />
               )}
 
