@@ -56,6 +56,8 @@ import { CustomerWalletOrders } from "./components/customer/CustomerWalletOrders
 import { AgentDashboard } from "./components/agent/AgentDashboard";
 import { MyStoreBuilder } from "./components/agent/MyStoreBuilder";
 import { AgentCommerce } from "./components/agent/AgentCommerce";
+import { AgentBuyDataFlow } from "./components/agent/AgentBuyDataFlow";
+import { AgentBuyAirtimeFlow } from "./components/agent/AgentBuyAirtimeFlow";
 
 // Admin Ops Console
 import { AdminOperations } from "./components/admin/AdminOperations";
@@ -68,18 +70,18 @@ import { DEMO_ACCOUNTS } from "./components/auth/auth.demo";
 export type AppRoute =
   | { type: "public"; tab: string }
   | {
-      type: "auth";
-      mode:
-        | "sign-in"
-        | "sign-up"
-        | "otp"
-        | "forgot-password"
-        | "new-password"
-        | "two-factor"
-        | "kyc-verify";
-      redirectTargetRole?: UserRole;
-      redirectReason?: string | null;
-    }
+    type: "auth";
+    mode:
+    | "sign-in"
+    | "sign-up"
+    | "otp"
+    | "forgot-password"
+    | "new-password"
+    | "two-factor"
+    | "kyc-verify";
+    redirectTargetRole?: UserRole;
+    redirectReason?: string | null;
+  }
   | { type: "storefront" }
   | { type: "dashboard"; role: "customer" | "agent" | "admin"; tab: string }
   | { type: "legal"; page: "terms" | "privacy" };
@@ -1073,25 +1075,25 @@ export default function App() {
                 activeTab === "guides" ||
                 activeTab === "profile" ||
                 activeTab === "notifications") && (
-                <CustomerWalletOrders
-                  view={activeTab as any}
-                  walletBalance={walletBalance}
-                  onOpenFundWallet={() => setIsFundWalletOpen(true)}
-                  orders={orders}
-                  transactions={transactions}
-                  complaints={complaints}
-                  onOpenReceipt={(order) => setSelectedReceiptOrder(order)}
-                  onAddComplaint={handleAddComplaint}
-                  onReplyComplaint={handleReplyComplaint}
-                  theme={theme}
-                  onToggleTheme={toggleTheme}
-                  onSetTheme={handleSetTheme}
-                  onOpenSecurityPins={() => setIsSecurityPinsOpen(true)}
-                  user={user}
-                  onUpdateUser={handleUpdateUser}
-                  onUpdateOrders={setOrders}
-                />
-              )}
+                  <CustomerWalletOrders
+                    view={activeTab as any}
+                    walletBalance={walletBalance}
+                    onOpenFundWallet={() => setIsFundWalletOpen(true)}
+                    orders={orders}
+                    transactions={transactions}
+                    complaints={complaints}
+                    onOpenReceipt={(order) => setSelectedReceiptOrder(order)}
+                    onAddComplaint={handleAddComplaint}
+                    onReplyComplaint={handleReplyComplaint}
+                    theme={theme}
+                    onToggleTheme={toggleTheme}
+                    onSetTheme={handleSetTheme}
+                    onOpenSecurityPins={() => setIsSecurityPinsOpen(true)}
+                    user={user}
+                    onUpdateUser={handleUpdateUser}
+                    onUpdateOrders={setOrders}
+                  />
+                )}
             </>
           )}
 
@@ -1118,26 +1120,43 @@ export default function App() {
                 />
               )}
 
+              {activeTab === "buy-data" && (
+                <AgentBuyDataFlow
+                  bundles={initialBundles}
+                  walletBalance={walletBalance}
+                  onOrderCreated={handleOrderCreated}
+                  onOpenReceipt={(order) => setSelectedReceiptOrder(order)}
+                />
+              )}
+
+              {activeTab === "buy-airtime" && (
+                <AgentBuyAirtimeFlow
+                  walletBalance={walletBalance}
+                  onOrderCreated={handleOrderCreated}
+                  onOpenReceipt={(order) => setSelectedReceiptOrder(order)}
+                />
+              )}
+
               {(activeTab === "store-orders" ||
                 activeTab === "pricing" ||
                 activeTab === "analytics" ||
                 activeTab === "bulk-sms" ||
                 activeTab === "withdraw" ||
                 activeTab === "verify") && (
-                <AgentCommerce
-                  view={activeTab as any}
-                  storeConfig={storeConfig}
-                  bundles={initialBundles}
-                  orders={orders}
-                  commissionBalance={commissionBalance}
-                  onWithdrawSuccess={handleWithdrawSuccess}
-                  onUpdateOrders={(updatedOrders) => {
-                    setOrders(updatedOrders);
-                    saveToStorage("sdh_orders_v4", updatedOrders);
-                  }}
-                  onNavigateTab={handleTabChange}
-                />
-              )}
+                  <AgentCommerce
+                    view={activeTab as any}
+                    storeConfig={storeConfig}
+                    bundles={initialBundles}
+                    orders={orders}
+                    commissionBalance={commissionBalance}
+                    onWithdrawSuccess={handleWithdrawSuccess}
+                    onUpdateOrders={(updatedOrders) => {
+                      setOrders(updatedOrders);
+                      saveToStorage("sdh_orders_v4", updatedOrders);
+                    }}
+                    onNavigateTab={handleTabChange}
+                  />
+                )}
             </>
           )}
 
@@ -1155,10 +1174,10 @@ export default function App() {
               <AdminOperations
                 view={
                   activeTab === "gateways" ||
-                  activeTab === "orders-audit" ||
-                  activeTab === "settlement" ||
-                  activeTab === "afa-verification" ||
-                  activeTab === "vouchers-stock"
+                    activeTab === "orders-audit" ||
+                    activeTab === "settlement" ||
+                    activeTab === "afa-verification" ||
+                    activeTab === "vouchers-stock"
                     ? (activeTab as any)
                     : "gateways"
                 }

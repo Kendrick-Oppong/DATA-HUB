@@ -12,9 +12,17 @@ import {
   TrendingUp,
   ShoppingCart,
 } from "lucide-react";
-import { TelecomNetwork, DataBundle, Order, VerificationStatus } from "../../types";
+import {
+  TelecomNetwork,
+  DataBundle,
+  Order,
+  VerificationStatus,
+} from "../../types";
 import { detectGhanaNetwork } from "../../mockData";
-import { verifyPhoneNumber, normalizePhoneNumber } from "../../mockVerificationData";
+import {
+  verifyPhoneNumber,
+  normalizePhoneNumber,
+} from "../../mockVerificationData";
 import { SignalRail } from "../common/SignalRail";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
@@ -45,42 +53,51 @@ export const AgentBuyDataFlow: React.FC<AgentBuyDataFlowProps> = ({
     "network" | "recipient" | "bundle" | "review" | "processing" | "success"
   >("network");
 
-  const [selectedNetwork, setSelectedNetwork] = useState<TelecomNetwork>(initialNetwork);
+  const [selectedNetwork, setSelectedNetwork] =
+    useState<TelecomNetwork>(initialNetwork);
   const [mtnTier, setMtnTier] = useState<"standard" | "xpress">(() => {
     if (initialBundleId && initialBundleId.includes("xpress")) return "xpress";
     return "standard";
   });
   const [atTier, setAtTier] = useState<"ishare" | "bigtime">(() => {
-    if (initialBundleId && initialBundleId.includes("bigtime")) return "bigtime";
+    if (initialBundleId && initialBundleId.includes("bigtime"))
+      return "bigtime";
     return "ishare";
   });
   const [selectedBundleId, setSelectedBundleId] = useState<string>(() => {
     if (initialBundleId) return initialBundleId;
     if (initialNetwork === "MTN") {
       return (
-        bundles.find((b) => b.network === "MTN" && (b.tier || "standard") === "standard")?.id ||
-        "mtn-5gb"
+        bundles.find(
+          (b) => b.network === "MTN" && (b.tier || "standard") === "standard",
+        )?.id || "mtn-5gb"
       );
     }
     if (initialNetwork === "AirtelTigo") {
       return (
         bundles.find(
-          (b) => b.network === "AirtelTigo" && (b.tier || "ishare") === "ishare",
+          (b) =>
+            b.network === "AirtelTigo" && (b.tier || "ishare") === "ishare",
         )?.id || "at-ishare-5gb"
       );
     }
-    return bundles.find((b) => b.network === initialNetwork)?.id || "telecel-5gb";
+    return (
+      bundles.find((b) => b.network === initialNetwork)?.id || "telecel-5gb"
+    );
   });
   const [recipientPhone, setRecipientPhone] = useState<string>("");
   const [paymentMethod, setPaymentMethod] = useState<
     "wallet" | "momo_mtn" | "momo_telecel" | "momo_at"
   >("wallet");
-  const [inputMode, setInputMode] = useState<"cards" | "text" | "bulk">("cards");
+  const [inputMode, setInputMode] = useState<"cards" | "text" | "bulk">(
+    "cards",
+  );
   const [bulkNumbersText, setBulkNumbersText] = useState<string>("");
   const [createdOrder, setCreatedOrder] = useState<Order | null>(null);
   const [copiedRef, setCopiedRef] = useState(false);
 
-  const [verificationStatus, setVerificationStatus] = useState<VerificationStatus | null>(null);
+  const [verificationStatus, setVerificationStatus] =
+    useState<VerificationStatus | null>(null);
   const [isVerifying, setIsVerifying] = useState(false);
   const [verificationMessage, setVerificationMessage] = useState<string>("");
 
@@ -100,8 +117,14 @@ export const AgentBuyDataFlow: React.FC<AgentBuyDataFlowProps> = ({
     const curSize = currentBundle?.sizeGb;
     const match =
       bundles.find(
-        (b) => b.network === "MTN" && (b.tier || "standard") === newTier && b.sizeGb === curSize,
-      ) || bundles.find((b) => b.network === "MTN" && (b.tier || "standard") === newTier);
+        (b) =>
+          b.network === "MTN" &&
+          (b.tier || "standard") === newTier &&
+          b.sizeGb === curSize,
+      ) ||
+      bundles.find(
+        (b) => b.network === "MTN" && (b.tier || "standard") === newTier,
+      );
     if (match) setSelectedBundleId(match.id);
   };
 
@@ -114,7 +137,10 @@ export const AgentBuyDataFlow: React.FC<AgentBuyDataFlowProps> = ({
           b.network === "AirtelTigo" &&
           (b.tier || "ishare") === newTier &&
           b.sizeGb === curSize,
-      ) || bundles.find((b) => b.network === "AirtelTigo" && (b.tier || "ishare") === newTier);
+      ) ||
+      bundles.find(
+        (b) => b.network === "AirtelTigo" && (b.tier || "ishare") === newTier,
+      );
     if (match) setSelectedBundleId(match.id);
   };
 
@@ -128,7 +154,8 @@ export const AgentBuyDataFlow: React.FC<AgentBuyDataFlowProps> = ({
   const filteredBundles = bundles.filter((b) => {
     if (b.network !== selectedNetwork) return false;
     if (selectedNetwork === "MTN") return (b.tier || "standard") === mtnTier;
-    if (selectedNetwork === "AirtelTigo") return (b.tier || "ishare") === atTier;
+    if (selectedNetwork === "AirtelTigo")
+      return (b.tier || "ishare") === atTier;
     return true;
   });
 
@@ -141,7 +168,9 @@ export const AgentBuyDataFlow: React.FC<AgentBuyDataFlowProps> = ({
   // Agent pays wholesale, earns the difference
   const agentCost = currentBundle?.wholesalePrice ?? 0;
   const agentCommission = currentBundle
-    ? Number((currentBundle.retailPrice - currentBundle.wholesalePrice).toFixed(2))
+    ? Number(
+        (currentBundle.retailPrice - currentBundle.wholesalePrice).toFixed(2),
+      )
     : 0;
 
   const handlePhoneChange = (val: string) => {
@@ -152,10 +181,13 @@ export const AgentBuyDataFlow: React.FC<AgentBuyDataFlowProps> = ({
         setSelectedNetwork(detected);
         let match: DataBundle | undefined;
         if (detected === "MTN") {
-          match = bundles.find((b) => b.network === "MTN" && (b.tier || "standard") === mtnTier);
+          match = bundles.find(
+            (b) => b.network === "MTN" && (b.tier || "standard") === mtnTier,
+          );
         } else if (detected === "AirtelTigo") {
           match = bundles.find(
-            (b) => b.network === "AirtelTigo" && (b.tier || "ishare") === atTier,
+            (b) =>
+              b.network === "AirtelTigo" && (b.tier || "ishare") === atTier,
           );
         } else {
           match = bundles.find((b) => b.network === detected);
@@ -184,8 +216,10 @@ export const AgentBuyDataFlow: React.FC<AgentBuyDataFlowProps> = ({
 
   const validateStep = (currentStep: string): boolean => {
     switch (currentStep) {
-      case "network": return !!selectedNetwork;
-      case "bundle": return !!selectedBundleId;
+      case "network":
+        return !!selectedNetwork;
+      case "bundle":
+        return !!selectedBundleId;
       case "recipient":
         return (
           recipientPhone.length >= 10 &&
@@ -193,16 +227,19 @@ export const AgentBuyDataFlow: React.FC<AgentBuyDataFlowProps> = ({
         );
       case "review":
         return paymentMethod !== "wallet" || walletBalance >= agentCost;
-      default: return true;
+      default:
+        return true;
     }
   };
 
   const handleNext = () => {
     if (!validateStep(step)) {
       if (step === "network") alert("Please select a network.");
-      if (step === "recipient") alert("Please enter a valid 10-digit phone number.");
+      if (step === "recipient")
+        alert("Please enter a valid 10-digit phone number.");
       if (step === "bundle") alert("Please select a data bundle.");
-      if (step === "review") alert("Insufficient wallet balance. Please choose Mobile Money.");
+      if (step === "review")
+        alert("Insufficient wallet balance. Please choose Mobile Money.");
       return;
     }
     if (step === "network") setStep("recipient");
@@ -313,10 +350,10 @@ export const AgentBuyDataFlow: React.FC<AgentBuyDataFlowProps> = ({
 
       {/* Agent Pricing Banner */}
       <div className="flex items-center gap-3 p-3.5 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-xs">
-        <TrendingUp className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
+        <SignalRail status="online" size="sm" />
         <span className="text-emerald-800 dark:text-emerald-300">
-          <span className="font-bold">Agent pricing active.</span> You pay the wholesale cost and
-          earn the retail margin on each order delivered.
+          <span className="font-bold">Agent pricing active.</span> You pay the
+          wholesale cost and earn the retail margin on each order delivered.
         </span>
       </div>
 
@@ -386,44 +423,51 @@ export const AgentBuyDataFlow: React.FC<AgentBuyDataFlowProps> = ({
             </div>
 
             <div className="grid grid-cols-3 gap-3">
-              {(["MTN", "Telecel", "AirtelTigo"] as TelecomNetwork[]).map((net) => {
-                const isSelected = selectedNetwork === net;
-                return (
-                  <button
-                    key={net}
-                    type="button"
-                    onClick={() => {
-                      setSelectedNetwork(net);
-                      let first: DataBundle | undefined;
-                      if (net === "MTN") {
-                        first = bundles.find(
-                          (b) => b.network === "MTN" && (b.tier || "standard") === mtnTier,
-                        );
-                      } else if (net === "AirtelTigo") {
-                        first = bundles.find(
-                          (b) =>
-                            b.network === "AirtelTigo" && (b.tier || "ishare") === atTier,
-                        );
-                      } else {
-                        first = bundles.find((b) => b.network === net);
-                      }
-                      if (first) setSelectedBundleId(first.id);
-                    }}
-                    className={`py-4 px-3 rounded-xl border text-center transition-all cursor-pointer ${
-                      isSelected
-                        ? net === "MTN"
-                          ? "bg-amber-400 text-amber-950 border-amber-500 ring-2 ring-amber-500/30 font-bold"
-                          : net === "Telecel"
-                            ? "bg-red-600 text-white border-red-700 ring-2 ring-red-500/30 font-bold"
-                            : "bg-blue-600 text-white border-blue-700 ring-2 ring-blue-500/30 font-bold"
-                        : "border-border bg-muted/40 hover:bg-muted text-foreground"
-                    }`}
-                  >
-                    <div className="text-sm font-extrabold">{net}</div>
-                    <div className="text-[10px] mt-1 opacity-85">Instant EVD</div>
-                  </button>
-                );
-              })}
+              {(["MTN", "Telecel", "AirtelTigo"] as TelecomNetwork[]).map(
+                (net) => {
+                  const isSelected = selectedNetwork === net;
+                  return (
+                    <button
+                      key={net}
+                      type="button"
+                      onClick={() => {
+                        setSelectedNetwork(net);
+                        let first: DataBundle | undefined;
+                        if (net === "MTN") {
+                          first = bundles.find(
+                            (b) =>
+                              b.network === "MTN" &&
+                              (b.tier || "standard") === mtnTier,
+                          );
+                        } else if (net === "AirtelTigo") {
+                          first = bundles.find(
+                            (b) =>
+                              b.network === "AirtelTigo" &&
+                              (b.tier || "ishare") === atTier,
+                          );
+                        } else {
+                          first = bundles.find((b) => b.network === net);
+                        }
+                        if (first) setSelectedBundleId(first.id);
+                      }}
+                      className={`py-4 px-3 rounded-xl border text-center transition-all cursor-pointer ${
+                        isSelected
+                          ? net === "MTN"
+                            ? "bg-amber-400 text-amber-950 border-amber-500 ring-2 ring-amber-500/30 font-bold"
+                            : net === "Telecel"
+                              ? "bg-red-600 text-white border-red-700 ring-2 ring-red-500/30 font-bold"
+                              : "bg-blue-600 text-white border-blue-700 ring-2 ring-blue-500/30 font-bold"
+                          : "border-border bg-muted/40 hover:bg-muted text-foreground"
+                      }`}
+                    >
+                      <div className="text-sm font-extrabold">{net}</div>
+                      <div className="text-[10px] mt-1 opacity-85">
+                        Instant EVD
+                      </div>
+                    </button>
+                  );
+                },
+              )}
             </div>
 
             {/* MTN tier selector */}
@@ -433,7 +477,9 @@ export const AgentBuyDataFlow: React.FC<AgentBuyDataFlowProps> = ({
                   <Label className="text-xs font-bold uppercase tracking-wider">
                     MTN Delivery Option
                   </Label>
-                  <span className="text-[11px] text-muted-foreground">Select delivery priority</span>
+                  <span className="text-[11px] text-muted-foreground">
+                    Select delivery priority
+                  </span>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <button
@@ -494,7 +540,9 @@ export const AgentBuyDataFlow: React.FC<AgentBuyDataFlowProps> = ({
                   <Label className="text-xs font-bold uppercase tracking-wider">
                     AT Data Option
                   </Label>
-                  <span className="text-[11px] text-muted-foreground">Select bundle category</span>
+                  <span className="text-[11px] text-muted-foreground">
+                    Select bundle category
+                  </span>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <button
@@ -540,7 +588,9 @@ export const AgentBuyDataFlow: React.FC<AgentBuyDataFlowProps> = ({
                         <Check className="size-4 text-blue-600 dark:text-blue-400 stroke-3" />
                       )}
                     </div>
-                    <p className="text-xs text-muted-foreground mt-1">Bulk data · never expires</p>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Bulk data · never expires
+                    </p>
                   </button>
                 </div>
               </div>
@@ -552,17 +602,21 @@ export const AgentBuyDataFlow: React.FC<AgentBuyDataFlowProps> = ({
                 <SignalRail status="processing" size="sm" />
                 <div className="space-y-1">
                   <div>
-                    <span className="font-bold text-foreground">Airtime Debt Notice: </span>
+                    <span className="font-bold text-foreground">
+                      Airtime Debt Notice:{" "}
+                    </span>
                     <span>
-                      Settle unpaid credit/airtime loans first; orders cannot be delivered to
-                      numbers with outstanding carrier balances.
+                      Settle unpaid credit/airtime loans first; orders cannot be
+                      delivered to numbers with outstanding carrier balances.
                     </span>
                   </div>
                   <div>
-                    <span className="font-bold text-foreground">Verify Before Payment: </span>
+                    <span className="font-bold text-foreground">
+                      Verify Before Payment:{" "}
+                    </span>
                     <span>
-                      Double-check recipient phone number and carrier network. Orders sent to wrong
-                      numbers cannot be refunded.
+                      Double-check recipient phone number and carrier network.
+                      Orders sent to wrong numbers cannot be refunded.
                     </span>
                   </div>
                 </div>
@@ -613,7 +667,9 @@ export const AgentBuyDataFlow: React.FC<AgentBuyDataFlowProps> = ({
                       Standard
                     </div>
                     {mtnTier === "standard" && (
-                      <span className="text-[10px] font-semibold text-primary">Active</span>
+                      <span className="text-[10px] font-semibold text-primary">
+                        Active
+                      </span>
                     )}
                   </div>
                   <p className="text-[11px] text-muted-foreground mt-0.5">
@@ -638,7 +694,9 @@ export const AgentBuyDataFlow: React.FC<AgentBuyDataFlowProps> = ({
                       </span>
                     </div>
                     {mtnTier === "xpress" && (
-                      <span className="text-[10px] font-semibold text-primary">Active</span>
+                      <span className="text-[10px] font-semibold text-primary">
+                        Active
+                      </span>
                     )}
                   </div>
                   <p className="text-[11px] text-muted-foreground mt-0.5">
@@ -666,7 +724,9 @@ export const AgentBuyDataFlow: React.FC<AgentBuyDataFlowProps> = ({
                       iShare
                     </div>
                     {atTier === "ishare" && (
-                      <span className="text-[10px] font-semibold text-primary">Active</span>
+                      <span className="text-[10px] font-semibold text-primary">
+                        Active
+                      </span>
                     )}
                   </div>
                   <p className="text-[11px] text-muted-foreground mt-0.5">
@@ -691,10 +751,14 @@ export const AgentBuyDataFlow: React.FC<AgentBuyDataFlowProps> = ({
                       </span>
                     </div>
                     {atTier === "bigtime" && (
-                      <span className="text-[10px] font-semibold text-primary">Active</span>
+                      <span className="text-[10px] font-semibold text-primary">
+                        Active
+                      </span>
                     )}
                   </div>
-                  <p className="text-[11px] text-muted-foreground mt-0.5">Bulk data · never expires</p>
+                  <p className="text-[11px] text-muted-foreground mt-0.5">
+                    Bulk data · never expires
+                  </p>
                 </button>
               </div>
             )}
@@ -711,7 +775,11 @@ export const AgentBuyDataFlow: React.FC<AgentBuyDataFlowProps> = ({
                       : "text-muted-foreground hover:text-foreground"
                   }`}
                 >
-                  {mode === "cards" ? "Card View" : mode === "text" ? "Quick Text" : "Bulk"}
+                  {mode === "cards"
+                    ? "Card View"
+                    : mode === "text"
+                      ? "Quick Text"
+                      : "Bulk"}
                 </button>
               ))}
             </div>
@@ -721,7 +789,9 @@ export const AgentBuyDataFlow: React.FC<AgentBuyDataFlowProps> = ({
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
                 {filteredBundles.map((b) => {
                   const isSelected = selectedBundleId === b.id;
-                  const margin = Number((b.retailPrice - b.wholesalePrice).toFixed(2));
+                  const margin = Number(
+                    (b.retailPrice - b.wholesalePrice).toFixed(2),
+                  );
                   return (
                     <button
                       key={b.id}
@@ -754,8 +824,12 @@ export const AgentBuyDataFlow: React.FC<AgentBuyDataFlowProps> = ({
                       ) : null}
 
                       <div>
-                        <div className="text-base font-extrabold text-foreground">{b.sizeLabel}</div>
-                        <div className="text-[11px] text-muted-foreground">{b.validity}</div>
+                        <div className="text-base font-extrabold text-foreground">
+                          {b.sizeLabel}
+                        </div>
+                        <div className="text-[11px] text-muted-foreground">
+                          {b.validity}
+                        </div>
                       </div>
 
                       <div className="pt-3 mt-2 border-t border-border/80 space-y-0.5">
@@ -770,7 +844,9 @@ export const AgentBuyDataFlow: React.FC<AgentBuyDataFlowProps> = ({
                         </div>
                         {/* Retail — suggested sell price */}
                         <div className="flex items-baseline justify-between">
-                          <span className="text-[10px] text-muted-foreground">Retail</span>
+                          <span className="text-[10px] text-muted-foreground">
+                            Retail
+                          </span>
                           <span className="text-[10px] text-muted-foreground tabular-nums line-through">
                             GH₵ {b.retailPrice.toFixed(2)}
                           </span>
@@ -793,7 +869,9 @@ export const AgentBuyDataFlow: React.FC<AgentBuyDataFlowProps> = ({
               </div>
             ) : inputMode === "text" ? (
               <div className="space-y-2">
-                <p className="text-xs text-muted-foreground">Quick select by bundle size:</p>
+                <p className="text-xs text-muted-foreground">
+                  Quick select by bundle size:
+                </p>
                 <div className="flex flex-wrap gap-2">
                   {filteredBundles.map((b) => (
                     <button
@@ -838,7 +916,8 @@ export const AgentBuyDataFlow: React.FC<AgentBuyDataFlowProps> = ({
                 Recipient & Payment
               </Label>
               <p className="text-xs text-muted-foreground mt-1">
-                Enter the recipient's phone number and choose how you'd like to pay.
+                Enter the recipient's phone number and choose how you'd like to
+                pay.
               </p>
             </div>
 
@@ -925,7 +1004,9 @@ export const AgentBuyDataFlow: React.FC<AgentBuyDataFlowProps> = ({
                   }`}
                 >
                   <div>
-                    <div className="text-xs font-bold text-foreground">SDH Wallet Balance</div>
+                    <div className="text-xs font-bold text-foreground">
+                      SDH Wallet Balance
+                    </div>
                     <div className="text-[11px] text-foreground tabular-nums">
                       Available: GH₵ {walletBalance.toFixed(2)}
                     </div>
@@ -950,8 +1031,12 @@ export const AgentBuyDataFlow: React.FC<AgentBuyDataFlowProps> = ({
                   }`}
                 >
                   <div>
-                    <div className="text-xs font-bold text-foreground">Direct Mobile Money</div>
-                    <div className="text-[11px] text-foreground">USSD PIN Prompt</div>
+                    <div className="text-xs font-bold text-foreground">
+                      Direct Mobile Money
+                    </div>
+                    <div className="text-[11px] text-foreground">
+                      USSD PIN Prompt
+                    </div>
                   </div>
                   <span className="text-xs font-bold">Push</span>
                 </button>
@@ -976,16 +1061,26 @@ export const AgentBuyDataFlow: React.FC<AgentBuyDataFlowProps> = ({
 
             <div className="p-4 rounded-xl bg-muted/40 border border-border space-y-3 text-xs">
               <div className="flex justify-between">
-                <span className="text-muted-foreground font-semibold">Network:</span>
-                <span className="font-bold text-foreground">{selectedNetwork} Ghana</span>
+                <span className="text-muted-foreground font-semibold">
+                  Network:
+                </span>
+                <span className="font-bold text-foreground">
+                  {selectedNetwork} Ghana
+                </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-muted-foreground font-semibold">Bundle:</span>
-                <span className="font-bold text-foreground">{currentBundle.name}</span>
+                <span className="text-muted-foreground font-semibold">
+                  Bundle:
+                </span>
+                <span className="font-bold text-foreground">
+                  {currentBundle.name}
+                </span>
               </div>
               {selectedNetwork === "MTN" && (
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground font-semibold">Delivery Option:</span>
+                  <span className="text-muted-foreground font-semibold">
+                    Delivery Option:
+                  </span>
                   <span className="font-bold text-foreground flex items-center gap-1.5">
                     {mtnTier === "xpress" ? (
                       <span className="inline-flex items-center gap-1 text-amber-600 dark:text-amber-400 font-bold">
@@ -1000,7 +1095,9 @@ export const AgentBuyDataFlow: React.FC<AgentBuyDataFlowProps> = ({
               )}
               {selectedNetwork === "AirtelTigo" && (
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground font-semibold">Bundle Option:</span>
+                  <span className="text-muted-foreground font-semibold">
+                    Bundle Option:
+                  </span>
                   <span className="font-bold text-foreground">
                     {atTier === "bigtime" ? (
                       <span className="text-blue-600 dark:text-blue-400">
@@ -1015,15 +1112,25 @@ export const AgentBuyDataFlow: React.FC<AgentBuyDataFlowProps> = ({
                 </div>
               )}
               <div className="flex justify-between">
-                <span className="text-muted-foreground font-semibold">Validity:</span>
-                <span className="font-bold text-foreground">{currentBundle.validity}</span>
+                <span className="text-muted-foreground font-semibold">
+                  Validity:
+                </span>
+                <span className="font-bold text-foreground">
+                  {currentBundle.validity}
+                </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-muted-foreground font-semibold">Recipient:</span>
-                <span className="font-bold text-foreground">{recipientPhone}</span>
+                <span className="text-muted-foreground font-semibold">
+                  Recipient:
+                </span>
+                <span className="font-bold text-foreground">
+                  {recipientPhone}
+                </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-muted-foreground font-semibold">Payment:</span>
+                <span className="text-muted-foreground font-semibold">
+                  Payment:
+                </span>
                 <span className="font-bold text-foreground capitalize">
                   {paymentMethod.replace("_", " ")}
                 </span>
@@ -1032,7 +1139,9 @@ export const AgentBuyDataFlow: React.FC<AgentBuyDataFlowProps> = ({
               {/* Agent pricing breakdown */}
               <div className="pt-2 mt-1 border-t border-border space-y-1.5">
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground font-semibold">Retail price:</span>
+                  <span className="text-muted-foreground font-semibold">
+                    Retail price:
+                  </span>
                   <span className="font-semibold text-muted-foreground tabular-nums line-through">
                     GH₵ {currentBundle.retailPrice.toFixed(2)}
                   </span>
@@ -1059,7 +1168,8 @@ export const AgentBuyDataFlow: React.FC<AgentBuyDataFlowProps> = ({
 
             {paymentMethod === "wallet" && walletBalance < agentCost && (
               <div className="p-3 rounded-xl bg-destructive/10 border border-destructive/30 text-destructive text-xs font-semibold">
-                Insufficient wallet balance. Please choose Mobile Money or fund your wallet.
+                Insufficient wallet balance. Please choose Mobile Money or fund
+                your wallet.
               </div>
             )}
           </CardContent>
@@ -1078,10 +1188,16 @@ export const AgentBuyDataFlow: React.FC<AgentBuyDataFlowProps> = ({
                 Connecting to {selectedNetwork} Core Switch...
               </h3>
               <p className="text-xs text-muted-foreground mt-1">
-                Dispatching {currentBundle.name} to <strong>{recipientPhone}</strong>.
+                Dispatching {currentBundle.name} to{" "}
+                <strong>{recipientPhone}</strong>.
               </p>
             </div>
-            <SignalRail status="processing" size="md" className="justify-center" label="EVD Dispatching" />
+            <SignalRail
+              status="processing"
+              size="md"
+              className="justify-center"
+              label="EVD Dispatching"
+            />
           </CardContent>
         </Card>
       )}
@@ -1095,10 +1211,15 @@ export const AgentBuyDataFlow: React.FC<AgentBuyDataFlowProps> = ({
             </div>
 
             <div>
-              <h3 className="text-xl font-bold text-foreground">Data Delivered Successfully!</h3>
+              <h3 className="text-xl font-bold text-foreground">
+                Data Delivered Successfully!
+              </h3>
               <p className="text-xs text-muted-foreground mt-1">
                 <strong>{createdOrder.productName}</strong> credited to{" "}
-                <span className="text-foreground font-semibold">{createdOrder.recipientPhone}</span>.
+                <span className="text-foreground font-semibold">
+                  {createdOrder.recipientPhone}
+                </span>
+                .
               </p>
             </div>
 
@@ -1106,7 +1227,9 @@ export const AgentBuyDataFlow: React.FC<AgentBuyDataFlowProps> = ({
               <div className="flex justify-between items-center">
                 <span className="text-muted-foreground">Order Reference:</span>
                 <div className="flex items-center gap-1.5">
-                  <span className="font-bold text-foreground">{createdOrder.reference}</span>
+                  <span className="font-bold text-foreground">
+                    {createdOrder.reference}
+                  </span>
                   <button
                     onClick={handleCopyRef}
                     className="p-1 hover:bg-muted rounded text-muted-foreground"
@@ -1120,7 +1243,9 @@ export const AgentBuyDataFlow: React.FC<AgentBuyDataFlowProps> = ({
                 </div>
               </div>
               <div className="flex justify-between">
-                <span className="text-muted-foreground">You paid (wholesale):</span>
+                <span className="text-muted-foreground">
+                  You paid (wholesale):
+                </span>
                 <span className="font-bold text-foreground tabular-nums">
                   GH₵ {createdOrder.amount.toFixed(2)}
                 </span>
@@ -1193,7 +1318,9 @@ export const AgentBuyDataFlow: React.FC<AgentBuyDataFlowProps> = ({
             <Button
               onClick={handleSubmit}
               className="flex-1"
-              disabled={selectedNetwork === "MTN" && verificationStatus !== "verified"}
+              disabled={
+                selectedNetwork === "MTN" && verificationStatus !== "verified"
+              }
             >
               Complete Purchase
               <CheckCircle2 className="w-4 h-4 ml-2" />
