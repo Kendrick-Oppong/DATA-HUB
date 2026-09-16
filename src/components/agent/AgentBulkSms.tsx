@@ -1715,11 +1715,17 @@ export const AgentBulkSms: React.FC<AgentBulkSmsProps> = ({
                               </span>
                             </div>
                             <div className="text-center">
-                              <p className="text-xs font-bold text-foreground">
+                              <p
+                                className={`text-xs font-bold ${
+                                  isSelected
+                                    ? "text-primary-foreground"
+                                    : "text-foreground"
+                                }`}
+                              >
                                 {aud.label}
                               </p>
                               <p
-                                className={`text-[10px] ${isSelected ? "text-foreground" : " text-muted-foreground "}`}
+                                className={`text-[10px] ${isSelected ? "text-primary-foreground" : " text-foreground "}`}
                               >
                                 {aud.sub}
                               </p>
