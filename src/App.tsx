@@ -64,6 +64,8 @@ import { AgentUtilitiesFlow } from "./components/agent/AgentUtilitiesFlow";
 import { AgentNotificationsView } from "./components/agent/views/AgentNotificationsView";
 import { AgentComplaintsView } from "./components/agent/views/AgentComplaintsView";
 import { AgentGuidesView } from "./components/agent/views/AgentGuidesView";
+import { AgentProfileView } from "./components/agent/views/AgentProfileView";
+import { AgentCommunityView } from "./components/agent/views/AgentCommunityView";
 
 // Admin Ops Console
 import { AdminOperations } from "./components/admin/AdminOperations";
@@ -1206,6 +1208,26 @@ export default function App() {
               )}
 
               {activeTab === "guides" && <AgentGuidesView />}
+
+              {activeTab === "community" && <AgentCommunityView />}
+
+              {activeTab === "profile" && (
+                <AgentProfileView
+                  theme={theme}
+                  onToggleTheme={toggleTheme}
+                  onSetTheme={handleSetTheme}
+                  onOpenSecurityPins={() => setIsSecurityPinsOpen(true)}
+                  user={user}
+                  onUpdateUser={handleUpdateUser}
+                  storeConfig={storeConfig}
+                  onUpdateStoreConfig={handleUpdateStoreConfig}
+                  walletBalance={walletBalance}
+                  commissionBalance={commissionBalance}
+                  onOpenFundWallet={() => setIsFundWalletOpen(true)}
+                  onNavigateTab={handleTabChange}
+                  totalOrdersCount={orders.length}
+                />
+              )}
             </>
           )}
 

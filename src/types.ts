@@ -146,7 +146,8 @@ export interface Complaint {
   | "failed_recharge"
   | "wrong_number"
   | "momo_debit_no_credit"
-  | "general";
+  | "general"
+  | "commission_payout";
   subject: string;
   status: "open" | "investigating" | "resolved" | "closed";
   priority: "low" | "medium" | "high" | "urgent";
