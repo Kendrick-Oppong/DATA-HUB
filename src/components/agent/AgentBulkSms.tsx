@@ -1508,12 +1508,6 @@ export const AgentBulkSms: React.FC<AgentBulkSmsProps> = ({
                     <DialogTitle className="text-left text-base font-extrabold tracking-tight truncate">
                       Compose SMS Campaign
                     </DialogTitle>
-                    <Badge
-                      variant="secondary"
-                      className="border-emerald-500/20 bg-emerald-500/15 px-2 py-0 text-[10px] font-bold text-emerald-700 dark:text-emerald-400"
-                    >
-                      Agent Rate: GH₵0.04/SMS
-                    </Badge>
                   </div>
                   <DialogDescription className="mt-0.5 text-left text-xs">
                     Dispatch promotional messages directly to customer handsets
