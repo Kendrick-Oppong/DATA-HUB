@@ -242,19 +242,30 @@ export const AgentAnalyticsEarnings: React.FC<AgentAnalyticsEarningsProps> = ({
   const periodFactor = period === "7d" ? 1 : period === "30d" ? 3.0 : 14.2;
 
   const periodSales = useMemo(() => {
-    return (totalSales > 0 ? totalSales : 4970) * (period === "7d" ? 1 : period === "30d" ? 2.99 : 13.8);
+    return (
+      (totalSales > 0 ? totalSales : 4970) *
+      (period === "7d" ? 1 : period === "30d" ? 2.99 : 13.8)
+    );
   }, [totalSales, period]);
 
   const periodCommissions = useMemo(() => {
-    return (thisMonthCommissions > 0 ? thisMonthCommissions : 547) * (period === "7d" ? 1 : period === "30d" ? 3.05 : 14.3);
+    return (
+      (thisMonthCommissions > 0 ? thisMonthCommissions : 547) *
+      (period === "7d" ? 1 : period === "30d" ? 3.05 : 14.3)
+    );
   }, [thisMonthCommissions, period]);
 
   const periodDeliveredCount = useMemo(() => {
-    return Math.round((deliveredOrders.length > 0 ? deliveredOrders.length : 148) * (period === "7d" ? 1 : period === "30d" ? 3.1 : 14.5));
+    return Math.round(
+      (deliveredOrders.length > 0 ? deliveredOrders.length : 148) *
+        (period === "7d" ? 1 : period === "30d" ? 3.1 : 14.5),
+    );
   }, [deliveredOrders.length, period]);
 
   const periodAvgOrderValue = useMemo(() => {
-    return periodDeliveredCount > 0 ? periodSales / periodDeliveredCount : 33.58;
+    return periodDeliveredCount > 0
+      ? periodSales / periodDeliveredCount
+      : 33.58;
   }, [periodSales, periodDeliveredCount]);
 
   // Network volume & profit breakdown reactively filtered by period
@@ -336,37 +347,52 @@ export const AgentAnalyticsEarnings: React.FC<AgentAnalyticsEarningsProps> = ({
   }, [deliveredOrders, periodFactor]);
 
   // Hourly rush times reactively filtered by period
-  const hourlyData = useMemo(() => [
-    { label: "6am – 8am", count: Math.round(7 * periodFactor) },
-    { label: "8am – 10am", count: Math.round(34 * periodFactor) },
-    { label: "10am – 12pm", count: Math.round(58 * periodFactor) },
-    { label: "12pm – 2pm", count: Math.round(76 * periodFactor) },
-    { label: "2pm – 4pm", count: Math.round(42 * periodFactor) },
-    { label: "4pm – 6pm", count: Math.round(68 * periodFactor) },
-    { label: "6pm – 8pm", count: Math.round(52 * periodFactor) },
-    { label: "8pm – 10pm", count: Math.round(24 * periodFactor) },
-  ], [periodFactor]);
+  const hourlyData = useMemo(
+    () => [
+      { label: "6am – 8am", count: Math.round(7 * periodFactor) },
+      { label: "8am – 10am", count: Math.round(34 * periodFactor) },
+      { label: "10am – 12pm", count: Math.round(58 * periodFactor) },
+      { label: "12pm – 2pm", count: Math.round(76 * periodFactor) },
+      { label: "2pm – 4pm", count: Math.round(42 * periodFactor) },
+      { label: "4pm – 6pm", count: Math.round(68 * periodFactor) },
+      { label: "6pm – 8pm", count: Math.round(52 * periodFactor) },
+      { label: "8pm – 10pm", count: Math.round(24 * periodFactor) },
+    ],
+    [periodFactor],
+  );
   const maxHourlyCount = Math.max(...hourlyData.map((h) => h.count), 1);
 
   // Day-of-week data reactively filtered by period
-  const dayOfWeekData = useMemo(() => [
-    { label: "Monday", count: Math.round(28 * periodFactor) },
-    { label: "Tuesday", count: Math.round(34 * periodFactor) },
-    { label: "Wednesday", count: Math.round(42 * periodFactor) },
-    { label: "Thursday", count: Math.round(38 * periodFactor) },
-    { label: "Friday", count: Math.round(56 * periodFactor) },
-    { label: "Saturday", count: Math.round(64 * periodFactor) },
-    { label: "Sunday", count: Math.round(46 * periodFactor) },
-  ], [periodFactor]);
+  const dayOfWeekData = useMemo(
+    () => [
+      { label: "Monday", count: Math.round(28 * periodFactor) },
+      { label: "Tuesday", count: Math.round(34 * periodFactor) },
+      { label: "Wednesday", count: Math.round(42 * periodFactor) },
+      { label: "Thursday", count: Math.round(38 * periodFactor) },
+      { label: "Friday", count: Math.round(56 * periodFactor) },
+      { label: "Saturday", count: Math.round(64 * periodFactor) },
+      { label: "Sunday", count: Math.round(46 * periodFactor) },
+    ],
+    [periodFactor],
+  );
   const maxDayOfWeekCount = Math.max(...dayOfWeekData.map((d) => d.count), 1);
 
   // Customer Retention Cohort Slices
-  const retentionSlices: PieSlice[] = useMemo(() => [
-    { name: "Repeat Buyers (2+ orders)", count: Math.round(148 * periodFactor) },
-    { name: "First-Time Customers", count: Math.round(70 * periodFactor) },
-    { name: "High-Volume VIPs (5+ orders)", count: Math.round(36 * periodFactor) },
-    { name: "Re-activated Buyers", count: Math.round(18 * periodFactor) },
-  ], [periodFactor]);
+  const retentionSlices: PieSlice[] = useMemo(
+    () => [
+      {
+        name: "Repeat Buyers (2+ orders)",
+        count: Math.round(148 * periodFactor),
+      },
+      { name: "First-Time Customers", count: Math.round(70 * periodFactor) },
+      {
+        name: "High-Volume VIPs (5+ orders)",
+        count: Math.round(36 * periodFactor),
+      },
+      { name: "Re-activated Buyers", count: Math.round(18 * periodFactor) },
+    ],
+    [periodFactor],
+  );
   const retentionTotal = retentionSlices.reduce((s, x) => s + x.count, 0);
 
   // Daily trend data based on period
@@ -402,48 +428,51 @@ export const AgentAnalyticsEarnings: React.FC<AgentAnalyticsEarningsProps> = ({
   const maxTrendSales = Math.max(...trendData.map((d) => d.sales), 1);
 
   // Top bundles ranking reactively filtered by period
-  const topBundles = useMemo(() => [
-    {
-      name: "MTN 10GB Non-Expiry",
-      network: "MTN",
-      orders: Math.round(184 * periodFactor),
-      revenue: Math.round(15640 * periodFactor),
-      profitPerUnit: 4.5,
-      profitTotal: Math.round(828 * periodFactor),
-    },
-    {
-      name: "MTN 5GB Non-Expiry",
-      network: "MTN",
-      orders: Math.round(142 * periodFactor),
-      revenue: Math.round(6035 * periodFactor),
-      profitPerUnit: 2.5,
-      profitTotal: Math.round(355 * periodFactor),
-    },
-    {
-      name: "Telecel 15GB Special",
-      network: "Telecel",
-      orders: Math.round(76 * periodFactor),
-      revenue: Math.round(6840 * periodFactor),
-      profitPerUnit: 5.0,
-      profitTotal: Math.round(380 * periodFactor),
-    },
-    {
-      name: "MTN 20GB Turbonet",
-      network: "MTN",
-      orders: Math.round(64 * periodFactor),
-      revenue: Math.round(8960 * periodFactor),
-      profitPerUnit: 7.0,
-      profitTotal: Math.round(448 * periodFactor),
-    },
-    {
-      name: "AT 10GB Big Time",
-      network: "AT",
-      orders: Math.round(38 * periodFactor),
-      revenue: Math.round(2660 * periodFactor),
-      profitPerUnit: 3.5,
-      profitTotal: Math.round(133 * periodFactor),
-    },
-  ], [periodFactor]);
+  const topBundles = useMemo(
+    () => [
+      {
+        name: "MTN 10GB Non-Expiry",
+        network: "MTN",
+        orders: Math.round(184 * periodFactor),
+        revenue: Math.round(15640 * periodFactor),
+        profitPerUnit: 4.5,
+        profitTotal: Math.round(828 * periodFactor),
+      },
+      {
+        name: "MTN 5GB Non-Expiry",
+        network: "MTN",
+        orders: Math.round(142 * periodFactor),
+        revenue: Math.round(6035 * periodFactor),
+        profitPerUnit: 2.5,
+        profitTotal: Math.round(355 * periodFactor),
+      },
+      {
+        name: "Telecel 15GB Special",
+        network: "Telecel",
+        orders: Math.round(76 * periodFactor),
+        revenue: Math.round(6840 * periodFactor),
+        profitPerUnit: 5.0,
+        profitTotal: Math.round(380 * periodFactor),
+      },
+      {
+        name: "MTN 20GB Turbonet",
+        network: "MTN",
+        orders: Math.round(64 * periodFactor),
+        revenue: Math.round(8960 * periodFactor),
+        profitPerUnit: 7.0,
+        profitTotal: Math.round(448 * periodFactor),
+      },
+      {
+        name: "AT 10GB Big Time",
+        network: "AT",
+        orders: Math.round(38 * periodFactor),
+        revenue: Math.round(2660 * periodFactor),
+        profitPerUnit: 3.5,
+        profitTotal: Math.round(133 * periodFactor),
+      },
+    ],
+    [periodFactor],
+  );
   const maxBundleRevenue = Math.max(...topBundles.map((b) => b.revenue));
 
   // Recent commissions ledger derived from delivered orders
@@ -1655,7 +1684,7 @@ export const AgentAnalyticsEarnings: React.FC<AgentAnalyticsEarningsProps> = ({
         <DialogContent className="flex max-h-[90vh] sm:max-w-md flex-col gap-0 overflow-hidden rounded-3xl border border-border bg-card p-0 shadow-2xl">
           {selectedCommission && (
             <>
-              <DialogHeader className="relative shrink-0 overflow-hidden border-b border-border bg-gradient-to-br from-primary/10 via-card to-emerald-500/10 p-5 pr-10 sm:pr-12">
+              <DialogHeader className="relative shrink-0 overflow-hidden border-b border-border bg-gradient-to-br from-primary/10 via-card to-amber-500/10 p-5 pr-10 sm:pr-12">
                 <div className="flex items-center gap-3">
                   <span
                     className={`flex size-11 shrink-0 items-center justify-center rounded-2xl font-black text-xs shadow-sm ${
@@ -1746,23 +1775,6 @@ export const AgentAnalyticsEarnings: React.FC<AgentAnalyticsEarningsProps> = ({
 
                 {/* Action Buttons */}
                 <div className="flex items-center gap-2 pt-2">
-                  <Button
-                    variant="outline"
-                    className="flex-1 rounded-xl text-xs font-bold gap-1.5 cursor-pointer"
-                    onClick={() => copyToClipboard(selectedCommission.orderId)}
-                  >
-                    {copiedId ? (
-                      <>
-                        <Check className="size-3.5 text-emerald-600" />
-                        <span>Copied!</span>
-                      </>
-                    ) : (
-                      <>
-                        <Copy className="size-3.5" />
-                        <span>Copy Order ID</span>
-                      </>
-                    )}
-                  </Button>
                   <Button
                     className="flex-1 rounded-xl text-xs font-bold cursor-pointer"
                     onClick={() => setSelectedCommission(null)}
