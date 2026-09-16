@@ -24,7 +24,7 @@ export const AgentBulkSms: React.FC = () => {
   };
 
   return (
-    <div className="max-w-3xl mx-auto space-y-6">
+    <div className="space-y-6">
       <div className="pb-4 border-b border-border">
         <h1 className="text-2xl font-extrabold text-foreground tracking-tight flex items-center gap-2">
           <Send className="w-6 h-6 text-purple-600" />
