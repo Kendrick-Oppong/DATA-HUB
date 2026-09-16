@@ -966,8 +966,7 @@ export const AgentBulkSms: React.FC<AgentBulkSmsProps> = ({
             <span>Bulk SMS Campaigns & Dispatches</span>
           </h1>
           <p className="mt-0.5 text-xs text-muted-foreground">
-            Promotional broadcast dispatcher, customer campaign records, sender
-            ID registry, and real-time delivery audits.
+            Promotional broadcast and real-time delivery audits.
           </p>
         </div>
 
@@ -1507,7 +1506,7 @@ export const AgentBulkSms: React.FC<AgentBulkSmsProps> = ({
                 <div className="min-w-0">
                   <div className="flex items-center gap-2">
                     <DialogTitle className="text-left text-base font-extrabold tracking-tight truncate">
-                      Compose Bulk SMS Campaign
+                      Compose SMS Campaign
                     </DialogTitle>
                     <Badge
                       variant="secondary"
