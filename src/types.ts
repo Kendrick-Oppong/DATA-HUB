@@ -231,8 +231,27 @@ export interface BulkSmsCampaign {
   totalCost: number;
   pagesPerSms: number;
   dateCreated: string;
-  status: "draft" | "scheduled" | "sent" | "delivering" | "failed";
+  status: "draft" | "scheduled" | "sent" | "delivering" | "failed" | "partial";
   deliveryRatePercent: number;
+  audienceType?: "all" | "repeat" | "inactive" | "custom";
+  sentCount?: number;
+  failedCount?: number;
+  refundedAmount?: number;
+  recipients?: string[];
+  deliveryTimeline?: {
+    step: string;
+    timestamp: string;
+    status: "completed" | "current" | "pending" | "failed";
+    note?: string;
+  }[];
+}
+
+export interface SenderIdRecord {
+  id: string;
+  status: "approved" | "pending" | "rejected";
+  isPlatformDefault?: boolean;
+  requestedAt?: string;
+  note?: string;
 }
 
 export interface TelecomGateway {

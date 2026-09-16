@@ -6,7 +6,6 @@ import {
   ArrowLeft,
   Loader2,
   Smartphone,
-  Info,
 } from "lucide-react";
 import { TelecomNetwork, Order } from "../../types";
 import { detectGhanaNetwork } from "../../mockData";
@@ -33,7 +32,7 @@ export const AgentBuyAirtimeFlow: React.FC<AgentBuyAirtimeFlowProps> = ({
   >("network");
 
   const [network, setNetwork] = useState<TelecomNetwork>("MTN");
-  const [recipientPhone, setRecipientPhone] = useState<string>("");
+  const [recipientPhone, setRecipientPhone] = useState<string>("0244192834");
   const [amount, setAmount] = useState<number>(20);
   const [customAmount, setCustomAmount] = useState<string>("");
   const [paymentMethod, setPaymentMethod] = useState<"wallet" | "momo_mtn">(
@@ -43,9 +42,6 @@ export const AgentBuyAirtimeFlow: React.FC<AgentBuyAirtimeFlowProps> = ({
 
   const quickAmounts = [5, 10, 20, 50, 100, 200];
   const finalAmount = customAmount ? parseFloat(customAmount) || 0 : amount;
-
-  // Airtime is always face value — no agent margin by design
-  const agentCost = finalAmount;
 
   const steps = [
     { id: "network", label: "Network", icon: PhoneCall },
@@ -70,7 +66,7 @@ export const AgentBuyAirtimeFlow: React.FC<AgentBuyAirtimeFlowProps> = ({
       case "recipient":
         return recipientPhone.length >= 10;
       case "review":
-        return paymentMethod !== "wallet" || walletBalance >= agentCost;
+        return paymentMethod !== "wallet" || walletBalance >= finalAmount;
       default:
         return true;
     }
@@ -85,6 +81,7 @@ export const AgentBuyAirtimeFlow: React.FC<AgentBuyAirtimeFlowProps> = ({
         alert("Insufficient wallet balance. Please choose Mobile Money.");
       return;
     }
+
     if (step === "network") setStep("amount");
     else if (step === "amount") setStep("recipient");
     else if (step === "recipient") setStep("review");
@@ -98,6 +95,7 @@ export const AgentBuyAirtimeFlow: React.FC<AgentBuyAirtimeFlowProps> = ({
 
   const handleSubmit = () => {
     if (!validateStep("review")) return;
+
     setStep("processing");
 
     const ref = `SDH-GH-2026-${Math.floor(10000 + Math.random() * 90000)}`;
@@ -105,16 +103,14 @@ export const AgentBuyAirtimeFlow: React.FC<AgentBuyAirtimeFlowProps> = ({
       id: `ord-air-${Date.now()}`,
       reference: ref,
       date: new Date().toISOString().replace("T", " ").slice(0, 16),
-      customerName: "Agent Purchase",
+      customerName: "Kojo Mensah",
       recipientPhone,
       network,
       serviceType: "airtime",
       productName: `${network} Airtime GH₵${finalAmount.toFixed(2)}`,
-      amount: agentCost,
+      amount: finalAmount,
       paymentMethod,
       status: "delivered",
-      // Airtime has no agent margin — face value on both sides
-      agentMargin: 0,
       deliveryTimeline: [
         { step: "Order Placed", timestamp: "10:00:01", status: "completed" },
         {
@@ -142,7 +138,6 @@ export const AgentBuyAirtimeFlow: React.FC<AgentBuyAirtimeFlowProps> = ({
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
-      {/* Page Header */}
       <div className="flex items-center justify-between pb-4 border-b border-border">
         <div>
           <h1 className="text-2xl font-extrabold text-foreground tracking-tight flex items-center gap-2">
@@ -155,16 +150,6 @@ export const AgentBuyAirtimeFlow: React.FC<AgentBuyAirtimeFlowProps> = ({
           </p>
         </div>
         <SignalRail status="online" size="sm" label="E-Load Active" />
-      </div>
-
-      {/* Airtime pricing note — face value, no agent margin */}
-      <div className="flex items-start gap-3 p-3.5 rounded-2xl bg-blue-500/10 border border-blue-500/20 text-xs">
-        <Info className="w-4 h-4 text-blue-600 dark:text-blue-400 shrink-0 mt-0.5" />
-        <span className="text-blue-800 dark:text-blue-300">
-          <span className="font-bold">Face value pricing.</span> Airtime is sold
-          at cost — GH₵10 of credit costs GH₵10. There is no agent margin on
-          airtime; it is offered as a convenience service for your customers.
-        </span>
       </div>
 
       {/* Step Indicator */}
@@ -219,7 +204,7 @@ export const AgentBuyAirtimeFlow: React.FC<AgentBuyAirtimeFlowProps> = ({
         </div>
       )}
 
-      {/* ── STEP: NETWORK ── */}
+      {/* Step Content */}
       {step === "network" && (
         <Card className="border-border shadow-xs">
           <CardContent className="p-6 space-y-4">
@@ -228,7 +213,7 @@ export const AgentBuyAirtimeFlow: React.FC<AgentBuyAirtimeFlowProps> = ({
                 Select Carrier Network
               </Label>
               <p className="text-xs text-muted-foreground mt-1">
-                Choose the mobile network for the airtime top-up.
+                Choose the mobile network for your airtime top-up.
               </p>
             </div>
 
@@ -258,10 +243,11 @@ export const AgentBuyAirtimeFlow: React.FC<AgentBuyAirtimeFlowProps> = ({
               )}
             </div>
 
-            {/* Notice banner */}
+            {/* Order Dispatch & Verification Notice Banner */}
             <div className="flex items-center justify-between rounded-2xl border border-amber-500/20 bg-amber-500/10 p-4 text-xs">
               <div className="flex items-center gap-3">
                 <SignalRail status="processing" size="sm" />
+
                 <div className="space-y-1">
                   <div>
                     <span className="font-bold text-foreground">
@@ -288,7 +274,6 @@ export const AgentBuyAirtimeFlow: React.FC<AgentBuyAirtimeFlowProps> = ({
         </Card>
       )}
 
-      {/* ── STEP: AMOUNT ── */}
       {step === "amount" && (
         <Card className="border-border shadow-xs">
           <CardContent className="p-6 space-y-4">
@@ -336,15 +321,12 @@ export const AgentBuyAirtimeFlow: React.FC<AgentBuyAirtimeFlowProps> = ({
             </div>
 
             {finalAmount > 0 && (
-              <div className="p-3 rounded-xl bg-muted/40 border border-border space-y-1">
+              <div className="p-3 rounded-xl bg-muted/40 border border-border">
                 <div className="text-xs text-muted-foreground">
                   Selected Amount:
                 </div>
                 <div className="text-xl font-black text-foreground tabular-nums">
                   GH₵ {finalAmount.toFixed(2)}
-                </div>
-                <div className="text-[11px] text-muted-foreground">
-                  Face value — no markup, no margin
                 </div>
               </div>
             )}
@@ -352,16 +334,15 @@ export const AgentBuyAirtimeFlow: React.FC<AgentBuyAirtimeFlowProps> = ({
         </Card>
       )}
 
-      {/* ── STEP: RECIPIENT ── */}
       {step === "recipient" && (
         <Card className="border-border shadow-xs">
-          <CardContent className="p-6 space-y-4">
+          <CardContent className="p-6 space-y-5">
             <div>
               <Label className="text-xs font-bold uppercase tracking-wider">
-                Recipient Phone Number
+                Recipient & Payment
               </Label>
               <p className="text-xs text-muted-foreground mt-1">
-                Enter the 10-digit Ghana mobile number to receive the airtime.
+                Enter the recipient's phone number and choose payment method.
               </p>
             </div>
 
@@ -388,20 +369,73 @@ export const AgentBuyAirtimeFlow: React.FC<AgentBuyAirtimeFlowProps> = ({
                 </p>
               )}
             </div>
+
+            <div className="space-y-3">
+              <Label className="text-xs font-bold">
+                Payment Method: <span>{paymentMethod}</span>
+              </Label>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                <button
+                  type="button"
+                  onClick={() => setPaymentMethod("wallet")}
+                  className={`p-3 rounded-xl border text-left flex items-center justify-between transition-all cursor-pointer ${
+                    paymentMethod === "wallet"
+                      ? "bg-primary/60 text-primary-foreground border-primary shadow-xs"
+                      : "border-border bg-background hover:bg-muted text-foreground"
+                  }`}
+                >
+                  <div>
+                    <div className="text-xs font-bold text-foreground">
+                      SDH Wallet Balance
+                    </div>
+                    <div className="text-[11px] text-foreground tabular-nums">
+                      Available: GH₵ {walletBalance.toFixed(2)}
+                    </div>
+                  </div>
+                  <span className="text-xs font-bold">Instant</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setPaymentMethod("momo_mtn")}
+                  className={`p-3 rounded-xl border text-left flex items-center justify-between transition-all cursor-pointer ${
+                    paymentMethod === "momo_mtn"
+                      ? "bg-primary/60 text-primary-foreground border-primary shadow-xs"
+                      : "border-border bg-background hover:bg-muted text-foreground"
+                  }`}
+                >
+                  <div>
+                    <div className="text-xs font-bold text-foreground">
+                      Direct Mobile Money
+                    </div>
+                    <div className="text-[11px] text-foreground">
+                      USSD PIN Prompt
+                    </div>
+                  </div>
+                  <span className="text-xs font-bold">Push</span>
+                </button>
+              </div>
+            </div>
+
+            {paymentMethod === "wallet" && walletBalance < finalAmount && (
+              <div className="p-3 rounded-xl bg-destructive/10 border border-destructive/30 text-destructive text-xs font-semibold">
+                Insufficient wallet balance. Please choose Mobile Money or fund
+                your wallet.
+              </div>
+            )}
           </CardContent>
         </Card>
       )}
 
-      {/* ── STEP: REVIEW ── */}
       {step === "review" && (
         <Card className="border-border shadow-xs">
           <CardContent className="p-6 space-y-5">
             <div>
               <Label className="text-xs font-bold uppercase tracking-wider">
-                Review & Payment
+                Review Your Order
               </Label>
               <p className="text-xs text-muted-foreground mt-1">
-                Verify your order details and choose payment method.
+                Verify all details before completing your purchase.
               </p>
             </div>
 
@@ -426,86 +460,25 @@ export const AgentBuyAirtimeFlow: React.FC<AgentBuyAirtimeFlowProps> = ({
                 <span className="text-muted-foreground font-semibold">
                   Recipient:
                 </span>
-                <span className="font-bold text-foreground">
+                <span className=" font-bold text-foreground">
                   {recipientPhone}
                 </span>
               </div>
-
-              {/* Agent pricing summary */}
-              <div className="pt-2 mt-1 border-t border-border space-y-1.5">
-                <div className="flex justify-between font-extrabold text-sm">
-                  <span>Your cost:</span>
-                  <span className="text-primary tabular-nums">
-                    GH₵ {agentCost.toFixed(2)}
-                  </span>
-                </div>
-                <div className="flex justify-between text-[11px] text-muted-foreground">
-                  <span className="flex items-center gap-1">
-                    <Info className="w-3 h-3" />
-                    No agent margin on airtime
-                  </span>
-                  <span>Face value</span>
-                </div>
+              <div className="flex justify-between">
+                <span className="text-muted-foreground font-semibold">
+                  Payment Method:
+                </span>
+                <span className="font-bold text-foreground">
+                  {paymentMethod === "wallet"
+                    ? "SDH Wallet Balance"
+                    : "Direct Mobile Money"}
+                </span>
               </div>
             </div>
-
-            <div className="space-y-3">
-              <Label className="text-xs font-bold">
-                Payment Method: <span>{paymentMethod}</span>
-              </Label>
-              <div className="space-y-2">
-                <button
-                  type="button"
-                  onClick={() => setPaymentMethod("wallet")}
-                  className={`w-full p-3 rounded-xl border text-left flex items-center justify-between transition-all cursor-pointer ${
-                    paymentMethod === "wallet"
-                      ? "bg-primary/60 text-primary-foreground border-primary shadow-xs"
-                      : "border-border bg-background hover:bg-muted text-foreground"
-                  }`}
-                >
-                  <div>
-                    <div className="text-xs font-bold text-foreground">
-                      SDH Wallet Balance
-                    </div>
-                    <div className="text-[11px] font-medium text-foreground tabular-nums">
-                      Available: GH₵ {walletBalance.toFixed(2)}
-                    </div>
-                  </div>
-                  <span className="text-xs font-bold">Instant</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setPaymentMethod("momo_mtn")}
-                  className={`w-full p-3 rounded-xl border text-left flex items-center justify-between transition-all cursor-pointer ${
-                    paymentMethod === "momo_mtn"
-                      ? "bg-primary/60 text-primary-foreground border-primary shadow-xs"
-                      : "border-border bg-background hover:bg-muted text-foreground"
-                  }`}
-                >
-                  <div>
-                    <div className="text-xs font-bold text-foreground">
-                      Direct Mobile Money
-                    </div>
-                    <div className="text-[11px] font-medium text-foreground">
-                      USSD PIN Prompt
-                    </div>
-                  </div>
-                  <span className="text-xs font-bold">Push to Phone</span>
-                </button>
-              </div>
-            </div>
-
-            {paymentMethod === "wallet" && walletBalance < agentCost && (
-              <div className="p-3 rounded-xl bg-destructive/10 border border-destructive/30 text-destructive text-xs font-semibold">
-                Insufficient wallet balance. Please choose Mobile Money or fund
-                your wallet.
-              </div>
-            )}
           </CardContent>
         </Card>
       )}
 
-      {/* ── PROCESSING ── */}
       {step === "processing" && (
         <Card className="border-border shadow-lg">
           <CardContent className="p-8 text-center space-y-4">
@@ -531,7 +504,6 @@ export const AgentBuyAirtimeFlow: React.FC<AgentBuyAirtimeFlowProps> = ({
         </Card>
       )}
 
-      {/* ── SUCCESS ── */}
       {step === "success" && completedOrder && (
         <Card className="border-border shadow-xl">
           <CardContent className="p-8 text-center space-y-5">
@@ -548,37 +520,6 @@ export const AgentBuyAirtimeFlow: React.FC<AgentBuyAirtimeFlowProps> = ({
                 <strong>{completedOrder.recipientPhone}</strong>.
               </p>
             </div>
-
-            <div className="p-4 rounded-xl bg-muted/40 border border-border text-xs space-y-2 text-left">
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Order Reference:</span>
-                <span className="font-bold text-foreground">
-                  {completedOrder.reference}
-                </span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">You paid:</span>
-                <span className="font-bold text-foreground tabular-nums">
-                  GH₵ {completedOrder.amount.toFixed(2)}
-                </span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-muted-foreground flex items-center gap-1">
-                  <Info className="w-3 h-3" />
-                  Margin:
-                </span>
-                <span className="text-muted-foreground font-semibold">
-                  None — face value
-                </span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Network Status:</span>
-                <span className="text-emerald-600 dark:text-emerald-400 font-semibold">
-                  Credited & SMS Sent
-                </span>
-              </div>
-            </div>
-
             <div className="flex gap-3 max-w-sm mx-auto">
               <Button
                 variant="outline"
@@ -601,7 +542,7 @@ export const AgentBuyAirtimeFlow: React.FC<AgentBuyAirtimeFlowProps> = ({
         </Card>
       )}
 
-      {/* Navigation */}
+      {/* Navigation Buttons */}
       {step !== "processing" && step !== "success" && (
         <div className="flex gap-3">
           {step !== "network" && (
