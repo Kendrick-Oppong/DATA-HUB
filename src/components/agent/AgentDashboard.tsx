@@ -114,7 +114,7 @@ export const AgentDashboard: React.FC<AgentDashboardProps> = ({
       <div className="p-6 sm:p-8 rounded-3xl bg-gradient-to-r from-amber-500/15 via-card to-primary/10 border border-border shadow-xs flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
         <div className="space-y-2 max-w-xl">
           <div className="flex items-center gap-2">
-            <span className="text-xs uppercase font-bold text-amber-900 dark:text-amber-300 tracking-wider">
+            <span className="text-xs uppercase font-bold text-primary tracking-wider">
               Agent Reseller Hub
             </span>
             <span className="px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 text-[10px] font-bold">
@@ -198,53 +198,61 @@ export const AgentDashboard: React.FC<AgentDashboardProps> = ({
       </div>
 
       {/* Metrics Row */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="p-5 rounded-2xl bg-card border border-border shadow-2xs">
-          <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-            Today's Profit
-          </span>
-          <div className="text-2xl font-black text-emerald-600 dark:text-emerald-400 tabular-nums mt-1">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+        <div className="rounded-xl border border-border bg-card p-3.5 shadow-2xs">
+          <div className="flex items-center gap-2">
+            <div className="flex size-7 items-center justify-center rounded-lg bg-emerald-500/10">
+              <TrendingUp className="size-3.5 text-emerald-600 dark:text-emerald-400" />
+            </div>
+            <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+              Today's Profit
+            </span>
+          </div>
+          <p className="mt-2 text-xl font-black tabular-nums text-emerald-600 dark:text-emerald-400">
             +GH₵ {todayProfit.toFixed(2)}
-          </div>
-          <p className="text-[11px] text-muted-foreground mt-1">
-            From 38 customer orders
           </p>
+          <p className="text-[10px] text-muted-foreground font-medium">From 38 customer orders</p>
         </div>
 
-        <div className="p-5 rounded-2xl bg-card border border-border shadow-2xs">
-          <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-            Monthly Sales GMV
-          </span>
-          <div className="text-2xl font-black text-foreground tabular-nums mt-1">
+        <div className="rounded-xl border border-border bg-card p-3.5 shadow-2xs">
+          <div className="flex items-center gap-2">
+            <div className="flex size-7 items-center justify-center rounded-lg bg-primary/10">
+              <ShoppingBag className="size-3.5 text-primary" />
+            </div>
+            <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+              Monthly GMV
+            </span>
+          </div>
+          <p className="mt-2 text-xl font-black tabular-nums text-foreground">
             GH₵ {totalGmv.toFixed(2)}
-          </div>
-          <p className="text-[11px] text-muted-foreground mt-1">
-            +18.4% vs last month
           </p>
+          <p className="text-[10px] text-muted-foreground font-medium">+18.4% vs last month</p>
         </div>
 
-        <div className="p-5 rounded-2xl bg-card border border-border shadow-2xs">
-          <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-            Store Health Score
-          </span>
-          <div className="text-2xl font-black text-primary tabular-nums mt-1">
-            96 / 100
+        <div className="rounded-xl border border-border bg-card p-3.5 shadow-2xs">
+          <div className="flex items-center gap-2">
+            <div className="flex size-7 items-center justify-center rounded-lg bg-amber-500/10">
+              <Sparkles className="size-3.5 text-amber-600 dark:text-amber-400" />
+            </div>
+            <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+              Health Score
+            </span>
           </div>
-          <p className="text-[11px] text-muted-foreground mt-1">
-            WhatsApp & Prices verified
-          </p>
+          <p className="mt-2 text-xl font-black tabular-nums text-primary">96 / 100</p>
+          <p className="text-[10px] text-muted-foreground font-medium">WhatsApp &amp; Prices verified</p>
         </div>
 
-        <div className="p-5 rounded-2xl bg-card border border-border shadow-2xs">
-          <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-            Registered Customers
-          </span>
-          <div className="text-2xl font-black text-foreground tabular-nums mt-1">
-            145
+        <div className="rounded-xl border border-border bg-card p-3.5 shadow-2xs">
+          <div className="flex items-center gap-2">
+            <div className="flex size-7 items-center justify-center rounded-lg bg-blue-500/10">
+              <Users className="size-3.5 text-blue-600 dark:text-blue-400" />
+            </div>
+            <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+              Customers
+            </span>
           </div>
-          <p className="text-[11px] text-muted-foreground mt-1">
-            Available for Bulk SMS
-          </p>
+          <p className="mt-2 text-xl font-black tabular-nums text-foreground">145</p>
+          <p className="text-[10px] text-muted-foreground font-medium">Available for Bulk SMS</p>
         </div>
       </div>
 

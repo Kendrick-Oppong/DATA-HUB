@@ -7,6 +7,10 @@ import {
   Zap,
   FlagTriangleRight,
   ArrowRight,
+  Receipt,
+  CheckCircle2,
+  Clock,
+  Wallet,
 } from "lucide-react";
 import { Order, OrderStatus, Transaction } from "../../types";
 import { SignalRail } from "../common/SignalRail";
@@ -147,45 +151,56 @@ export const CustomerDashboard: React.FC<CustomerDashboardProps> = ({
   return (
     <div className="space-y-6">
       {/* Welcome Banner */}
-      <div className="flex flex-col items-start justify-between gap-4 rounded-3xl border border-border bg-gradient-to-r from-primary/10 via-card to-amber-500/10 p-6 shadow-xs sm:flex-row sm:items-center sm:p-8">
-        <div className="space-y-1">
+      <div className="p-6 sm:p-8 rounded-3xl bg-gradient-to-r from-amber-500/15 via-card to-primary/10 border border-border shadow-xs flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
+        <div className="space-y-2 max-w-xl">
           <div className="flex items-center gap-2">
-            <span className="text-xs font-bold uppercase tracking-wider text-primary">
+            <span className="text-xs uppercase font-bold text-primary tracking-wider">
               Customer Portal
             </span>
-
-            <SignalRail
-              status="online"
-              size="sm"
-              label="Carrier Gateways 99.8%"
-            />
+            <span className="px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 text-[10px] font-bold">
+              Carrier Gateways 99.8% Uptime
+            </span>
+            <SignalRail status="online" size="sm" />
           </div>
-
-          <h1 className="text-2xl font-extrabold tracking-tight text-foreground sm:text-3xl">
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-foreground tracking-tight">
             Akwaaba, Kojo!
           </h1>
-
-          <p className="text-xs text-muted-foreground sm:text-sm">
-            Buy data, airtime, and WAEC vouchers with confidence and instant
-            delivery.
+          <p className="text-xs sm:text-sm text-muted-foreground">
+            Buy data, airtime, and WAEC vouchers with confidence and instant delivery.
           </p>
         </div>
 
-        {/* Wallet Balance Hero Card */}
-        <div className="flex shrink-0 items-center gap-4 rounded-2xl border border-border bg-card p-4 shadow-sm">
+        {/* Wallet Balance Card */}
+        <div className="p-5 rounded-2xl bg-card border border-border shadow-sm flex flex-col sm:flex-row items-start sm:items-center gap-4 shrink-0">
           <div>
-            <p className="block text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+            <span className="text-[10px] uppercase font-bold text-muted-foreground block">
               Available Balance
-            </p>
-
-            <p className="text-2xl font-black tabular-nums text-foreground">
+            </span>
+            <div className="text-2xl sm:text-3xl font-black text-foreground tabular-nums">
               GH₵ {walletBalance.toFixed(2)}
-            </p>
+            </div>
+            <span className="text-[11px] text-muted-foreground">
+              SDH Wallet · Instant spend
+            </span>
           </div>
-
-          <Button onClick={onOpenFundWallet} size="lg">
-            + Top-up
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button
+              size="lg"
+              onClick={onOpenFundWallet}
+              className="px-4 py-2.5 font-extrabold text-xs transition-all shadow-sm cursor-pointer"
+            >
+              + Top-up
+            </Button>
+            <Button
+              size="lg"
+              variant="outline"
+              onClick={() => onNavigateTab("orders")}
+              className="px-4 py-2.5 font-extrabold text-xs transition-all shadow-sm cursor-pointer flex items-center gap-1.5"
+            >
+              <Receipt className="w-3.5 h-3.5" />
+              Orders
+            </Button>
+          </div>
         </div>
       </div>
 
@@ -237,6 +252,67 @@ export const CustomerDashboard: React.FC<CustomerDashboardProps> = ({
           View
           <ArrowRight className="size-3.5" />
         </Button>
+      </div>
+
+      {/* Stats Tiles */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <div className="rounded-xl border border-border bg-card p-3.5 shadow-2xs">
+          <div className="flex items-center gap-2">
+            <div className="flex size-7 items-center justify-center rounded-lg bg-primary/10">
+              <Receipt className="size-3.5 text-primary" />
+            </div>
+            <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+              Total Orders
+            </span>
+          </div>
+          <p className="mt-2 text-xl font-black tabular-nums text-foreground">{orders.length}</p>
+          <p className="text-[10px] text-muted-foreground font-medium">All time purchases</p>
+        </div>
+
+        <div className="rounded-xl border border-border bg-card p-3.5 shadow-2xs">
+          <div className="flex items-center gap-2">
+            <div className="flex size-7 items-center justify-center rounded-lg bg-emerald-500/10">
+              <CheckCircle2 className="size-3.5 text-emerald-600 dark:text-emerald-400" />
+            </div>
+            <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+              Delivered
+            </span>
+          </div>
+          <p className="mt-2 text-xl font-black tabular-nums text-foreground">
+            {orders.filter((o) => o.status === "delivered").length}
+          </p>
+          <p className="text-[10px] text-emerald-600 dark:text-emerald-400 font-medium">Successfully fulfilled</p>
+        </div>
+
+        <div className="rounded-xl border border-border bg-card p-3.5 shadow-2xs">
+          <div className="flex items-center gap-2">
+            <div className="flex size-7 items-center justify-center rounded-lg bg-amber-500/10">
+              <Clock className="size-3.5 text-amber-600 dark:text-amber-400" />
+            </div>
+            <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+              In Progress
+            </span>
+          </div>
+          <p className="mt-2 text-xl font-black tabular-nums text-foreground">
+            {orders.filter((o) => o.status === "processing" || o.status === "waiting" || o.status === "pending" || o.status === "pending_payment").length}
+          </p>
+          <p className="text-[10px] text-amber-600 dark:text-amber-400 font-medium">Active deliveries</p>
+        </div>
+
+        <div className="rounded-xl border border-border bg-card p-3.5 shadow-2xs">
+          <div className="flex items-center gap-2">
+            <div className="flex size-7 items-center justify-center rounded-lg bg-blue-500/10">
+              <Wallet className="size-3.5 text-blue-600 dark:text-blue-400" />
+            </div>
+            <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+              Wallet
+            </span>
+          </div>
+          <p className="mt-2 text-xl font-black tabular-nums text-foreground">
+            GH₵ {walletBalance.toFixed(2)}
+          </p>
+          <p className="text-[10px] text-muted-foreground font-medium">Available balance</p>
+        </div>
       </div>
 
       {/* Quick Action Shortcuts */}
@@ -379,13 +455,12 @@ export const CustomerDashboard: React.FC<CustomerDashboardProps> = ({
                   <TableRow key={order.id} className="hover:bg-muted/40">
                     <TableCell>
                       <span
-                        className={`rounded-md px-2 py-0.5 text-[10px] font-black uppercase ${
-                          order.network === "MTN"
-                            ? "bg-amber-400 text-amber-950"
-                            : order.network === "Telecel"
-                              ? "bg-red-600 text-white"
-                              : "bg-blue-600 text-white"
-                        }`}
+                        className={`rounded-md px-2 py-0.5 text-[10px] font-black uppercase ${order.network === "MTN"
+                          ? "bg-amber-400 text-amber-950"
+                          : order.network === "Telecel"
+                            ? "bg-red-600 text-white"
+                            : "bg-blue-600 text-white"
+                          }`}
                       >
                         {order.network.slice(0, 3)}
                       </span>
@@ -433,11 +508,11 @@ export const CustomerDashboard: React.FC<CustomerDashboardProps> = ({
                         )}
                         {(order.status === "pending" ||
                           order.status === "pending_payment") && (
-                          <span className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase bg-purple-500/15 text-purple-700 dark:text-purple-400 border border-purple-500/30">
-                            <span className="size-1.5 rounded-full bg-purple-500 animate-pulse" />
-                            Pending
-                          </span>
-                        )}
+                            <span className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase bg-purple-500/15 text-purple-700 dark:text-purple-400 border border-purple-500/30">
+                              <span className="size-1.5 rounded-full bg-purple-500 animate-pulse" />
+                              Pending
+                            </span>
+                          )}
                         {order.status === "failed" && (
                           <span className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase bg-red-500/15 text-red-600 dark:text-red-400 border border-red-500/30">
                             <span className="size-1.5 rounded-full bg-red-500" />
@@ -457,16 +532,16 @@ export const CustomerDashboard: React.FC<CustomerDashboardProps> = ({
                       <div className="flex items-center justify-end gap-1.5">
                         {(order.status === "pending" ||
                           order.status === "pending_payment") && (
-                          <Button
-                            variant="default"
-                            size="sm"
-                            onClick={() => handleOpenVerifyModal(order)}
-                            className="h-7 rounded-full px-2.5 text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white shadow-xs inline-flex items-center gap-1 cursor-pointer"
-                          >
-                            <ShieldCheck className="size-3.5" />
-                            <span>Verify Payment</span>
-                          </Button>
-                        )}
+                            <Button
+                              variant="default"
+                              size="sm"
+                              onClick={() => handleOpenVerifyModal(order)}
+                              className="h-7 rounded-full px-2.5 text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white shadow-xs inline-flex items-center gap-1 cursor-pointer"
+                            >
+                              <ShieldCheck className="size-3.5" />
+                              <span>Verify Payment</span>
+                            </Button>
+                          )}
 
                         <Button
                           variant="outline"
