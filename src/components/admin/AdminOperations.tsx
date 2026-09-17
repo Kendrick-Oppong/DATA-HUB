@@ -186,7 +186,7 @@ export const AdminOperations: React.FC<AdminOperationsProps> = ({
                   <div className="flex justify-between items-start">
                     <div>
                       <CardTitle className="text-sm font-bold text-foreground">{gw.name}</CardTitle>
-                      <CardDescription className="text-[10px] font-mono">Gateway ID: {gw.id}</CardDescription>
+                      <CardDescription className="text-[10px] uppercase font-semibold text-muted-foreground">Gateway ID: {gw.id}</CardDescription>
                     </div>
                     <SignalRail status={gw.status} size="sm" />
                   </div>
@@ -196,11 +196,11 @@ export const AdminOperations: React.FC<AdminOperationsProps> = ({
                   <div className="grid grid-cols-2 gap-2 text-xs">
                     <div className="p-2.5 rounded-xl bg-muted/40 border border-border/80">
                       <span className="text-[10px] uppercase font-bold text-muted-foreground block">Latency</span>
-                      <span className="font-mono font-bold text-foreground tabular-nums">{gw.latencyMs} ms</span>
+                      <span className="font-bold text-foreground tabular-nums">{gw.latencyMs} ms</span>
                     </div>
                     <div className="p-2.5 rounded-xl bg-muted/40 border border-border/80">
                       <span className="text-[10px] uppercase font-bold text-muted-foreground block">Success Rate</span>
-                      <span className="font-mono font-bold text-emerald-600 dark:text-emerald-400 tabular-nums">
+                      <span className="font-bold text-emerald-600 dark:text-emerald-400 tabular-nums">
                         {gw.successRate}%
                       </span>
                     </div>
@@ -238,7 +238,7 @@ export const AdminOperations: React.FC<AdminOperationsProps> = ({
               </p>
             </div>
             <div className="flex items-center gap-2">
-              <Badge variant="outline" className="font-mono text-xs">
+              <Badge variant="outline" className="text-xs font-semibold tabular-nums">
                 Total Audited: {orders.length}
               </Badge>
             </div>
@@ -256,7 +256,7 @@ export const AdminOperations: React.FC<AdminOperationsProps> = ({
                     placeholder="Search reference, customer name, phone..."
                     value={orderQuery}
                     onChange={(e) => setOrderQuery(e.target.value)}
-                    className="pl-8 h-9 text-xs font-mono"
+                    className="pl-8 h-9 text-xs"
                   />
                 </div>
 
@@ -352,7 +352,7 @@ export const AdminOperations: React.FC<AdminOperationsProps> = ({
                   ) : (
                     filteredOrders.map((ord) => (
                       <TableRow key={ord.id} className="hover:bg-muted/40">
-                        <TableCell className="font-mono font-bold text-xs text-foreground">
+                        <TableCell className="font-bold text-xs text-foreground tabular-nums">
                           {ord.reference}
                         </TableCell>
                         <TableCell className="text-muted-foreground tabular-nums text-xs">
@@ -360,7 +360,7 @@ export const AdminOperations: React.FC<AdminOperationsProps> = ({
                         </TableCell>
                         <TableCell className="text-xs text-foreground">
                           <div className="font-semibold">{ord.customerName}</div>
-                          <div className="font-mono text-[10px] text-muted-foreground">{ord.recipientPhone}</div>
+                          <div className="text-[10px] text-muted-foreground tabular-nums">{ord.recipientPhone}</div>
                         </TableCell>
                         <TableCell className="text-xs font-medium text-foreground">
                           <div className="flex items-center gap-1.5">
@@ -432,7 +432,7 @@ export const AdminOperations: React.FC<AdminOperationsProps> = ({
                 Review Ghana Card numbers and whitelist eligible agricultural subscribers for subsidized telecom data.
               </p>
             </div>
-            <Badge variant="outline" className="font-mono text-xs">
+            <Badge variant="outline" className="text-xs font-semibold tabular-nums">
               Pending Verification: {afaApplications.filter(a => a.status === 'under_review').length}
             </Badge>
           </div>
@@ -477,7 +477,7 @@ export const AdminOperations: React.FC<AdminOperationsProps> = ({
                   <div className="space-y-1">
                     <div className="flex items-center gap-2">
                       <span className="font-bold text-sm text-foreground">{app.fullName}</span>
-                      <span className="font-mono text-muted-foreground font-semibold">({app.phoneNumber})</span>
+                      <span className="text-muted-foreground font-semibold tabular-nums">({app.phoneNumber})</span>
                       <Badge
                         variant={app.status === 'approved' ? 'default' : 'secondary'}
                         className="text-[10px] font-bold uppercase"
@@ -486,7 +486,7 @@ export const AdminOperations: React.FC<AdminOperationsProps> = ({
                       </Badge>
                     </div>
                     <div className="text-muted-foreground flex flex-wrap gap-3 pt-0.5">
-                      <span>Ghana Card: <strong className="font-mono text-foreground">{app.ghanaCardNumber}</strong></span>
+                      <span>Ghana Card: <strong className="text-foreground tabular-nums">{app.ghanaCardNumber}</strong></span>
                       <span>Region: <strong className="text-foreground">{app.region}</strong></span>
                       <span>Trade: <strong className="text-foreground">{app.occupation}</strong></span>
                     </div>
@@ -550,9 +550,9 @@ export const AdminOperations: React.FC<AdminOperationsProps> = ({
                   <div className="flex justify-between items-start">
                     <div>
                       <CardTitle className="text-sm font-bold text-foreground">{chk.title}</CardTitle>
-                      <CardDescription className="text-[10px] uppercase font-mono">{chk.examBody} Portal</CardDescription>
+                      <CardDescription className="text-[10px] uppercase font-semibold text-muted-foreground">{chk.examBody} Portal</CardDescription>
                     </div>
-                    <Badge variant="outline" className="text-emerald-600 dark:text-emerald-400 font-mono font-black text-xs">
+                    <Badge variant="outline" className="text-emerald-600 dark:text-emerald-400 font-bold text-xs tabular-nums">
                       {chk.stockCount} Cards In Stock
                     </Badge>
                   </div>

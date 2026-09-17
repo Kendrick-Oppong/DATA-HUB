@@ -69,6 +69,7 @@ import { AgentCommunityView } from "./components/agent/views/AgentCommunityView"
 import { AgentCustomersView } from "./components/agent/views/AgentCustomersView";
 
 // Admin Ops Console
+import { AdminDashboard } from "./components/admin/AdminDashboard";
 import { AdminOperations } from "./components/admin/AdminOperations";
 
 // Public Storefront
@@ -133,7 +134,7 @@ function parsePathToRoute(pathname: string, search = ""): AppRoute {
     return { type: "storefront" };
   }
   if (clean.startsWith("/admin")) {
-    return { type: "dashboard", role: "admin", tab: "gateways" };
+    return { type: "dashboard", role: "admin", tab: "overview" };
   }
   if (clean.startsWith("/agent")) {
     return { type: "dashboard", role: "agent", tab: "overview" };
@@ -315,7 +316,7 @@ export default function App() {
       return;
     }
 
-    const defaultTab = tab || (role === "admin" ? "gateways" : "overview");
+    const defaultTab = tab || "overview";
     navigateTo({ type: "dashboard", role, tab: defaultTab });
   };
 
@@ -1248,6 +1249,15 @@ export default function App() {
                 isSuccess={isAdminUnlocked}
                 onCancel={() => navigateToDashboard("customer", "overview")}
                 onOpenSecurityPins={() => setIsSecurityPinsOpen(true)}
+              />
+            ) : activeTab === "overview" || activeTab === "dashboard" ? (
+              <AdminDashboard
+                orders={orders}
+                gateways={gateways}
+                onNavigateTab={(tab) => handleTabChange(tab)}
+                onSelectReceiptOrder={(order) => setSelectedReceiptOrder(order)}
+                afaApplications={afaApplications}
+                checkers={checkers}
               />
             ) : (
               <AdminOperations
