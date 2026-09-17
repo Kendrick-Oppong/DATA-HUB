@@ -1,5 +1,6 @@
 import React from "react";
 import { Info, Layers } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 
 interface TierProgressCardProps {
   currentTier: string;
@@ -43,15 +44,16 @@ export const TierProgressCard: React.FC<TierProgressCardProps> = ({
   const formatCurrency = (val: number) => `GH₵ ${val.toFixed(2)}`;
 
   return (
-    <div className="flex flex-col justify-between rounded-2xl  shadow-xs">
-      <div>
-        <h3 className="mb-4 flex items-center gap-2 text-sm font-extrabold text-foreground">
+    <Card className="border-border shadow-xs">
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
+        <CardTitle className="text-sm font-bold text-foreground flex items-center gap-2">
           <Layers className="size-4" />
           Tier Progress & Rewards
-        </h3>
-
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-4">
         {/* Current Tier Info */}
-        <div className="mb-4 p-3 rounded-xl bg-muted/30 border border-border/80">
+        <div className="p-3 rounded-xl bg-muted/30 border border-border/80">
           <div className="flex items-center justify-between mb-2">
             <div className="font-semibold text-base text-foreground">
               {currentTier}
@@ -72,8 +74,8 @@ export const TierProgressCard: React.FC<TierProgressCardProps> = ({
         </div>
 
         {/* Main Progress Bar */}
-        <div className="mb-4">
-          <div className="flex items-center gap-3 mb-2">
+        <div className="space-y-2">
+          <div className="flex items-center gap-3">
             <span className="w-32 shrink-0 text-[10px] font-semibold text-muted-foreground">
               Current Score
             </span>
@@ -160,47 +162,47 @@ export const TierProgressCard: React.FC<TierProgressCardProps> = ({
             </span>
           </div>
         </div>
-      </div>
 
-      {/* Stats Row */}
-      <div className="flex gap-6 pt-4 border-t border-border">
-        <div>
-          <div className="font-semibold text-base text-foreground">
-            {customers}
+        {/* Stats Row */}
+        <div className="flex gap-6 pt-2 border-t border-border">
+          <div>
+            <div className="font-semibold text-base text-foreground">
+              {customers}
+            </div>
+            <div className="text-[11px] font-semibold text-muted-foreground">
+              customers
+            </div>
           </div>
-          <div className="text-[11px] font-semibold text-muted-foreground">
-            customers
+          <div>
+            <div className="font-semibold text-base text-foreground">
+              {referralCount}
+            </div>
+            <div className="text-[11px] font-semibold text-muted-foreground">
+              referrals
+            </div>
+          </div>
+          <div>
+            <div className="font-semibold text-base text-emerald-600 dark:text-emerald-400">
+              {deliveredPercent}
+            </div>
+            <div className="text-[11px] font-semibold text-muted-foreground">
+              delivered
+            </div>
           </div>
         </div>
-        <div>
-          <div className="font-semibold text-base text-foreground">
-            {referralCount}
-          </div>
-          <div className="text-[11px] font-semibold text-muted-foreground">
-            referrals
-          </div>
-        </div>
-        <div>
-          <div className="font-semibold text-base text-emerald-600 dark:text-emerald-400">
-            {deliveredPercent}
-          </div>
-          <div className="text-[11px] font-semibold text-muted-foreground">
-            delivered
-          </div>
-        </div>
-      </div>
 
-      {/* Referral Ceiling Note */}
-      {referralsExcluded > 0 && (
-        <div className="flex items-start gap-2 pt-2 text-xs text-muted-foreground">
-          <Info className="w-3.5 h-3.5 flex-shrink-0 mt-0.5" />
-          <span>
-            {formatCurrency(referralsExcluded)} of referral earnings isn't
-            counting toward your tier yet — at least 70% of tier progress has to
-            come from real sales. Sell more and it starts counting.
-          </span>
-        </div>
-      )}
-    </div>
+        {/* Referral Ceiling Note */}
+        {referralsExcluded > 0 && (
+          <div className="flex items-start gap-2 pt-2 text-xs text-muted-foreground">
+            <Info className="w-3.5 h-3.5 flex-shrink-0 mt-0.5" />
+            <span>
+              {formatCurrency(referralsExcluded)} of referral earnings isn't
+              counting toward your tier yet — at least 70% of tier progress has
+              to come from real sales. Sell more and it starts counting.
+            </span>
+          </div>
+        )}
+      </CardContent>
+    </Card>
   );
 };
