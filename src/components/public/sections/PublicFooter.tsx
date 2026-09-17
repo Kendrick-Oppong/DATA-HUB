@@ -6,11 +6,11 @@ import {
   Lock,
   ArrowUpRight,
 } from "lucide-react";
-import { TelecomNetwork, UserRole } from "../../../types";
+import { TelecomNetwork, UserRole, AppTheme } from "../../../types";
 import { SignalRail } from "../../common/SignalRail";
 import { Button } from "../../ui/button";
 import { Badge } from "../../ui/badge";
-import { getLogoFromDOM } from "../../../lib/themes";
+import { getLogoForTheme } from "../../../lib/themes";
 import type { PublicTabType } from "./PublicHomeSection";
 import {
   FOOTER_BRAND,
@@ -26,6 +26,7 @@ interface PublicFooterProps {
   onNavigatePublicTab: (tab: PublicTabType) => void;
   onNavigate?: (role: UserRole, tab: string) => void;
   onNavigateToLegal?: (page: "terms" | "privacy") => void;
+  theme?: AppTheme;
 }
 
 export const PublicFooter: React.FC<PublicFooterProps> = ({
@@ -33,6 +34,7 @@ export const PublicFooter: React.FC<PublicFooterProps> = ({
   onNavigatePublicTab,
   onNavigate,
   onNavigateToLegal,
+  theme = "light",
 }) => {
   const resolveClick = useCallback(
     (action: FooterAction) => () => {
@@ -49,7 +51,8 @@ export const PublicFooter: React.FC<PublicFooterProps> = ({
             return;
           }
           if (typeof window !== "undefined") {
-            window.location.href = action.page === "terms" ? "/terms" : "/privacy";
+            window.location.href =
+              action.page === "terms" ? "/terms" : "/privacy";
           }
           return;
         case "role":
@@ -82,7 +85,11 @@ export const PublicFooter: React.FC<PublicFooterProps> = ({
           <div className="space-y-4 lg:col-span-1">
             <div className="flex items-center gap-2.5">
               <div className="flex h-10 items-center justify-center p-1 ">
-                <img src={getLogoFromDOM()} alt="Smart Data Hub Logo" className="h-8 w-auto object-contain" />
+                <img
+                  src={getLogoForTheme(theme)}
+                  alt="Smart Data Hub Logo"
+                  className="h-8 w-auto object-contain"
+                />
               </div>
               <span className="font-black text-base text-foreground tracking-tight">
                 {FOOTER_BRAND.name}

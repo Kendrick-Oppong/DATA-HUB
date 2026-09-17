@@ -15,7 +15,7 @@ import { Button } from "../ui/button";
 import { Badge } from "../ui/badge";
 import { PublicFooter } from "../public/sections/PublicFooter";
 import { PublicNavbar } from "../public/PublicNavbar";
-import type { UserAccount } from "../../types";
+import type { UserAccount, AppTheme } from "../../types";
 
 interface TermsOfServiceProps {
   user?: UserAccount | null;
@@ -26,7 +26,7 @@ interface TermsOfServiceProps {
   onNavigateToAuth?: (mode: string) => void;
   onNavigateToDashboard?: (role: string) => void;
   onSignOut?: () => void;
-  theme?: string;
+  theme?: AppTheme;
   onSetTheme?: (theme: string) => void;
   onOpenSecurityPins?: () => void;
 }
@@ -672,6 +672,7 @@ export function TermsOfService({
       <PublicFooter
         onNavigateToLegal={onNavigateToLegal}
         onNavigatePublicTab={() => {}}
+        theme={theme}
       />
     </div>
   );

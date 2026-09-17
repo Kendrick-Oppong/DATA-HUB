@@ -18,8 +18,15 @@ import {
   Filter,
   Check,
   ExternalLink,
+  Radio,
+  Gift,
 } from "lucide-react";
-import { TelecomGateway, Order, AfaApplication, ResultCheckerProduct } from "../../types";
+import {
+  TelecomGateway,
+  Order,
+  AfaApplication,
+  ResultCheckerProduct,
+} from "../../types";
 import { SignalRail } from "../common/SignalRail";
 import { Button } from "../ui/button";
 import { Badge } from "../ui/badge";
@@ -185,7 +192,9 @@ const MOCK_RECENT_REFERRALS: RecentReferral[] = [
 function formatTimeAgo(dateStr: string): string {
   if (!dateStr) return "Just now";
   try {
-    const parseable = dateStr.includes("T") ? dateStr : dateStr.replace(" ", "T");
+    const parseable = dateStr.includes("T")
+      ? dateStr
+      : dateStr.replace(" ", "T");
     const d = new Date(parseable);
     if (isNaN(d.getTime())) return "Recently";
     const now = Date.now();
@@ -211,16 +220,26 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   // Core Platform Metrics
   const deliveredOrders = orders.filter((o) => o.status === "delivered");
   const baseRevenue = 14850.0;
-  const dynamicDeliveredTotal = deliveredOrders.reduce((sum, o) => sum + o.amount, 0);
+  const dynamicDeliveredTotal = deliveredOrders.reduce(
+    (sum, o) => sum + o.amount,
+    0,
+  );
   const totalRevenueToday = baseRevenue + dynamicDeliveredTotal;
 
   const totalOrdersToday = orders.length + 146; // Platform total across retail & agents
-  const inFlightCount = orders.filter(
-    (o) => o.status === "waiting" || o.status === "processing" || o.status === "pending"
-  ).length + 4;
+  const inFlightCount =
+    orders.filter(
+      (o) =>
+        o.status === "waiting" ||
+        o.status === "processing" ||
+        o.status === "pending",
+    ).length + 4;
 
   const settledOrders = orders.filter(
-    (o) => o.status === "delivered" || o.status === "failed" || o.status === "refunded"
+    (o) =>
+      o.status === "delivered" ||
+      o.status === "failed" ||
+      o.status === "refunded",
   );
   const deliveredRate =
     settledOrders.length > 0
@@ -229,7 +248,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
   // Failing / Auto-refunded orders alert
   const failingOrders = orders.filter(
-    (o) => o.status === "failed" || o.status === "refunded"
+    (o) => o.status === "failed" || o.status === "refunded",
   );
 
   // Network Mix calculations
@@ -238,8 +257,14 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   const telecelOrders = orders.filter((o) => o.network === "Telecel").length;
   const atOrders = orders.filter((o) => o.network === "AirtelTigo").length;
 
-  const mtnPercent = Math.max(58, Math.round((mtnOrders / totalTrackedOrders) * 100));
-  const telecelPercent = Math.max(28, Math.round((telecelOrders / totalTrackedOrders) * 100));
+  const mtnPercent = Math.max(
+    58,
+    Math.round((mtnOrders / totalTrackedOrders) * 100),
+  );
+  const telecelPercent = Math.max(
+    28,
+    Math.round((telecelOrders / totalTrackedOrders) * 100),
+  );
   const atPercent = Math.max(14, 100 - mtnPercent - telecelPercent);
 
   // Core Liquidity Float
@@ -263,7 +288,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
             Platform Operations &amp; Infrastructure
           </h1>
           <p className="text-xs sm:text-sm text-muted-foreground">
-            Live telecom dispatch switches, wholesale order routing, and partner storefront ecosystem.
+            Live telecom dispatch switches, wholesale order routing, and partner
+            storefront ecosystem.
           </p>
 
           {/* Quick Action Pills */}
@@ -355,7 +381,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
           <p className="mt-2 text-xl font-black tabular-nums text-foreground">
             {totalOrdersToday}
           </p>
-          <p className="text-[10px] text-muted-foreground font-medium">Since midnight (00:00 GMT)</p>
+          <p className="text-[10px] text-muted-foreground font-medium">
+            Since midnight (00:00 GMT)
+          </p>
         </div>
 
         <div className="rounded-xl border border-border bg-card p-3.5 shadow-2xs">
@@ -387,7 +415,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
           <p className="mt-2 text-xl font-black tabular-nums text-foreground">
             {inFlightCount}
           </p>
-          <p className="text-[10px] text-muted-foreground font-medium">Waiting or processing</p>
+          <p className="text-[10px] text-muted-foreground font-medium">
+            Waiting or processing
+          </p>
         </div>
       </div>
 
@@ -400,10 +430,13 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
             </div>
             <div>
               <span className="font-bold text-red-600 dark:text-red-400">
-                {failingOrders.length} order{failingOrders.length === 1 ? "" : "s"} failed &amp; auto-refunded
+                {failingOrders.length} order
+                {failingOrders.length === 1 ? "" : "s"} failed &amp;
+                auto-refunded
               </span>
               <p className="text-muted-foreground mt-0.5">
-                The upstream carrier rejected these — customer wallet balances were refunded automatically.
+                The upstream carrier rejected these — customer wallet balances
+                were refunded automatically.
               </p>
             </div>
           </div>
@@ -418,315 +451,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
         </div>
       )}
 
-      {/* Quick Operational Actions (matching Agent Dashboard quick actions grid) */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        <button
-          onClick={() => onNavigateTab("orders-audit")}
-          className="p-4 rounded-2xl bg-card border border-border hover:border-primary/50 text-left transition-all group cursor-pointer shadow-2xs"
-        >
-          <div className="w-9 h-9 rounded-xl bg-primary/10 text-primary flex items-center justify-center mb-2 group-hover:scale-105 transition-transform">
-            <Clock className="w-5 h-5" />
-          </div>
-          <div className="font-bold text-xs text-foreground">
-            Order Monitor
-          </div>
-          <div className="text-[10px] text-muted-foreground">
-            Upstream dispatches &amp; retries
-          </div>
-        </button>
-
-        <button
-          onClick={() => onNavigateTab("afa-verification")}
-          className="p-4 rounded-2xl bg-card border border-border hover:border-primary/50 text-left transition-all group cursor-pointer shadow-2xs"
-        >
-          <div className="w-9 h-9 rounded-xl bg-amber-500/10 text-amber-600 flex items-center justify-center mb-2 group-hover:scale-105 transition-transform">
-            <ShieldCheck className="w-5 h-5" />
-          </div>
-          <div className="font-bold text-xs text-foreground">
-            AFA Applications
-          </div>
-          <div className="text-[10px] text-muted-foreground">
-            National youth auth queue
-          </div>
-        </button>
-
-        <button
-          onClick={() => onNavigateTab("vouchers-stock")}
-          className="p-4 rounded-2xl bg-card border border-border hover:border-primary/50 text-left transition-all group cursor-pointer shadow-2xs"
-        >
-          <div className="w-9 h-9 rounded-xl bg-purple-500/10 text-purple-600 flex items-center justify-center mb-2 group-hover:scale-105 transition-transform">
-            <GraduationCap className="w-5 h-5" />
-          </div>
-          <div className="font-bold text-xs text-foreground">
-            Result Checkers
-          </div>
-          <div className="text-[10px] text-muted-foreground">
-            BECE &amp; WASSCE inventory
-          </div>
-        </button>
-
-        <button
-          onClick={() => onNavigateTab("agents")}
-          className="p-4 rounded-2xl bg-card border border-border hover:border-primary/50 text-left transition-all group cursor-pointer shadow-2xs"
-        >
-          <div className="w-9 h-9 rounded-xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center mb-2 group-hover:scale-105 transition-transform">
-            <ShoppingBag className="w-5 h-5" />
-          </div>
-          <div className="font-bold text-xs text-foreground">
-            Reseller Stores
-          </div>
-          <div className="text-[10px] text-muted-foreground">
-            Agent margins &amp; stores
-          </div>
-        </button>
-      </div>
-
-      {/* Main Grid: Live Order Feed + Network Mix */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Live Order Feed Table (2 cols on large screen) */}
-        <Card className="border-border shadow-xs lg:col-span-2">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 border-b border-border pb-3">
-            <div>
-              <CardTitle className="text-base font-extrabold text-foreground">
-                Live Order Feed
-              </CardTitle>
-              <CardDescription className="text-xs">
-                Real-time carrier dispatches across customer purchases and agent stores.
-              </CardDescription>
-            </div>
-            <Button
-              variant="link"
-              onClick={() => onNavigateTab("orders-audit")}
-              className="h-auto gap-1 px-0 text-xs font-bold text-primary cursor-pointer"
-            >
-              <span>Order Monitor</span>
-              <ArrowRight className="size-3.5" />
-            </Button>
-          </CardHeader>
-          <CardContent className="p-0">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Order</TableHead>
-                  <TableHead>User</TableHead>
-                  <TableHead className="text-right">Amount</TableHead>
-                  <TableHead className="text-center">Status</TableHead>
-                  <TableHead className="text-right">When</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {orders.length === 0 ? (
-                  <TableRow>
-                    <TableCell
-                      colSpan={5}
-                      className="py-8 text-center text-xs text-muted-foreground"
-                    >
-                      No orders found on the platform yet.
-                    </TableCell>
-                  </TableRow>
-                ) : (
-                  orders.slice(0, 7).map((order) => {
-                    const isStorefront = !!order.agentMargin;
-                    const isAgent = !isStorefront && order.customerName.toLowerCase().includes("agent");
-
-                    return (
-                      <TableRow
-                        key={order.id}
-                        className="hover:bg-muted/40 cursor-pointer"
-                        onClick={() => onSelectReceiptOrder && onSelectReceiptOrder(order)}
-                      >
-                        <TableCell>
-                          <div className="flex items-center gap-2.5">
-                            <span
-                              className={`rounded-md px-2 py-0.5 text-[10px] font-black uppercase shrink-0 ${
-                                order.network === "MTN"
-                                  ? "bg-amber-400 text-amber-950"
-                                  : order.network === "Telecel"
-                                    ? "bg-red-600 text-white"
-                                    : "bg-blue-600 text-white"
-                              }`}
-                            >
-                              {order.network.slice(0, 3)}
-                            </span>
-                            <div className="min-w-0">
-                              <div className="text-xs font-bold text-foreground truncate">
-                                {order.productName}
-                              </div>
-                              <div className="text-[11px] text-muted-foreground tabular-nums">
-                                {order.reference}
-                              </div>
-                            </div>
-                          </div>
-                        </TableCell>
-
-                        <TableCell>
-                          <div className="text-xs font-semibold text-foreground">
-                            {order.customerName}
-                          </div>
-                          <div>
-                            {isStorefront ? (
-                              <span className="inline-block px-2 py-0.5 rounded-full text-[10px] font-bold bg-teal-500/15 text-teal-700 dark:text-teal-400">
-                                Storefront
-                              </span>
-                            ) : isAgent ? (
-                              <span className="inline-block px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-500/15 text-blue-700 dark:text-blue-400">
-                                Agent
-                              </span>
-                            ) : (
-                              <span className="inline-block px-2 py-0.5 rounded-full text-[10px] font-semibold bg-muted text-muted-foreground">
-                                Customer
-                              </span>
-                            )}
-                          </div>
-                        </TableCell>
-
-                        <TableCell className="text-right text-xs font-bold text-foreground tabular-nums">
-                          GH₵ {order.amount.toFixed(2)}
-                        </TableCell>
-
-                        <TableCell className="text-center">
-                          <span
-                            className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold capitalize ${
-                              order.status === "delivered"
-                                ? "bg-emerald-500/15 text-emerald-700 dark:text-emerald-400"
-                                : order.status === "processing"
-                                  ? "bg-amber-500/15 text-amber-700 dark:text-amber-400"
-                                  : order.status === "waiting" || order.status === "pending"
-                                    ? "bg-yellow-500/15 text-yellow-700 dark:text-yellow-400"
-                                    : "bg-red-500/15 text-red-700 dark:text-red-400"
-                            }`}
-                          >
-                            {order.status}
-                          </span>
-                        </TableCell>
-
-                        <TableCell className="text-right text-xs text-muted-foreground whitespace-nowrap">
-                          {formatTimeAgo(order.date)}
-                        </TableCell>
-                      </TableRow>
-                    );
-                  })
-                )}
-              </TableBody>
-            </Table>
-          </CardContent>
-        </Card>
-
-        {/* Network Mix & Volume Distribution Card */}
-        <Card className="border-border shadow-xs flex flex-col justify-between">
-          <div>
-            <CardHeader className="border-b border-border pb-3">
-              <CardTitle className="text-base font-extrabold text-foreground">
-                Network Mix
-              </CardTitle>
-              <CardDescription className="text-xs">
-                Real-time carrier distribution across current order volume.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="p-5 space-y-5">
-              {/* MTN */}
-              <div className="space-y-1.5">
-                <div className="flex items-center justify-between text-xs">
-                  <div className="flex items-center gap-2">
-                    <span className="size-2.5 rounded-full bg-amber-400 shrink-0" />
-                    <span className="font-bold text-foreground">MTN Ghana</span>
-                  </div>
-                  <span className="font-extrabold text-foreground tabular-nums">
-                    {mtnPercent}%
-                  </span>
-                </div>
-                <div className="h-2 w-full rounded-full bg-muted overflow-hidden">
-                  <div
-                    className="h-full bg-amber-400 rounded-full transition-all"
-                    style={{ width: `${mtnPercent}%` }}
-                  />
-                </div>
-              </div>
-
-              {/* Telecel */}
-              <div className="space-y-1.5">
-                <div className="flex items-center justify-between text-xs">
-                  <div className="flex items-center gap-2">
-                    <span className="size-2.5 rounded-full bg-red-600 shrink-0" />
-                    <span className="font-bold text-foreground">Telecel Ghana</span>
-                  </div>
-                  <span className="font-extrabold text-foreground tabular-nums">
-                    {telecelPercent}%
-                  </span>
-                </div>
-                <div className="h-2 w-full rounded-full bg-muted overflow-hidden">
-                  <div
-                    className="h-full bg-red-600 rounded-full transition-all"
-                    style={{ width: `${telecelPercent}%` }}
-                  />
-                </div>
-              </div>
-
-              {/* AT (AirtelTigo) */}
-              <div className="space-y-1.5">
-                <div className="flex items-center justify-between text-xs">
-                  <div className="flex items-center gap-2">
-                    <span className="size-2.5 rounded-full bg-blue-600 shrink-0" />
-                    <span className="font-bold text-foreground">AT (AirtelTigo)</span>
-                  </div>
-                  <span className="font-extrabold text-foreground tabular-nums">
-                    {atPercent}%
-                  </span>
-                </div>
-                <div className="h-2 w-full rounded-full bg-muted overflow-hidden">
-                  <div
-                    className="h-full bg-blue-600 rounded-full transition-all"
-                    style={{ width: `${atPercent}%` }}
-                  />
-                </div>
-              </div>
-            </CardContent>
-          </div>
-
-          {/* Card Footer Summary */}
-          <div className="p-5 border-t border-border flex items-center justify-between bg-muted/20">
-            <div>
-              <div className="text-xl font-extrabold text-foreground tabular-nums">
-                48
-              </div>
-              <div className="text-[11px] font-semibold text-muted-foreground">
-                active agents
-              </div>
-            </div>
-            <div className="text-right">
-              <div className="text-xl font-extrabold text-foreground tabular-nums">
-                64%
-              </div>
-              <div className="text-[11px] font-semibold text-muted-foreground">
-                via agents
-              </div>
-            </div>
-          </div>
-        </Card>
-      </div>
 
       {/* Referral & Growth Engine Section (Audited from sdh-next AdminReferrals) */}
-      <div className="space-y-4 pt-2">
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 pb-2">
-          <div>
-            <h2 className="text-lg font-extrabold text-foreground tracking-tight flex items-center gap-2">
-              <Share2 className="w-5 h-5 text-primary" />
-              <span>Referral &amp; Growth Engine</span>
-            </h2>
-            <p className="text-xs text-muted-foreground">
-              Platform-wide affiliate signups, first delivery rewards, and credit payouts.
-            </p>
-          </div>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => onNavigateTab("referrals")}
-            className="text-xs font-bold cursor-pointer"
-          >
-            Tiers &amp; Incentives
-          </Button>
-        </div>
-
+      <div className="space-y-4">
         {/* 4 Referral Metrics Tiles - Replicating AgentDashboard tile pattern */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
           <div className="rounded-xl border border-border bg-card p-3.5 shadow-2xs">
@@ -798,116 +525,364 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
           </div>
         </div>
 
-        {/* Referrals 2-Column Grid: Top Referrers + Latest Referrals */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Top Referrers Table */}
-          <Card className="border-border shadow-xs lg:col-span-2">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 border-b border-border pb-3">
-              <div>
-                <CardTitle className="text-base font-extrabold text-foreground">
-                  Top Referrers
-                </CardTitle>
-                <CardDescription className="text-xs">
-                  Leading agents generating verified user acquisition and retail sales.
-                </CardDescription>
-              </div>
-              <Button
-                variant="link"
-                onClick={() => onNavigateTab("users")}
-                className="h-auto gap-1 px-0 text-xs font-bold text-primary cursor-pointer"
-              >
-                <span>All Users</span>
-                <ArrowRight className="size-3.5" />
-              </Button>
-            </CardHeader>
-            <CardContent className="p-0">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Referrer</TableHead>
-                    <TableHead>Affiliate Code</TableHead>
-                    <TableHead className="text-center">Signups</TableHead>
-                    <TableHead className="text-center">Funded</TableHead>
-                    <TableHead className="text-right">Earned</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {MOCK_REFERRAL_LEADERS.map((leader) => (
-                    <TableRow key={leader.id} className="hover:bg-muted/40">
-                      <TableCell>
-                        <div className="text-xs font-bold text-foreground">
-                          {leader.name}
-                        </div>
-                        <div className="text-[11px] text-muted-foreground">
-                          {leader.phone} · {leader.role}
-                        </div>
-                      </TableCell>
-                      <TableCell className="text-xs font-semibold text-foreground tabular-nums">
-                        {leader.code}
-                      </TableCell>
-                      <TableCell className="text-center text-xs font-medium tabular-nums">
-                        {leader.signups}
-                      </TableCell>
-                      <TableCell className="text-center text-xs font-bold text-emerald-600 dark:text-emerald-400 tabular-nums">
-                        {leader.qualified}
-                      </TableCell>
-                      <TableCell className="text-right text-xs font-bold text-foreground tabular-nums">
-                        GH₵ {leader.earned.toFixed(2)}
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </CardContent>
-          </Card>
+        {/* Network Mix - Profit by Telecom Carrier Design (Own Section) */}
+        <div className="flex flex-col justify-between rounded-2xl border border-border bg-card p-5 shadow-xs">
+          <div>
+            <h3 className="mb-4 flex items-center gap-2 text-sm font-extrabold text-foreground">
+              <Radio className="size-4 text-amber-500" />
+              Network Mix
+            </h3>
 
-          {/* Latest Referrals List */}
-          <Card className="border-border shadow-xs">
-            <CardHeader className="border-b border-border pb-3">
+            <div className="space-y-2.5">
+              <div className="flex items-center gap-3">
+                <span className="w-32 shrink-0 text-[10px] font-semibold text-muted-foreground">
+                  MTN Ghana
+                </span>
+                <div className="relative flex-1">
+                  <div className="h-5 w-full overflow-hidden rounded-lg bg-muted/40">
+                    <div
+                      className="h-full rounded-lg bg-amber-400 transition-all duration-700"
+                      style={{ width: `${mtnPercent}%` }}
+                    />
+                  </div>
+                </div>
+                <span className="w-20 shrink-0 text-right text-[10px] font-bold text-emerald-600 dark:text-emerald-400">
+                  +GH₵ {((mtnPercent / 100) * 265.5).toFixed(2)}
+                </span>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <span className="w-32 shrink-0 text-[10px] font-semibold text-muted-foreground">
+                  Telecel Ghana
+                </span>
+                <div className="relative flex-1">
+                  <div className="h-5 w-full overflow-hidden rounded-lg bg-muted/40">
+                    <div
+                      className="h-full rounded-lg bg-red-600 transition-all duration-700"
+                      style={{ width: `${telecelPercent}%` }}
+                    />
+                  </div>
+                </div>
+                <span className="w-20 shrink-0 text-right text-[10px] font-bold text-emerald-600 dark:text-emerald-400">
+                  +GH₵ {((telecelPercent / 100) * 98).toFixed(2)}
+                </span>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <span className="w-32 shrink-0 text-[10px] font-semibold text-muted-foreground">
+                  AirtelTigo AT
+                </span>
+                <div className="relative flex-1">
+                  <div className="h-5 w-full overflow-hidden rounded-lg bg-muted/40">
+                    <div
+                      className="h-full rounded-lg bg-blue-600 transition-all duration-700"
+                      style={{ width: `${atPercent}%` }}
+                    />
+                  </div>
+                </div>
+                <span className="w-20 shrink-0 text-right text-[10px] font-bold text-emerald-600 dark:text-emerald-400">
+                  +GH₵ {((atPercent / 100) * 42.5).toFixed(2)}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-4 p-3.5 rounded-xl bg-muted/40 border border-border flex items-center justify-between">
+            <div>
+              <div className="text-xl font-extrabold text-foreground tabular-nums">
+                48
+              </div>
+              <div className="text-[11px] font-semibold text-muted-foreground">
+                active agents
+              </div>
+            </div>
+            <div className="text-right">
+              <div className="text-xl font-extrabold text-foreground tabular-nums">
+                64%
+              </div>
+              <div className="text-[11px] font-semibold text-muted-foreground">
+                via agents
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Top Referrers - Storefront Customer Orders Design */}
+        <Card className="border-border shadow-xs">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 border-b border-border pb-3">
+            <div>
               <CardTitle className="text-base font-extrabold text-foreground">
-                Latest Referrals
+                Top Referrers (Top 6)
               </CardTitle>
               <CardDescription className="text-xs">
-                Recent user signups via affiliate invite links.
+                Leading agents generating verified user acquisition and retail
+                sales.
               </CardDescription>
-            </CardHeader>
-            <CardContent className="p-4 space-y-3">
-              {MOCK_RECENT_REFERRALS.map((item) => (
-                <div
-                  key={item.id}
-                  className="flex items-center gap-3 p-2.5 rounded-xl border border-border bg-card hover:bg-muted/30 transition-colors"
-                >
+            </div>
+            <Button
+              variant="link"
+              onClick={() => onNavigateTab("users")}
+              className="h-auto gap-1 px-0 text-xs font-bold text-primary cursor-pointer"
+            >
+              <span>All Users</span>
+              <ArrowRight className="size-3.5" />
+            </Button>
+          </CardHeader>
+          <CardContent className="p-0">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Referrer</TableHead>
+                  <TableHead>Affiliate Code</TableHead>
+                  <TableHead>Phone</TableHead>
+                  <TableHead className="text-center">Signups</TableHead>
+                  <TableHead className="text-center">Funded</TableHead>
+                  <TableHead className="text-right">Earned</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {MOCK_REFERRAL_LEADERS.slice(0, 6).map((leader) => (
+                  <TableRow key={leader.id} className="hover:bg-muted/40">
+                    <TableCell className="text-xs font-bold text-foreground">
+                      {leader.name}
+                    </TableCell>
+                    <TableCell className="text-xs font-semibold text-foreground tabular-nums">
+                      {leader.code}
+                    </TableCell>
+                    <TableCell className="text-xs text-muted-foreground">
+                      {leader.phone}
+                    </TableCell>
+                    <TableCell className="text-center text-xs font-medium tabular-nums">
+                      {leader.signups}
+                    </TableCell>
+                    <TableCell className="text-center">
+                      <div className="flex items-center justify-center gap-1.5">
+                        {leader.qualified > 0 ? (
+                          <span className="text-[10px] font-bold">
+                            {leader.qualified}
+                          </span>
+                        ) : (
+                          <span className="text-xs font-bold text-muted-foreground">
+                            —
+                          </span>
+                        )}
+                      </div>
+                    </TableCell>
+                    <TableCell className="text-right text-xs font-black tabular-nums text-emerald-600 dark:text-emerald-400">
+                      +GH₵ {leader.earned.toFixed(2)}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Live Order Feed - Storefront Customer Orders Design */}
+      <Card className="border-border shadow-xs">
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 border-b border-border pb-3">
+          <div>
+            <CardTitle className="text-base font-extrabold text-foreground">
+              Live Order Feed (Top 6)
+            </CardTitle>
+            <CardDescription className="text-xs">
+              Real-time carrier dispatches across customer purchases and agent
+              stores.
+            </CardDescription>
+          </div>
+          <Button
+            variant="link"
+            onClick={() => onNavigateTab("orders-audit")}
+            className="h-auto gap-1 px-0 text-xs font-bold text-primary cursor-pointer"
+          >
+            <span>Order Monitor</span>
+            <ArrowRight className="size-3.5" />
+          </Button>
+        </CardHeader>
+        <CardContent className="p-0">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Network</TableHead>
+                <TableHead>Order Reference</TableHead>
+                <TableHead>Product Package</TableHead>
+                <TableHead>Customer</TableHead>
+                <TableHead>Date</TableHead>
+                <TableHead className="text-right">Amount</TableHead>
+                <TableHead className="text-center">Status</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {orders.length === 0 ? (
+                <TableRow>
+                  <TableCell
+                    colSpan={7}
+                    className="py-8 text-center text-xs text-muted-foreground"
+                  >
+                    No orders found on the platform yet.
+                  </TableCell>
+                </TableRow>
+              ) : (
+                orders.slice(0, 6).map((order) => (
+                  <TableRow
+                    key={order.id}
+                    className="hover:bg-muted/40 cursor-pointer"
+                    onClick={() =>
+                      onSelectReceiptOrder && onSelectReceiptOrder(order)
+                    }
+                  >
+                    <TableCell>
+                      <span
+                        className={`rounded-md px-2 py-0.5 text-[10px] font-black uppercase ${
+                          order.network === "MTN"
+                            ? "bg-amber-400 text-amber-950"
+                            : order.network === "Telecel"
+                              ? "bg-red-600 text-white"
+                              : "bg-blue-600 text-white"
+                        }`}
+                      >
+                        {order.network.slice(0, 3)}
+                      </span>
+                    </TableCell>
+                    <TableCell className="text-xs font-bold text-foreground">
+                      {order.reference}
+                    </TableCell>
+                    <TableCell className="text-xs font-bold text-foreground">
+                      {order.productName}
+                    </TableCell>
+                    <TableCell className="text-xs">
+                      {order.customerName}
+                    </TableCell>
+                    <TableCell className="text-xs tabular-nums text-muted-foreground whitespace-nowrap">
+                      {formatTimeAgo(order.date)}
+                    </TableCell>
+                    <TableCell className="text-right text-xs font-black tabular-nums text-foreground">
+                      GH₵ {order.amount.toFixed(2)}
+                    </TableCell>
+                    <TableCell className="text-center">
+                      <div className="flex items-center justify-center gap-1.5">
+                        {order.status === "delivered" && (
+                          <span className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30">
+                            <span className="size-1.5 rounded-full bg-emerald-500" />
+                            Delivered
+                          </span>
+                        )}
+                        {order.status === "processing" && (
+                          <span className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase bg-amber-500/15 text-amber-700 dark:text-amber-400 border border-amber-500/30">
+                            <span className="size-1.5 rounded-full bg-amber-500 animate-pulse" />
+                            Processing
+                          </span>
+                        )}
+                        {order.status === "waiting" && (
+                          <span className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase bg-sky-500/15 text-sky-700 dark:text-sky-400 border border-sky-500/30">
+                            <span className="size-1.5 rounded-full bg-sky-500" />
+                            Waiting
+                          </span>
+                        )}
+                        {(order.status === "pending" ||
+                          order.status === "pending_payment") && (
+                          <span className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase bg-purple-500/15 text-purple-700 dark:text-purple-400 border border-purple-500/30">
+                            <span className="size-1.5 rounded-full bg-purple-500 animate-pulse" />
+                            Pending
+                          </span>
+                        )}
+                        {order.status === "failed" && (
+                          <span className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase bg-red-500/15 text-red-600 dark:text-red-400 border border-red-500/30">
+                            <span className="size-1.5 rounded-full bg-red-500" />
+                            Failed
+                          </span>
+                        )}
+                        {order.status === "refunded" && (
+                          <span className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase bg-muted text-muted-foreground border border-border">
+                            <span className="size-1.5 rounded-full bg-muted-foreground/50" />
+                            Refunded
+                          </span>
+                        )}
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
+
+      {/* Latest Referrals - Carrier Performance Comparison Cards Design */}
+      <div className="rounded-2xl border border-border bg-card p-5 shadow-xs">
+        <div className="mb-4 flex items-center justify-between">
+          <h3 className="flex items-center gap-2 text-sm font-extrabold text-foreground">
+            <Gift className="size-4 text-emerald-600" />
+            Latest Referrals
+          </h3>
+          <Button
+            variant="link"
+            onClick={() => onNavigateTab("referrals")}
+            className="h-auto gap-1 px-0 text-xs font-bold text-primary cursor-pointer"
+          >
+            <span>View All</span>
+            <ArrowRight className="size-3.5" />
+          </Button>
+        </div>
+
+        <div className="space-y-3">
+          {MOCK_RECENT_REFERRALS.slice(0, 6).map((item) => (
+            <div
+              key={item.id}
+              className="p-4 rounded-2xl border border-border bg-muted/50 shadow-xs"
+            >
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center gap-3">
                   <div
-                    className={`size-8 rounded-lg flex items-center justify-center shrink-0 ${
+                    className={`size-10 rounded-lg flex items-center justify-center shrink-0 ${
                       item.status === "qualified"
                         ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400"
                         : "bg-amber-500/15 text-amber-600 dark:text-amber-400"
                     }`}
                   >
                     {item.status === "qualified" ? (
-                      <Check className="size-4" />
+                      <Check className="size-5" />
                     ) : (
-                      <Clock className="size-4" />
+                      <Clock className="size-5" />
                     )}
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="text-xs font-bold text-foreground truncate">
+                  <div>
+                    <div className="text-xs font-bold text-foreground">
                       {item.name}
                     </div>
-                    <div className="text-[11px] text-muted-foreground truncate">
-                      via {item.referrer} ·{" "}
-                      <span className="font-semibold text-foreground/80 tabular-nums">
-                        {item.code}
-                      </span>
+                    <div className="text-[11px] text-muted-foreground">
+                      via {item.referrer} · {item.code}
                     </div>
                   </div>
-                  <div className="text-[11px] text-muted-foreground whitespace-nowrap tabular-nums">
-                    {item.timeAgo}
-                  </div>
                 </div>
-              ))}
-            </CardContent>
-          </Card>
+                <div className="text-right">
+                  <span className="text-[10px] uppercase font-bold text-muted-foreground block">
+                    Status
+                  </span>
+                  {item.status === "qualified" ? (
+                    <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400">
+                      Qualified
+                    </span>
+                  ) : (
+                    <span className="text-xs font-bold text-amber-600 dark:text-amber-400">
+                      Pending
+                    </span>
+                  )}
+                </div>
+              </div>
+              <div className="flex items-center justify-between pt-2 border-t border-border">
+                <div className="text-[11px] text-muted-foreground">
+                  {item.status === "qualified"
+                    ? "First order delivered · reward credited"
+                    : "Signed up · awaiting first delivery"}
+                </div>
+                <div className="text-[11px] text-muted-foreground tabular-nums">
+                  {item.timeAgo}
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     </div>

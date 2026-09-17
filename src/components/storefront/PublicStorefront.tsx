@@ -36,6 +36,7 @@ import {
   TelecomNetwork,
   Order,
   UserRole,
+  AppTheme,
 } from "../../types";
 import { detectGhanaNetwork, INITIAL_CHECKERS } from "../../mockData";
 import { SignalRail } from "../common/SignalRail";
@@ -53,6 +54,7 @@ interface PublicStorefrontProps {
   onUpdateStoreConfig?: (newConfig: AgentStoreConfig) => void;
   onNavigatePublicTab?: (tab: any) => void;
   onNavigateToLegal?: (page: "terms" | "privacy") => void;
+  theme?: AppTheme;
 }
 
 export const PublicStorefront: React.FC<PublicStorefrontProps> = ({
@@ -64,6 +66,7 @@ export const PublicStorefront: React.FC<PublicStorefrontProps> = ({
   onUpdateStoreConfig,
   onNavigatePublicTab = () => {},
   onNavigateToLegal = () => {},
+  theme = "light",
 }) => {
   // Share Modal State
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
@@ -1416,6 +1419,7 @@ export const PublicStorefront: React.FC<PublicStorefrontProps> = ({
       <PublicFooter
         onNavigatePublicTab={onNavigatePublicTab}
         onNavigateToLegal={onNavigateToLegal}
+        theme={theme}
       />
     </div>
   );

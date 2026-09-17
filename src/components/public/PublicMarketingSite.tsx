@@ -1,5 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { TelecomNetwork, DataBundle, Order, UserRole } from "../../types";
+import {
+  TelecomNetwork,
+  DataBundle,
+  Order,
+  UserRole,
+  AppTheme,
+} from "../../types";
 import { PublicHomeSection, PublicTabType } from "./sections/PublicHomeSection";
 import { PublicServicesSection } from "./sections/PublicServicesSection";
 import { PublicAgentSection } from "./sections/PublicAgentSection";
@@ -21,6 +27,7 @@ export interface PublicMarketingSiteProps {
   onOpenReceipt?: (order: Order) => void;
   onOpenAuth?: (mode?: "signin" | "signup" | "demo") => void;
   onOpenSecurityPins?: () => void;
+  theme?: AppTheme;
 }
 
 export const PublicMarketingSite: React.FC<PublicMarketingSiteProps> = ({
@@ -31,6 +38,7 @@ export const PublicMarketingSite: React.FC<PublicMarketingSiteProps> = ({
   orders,
   onNavigate,
   onNavigateToLegal,
+  theme = "light",
 }) => {
   const [selectedNetwork, setSelectedNetwork] = useState<TelecomNetwork>("MTN");
   const [selectedBundleId, setSelectedBundleId] = useState<string>("mtn-5gb");
@@ -190,6 +198,7 @@ export const PublicMarketingSite: React.FC<PublicMarketingSiteProps> = ({
         onNavigatePublicTab={navigatePublicTab}
         onNavigate={onNavigate}
         onNavigateToLegal={onNavigateToLegal}
+        theme={theme}
       />
     </div>
   );

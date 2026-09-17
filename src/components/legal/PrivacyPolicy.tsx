@@ -14,7 +14,7 @@ import {
 } from "lucide-react";
 import { PublicFooter } from "../public/sections/PublicFooter";
 import { PublicNavbar } from "../public/PublicNavbar";
-import type { UserAccount } from "../../types";
+import type { UserAccount, AppTheme } from "../../types";
 
 interface PrivacyPolicyProps {
   user?: UserAccount | null;
@@ -25,7 +25,7 @@ interface PrivacyPolicyProps {
   onNavigateToAuth?: (mode: string) => void;
   onNavigateToDashboard?: (role: string) => void;
   onSignOut?: () => void;
-  theme?: string;
+  theme?: AppTheme;
   onSetTheme?: (theme: string) => void;
   onOpenSecurityPins?: () => void;
 }
@@ -641,6 +641,7 @@ export function PrivacyPolicy({
       <PublicFooter
         onNavigateToLegal={onNavigateToLegal}
         onNavigatePublicTab={() => {}}
+        theme={theme}
       />
     </div>
   );

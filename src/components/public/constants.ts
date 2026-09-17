@@ -159,8 +159,7 @@ export interface FooterColumn {
 export const FOOTER_BRAND = {
   short: "SDH",
   name: "Smart Data Hub",
-  tagline:
-    "Ghana's trusted consumer fintech and telecom resale infrastructure. Sub-minute automated delivery across all networks.",
+  tagline: "Smart Data, Seamless Connection.",
   uptimeBadge: "Core Switch 99.8% Live",
 };
 
