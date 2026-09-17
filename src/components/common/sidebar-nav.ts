@@ -219,7 +219,7 @@ export const ADMIN_NAV: NavGroup[] = [
       {
         id: "afa-verification",
         altIds: ["afa", "afa-admin"],
-        label: "AFA",
+        label: "AFA Registration",
         icon: ShieldCheck,
       },
       {
