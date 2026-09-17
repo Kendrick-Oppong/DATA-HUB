@@ -66,6 +66,7 @@ import { AgentComplaintsView } from "./components/agent/views/AgentComplaintsVie
 import { AgentGuidesView } from "./components/agent/views/AgentGuidesView";
 import { AgentProfileView } from "./components/agent/views/AgentProfileView";
 import { AgentCommunityView } from "./components/agent/views/AgentCommunityView";
+import { AgentCustomersView } from "./components/agent/views/AgentCustomersView";
 
 // Admin Ops Console
 import { AdminOperations } from "./components/admin/AdminOperations";
@@ -1210,6 +1211,13 @@ export default function App() {
               {activeTab === "guides" && <AgentGuidesView />}
 
               {activeTab === "community" && <AgentCommunityView />}
+
+              {activeTab === "customers" && (
+                <AgentCustomersView
+                  orders={orders}
+                  onNavigateTab={handleTabChange}
+                />
+              )}
 
               {activeTab === "profile" && (
                 <AgentProfileView
