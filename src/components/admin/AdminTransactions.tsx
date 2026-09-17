@@ -409,12 +409,11 @@ export const AdminTransactions: React.FC<AdminTransactionsProps> = ({
           )}
 
           <Button
-            variant="outline"
             size="sm"
             onClick={handleExportCsv}
             className="text-xs font-bold shadow-xs cursor-pointer gap-1.5 h-9"
           >
-            <Download className="size-4 text-muted-foreground" />
+            <Download className="size-4" />
             <span>Export CSV</span>
           </Button>
         </div>
