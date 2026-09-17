@@ -124,41 +124,87 @@ export const AdminAfa: React.FC<AdminAfaProps> = ({
   // --------------------------------------------------------------------------
   // 1. Authoritative AFA Registration Pricing (Audited from sdh-next afaPricing.ts)
   // --------------------------------------------------------------------------
-  const [afaPrice, setAfaPrice] = useState<number>(() => {
+  const [customerPrice, setCustomerPrice] = useState<number>(() => {
     try {
-      const stored = localStorage.getItem("sdh_afa_price");
+      const stored = localStorage.getItem("sdh_afa_customer_price");
       if (stored && !isNaN(Number(stored)) && Number(stored) > 0) {
         return Number(stored);
       }
     } catch {}
     return 25.0; // Default customer price in GH₵
   });
-  const [priceInput, setPriceInput] = useState<string>(afaPrice.toFixed(2));
+  const [agentPrice, setAgentPrice] = useState<number>(() => {
+    try {
+      const stored = localStorage.getItem("sdh_afa_agent_price");
+      if (stored && !isNaN(Number(stored)) && Number(stored) > 0) {
+        return Number(stored);
+      }
+    } catch {}
+    return 25.0; // Default agent price in GH₵
+  });
+  const [customerPriceInput, setCustomerPriceInput] = useState<string>(
+    customerPrice.toFixed(2),
+  );
+  const [agentPriceInput, setAgentPriceInput] = useState<string>(
+    agentPrice.toFixed(2),
+  );
   const [priceNotice, setPriceNotice] = useState<string | null>(null);
 
   useEffect(() => {
-    setPriceInput(afaPrice.toFixed(2));
-  }, [afaPrice]);
+    setCustomerPriceInput(customerPrice.toFixed(2));
+  }, [customerPrice]);
 
-  const priceChanged =
-    !isNaN(Number(priceInput)) &&
-    Number(priceInput) > 0 &&
-    Number(Number(priceInput).toFixed(2)) !== Number(afaPrice.toFixed(2));
+  useEffect(() => {
+    setAgentPriceInput(agentPrice.toFixed(2));
+  }, [agentPrice]);
+
+  const customerPriceChanged =
+    !isNaN(Number(customerPriceInput)) &&
+    Number(customerPriceInput) > 0 &&
+    Number(Number(customerPriceInput).toFixed(2)) !==
+      Number(customerPrice.toFixed(2));
+
+  const agentPriceChanged =
+    !isNaN(Number(agentPriceInput)) &&
+    Number(agentPriceInput) > 0 &&
+    Number(Number(agentPriceInput).toFixed(2)) !==
+      Number(agentPrice.toFixed(2));
+
+  const anyPriceChanged = customerPriceChanged || agentPriceChanged;
 
   const handleSavePrice = () => {
-    const num = Number(priceInput);
-    if (!Number.isFinite(num) || num < 1 || num > 500) {
-      setPriceNotice("Please enter a valid price between GH₵ 1.00 and GH₵ 500.00.");
+    const customerNum = Number(customerPriceInput);
+    const agentNum = Number(agentPriceInput);
+
+    if (!Number.isFinite(customerNum) || customerNum < 1 || customerNum > 500) {
+      setPriceNotice(
+        "Please enter a valid customer price between GH₵ 1.00 and GH₵ 500.00.",
+      );
       setTimeout(() => setPriceNotice(null), 3500);
       return;
     }
-    const sanitized = Number(num.toFixed(2));
-    setAfaPrice(sanitized);
+
+    if (!Number.isFinite(agentNum) || agentNum < 1 || agentNum > 500) {
+      setPriceNotice(
+        "Please enter a valid agent price between GH₵ 1.00 and GH₵ 500.00.",
+      );
+      setTimeout(() => setPriceNotice(null), 3500);
+      return;
+    }
+
+    const sanitizedCustomer = Number(customerNum.toFixed(2));
+    const sanitizedAgent = Number(agentNum.toFixed(2));
+
+    setCustomerPrice(sanitizedCustomer);
+    setAgentPrice(sanitizedAgent);
+
     try {
-      localStorage.setItem("sdh_afa_price", String(sanitized));
+      localStorage.setItem("sdh_afa_customer_price", String(sanitizedCustomer));
+      localStorage.setItem("sdh_afa_agent_price", String(sanitizedAgent));
     } catch {}
+
     setPriceNotice(
-      `Registration fee saved: GH₵ ${sanitized.toFixed(2)} (Applies platform-wide)`,
+      `Prices saved: Customer GH₵ ${sanitizedCustomer.toFixed(2)} | Agent GH₵ ${sanitizedAgent.toFixed(2)}`,
     );
     setTimeout(() => setPriceNotice(null), 4000);
   };
@@ -176,7 +222,9 @@ export const AdminAfa: React.FC<AdminAfaProps> = ({
   const [copiedRef, setCopiedRef] = useState<string | null>(null);
 
   // Selected application for detail modal inspection
-  const [inspectingApp, setInspectingApp] = useState<AfaApplication | null>(null);
+  const [inspectingApp, setInspectingApp] = useState<AfaApplication | null>(
+    null,
+  );
   const [correctionNote, setCorrectionNote] = useState("");
 
   // Copy reference utility
@@ -192,18 +240,20 @@ export const AdminAfa: React.FC<AdminAfaProps> = ({
   // --------------------------------------------------------------------------
   const stats = useMemo(() => {
     const total = applications.length;
-    const pending = applications.filter((a) => a.status === "under_review").length;
+    const pending = applications.filter(
+      (a) => a.status === "under_review",
+    ).length;
     const approved = applications.filter((a) => a.status === "approved").length;
     const notApproved = applications.filter(
       (a) => a.status === "rejected" || a.status === "needs_correction",
     ).length;
     const totalFees = applications.reduce(
-      (sum, a) => sum + (a.fee || afaPrice),
+      (sum, a) => sum + (a.fee || customerPrice),
       0,
     );
 
     return { total, pending, approved, notApproved, totalFees };
-  }, [applications, afaPrice]);
+  }, [applications, customerPrice]);
 
   // Unique lists for dropdowns
   const availableRegions = useMemo(() => {
@@ -229,7 +279,10 @@ export const AdminAfa: React.FC<AdminAfaProps> = ({
       .filter((app) => {
         // Status filter
         if (statusFilter !== "all") {
-          if (statusFilter === "under_review" && app.status !== "under_review") {
+          if (
+            statusFilter === "under_review" &&
+            app.status !== "under_review"
+          ) {
             return false;
           }
           if (statusFilter === "approved" && app.status !== "approved") {
@@ -266,7 +319,9 @@ export const AdminAfa: React.FC<AdminAfaProps> = ({
           const matchRef = (app.reference || "").toLowerCase().includes(q);
           const matchLocation = (app.location || "").toLowerCase().includes(q);
           const matchRegion = getApplicantRegion(app).toLowerCase().includes(q);
-          const matchOccupation = (app.occupation || "").toLowerCase().includes(q);
+          const matchOccupation = (app.occupation || "")
+            .toLowerCase()
+            .includes(q);
           const matchSubmitter = getApplicantSubmitter(app)
             .toLowerCase()
             .includes(q);
@@ -295,10 +350,12 @@ export const AdminAfa: React.FC<AdminAfaProps> = ({
           return (a.fullName || "").localeCompare(b.fullName || "");
         }
         if (sortBy === "card") {
-          return (a.ghanaCardNumber || "").localeCompare(b.ghanaCardNumber || "");
+          return (a.ghanaCardNumber || "").localeCompare(
+            b.ghanaCardNumber || "",
+          );
         }
         if (sortBy === "fee") {
-          return (b.fee || afaPrice) - (a.fee || afaPrice);
+          return (b.fee || customerPrice) - (a.fee || customerPrice);
         }
         // Default: newest first
         return (b.dateSubmitted || "").localeCompare(a.dateSubmitted || "");
@@ -310,7 +367,7 @@ export const AdminAfa: React.FC<AdminAfaProps> = ({
     occupationFilter,
     searchQuery,
     sortBy,
-    afaPrice,
+    customerPrice,
   ]);
 
   // Pagination calculation
@@ -371,7 +428,7 @@ export const AdminAfa: React.FC<AdminAfaProps> = ({
       esc(getApplicantRegion(app)),
       esc(app.dateOfBirth),
       esc(app.occupation),
-      esc((app.fee || afaPrice).toFixed(2)),
+      esc((app.fee || customerPrice).toFixed(2)),
       esc(app.status),
       esc(app.dateSubmitted),
       esc(app.notes || ""),
@@ -454,7 +511,8 @@ export const AdminAfa: React.FC<AdminAfaProps> = ({
             <span>AFA National Identity & Tariff Verification Desk</span>
           </h1>
           <p className="mt-0.5 text-xs text-muted-foreground">
-            Review Ghana Card numbers and whitelist eligible agricultural subscribers for subsidized telecom data.
+            Review Ghana Card numbers and whitelist eligible agricultural
+            subscribers for subsidized telecom data.
           </p>
         </div>
 
@@ -566,7 +624,9 @@ export const AdminAfa: React.FC<AdminAfaProps> = ({
                 <span>AFA Registration Pricing</span>
               </CardTitle>
               <CardDescription className="mt-0.5 text-xs">
-                Applies everywhere — in the app and on every agent&apos;s store. Agents cannot change it and earn no commission on AFA.
+                Applies everywhere, including agent stores. Agents can’t change
+                it or earn AFA commission. Unpriced stores sell at the customer
+                price.
               </CardDescription>
             </div>
             <Badge
@@ -580,9 +640,10 @@ export const AdminAfa: React.FC<AdminAfaProps> = ({
 
         <CardContent className="p-4 sm:p-5 space-y-4">
           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-            {/* Price Edit Control */}
+            {/* Price Edit Controls */}
             <div className="flex flex-wrap items-end gap-3">
-              <div className="space-y-1.5 min-w-[200px]">
+              {/* Customer Price */}
+              <div className="space-y-1.5">
                 <Label
                   htmlFor="afa-reg-price"
                   className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground"
@@ -596,24 +657,49 @@ export const AdminAfa: React.FC<AdminAfaProps> = ({
                   <Input
                     id="afa-reg-price"
                     type="number"
-                    step="0.50"
+                    step="1"
                     min="1"
                     max="500"
-                    value={priceInput}
-                    onChange={(e) => setPriceInput(e.target.value)}
-                    className="h-10 pl-11 pr-3 font-mono text-sm font-bold w-44 bg-background"
+                    value={customerPriceInput}
+                    onChange={(e) => setCustomerPriceInput(e.target.value)}
+                    className="h-10 pl-11 pr-3 text-sm font-bold w-44 bg-background"
+                  />
+                </div>
+              </div>
+
+              {/* Agent Price */}
+              <div className="space-y-1.5">
+                <Label
+                  htmlFor="afa-agent-price"
+                  className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground"
+                >
+                  Price agents pay (GH₵)
+                </Label>
+                <div className="relative flex items-center">
+                  <span className="absolute left-3 font-semibold text-xs text-muted-foreground">
+                    GH₵
+                  </span>
+                  <Input
+                    id="afa-agent-price"
+                    type="number"
+                    step="1"
+                    min="1"
+                    max="500"
+                    value={agentPriceInput}
+                    onChange={(e) => setAgentPriceInput(e.target.value)}
+                    className="h-10 pl-11 pr-3 text-sm font-bold w-44 bg-background"
                   />
                 </div>
               </div>
 
               <Button
                 type="button"
-                disabled={!priceChanged}
+                disabled={!anyPriceChanged}
                 onClick={handleSavePrice}
-                className="h-10 px-4 text-xs font-bold gap-1.5 shadow-xs cursor-pointer disabled:opacity-50"
+                className="h-10 px-4 text-xs font-bold gap-1.5 shadow-xs text-white cursor-pointer disabled:opacity-50"
               >
                 <Check className="size-4" />
-                <span>Save price</span>
+                <span>Save prices</span>
               </Button>
 
               {priceNotice && (
@@ -622,50 +708,40 @@ export const AdminAfa: React.FC<AdminAfaProps> = ({
                 </span>
               )}
             </div>
-
-            {/* Wholesale & Margin Breakdown */}
-            <div className="flex flex-wrap items-center gap-3 text-xs bg-muted/40 p-3 rounded-xl border border-border">
-              <div className="space-y-0.5 pr-3 border-r border-border">
-                <span className="text-[9px] uppercase font-bold text-muted-foreground">
-                  Current Retail Fee
-                </span>
-                <p className="font-extrabold text-foreground tabular-nums">
-                  GH₵ {afaPrice.toFixed(2)}
-                </p>
-              </div>
-
-              <div className="space-y-0.5 pr-3 border-r border-border">
-                <span className="text-[9px] uppercase font-bold text-muted-foreground">
-                  Wholesale Cost
-                </span>
-                <p className="font-semibold text-muted-foreground tabular-nums">
-                  GH₵ {AFA_WHOLESALE_COST.toFixed(2)}
-                </p>
-              </div>
-
-              <div className="space-y-0.5">
-                <span className="text-[9px] uppercase font-bold text-emerald-600 dark:text-emerald-400">
-                  Platform Net Margin
-                </span>
-                <p className="font-extrabold text-emerald-600 dark:text-emerald-400 tabular-nums">
-                  +GH₵ {Math.max(0, afaPrice - AFA_WHOLESALE_COST).toFixed(2)}
-                </p>
-              </div>
-            </div>
           </div>
         </CardContent>
       </Card>
 
       {/* ========================================================
-          4. STRUCTURED SEARCH & FILTERS CONTAINER (Matching Commissions)
+          4. MASTER AFA REGISTRATIONS CARD (Merged Filters + Table like AdminPayouts)
           ======================================================== */}
-      <div className="rounded-xl border border-border bg-card shadow-xs overflow-hidden">
+      <Card className="border-border shadow-xs">
+        <CardHeader className="border-b border-border pb-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div>
+              <CardTitle className="flex items-center gap-2 text-base font-extrabold text-foreground">
+                <span>AFA Verification Applications</span>
+                {stats.pending > 0 && (
+                  <Badge className="bg-amber-500/15 text-amber-700 dark:text-amber-400 border border-amber-500/30 text-[10px] font-bold">
+                    {stats.pending} pending review
+                  </Badge>
+                )}
+              </CardTitle>
+              <CardDescription className="mt-1 text-xs">
+                Review Ghana Card numbers and whitelist eligible agricultural
+                subscribers for subsidized telecom data.
+              </CardDescription>
+            </div>
+          </div>
+        </CardHeader>
+
+        {/* Search + Filters Container */}
         <div className="border-b border-border bg-muted/20 p-4 space-y-4">
-          {/* Search input with proper Label & styling */}
+          {/* Search input */}
           <div className="space-y-1.5">
             <Label
               htmlFor="admin-afa-search"
-              className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground"
+              className="text-[10px] font-bold uppercase text-muted-foreground"
             >
               Search AFA verification applications
             </Label>
@@ -697,12 +773,12 @@ export const AdminAfa: React.FC<AdminAfaProps> = ({
             </div>
           </div>
 
-          {/* Filters Box (Matching Commissions screen) */}
+          {/* Filters Box */}
           <div className="rounded-xl border border-border bg-background p-3 space-y-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <SlidersHorizontal className="size-3.5 text-muted-foreground" />
-                <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                <span className="text-[10px] font-bold uppercase text-muted-foreground">
                   Verification filters
                 </span>
                 {isFiltered && (
@@ -744,7 +820,10 @@ export const AdminAfa: React.FC<AdminAfaProps> = ({
                     setCurrentPage(1);
                   }}
                 >
-                  <SelectTrigger id="afa-filter-status" className="h-9 w-full text-xs">
+                  <SelectTrigger
+                    id="afa-filter-status"
+                    className="h-9 w-full text-xs"
+                  >
                     <SelectValue placeholder="All Verification States" />
                   </SelectTrigger>
                   <SelectContent>
@@ -779,7 +858,10 @@ export const AdminAfa: React.FC<AdminAfaProps> = ({
                     setCurrentPage(1);
                   }}
                 >
-                  <SelectTrigger id="afa-filter-region" className="h-9 w-full text-xs">
+                  <SelectTrigger
+                    id="afa-filter-region"
+                    className="h-9 w-full text-xs"
+                  >
                     <SelectValue placeholder="All Regions" />
                   </SelectTrigger>
                   <SelectContent>
@@ -840,7 +922,10 @@ export const AdminAfa: React.FC<AdminAfaProps> = ({
                     setCurrentPage(1);
                   }}
                 >
-                  <SelectTrigger id="afa-sort-by" className="h-9 w-full text-xs">
+                  <SelectTrigger
+                    id="afa-sort-by"
+                    className="h-9 w-full text-xs"
+                  >
                     <SelectValue placeholder="Sort order" />
                   </SelectTrigger>
                   <SelectContent>
@@ -848,74 +933,18 @@ export const AdminAfa: React.FC<AdminAfaProps> = ({
                     <SelectItem value="oldest">Oldest First</SelectItem>
                     <SelectItem value="name">Applicant Name (A-Z)</SelectItem>
                     <SelectItem value="card">Ghana Card (Ascending)</SelectItem>
-                    <SelectItem value="fee">Registration Fee (Highest)</SelectItem>
+                    <SelectItem value="fee">
+                      Registration Fee (Highest)
+                    </SelectItem>
                   </SelectContent>
                 </Select>
               </div>
             </div>
           </div>
         </div>
-      </div>
 
-      {/* ========================================================
-          5. MASTER AFA REGISTRATIONS TABLE (Matching Commissions Approach)
-          Audited from sdh-next: Reference | Applicant | Submitted By | Ghana Card | Occupation | Paid | Status | When | Actions
-          ======================================================== */}
-      <div className="space-y-3">
-        {/* Table Toolbar / Segment Pills */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-1">
-          <div className="flex items-center gap-2">
-            <h3 className="text-base font-extrabold text-foreground">
-              AFA Registrations
-            </h3>
-            {isFiltered && (
-              <Badge
-                variant="secondary"
-                className="text-[9px] px-1.5 py-0 font-semibold"
-              >
-                Filtered
-              </Badge>
-            )}
-          </div>
-
-          <div className="flex flex-wrap items-center gap-3">
-            {/* Segment tabs pill bar (Audited from sdh-next) */}
-            <div className="flex items-center gap-1 bg-muted/40 p-0.5 rounded-lg border border-border text-[11px] font-bold">
-              {[
-                { id: "all", label: "All" },
-                { id: "under_review", label: "Under review" },
-                { id: "approved", label: "Approved" },
-                { id: "rejected", label: "Not approved" },
-              ].map((tab) => {
-                const active = statusFilter === tab.id;
-                return (
-                  <button
-                    key={tab.id}
-                    type="button"
-                    onClick={() => {
-                      setStatusFilter(tab.id);
-                      setCurrentPage(1);
-                    }}
-                    className={`rounded-md px-2.5 py-1 transition-all cursor-pointer ${
-                      active
-                        ? "bg-card text-foreground shadow-2xs font-extrabold"
-                        : "text-muted-foreground hover:text-foreground"
-                    }`}
-                  >
-                    {tab.label}
-                  </button>
-                );
-              })}
-            </div>
-
-            <span className="text-xs font-semibold text-muted-foreground tabular-nums">
-              Showing {filteredApplications.length} of {applications.length}
-            </span>
-          </div>
-        </div>
-
-        {/* The Data Table */}
-        <div className="rounded-xl border border-border overflow-hidden bg-card shadow-xs">
+        {/* AFA REGISTRATIONS TABLE */}
+        <div className="rounded-xl border border-border overflow-hidden bg-card">
           <div className="overflow-x-auto">
             <Table className="w-full text-xs">
               <TableHeader>
@@ -983,7 +1012,7 @@ export const AdminAfa: React.FC<AdminAfaProps> = ({
                   paginatedApplications.map((app) => {
                     const region = getApplicantRegion(app);
                     const submitter = getApplicantSubmitter(app);
-                    const feePaid = app.fee || afaPrice;
+                    const feePaid = app.fee || customerPrice;
                     const isPending = app.status === "under_review";
                     const isApproved = app.status === "approved";
                     const isRejected =
@@ -1002,12 +1031,14 @@ export const AdminAfa: React.FC<AdminAfaProps> = ({
                         {/* 1. Reference */}
                         <TableCell className="py-4 px-4 whitespace-nowrap">
                           <div className="flex items-center gap-1.5">
-                            <span className="font-mono text-xs font-bold text-primary">
+                            <span className=" text-xs font-bold text-primary">
                               {app.reference}
                             </span>
                             <button
                               type="button"
-                              onClick={(e) => handleCopyReference(app.reference, e)}
+                              onClick={(e) =>
+                                handleCopyReference(app.reference, e)
+                              }
                               className="text-muted-foreground hover:text-foreground cursor-pointer p-0.5 rounded transition-colors"
                               title="Copy Reference"
                             >
@@ -1030,7 +1061,7 @@ export const AdminAfa: React.FC<AdminAfaProps> = ({
                               <p className="font-bold text-xs text-foreground truncate">
                                 {app.fullName}
                               </p>
-                              <p className="font-mono text-[11px] text-muted-foreground tabular-nums">
+                              <p className=" text-[11px] text-muted-foreground tabular-nums">
                                 {app.phoneNumber}
                               </p>
                               <p className="text-[10px] text-muted-foreground truncate">
@@ -1058,13 +1089,13 @@ export const AdminAfa: React.FC<AdminAfaProps> = ({
                         {/* 4. Ghana Card */}
                         <TableCell className="py-4 px-4 whitespace-nowrap">
                           <div className="space-y-0.5">
-                            <span className="font-mono text-xs font-bold text-foreground">
+                            <span className=" text-xs font-bold text-foreground">
                               {app.ghanaCardNumber}
                             </span>
                             <div>
                               <Badge
                                 variant="outline"
-                                className="text-[9px] px-1 py-0 font-mono text-muted-foreground"
+                                className="text-[9px] px-1 py-0  text-muted-foreground"
                               >
                                 {region}
                               </Badge>
@@ -1140,20 +1171,6 @@ export const AdminAfa: React.FC<AdminAfaProps> = ({
                                 <span>Reopen</span>
                               </Button>
                             )}
-
-                            {/* Inspect Details Button */}
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => {
-                                setInspectingApp(app);
-                                setCorrectionNote(app.notes || "");
-                              }}
-                              className="h-7 px-2 text-muted-foreground hover:text-foreground cursor-pointer"
-                              title="Inspect Ghana Card & Audit Details"
-                            >
-                              <Eye className="size-3.5" />
-                            </Button>
                           </div>
                         </TableCell>
                       </TableRow>
@@ -1164,7 +1181,7 @@ export const AdminAfa: React.FC<AdminAfaProps> = ({
             </Table>
           </div>
 
-          {/* PAGINATION FOOTER (Matching Commissions table) */}
+          {/* PAGINATION FOOTER */}
           <div className="flex flex-col sm:flex-row items-center justify-between gap-3 p-4 border-t border-border">
             <p className="text-xs text-muted-foreground">
               Showing {(currentPage - 1) * ITEMS_PER_PAGE + 1} to{" "}
@@ -1230,7 +1247,7 @@ export const AdminAfa: React.FC<AdminAfaProps> = ({
             </Pagination>
           </div>
         </div>
-      </div>
+      </Card>
 
       {/* ========================================================
           6. DETAILED GHANA CARD INSPECTION MODAL
@@ -1254,7 +1271,8 @@ export const AdminAfa: React.FC<AdminAfaProps> = ({
                     National ID &amp; Tariff Verification
                   </DialogTitle>
                   <DialogDescription className="mt-1 text-xs leading-relaxed">
-                    Verify applicant identity against National Identification Authority (NIA) and MoFA farmer registry.
+                    Verify applicant identity against National Identification
+                    Authority (NIA) and MoFA farmer registry.
                   </DialogDescription>
                 </div>
               </div>
@@ -1271,7 +1289,7 @@ export const AdminAfa: React.FC<AdminAfaProps> = ({
                       Republic of Ghana &middot; National Identity Card
                     </span>
                   </div>
-                  <Badge variant="outline" className="text-[9px] font-mono font-bold">
+                  <Badge variant="outline" className="text-[9px]  font-bold">
                     ECOWAS / NIA
                   </Badge>
                 </div>
@@ -1291,7 +1309,7 @@ export const AdminAfa: React.FC<AdminAfaProps> = ({
                       <span className="text-[10px] text-muted-foreground uppercase font-bold">
                         Personal ID Number
                       </span>
-                      <p className="font-mono font-black text-sm text-foreground tracking-wide">
+                      <p className=" font-black text-sm text-foreground tracking-wide">
                         {inspectingApp.ghanaCardNumber}
                       </p>
                     </div>
@@ -1352,7 +1370,8 @@ export const AdminAfa: React.FC<AdminAfaProps> = ({
                       Registration Fee Paid:
                     </span>
                     <strong className="text-emerald-600 dark:text-emerald-400 font-bold">
-                      GH₵ {(inspectingApp.fee || afaPrice).toFixed(2)} (Paid &amp; Cleared)
+                      GH₵ {(inspectingApp.fee || customerPrice).toFixed(2)}{" "}
+                      (Paid &amp; Cleared)
                     </strong>
                   </div>
                 </div>
@@ -1381,7 +1400,10 @@ export const AdminAfa: React.FC<AdminAfaProps> = ({
 
               {/* AUDIT NOTE INPUT */}
               <div className="space-y-1.5">
-                <Label htmlFor="audit-note" className="text-[11px] font-semibold">
+                <Label
+                  htmlFor="audit-note"
+                  className="text-[11px] font-semibold"
+                >
                   Officer Notes / Flag Reason
                 </Label>
                 <Input
