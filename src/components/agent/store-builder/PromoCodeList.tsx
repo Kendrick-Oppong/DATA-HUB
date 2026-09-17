@@ -116,7 +116,7 @@ export const PromoCodeList: React.FC<PromoCodeListProps> = ({
           {[...promoCodes].reverse().map((promo) => (
             <div
               key={promo.code}
-              className="p-3.5 rounded-2xl border border-border bg-card flex items-center justify-between gap-3 shadow-2xs hover:border-primary/40 transition-colors"
+              className="p-3.5 rounded-2xl border border-border bg-muted/70 flex items-center justify-between gap-3 shadow-2xs hover:border-primary/40 transition-colors"
             >
               <div className="flex items-center gap-3 flex-1 min-w-0">
                 <button

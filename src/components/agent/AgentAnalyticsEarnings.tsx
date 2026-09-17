@@ -1077,7 +1077,7 @@ export const AgentAnalyticsEarnings: React.FC<AgentAnalyticsEarningsProps> = ({
               {networkBreakdown.map((net) => (
                 <div
                   key={net.code}
-                  className="p-5 rounded-2xl border border-border bg-card shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+                  className="p-5 rounded-2xl border border-border bg-muted/70 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4"
                 >
                   <div className="space-y-1">
                     <div className="flex items-center gap-2">
