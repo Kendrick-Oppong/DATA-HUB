@@ -425,7 +425,7 @@ export default function App() {
     loadFromStorage("sdh_orders_v4", mockOrders),
   );
   const [transactions, setTransactions] = useState<Transaction[]>(() =>
-    loadFromStorage("sdh_transactions_v2", mockTransactions),
+    loadFromStorage("sdh_transactions_v3", mockTransactions),
   );
   const [afaApplications, setAfaApplications] = useState<AfaApplication[]>(() =>
     loadFromStorage("sdh_afa_apps", mockAfaApplications),
@@ -501,7 +501,7 @@ export default function App() {
       };
       const updatedTx = [newTx, ...transactions];
       setTransactions(updatedTx);
-      saveToStorage("sdh_transactions_v2", updatedTx);
+      saveToStorage("sdh_transactions_v3", updatedTx);
     }
 
     if (newOrder.agentMargin && newOrder.agentMargin > 0) {

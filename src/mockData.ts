@@ -914,7 +914,7 @@ export const INITIAL_TRANSACTIONS: Transaction[] = [
     fee: 0.0,
     balanceAfter: 349.0,
     description: "WASSCE Result Checker purchase (ord-1003)",
-    status: "completed",
+    status: "pending",
     channel: "SDH Wallet",
   },
   {
@@ -927,7 +927,7 @@ export const INITIAL_TRANSACTIONS: Transaction[] = [
     fee: 0.0,
     balanceAfter: 329.0,
     description: "AT Airtime Top-up for 0277382910",
-    status: "completed",
+    status: "failed",
     channel: "SDH Wallet",
   },
   {

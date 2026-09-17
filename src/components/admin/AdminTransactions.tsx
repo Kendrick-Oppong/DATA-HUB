@@ -29,12 +29,7 @@ import { Transaction, Order } from "../../types";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Badge } from "../ui/badge";
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-} from "../ui/card";
+import { Card, CardHeader, CardTitle, CardDescription } from "../ui/card";
 import { Label } from "../ui/label";
 import {
   Table,
@@ -116,7 +111,9 @@ function resolveTxUser(tx: Transaction, index: number) {
     return { name: "SDH System", role: "admin" as const };
   }
   // Fallback cycling deterministically by transaction id hash
-  const hash = (tx.id || String(index)).split("").reduce((acc, c) => acc + c.charCodeAt(0), 0);
+  const hash = (tx.id || String(index))
+    .split("")
+    .reduce((acc, c) => acc + c.charCodeAt(0), 0);
   return USER_PROFILES[hash % USER_PROFILES.length];
 }
 
@@ -338,7 +335,8 @@ export const AdminTransactions: React.FC<AdminTransactionsProps> = ({
       "Channel",
     ];
 
-    const esc = (c: any) => `"${String(c == null ? "" : c).replace(/"/g, '""')}"`;
+    const esc = (c: any) =>
+      `"${String(c == null ? "" : c).replace(/"/g, '""')}"`;
 
     const body = filteredTransactions.map((e) => {
       const meta = getCategoryMeta(e.category, e.type);
@@ -355,7 +353,9 @@ export const AdminTransactions: React.FC<AdminTransactionsProps> = ({
       ];
     });
 
-    const csv = [head.map(esc).join(","), ...body.map((r) => r.join(","))].join("\r\n");
+    const csv = [head.map(esc).join(","), ...body.map((r) => r.join(","))].join(
+      "\r\n",
+    );
     const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8" });
     const a = document.createElement("a");
     a.href = URL.createObjectURL(blob);
@@ -417,21 +417,6 @@ export const AdminTransactions: React.FC<AdminTransactionsProps> = ({
             <Download className="size-4 text-muted-foreground" />
             <span>Export CSV</span>
           </Button>
-        </div>
-      </div>
-
-      {/* POLICY BANNER */}
-      <div className="flex items-start gap-3 p-3.5 rounded-2xl bg-blue-500/10 border border-blue-500/20 text-xs">
-        <Info className="size-4 text-blue-600 dark:text-blue-400 shrink-0 mt-0.5" />
-        <div className="text-blue-800 dark:text-blue-300 space-y-0.5">
-          <span className="font-bold block">
-            Double-Entry Wallet Reconciliation &amp; Audit Trail:
-          </span>
-          <span>
-            Every platform transaction is cryptographically logged with a
-            unique reference code, originating wallet balance, and target
-            clearing switch.
-          </span>
         </div>
       </div>
 
@@ -547,7 +532,7 @@ export const AdminTransactions: React.FC<AdminTransactionsProps> = ({
               <Input
                 id="admin-tx-search"
                 type="text"
-                placeholder="Search by reference code, user name, role, note, or amount (e.g. TX-SDH, MTN, GH₵ 50)..."
+                placeholder="Search by reference code, user name, role, note, or amount "
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="h-10 bg-background pl-9 text-xs"
@@ -629,10 +614,14 @@ export const AdminTransactions: React.FC<AdminTransactionsProps> = ({
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">All Types</SelectItem>
-                    <SelectItem value="wallet_funding">Wallet Top-up</SelectItem>
+                    <SelectItem value="wallet_funding">
+                      Wallet Top-up
+                    </SelectItem>
                     <SelectItem value="purchase">Purchase</SelectItem>
                     <SelectItem value="commission">Commission</SelectItem>
-                    <SelectItem value="withdrawal">Withdrawal / Payout</SelectItem>
+                    <SelectItem value="withdrawal">
+                      Withdrawal / Payout
+                    </SelectItem>
                     <SelectItem value="refund">Refund</SelectItem>
                     <SelectItem value="promo_credit">Promo Credit</SelectItem>
                   </SelectContent>
@@ -696,28 +685,28 @@ export const AdminTransactions: React.FC<AdminTransactionsProps> = ({
             <Table className="w-full text-xs">
               <TableHeader>
                 <TableRow className="border-b border-border bg-muted/40 hover:bg-muted/40">
-                  <TableHead className="h-10 px-4 text-left font-bold text-muted-foreground uppercase text-[10px]">
+                  <TableHead className="h-12 px-4 text-left font-bold text-muted-foreground uppercase text-[10px]">
                     Transaction &amp; Category
                   </TableHead>
-                  <TableHead className="h-10 px-3 text-left font-bold text-muted-foreground uppercase text-[10px]">
+                  <TableHead className="h-12 px-4 text-left font-bold text-muted-foreground uppercase text-[10px]">
                     User &amp; Role
                   </TableHead>
-                  <TableHead className="h-10 px-3 text-left font-bold text-muted-foreground uppercase text-[10px]">
+                  <TableHead className="h-12 px-4 text-left font-bold text-muted-foreground uppercase text-[10px]">
                     Reference
                   </TableHead>
-                  <TableHead className="h-10 px-3 text-left font-bold text-muted-foreground uppercase text-[10px]">
+                  <TableHead className="h-12 px-4 text-left font-bold text-muted-foreground uppercase text-[10px]">
                     Channel
                   </TableHead>
-                  <TableHead className="h-10 px-3 text-right font-bold text-muted-foreground uppercase text-[10px]">
+                  <TableHead className="h-12 px-4 text-right font-bold text-muted-foreground uppercase text-[10px]">
                     Amount
                   </TableHead>
-                  <TableHead className="h-10 px-3 text-right font-bold text-muted-foreground uppercase text-[10px]">
+                  <TableHead className="h-12 px-4 text-right font-bold text-muted-foreground uppercase text-[10px]">
                     Balance After
                   </TableHead>
-                  <TableHead className="h-10 px-3 text-center font-bold text-muted-foreground uppercase text-[10px]">
+                  <TableHead className="h-12 px-4 text-center font-bold text-muted-foreground uppercase text-[10px]">
                     Status
                   </TableHead>
-                  <TableHead className="h-10 px-4 text-right font-bold text-muted-foreground uppercase text-[10px]">
+                  <TableHead className="h-12 px-4 text-right font-bold text-muted-foreground uppercase text-[10px]">
                     When
                   </TableHead>
                 </TableRow>
@@ -760,7 +749,7 @@ export const AdminTransactions: React.FC<AdminTransactionsProps> = ({
                 ) : (
                   paginatedTransactions.map((tx) => {
                     const meta = getCategoryMeta(tx.category, tx.type);
-                    const IconComp = meta.icon;
+
                     const isCredit = tx.type === "credit";
 
                     return (
@@ -770,17 +759,8 @@ export const AdminTransactions: React.FC<AdminTransactionsProps> = ({
                         className="hover:bg-muted/30 transition-colors cursor-pointer"
                       >
                         {/* Transaction & Category */}
-                        <TableCell className="py-3 px-4">
+                        <TableCell className="py-4 px-4">
                           <div className="flex items-center gap-3">
-                            <div
-                              className={`size-8 rounded-xl flex items-center justify-center shrink-0 ${
-                                isCredit
-                                  ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
-                                  : "bg-red-500/10 text-red-600 dark:text-red-400"
-                              }`}
-                            >
-                              <IconComp className="size-4" />
-                            </div>
                             <div>
                               <div className="font-bold text-foreground flex items-center gap-1.5">
                                 <span>{meta.label}</span>
@@ -799,44 +779,27 @@ export const AdminTransactions: React.FC<AdminTransactionsProps> = ({
                         </TableCell>
 
                         {/* User & Role */}
-                        <TableCell className="py-3 px-3">
+                        <TableCell className="py-4 px-4">
                           <div className="font-semibold text-foreground text-xs">
                             {tx.userName}
                           </div>
-                          <div className="mt-0.5">
+                          <div className="mt-1">
                             {getRoleBadge(tx.userRole)}
                           </div>
                         </TableCell>
 
                         {/* Reference */}
-                        <TableCell className="py-3 px-3 font-semibold text-foreground">
-                          <div className="flex items-center gap-1">
-                            <span>{tx.reference || "—"}</span>
-                            <button
-                              type="button"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleCopyReference(tx.reference);
-                              }}
-                              className="p-1 text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
-                              title="Copy reference"
-                            >
-                              {copiedRef === tx.reference ? (
-                                <Check className="size-3 text-emerald-500" />
-                              ) : (
-                                <Copy className="size-3" />
-                              )}
-                            </button>
-                          </div>
+                        <TableCell className="py-4 px-4 text-xs font-semibold text-foreground">
+                          {tx.reference || "—"}
                         </TableCell>
 
                         {/* Channel */}
-                        <TableCell className="py-3 px-3 text-muted-foreground">
+                        <TableCell className="py-4 px-4 text-muted-foreground">
                           {tx.channel || "SDH Switch"}
                         </TableCell>
 
                         {/* Amount */}
-                        <TableCell className="py-3 px-3 text-right font-black tabular-nums">
+                        <TableCell className="py-4 px-4 text-right text-xs font-black tabular-nums">
                           <span
                             className={
                               isCredit
@@ -849,34 +812,46 @@ export const AdminTransactions: React.FC<AdminTransactionsProps> = ({
                         </TableCell>
 
                         {/* Balance After */}
-                        <TableCell className="py-3 px-3 text-right font-semibold text-muted-foreground tabular-nums">
+                        <TableCell className="py-4 px-4 text-xs text-right font-semibold text-muted-foreground tabular-nums">
                           {tx.balanceAfter != null
                             ? `GH₵ ${tx.balanceAfter.toFixed(2)}`
                             : "—"}
                         </TableCell>
 
                         {/* Status */}
-                        <TableCell className="py-3 px-3 text-center">
-                          <Badge
-                            variant="outline"
-                            className={`text-[10px] font-bold ${
-                              tx.status === "completed"
-                                ? "bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border-emerald-500/30"
-                                : tx.status === "pending"
-                                  ? "bg-amber-500/10 text-amber-700 dark:text-amber-300 border-amber-500/30"
-                                  : "bg-red-500/10 text-red-700 dark:text-red-300 border-red-500/30"
-                            }`}
-                          >
-                            {tx.status === "completed"
-                              ? "Completed"
-                              : tx.status === "pending"
-                                ? "Processing"
-                                : "Failed"}
-                          </Badge>
+                        <TableCell className="py-4 px-4 text-center">
+                          {(() => {
+                            const isCompleted = tx.status === "completed";
+                            const isPending = tx.status === "pending";
+                            const isFailed = tx.status === "failed";
+
+                            return (
+                              <>
+                                {isCompleted && (
+                                  <Badge className="bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30 text-[10px] font-bold inline-flex items-center gap-1">
+                                    <span className="size-1.5 rounded-full bg-emerald-500" />
+                                    <span>Completed</span>
+                                  </Badge>
+                                )}
+                                {isPending && (
+                                  <Badge className="bg-amber-500/15 text-amber-700 dark:text-amber-400 border border-amber-500/30 text-[10px] font-bold inline-flex items-center gap-1">
+                                    <span className="size-1.5 rounded-full bg-amber-500 animate-pulse" />
+                                    <span>Processing</span>
+                                  </Badge>
+                                )}
+                                {isFailed && (
+                                  <Badge className="bg-red-500/15 text-red-700 dark:text-red-400 border border-red-500/30 text-[10px] font-bold inline-flex items-center gap-1">
+                                    <span className="size-1.5 rounded-full bg-red-500" />
+                                    <span>Failed</span>
+                                  </Badge>
+                                )}
+                              </>
+                            );
+                          })()}
                         </TableCell>
 
                         {/* When */}
-                        <TableCell className="py-3 px-4 text-right text-muted-foreground whitespace-nowrap">
+                        <TableCell className="py-4 px-4 text-xs text-right text-muted-foreground whitespace-nowrap">
                           {tx.date}
                         </TableCell>
                       </TableRow>
@@ -983,7 +958,8 @@ export const AdminTransactions: React.FC<AdminTransactionsProps> = ({
                       {selectedTx.reference}
                     </DialogTitle>
                     <DialogDescription className="text-xs text-muted-foreground mt-0.5">
-                      {selectedTx.category.replace("_", " ")} Platform Audit Ledger
+                      {selectedTx.category.replace("_", " ")} Platform Audit
+                      Ledger
                     </DialogDescription>
                   </div>
                 </div>
@@ -991,9 +967,31 @@ export const AdminTransactions: React.FC<AdminTransactionsProps> = ({
 
               <div className="p-6 space-y-4 text-xs">
                 {/* Status Callout */}
-                <div className="p-3 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-between">
-                  <span className="font-bold text-emerald-800 dark:text-emerald-300 flex items-center gap-1.5">
-                    <CheckCircle2 className="size-4 text-emerald-600 dark:text-emerald-400" />
+                <div
+                  className={`p-3 rounded-2xl border flex items-center justify-between ${
+                    selectedTx.status === "completed"
+                      ? "bg-emerald-500/10 border-emerald-500/20"
+                      : selectedTx.status === "pending"
+                        ? "bg-amber-500/10 border-amber-500/20"
+                        : "bg-red-500/10 border-red-500/20"
+                  }`}
+                >
+                  <span
+                    className={`font-bold flex items-center gap-1.5 ${
+                      selectedTx.status === "completed"
+                        ? "text-emerald-800 dark:text-emerald-300"
+                        : selectedTx.status === "pending"
+                          ? "text-amber-800 dark:text-amber-300"
+                          : "text-red-800 dark:text-red-300"
+                    }`}
+                  >
+                    {selectedTx.status === "completed" ? (
+                      <CheckCircle2 className="size-4 text-emerald-600 dark:text-emerald-400" />
+                    ) : selectedTx.status === "pending" ? (
+                      <AlertCircle className="size-4 text-amber-600 dark:text-amber-400 animate-pulse" />
+                    ) : (
+                      <AlertCircle className="size-4 text-red-600 dark:text-red-400" />
+                    )}
                     {selectedTx.status === "completed"
                       ? "Settled & Confirmed"
                       : selectedTx.status === "pending"
@@ -1034,7 +1032,9 @@ export const AdminTransactions: React.FC<AdminTransactionsProps> = ({
                   </div>
 
                   <div className="flex justify-between items-center">
-                    <span className="text-muted-foreground">Flow Direction</span>
+                    <span className="text-muted-foreground">
+                      Flow Direction
+                    </span>
                     <span
                       className={`font-bold capitalize ${
                         selectedTx.type === "credit"
@@ -1049,14 +1049,18 @@ export const AdminTransactions: React.FC<AdminTransactionsProps> = ({
                   </div>
 
                   <div className="flex justify-between items-center">
-                    <span className="text-muted-foreground">Payment Channel</span>
+                    <span className="text-muted-foreground">
+                      Payment Channel
+                    </span>
                     <span className="font-bold text-foreground">
                       {selectedTx.channel || "SDH Switch"}
                     </span>
                   </div>
 
                   <div className="flex justify-between items-center">
-                    <span className="text-muted-foreground">Transaction Date</span>
+                    <span className="text-muted-foreground">
+                      Transaction Date
+                    </span>
                     <span className="font-semibold text-foreground">
                       {selectedTx.date}
                     </span>
@@ -1086,7 +1090,9 @@ export const AdminTransactions: React.FC<AdminTransactionsProps> = ({
                   )}
 
                   <div className="flex justify-between items-center">
-                    <span className="text-muted-foreground">Running Balance</span>
+                    <span className="text-muted-foreground">
+                      Running Balance
+                    </span>
                     <span className="font-bold text-foreground tabular-nums">
                       {selectedTx.balanceAfter != null
                         ? `GH₵ ${selectedTx.balanceAfter.toFixed(2)}`
@@ -1098,7 +1104,7 @@ export const AdminTransactions: React.FC<AdminTransactionsProps> = ({
                     <span className="text-muted-foreground">
                       Description / Note
                     </span>
-                    <span className="font-medium text-foreground bg-background p-2 rounded-lg border border-border">
+                    <span className="font-medium text-foreground bg-muted p-2 px-3 rounded-lg border border-border">
                       {selectedTx.description}
                     </span>
                   </div>
@@ -1106,24 +1112,6 @@ export const AdminTransactions: React.FC<AdminTransactionsProps> = ({
 
                 {/* Actions inside modal */}
                 <div className="flex items-center gap-2 pt-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="flex-1 text-xs font-bold gap-1.5 cursor-pointer h-9"
-                    onClick={() => handleCopyReference(selectedTx.reference)}
-                  >
-                    {copiedRef === selectedTx.reference ? (
-                      <Check className="size-3.5 text-emerald-500" />
-                    ) : (
-                      <Copy className="size-3.5" />
-                    )}
-                    <span>
-                      {copiedRef === selectedTx.reference
-                        ? "Copied Ref"
-                        : "Copy Reference"}
-                    </span>
-                  </Button>
-
                   <Button
                     variant="default"
                     size="sm"
