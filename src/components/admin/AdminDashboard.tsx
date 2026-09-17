@@ -291,29 +291,6 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
             Live telecom dispatch switches, wholesale order routing, and partner
             storefront ecosystem.
           </p>
-
-          {/* Quick Action Pills */}
-          <div className="flex flex-wrap items-center gap-2 pt-1">
-            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-background border border-border text-xs">
-              <span className="font-semibold text-foreground">
-                api.smartdatahub.com/v1
-              </span>
-            </div>
-            <button
-              onClick={() => onNavigateTab("orders-audit")}
-              className="px-3 py-1.5 rounded-xl border border-border bg-card text-xs font-bold hover:bg-muted transition-colors flex items-center gap-1.5 cursor-pointer"
-            >
-              <Clock className="w-3.5 h-3.5" />
-              <span>Order Monitor</span>
-            </button>
-            <button
-              onClick={() => onNavigateTab("gateways")}
-              className="px-3 py-1.5 rounded-xl bg-primary text-primary-foreground text-xs font-bold hover:bg-primary/90 transition-colors flex items-center gap-1.5 cursor-pointer shadow-2xs inline-flex"
-            >
-              <Server className="w-3.5 h-3.5" />
-              <span>Carrier Switches</span>
-            </button>
-          </div>
         </div>
 
         {/* Core Gateway Liquidity Float Card */}
@@ -323,29 +300,11 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
               Core Gateway Liquidity
             </span>
             <div className="text-2xl sm:text-3xl font-black text-foreground tabular-nums">
-              GH₵ {coreLiquidity.toFixed(2)}
+              GH₵ {coreLiquidity}
             </div>
             <span className="text-[11px] text-muted-foreground">
               MTN EVD &amp; Telecel Float
             </span>
-          </div>
-          <div className="flex items-center gap-2">
-            <Button
-              size="lg"
-              onClick={() => onNavigateTab("gateways")}
-              className="px-4 py-2.5 font-extrabold text-xs transition-all shadow-sm cursor-pointer"
-            >
-              Gateways
-            </Button>
-            <Button
-              size="lg"
-              variant="outline"
-              onClick={() => onNavigateTab("orders-audit")}
-              className="px-4 py-2.5 font-extrabold text-xs transition-all shadow-sm cursor-pointer flex items-center gap-1.5"
-            >
-              <Activity className="w-3.5 h-3.5" />
-              Live Monitor
-            </Button>
           </div>
         </div>
       </div>
@@ -450,7 +409,6 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
           </Button>
         </div>
       )}
-
 
       {/* Referral & Growth Engine Section (Audited from sdh-next AdminReferrals) */}
       <div className="space-y-4">
