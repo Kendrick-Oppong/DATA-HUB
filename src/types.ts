@@ -139,6 +139,7 @@ export interface AfaApplication {
   status: "under_review" | "approved" | "rejected" | "needs_correction";
   fee: number;
   notes?: string;
+  submittedBy?: string;
 }
 
 export interface Complaint {

@@ -671,7 +671,7 @@ export default function App() {
   // AFA Status Update (Admin)
   const handleUpdateAfaStatus = (
     id: string,
-    status: "approved" | "rejected" | "needs_correction",
+    status: "approved" | "rejected" | "needs_correction" | "under_review",
   ) => {
     const updated = afaApplications.map((a) => {
       if (a.id === id) return { ...a, status };

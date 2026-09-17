@@ -40,6 +40,7 @@ import { AdminTransactions } from "./AdminTransactions";
 import { AdminCommissions } from "./AdminCommissions";
 import { AdminPayouts } from "./AdminPayouts";
 import { AdminComplaints } from "./AdminComplaints";
+import { AdminAfa } from "./AdminAfa";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Badge } from "../ui/badge";
@@ -88,7 +89,7 @@ interface AdminOperationsProps {
   afaApplications: AfaApplication[];
   onUpdateAfaStatus: (
     appId: string,
-    status: "approved" | "rejected" | "needs_correction",
+    status: "approved" | "rejected" | "needs_correction" | "under_review",
   ) => void;
   checkers: ResultCheckerProduct[];
   onAddVoucherStock: (checkerId: string, count: number) => void;
@@ -134,10 +135,6 @@ export const AdminOperations: React.FC<AdminOperationsProps> = ({
   const [gatewaySearch, setGatewaySearch] = useState("");
   const [gatewayStatusFilter, setGatewayStatusFilter] = useState<string>("all");
 
-  // AFA Search & Filters
-  const [afaSearch, setAfaSearch] = useState("");
-  const [afaStatusFilter, setAfaStatusFilter] = useState<string>("all");
-
   // Vouchers Search & Filters
   const [voucherSearch, setVoucherSearch] = useState("");
 
@@ -177,19 +174,6 @@ export const AdminOperations: React.FC<AdminOperationsProps> = ({
       gw.id.toLowerCase().includes(q);
     const matchSt =
       gatewayStatusFilter === "all" || gw.status === gatewayStatusFilter;
-    return matchQ && matchSt;
-  });
-
-  // Filtered AFA Applications
-  const filteredAfa = afaApplications.filter((app) => {
-    const q = afaSearch.toLowerCase().trim();
-    const matchQ =
-      !q ||
-      app.fullName.toLowerCase().includes(q) ||
-      app.phoneNumber.includes(q) ||
-      app.ghanaCardNumber.toLowerCase().includes(q) ||
-      app.region.toLowerCase().includes(q);
-    const matchSt = afaStatusFilter === "all" || app.status === afaStatusFilter;
     return matchQ && matchSt;
   });
 
@@ -904,136 +888,13 @@ export const AdminOperations: React.FC<AdminOperationsProps> = ({
         </div>
       )}
 
-      {/* VIEW: AFA VERIFICATION PORTAL WITH SEARCH & STATUS FILTER */}
+      {/* VIEW: AFA VERIFICATION PORTAL */}
       {view === "afa-verification" && (
-        <div className="space-y-6">
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-4 border-b border-border">
-            <div>
-              <h1 className="text-2xl font-extrabold text-foreground tracking-tight flex items-center gap-2">
-                <FileCheck className="w-6 h-6 text-emerald-600" />
-                <span>AFA National Identity & Tariff Verification Desk</span>
-              </h1>
-              <p className="text-xs text-muted-foreground mt-0.5">
-                Review Ghana Card numbers and whitelist eligible agricultural
-                subscribers for subsidized telecom data.
-              </p>
-            </div>
-            <Badge
-              variant="outline"
-              className="text-xs font-semibold tabular-nums"
-            >
-              Pending Verification:{" "}
-              {
-                afaApplications.filter((a) => a.status === "under_review")
-                  .length
-              }
-            </Badge>
-          </div>
-
-          {/* Search and Filters Toolbar */}
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <div className="relative flex-1 max-w-md">
-              <Search className="absolute left-3 top-2.5 w-3.5 h-3.5 text-muted-foreground" />
-              <Input
-                type="text"
-                placeholder="Search applicant name, phone, Ghana Card, or region..."
-                value={afaSearch}
-                onChange={(e) => setAfaSearch(e.target.value)}
-                className="pl-8 h-9 text-xs"
-              />
-            </div>
-
-            <select
-              value={afaStatusFilter}
-              onChange={(e) => setAfaStatusFilter(e.target.value)}
-              className="h-9 text-xs w-40 rounded-lg border border-input bg-background text-foreground px-2"
-            >
-              <option value="all">All Verification States</option>
-              <option value="under_review">Pending Review</option>
-              <option value="approved">Approved & Whitelisted</option>
-              <option value="needs_correction">Flagged for Correction</option>
-            </select>
-          </div>
-
-          {/* AFA Applicants List */}
-          <div className="space-y-3">
-            {filteredAfa.length === 0 ? (
-              <Card className="p-8 text-center border-border">
-                <p className="text-xs text-muted-foreground">
-                  No AFA applications found matching criteria.
-                </p>
-              </Card>
-            ) : (
-              filteredAfa.map((app) => (
-                <Card
-                  key={app.id}
-                  className="p-5 border-border shadow-xs flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 text-xs hover:border-primary/40 transition-colors"
-                >
-                  <div className="space-y-1">
-                    <div className="flex items-center gap-2">
-                      <span className="font-bold text-sm text-foreground">
-                        {app.fullName}
-                      </span>
-                      <span className="text-muted-foreground font-semibold tabular-nums">
-                        ({app.phoneNumber})
-                      </span>
-                      <Badge
-                        variant={
-                          app.status === "approved" ? "default" : "secondary"
-                        }
-                        className="text-[10px] font-bold uppercase"
-                      >
-                        {app.status}
-                      </Badge>
-                    </div>
-                    <div className="text-muted-foreground flex flex-wrap gap-3 pt-0.5">
-                      <span>
-                        Ghana Card:{" "}
-                        <strong className="text-foreground tabular-nums">
-                          {app.ghanaCardNumber}
-                        </strong>
-                      </span>
-                      <span>
-                        Region:{" "}
-                        <strong className="text-foreground">
-                          {app.region}
-                        </strong>
-                      </span>
-                      <span>
-                        Trade:{" "}
-                        <strong className="text-foreground">
-                          {app.occupation}
-                        </strong>
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-2">
-                    <Button
-                      variant="default"
-                      size="sm"
-                      onClick={() => onUpdateAfaStatus(app.id, "approved")}
-                      className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs gap-1.5"
-                    >
-                      <Check className="w-3.5 h-3.5" />
-                      <span>Approve & Whitelist</span>
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() =>
-                        onUpdateAfaStatus(app.id, "needs_correction")
-                      }
-                      className="text-xs font-semibold"
-                    >
-                      Flag Correction
-                    </Button>
-                  </div>
-                </Card>
-              ))
-            )}
-          </div>
-        </div>
+        <AdminAfa
+          applications={afaApplications}
+          onUpdateAfaStatus={onUpdateAfaStatus}
+          onNavigateTab={onNavigateTab}
+        />
       )}
 
       {/* VIEW: VOUCHERS INVENTORY WITH SEARCH & INSTANT RESTOCK */}
