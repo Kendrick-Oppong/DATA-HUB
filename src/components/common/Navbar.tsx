@@ -17,6 +17,7 @@ import {
 import { UserRole, AppTheme, UserAccount } from "../../types";
 import { SignalRail } from "./SignalRail";
 import { themeOptions, getThemeOption } from "../../lib/themes";
+import logoImg from "../../assets/logo.png";
 
 import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
@@ -141,8 +142,8 @@ export const Navbar: React.FC<NavbarProps> = ({
               onClick={() => onRoleChange("public")}
               className="group flex cursor-pointer items-center gap-2.5"
             >
-              <div className="flex size-9 items-center justify-center rounded-full bg-primary text-sm font-extrabold text-primary-foreground shadow-sm transition-transform group-hover:scale-105">
-                SDH
+              <div className="flex h-10 items-center justify-center  p-1 transition-transform group-hover:scale-105">
+                <img src={logoImg} alt="Smart Data Hub Logo" className="h-8 w-auto object-contain" />
               </div>
 
               <div className="hidden sm:block">

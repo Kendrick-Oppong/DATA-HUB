@@ -21,6 +21,7 @@ import { AppTheme, UserAccount, UserRole } from "../../types";
 import { Button } from "../ui/button";
 import { Badge } from "../ui/badge";
 import { themeOptions } from "../../lib/themes";
+import logoImg from "../../assets/logo.png";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -139,8 +140,8 @@ export const PublicNavbar: React.FC<PublicNavbarProps> = ({
             onClick={() => handleNavClick("home")}
             className="group h-auto cursor-pointer gap-2.5 rounded-lg p-0 text-left hover:!bg-transparent"
           >
-            <div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-primary text-sm font-black text-primary-foreground shadow-xs transition-transform group-hover:scale-105">
-              SDH
+            <div className="flex h-10 shrink-0 items-center justify-center p-1 transition-transform group-hover:scale-105">
+              <img src={logoImg} alt="Smart Data Hub Logo" className="h-8 w-auto object-contain" />
             </div>
 
             <div>

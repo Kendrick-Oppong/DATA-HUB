@@ -13,12 +13,14 @@ import {
   CardTitle,
 } from "../ui/card";
 import { Tabs, TabsList, TabsTrigger } from "../ui/tabs";
+import { Button } from "../ui/button";
 
 import { SignInView } from "./SignInView";
 import { SignUpView } from "./SignUpView";
 import { OtpView } from "./OtpView";
 import { ForgotPasswordView } from "./ForgotPasswordView";
 import { NewPasswordView } from "./NewPasswordView";
+import logoImg from "../../assets/logo.png";
 
 export interface AuthSuccessPayload {
   name: string;
@@ -490,6 +492,29 @@ export const AuthPage: React.FC<AuthPageProps> = ({
 
           <Card className="overflow-hidden rounded-3xl border border-border bg-card shadow-xl">
             <CardHeader className="space-y-5 p-5">
+              <div className="flex items-center justify-between pb-4">
+                <button
+                  type="button"
+                  onClick={onBackToPublic}
+                  className="flex items-center gap-2 cursor-pointer group"
+                >
+                  <img src={logoImg} alt="Smart Data Hub Logo" className="h-9 w-auto object-contain transition-transform group-hover:scale-105" />
+                  <div>
+                    <span className="text-sm font-black tracking-tight text-foreground block">Smart Data Hub</span>
+                    <span className="text-[10px] text-muted-foreground block -mt-0.5">Telecom &amp; Digital Services</span>
+                  </div>
+                </button>
+
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={onBackToPublic}
+                  className="text-xs font-bold text-muted-foreground hover:text-foreground"
+                >
+                  Back to Site &rarr;
+                </Button>
+              </div>
+
               <div className="flex items-start justify-between gap-4">
                 <div className="space-y-1.5">
                   <CardTitle className="text-xl font-black tracking-tight sm:text-2xl">

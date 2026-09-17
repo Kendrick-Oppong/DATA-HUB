@@ -15,6 +15,7 @@ import {
   ChevronRight,
 } from "lucide-react";
 import { Order } from "../../types";
+import logoImg from "../../assets/logo.png";
 import {
   Dialog,
   DialogContent,
@@ -140,8 +141,8 @@ export const ReceiptModal: React.FC<ReceiptModalProps> = ({
 
           <div className="relative flex items-start justify-between gap-4">
             <div className="flex items-center gap-3">
-              <div className="flex size-11 shrink-0 items-center justify-center rounded-2xl bg-primary text-sm font-black text-primary-foreground shadow-sm">
-                SDH
+              <div className="flex h-11 shrink-0 items-center justify-center p-1  ">
+                <img src={logoImg} alt="Smart Data Hub Logo" className="h-9 w-auto object-contain" />
               </div>
 
               <div className="min-w-0">
