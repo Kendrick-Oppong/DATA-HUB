@@ -212,18 +212,37 @@ export interface AgentStoreConfig {
 export interface PayoutRequest {
   id: string;
   reference: string;
-  agentId: string;
+  agentId?: string;
   agentName: string;
+  agentHandle?: string;
+  userId?: string;
   amount: number;
-  fee: number;
-  netAmount: number;
-  momoNetwork: TelecomNetwork;
-  momoNumber: string;
-  accountName: string;
-  requestDate: string;
-  status: "pending" | "approved" | "rejected" | "processed";
-  riskScore: "low" | "medium" | "high";
+  fee?: number;
+  netAmount?: number;
+  network?: TelecomNetwork;
+  momoNetwork?: TelecomNetwork;
+  phoneNumber?: string;
+  momoNumber?: string;
+  accountName?: string;
+  recipientName?: string;
+  createdAt?: string;
+  requestDate?: string;
+  paidAt?: string;
+  updatedAt?: string;
+  status:
+    | "pending"
+    | "approved"
+    | "rejected"
+    | "processed"
+    | "requested"
+    | "paid"
+    | "failed"
+    | "processing";
+  riskScore?: "low" | "medium" | "high";
   notes?: string;
+  reason?: string;
+  paystackTransferCode?: string;
+  momoTransactionId?: string;
 }
 
 export interface BulkSmsCampaign {

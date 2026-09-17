@@ -36,6 +36,8 @@ import {
   Transaction,
 } from "../../types";
 import { AdminTransactions } from "./AdminTransactions";
+import { AdminCommissions } from "./AdminCommissions";
+import { AdminPayouts } from "./AdminPayouts";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Badge } from "../ui/badge";
@@ -70,7 +72,9 @@ interface AdminOperationsProps {
     | "gateways"
     | "orders-audit"
     | "transactions"
+    | "commissions"
     | "settlement"
+    | "payouts"
     | "afa-verification"
     | "vouchers-stock";
   gateways: TelecomGateway[];
@@ -1087,66 +1091,23 @@ export const AdminOperations: React.FC<AdminOperationsProps> = ({
         </div>
       )}
 
-      {/* VIEW: SETTLEMENT & FLOAT RECONCILIATION */}
-      {view === "settlement" && (
-        <div className="space-y-6">
-          <div className="pb-4 border-b border-border">
-            <h1 className="text-2xl font-extrabold text-foreground tracking-tight flex items-center gap-2">
-              <DollarSign className="w-6 h-6 text-amber-500" />
-              <span>Carrier Float Balances & Daily Settlement</span>
-            </h1>
-            <p className="text-xs text-muted-foreground mt-0.5">
-              Liquidity reserve accounts with MTN Mobile Money, Telecel Cash,
-              and Ecobank Ghana Settlement.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <Card className="border-border shadow-xs p-5">
-              <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                MTN Core Float Reserve
-              </span>
-              <div className="text-3xl font-black text-foreground tabular-nums mt-1">
-                GH₵ 42,850.00
-              </div>
-              <p className="text-[11px] text-emerald-600 dark:text-emerald-400 mt-1 flex items-center gap-1">
-                <CheckCircle2 className="w-3.5 h-3.5" />
-                <span>Healthy liquidity (USSD EVD auto-replenish)</span>
-              </p>
-            </Card>
-
-            <Card className="border-border shadow-xs p-5">
-              <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                Telecel Cash Float
-              </span>
-              <div className="text-3xl font-black text-foreground tabular-nums mt-1">
-                GH₵ 18,400.00
-              </div>
-              <p className="text-[11px] text-emerald-600 dark:text-emerald-400 mt-1 flex items-center gap-1">
-                <CheckCircle2 className="w-3.5 h-3.5" />
-                <span>Healthy liquidity</span>
-              </p>
-            </Card>
-
-            <Card className="border-border shadow-xs p-5">
-              <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                Ecobank Ghana Settlement
-              </span>
-              <div className="text-3xl font-black text-foreground tabular-nums mt-1">
-                GH₵ 94,120.00
-              </div>
-              <p className="text-[11px] text-muted-foreground mt-1">
-                Automated 11:59 PM daily clearing sweep
-              </p>
-            </Card>
-          </div>
-        </div>
+      {/* VIEW: SETTLEMENT / AGENT PAYOUTS */}
+      {(view === "settlement" || view === "payouts") && (
+        <AdminPayouts onNavigateTab={onNavigateTab} />
       )}
 
       {/* VIEW: PLATFORM TRANSACTIONS */}
       {view === "transactions" && (
         <AdminTransactions
           transactions={transactions}
+          orders={orders}
+          onNavigateTab={onNavigateTab}
+        />
+      )}
+
+      {/* VIEW: STOREFRONT COMMISSIONS */}
+      {view === "commissions" && (
+        <AdminCommissions
           orders={orders}
           onNavigateTab={onNavigateTab}
         />

@@ -1289,7 +1289,9 @@ export default function App() {
                   activeTab === "gateways" ||
                   activeTab === "orders-audit" ||
                   activeTab === "transactions" ||
+                  activeTab === "commissions" ||
                   activeTab === "settlement" ||
+                  activeTab === "payouts" ||
                   activeTab === "afa-verification" ||
                   activeTab === "vouchers-stock"
                     ? (activeTab as any)
