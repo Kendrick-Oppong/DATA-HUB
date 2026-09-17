@@ -62,7 +62,7 @@ interface AdminComplaintsProps {
   onUpdateComplaintStatus?: (
     ticketId: string,
     status: Complaint["status"],
-    priority?: Complaint["priority"]
+    priority?: Complaint["priority"],
   ) => void;
   onNavigateTab?: (tab: string) => void;
   orders?: Order[];
@@ -99,7 +99,7 @@ export const AdminComplaints: React.FC<AdminComplaintsProps> = ({
   orders = [],
 }) => {
   const [selectedTicketId, setSelectedTicketId] = useState<string>(
-    complaints[0]?.id || ""
+    complaints[0]?.id || "",
   );
   const [newReplyText, setNewReplyText] = useState("");
   const [showNewTicketModal, setShowNewTicketModal] = useState(false);
@@ -121,7 +121,7 @@ export const AdminComplaints: React.FC<AdminComplaintsProps> = ({
   const [ticketUserName, setTicketUserName] = useState("");
   const [ticketUserContact, setTicketUserContact] = useState("");
   const [ticketUserType, setTicketUserType] = useState<"agent" | "customer">(
-    "agent"
+    "agent",
   );
   const [ticketPriority, setTicketPriority] =
     useState<Complaint["priority"]>("medium");
@@ -138,7 +138,8 @@ export const AdminComplaints: React.FC<AdminComplaintsProps> = ({
           c.status !== "investigating"
         )
           return false;
-        if (statusFilter === "resolved" && c.status !== "resolved") return false;
+        if (statusFilter === "resolved" && c.status !== "resolved")
+          return false;
         if (statusFilter === "closed" && c.status !== "closed") return false;
       }
 
@@ -203,18 +204,20 @@ export const AdminComplaints: React.FC<AdminComplaintsProps> = ({
     const total = complaints.length;
     const open = complaints.filter((c) => c.status === "open").length;
     const inProgress = complaints.filter(
-      (c) => c.status === "in_progress" || c.status === "investigating"
+      (c) => c.status === "in_progress" || c.status === "investigating",
     ).length;
     const resolved = complaints.filter(
-      (c) => c.status === "resolved" || c.status === "closed"
+      (c) => c.status === "resolved" || c.status === "closed",
     ).length;
     const urgent = complaints.filter(
       (c) =>
         c.priority === "urgent" &&
         c.status !== "resolved" &&
-        c.status !== "closed"
+        c.status !== "closed",
     ).length;
-    const agentTickets = complaints.filter((c) => c.userType === "agent").length;
+    const agentTickets = complaints.filter(
+      (c) => c.userType === "agent",
+    ).length;
 
     return { total, open, inProgress, resolved, urgent, agentTickets };
   }, [complaints]);
@@ -334,7 +337,7 @@ export const AdminComplaints: React.FC<AdminComplaintsProps> = ({
     ]);
 
     const csv = [head.map(esc).join(","), ...body.map((r) => r.join(","))].join(
-      "\r\n"
+      "\r\n",
     );
     const blob = new Blob(["\uFEFF" + csv], {
       type: "text/csv;charset=utf-8",
@@ -348,9 +351,8 @@ export const AdminComplaints: React.FC<AdminComplaintsProps> = ({
     setTimeout(() => URL.revokeObjectURL(a.href), 1000);
 
     setExportNotice(
-      `Exported ${filteredComplaints.length} ticket${
-        filteredComplaints.length === 1 ? "" : "s"
-      } successfully.`
+      `Exported ${filteredComplaints.length} ticket${filteredComplaints.length === 1 ? "" : "s"
+      } successfully.`,
     );
     setTimeout(() => setExportNotice(null), 3500);
   };
@@ -362,22 +364,26 @@ export const AdminComplaints: React.FC<AdminComplaintsProps> = ({
     const config: Record<string, StatusConfig> = {
       open: {
         dot: "bg-amber-500",
-        classes: "bg-amber-500/15 text-amber-700 dark:text-amber-400 border-amber-500/20",
+        classes:
+          "bg-amber-500/15 text-amber-700 dark:text-amber-400 border-amber-500/20",
         label: "Open",
       },
       investigating: {
         dot: "bg-blue-500",
-        classes: "bg-blue-500/15 text-blue-700 dark:text-blue-400 border-blue-500/20",
+        classes:
+          "bg-blue-500/15 text-blue-700 dark:text-blue-400 border-blue-500/20",
         label: "In Progress",
       },
       in_progress: {
         dot: "bg-blue-500",
-        classes: "bg-blue-500/15 text-blue-700 dark:text-blue-400 border-blue-500/20",
+        classes:
+          "bg-blue-500/15 text-blue-700 dark:text-blue-400 border-blue-500/20",
         label: "In Progress",
       },
       resolved: {
         dot: "bg-emerald-500",
-        classes: "bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border-emerald-500/20",
+        classes:
+          "bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border-emerald-500/20",
         label: "Resolved",
       },
       closed: {
@@ -446,7 +452,8 @@ export const AdminComplaints: React.FC<AdminComplaintsProps> = ({
             <span>Complaints & Support Desk</span>
           </h1>
           <p className="mt-0.5 text-xs text-muted-foreground">
-            Centralized dispute resolution desk for SDH agents and direct customers
+            Centralized dispute resolution desk for SDH agents and direct
+            customers
           </p>
         </div>
 
@@ -459,21 +466,11 @@ export const AdminComplaints: React.FC<AdminComplaintsProps> = ({
 
           <Button
             size="sm"
-            variant="outline"
             onClick={handleExportCsv}
             className="text-xs font-bold shadow-xs gap-1.5 h-9"
           >
             <Download className="size-4" />
             <span>Export CSV</span>
-          </Button>
-
-          <Button
-            size="sm"
-            onClick={() => setShowNewTicketModal(true)}
-            className="text-xs font-bold shadow-xs gap-1.5 h-9"
-          >
-            <Plus className="size-4" />
-            <span>New Ticket</span>
           </Button>
         </div>
       </div>
@@ -557,7 +554,8 @@ export const AdminComplaints: React.FC<AdminComplaintsProps> = ({
             )}
           </div>
           <p className="text-[10px] text-muted-foreground font-medium">
-            {stats.agentTickets} agent stores &middot; {stats.total - stats.agentTickets} direct
+            {stats.agentTickets} agent stores &middot;{" "}
+            {stats.total - stats.agentTickets} direct
           </p>
         </div>
       </div>
@@ -638,11 +636,16 @@ export const AdminComplaints: React.FC<AdminComplaintsProps> = ({
                   Ticket Status
                 </Label>
                 <Select value={statusFilter} onValueChange={setStatusFilter}>
-                  <SelectTrigger id="filter-status" className="h-9 w-full text-xs">
+                  <SelectTrigger
+                    id="filter-status"
+                    className="h-9 w-full text-xs"
+                  >
                     <SelectValue placeholder="All Statuses" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">All Statuses ({stats.total})</SelectItem>
+                    <SelectItem value="all">
+                      All Statuses ({stats.total})
+                    </SelectItem>
                     <SelectItem value="open">Open ({stats.open})</SelectItem>
                     <SelectItem value="in_progress">
                       In Progress ({stats.inProgress})
@@ -667,7 +670,10 @@ export const AdminComplaints: React.FC<AdminComplaintsProps> = ({
                   value={categoryFilter}
                   onValueChange={setCategoryFilter}
                 >
-                  <SelectTrigger id="filter-category" className="h-9 w-full text-xs">
+                  <SelectTrigger
+                    id="filter-category"
+                    className="h-9 w-full text-xs"
+                  >
                     <SelectValue placeholder="All Categories" />
                   </SelectTrigger>
                   <SelectContent>
@@ -687,9 +693,7 @@ export const AdminComplaints: React.FC<AdminComplaintsProps> = ({
                     <SelectItem value="store_issue">
                       Store Configuration
                     </SelectItem>
-                    <SelectItem value="tier_dispute">
-                      Tier Dispute
-                    </SelectItem>
+                    <SelectItem value="tier_dispute">Tier Dispute</SelectItem>
                     <SelectItem value="general">General Help</SelectItem>
                   </SelectContent>
                 </Select>
@@ -715,7 +719,9 @@ export const AdminComplaints: React.FC<AdminComplaintsProps> = ({
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">All Requesters</SelectItem>
-                    <SelectItem value="agent">Agents Only (Storefronts)</SelectItem>
+                    <SelectItem value="agent">
+                      Agents Only (Storefronts)
+                    </SelectItem>
                     <SelectItem value="customer">Direct Customers</SelectItem>
                   </SelectContent>
                 </Select>
@@ -762,40 +768,21 @@ export const AdminComplaints: React.FC<AdminComplaintsProps> = ({
             LEFT COLUMN: TICKET INBOX QUEUE (4 Cols)
             ====================================================== */}
         <div className="space-y-3 lg:col-span-4 flex flex-col">
-          {/* Header row with count & quick status switches */}
+          {/* Header row: queue label + result count + active filter indicator */}
           <div className="flex items-center justify-between px-1">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
-              Inbound Queue
+            <div className="flex items-center gap-2">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
+                Inbound Queue
+              </span>
+              {isFiltered && (
+                <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2 py-0.5 text-[9px] font-bold text-primary">
+                  Filtered
+                </span>
+              )}
+            </div>
+            <span className="text-[11px] font-semibold text-muted-foreground tabular-nums">
+              {filteredComplaints.length} of {complaints.length}
             </span>
-            <span className="text-[11px] font-semibold text-muted-foreground">
-              Showing {filteredComplaints.length} of {complaints.length}
-            </span>
-          </div>
-
-          {/* Quick tab filters pill strip */}
-          <div className="flex flex-wrap items-center gap-1.5 bg-muted/40 p-1 rounded-xl border border-border">
-            {[
-              { id: "all", label: "All" },
-              { id: "open", label: "Open" },
-              { id: "in_progress", label: "In Progress" },
-              { id: "resolved", label: "Resolved" },
-            ].map((tab) => {
-              const active = statusFilter === tab.id;
-              return (
-                <button
-                  key={tab.id}
-                  type="button"
-                  onClick={() => setStatusFilter(tab.id)}
-                  className={`flex-1 rounded-lg py-1 px-2 text-[10px] font-bold transition-all text-center ${
-                    active
-                      ? "bg-card text-foreground shadow-xs border border-border"
-                      : "text-muted-foreground hover:text-foreground"
-                  }`}
-                >
-                  {tab.label}
-                </button>
-              );
-            })}
           </div>
 
           {/* Ticket list scrollable container */}
@@ -826,7 +813,7 @@ export const AdminComplaints: React.FC<AdminComplaintsProps> = ({
               )}
             </div>
           ) : (
-            <div className="space-y-2.5 max-h-[660px] overflow-y-auto pr-1">
+            <div className="space-y-2.5 overflow-y-auto pr-1" style={{ maxHeight: "calc(700px - 2.5rem)" }}>
               {filteredComplaints.map((complaint) => {
                 const isSelected = selectedTicket?.id === complaint.id;
 
@@ -835,11 +822,10 @@ export const AdminComplaints: React.FC<AdminComplaintsProps> = ({
                     key={complaint.id}
                     type="button"
                     onClick={() => setSelectedTicketId(complaint.id)}
-                    className={`w-full rounded-2xl border p-3.5 text-left transition-all relative ${
-                      isSelected
-                        ? "border-primary bg-primary/5 shadow-xs ring-2 ring-primary/20"
-                        : "border-border bg-card hover:bg-muted/40"
-                    }`}
+                    className={`w-full rounded-2xl border p-3.5 text-left transition-all relative ${isSelected
+                      ? "border-primary bg-primary/5 shadow-xs ring-2 ring-primary/20"
+                      : "border-border bg-card hover:bg-muted/40"
+                      }`}
                   >
                     {/* Top Row: Ticket Number, User Type, and Status */}
                     <div className="mb-2 flex items-center justify-between gap-2">
@@ -849,11 +835,10 @@ export const AdminComplaints: React.FC<AdminComplaintsProps> = ({
                         </span>
 
                         <span
-                          className={`inline-flex items-center gap-1 rounded px-1.5 py-0.2 text-[9px] font-extrabold uppercase ${
-                            complaint.userType === "agent"
-                              ? "bg-amber-500/15 text-amber-700 dark:text-amber-400"
-                              : "bg-blue-500/15 text-blue-700 dark:text-blue-400"
-                          }`}
+                          className={`inline-flex items-center gap-1 rounded px-1.5 py-0.2 text-[9px] font-extrabold uppercase ${complaint.userType === "agent"
+                            ? "bg-amber-500/15 text-amber-700 dark:text-amber-400"
+                            : "bg-blue-500/15 text-blue-700 dark:text-blue-400"
+                            }`}
                         >
                           {complaint.userType === "agent" ? (
                             <Store className="size-2.5" />
@@ -894,7 +879,7 @@ export const AdminComplaints: React.FC<AdminComplaintsProps> = ({
 
                     {/* Order Reference tag if exists */}
                     {complaint.orderReference && (
-                      <div className="mt-1.5 flex items-center gap-1 text-[10px] text-primary font-mono font-medium">
+                      <div className="mt-1.5 flex items-center gap-1 text-[10px] text-primary font-medium">
                         <FileText className="size-3 shrink-0" />
                         <span className="truncate">
                           Ref: {complaint.orderReference}
@@ -964,16 +949,19 @@ export const AdminComplaints: React.FC<AdminComplaintsProps> = ({
                     </h2>
                   </div>
 
-                  {/* Right quick status & priority dropdown selectors for staff */}
-                  <div className="flex flex-wrap items-center gap-2 shrink-0">
-                    {/* Status Changer */}
-                    <div className="flex items-center gap-1">
+                  {/* Right: Ticket action controls — change THIS ticket's status/priority */}
+                  <div className="flex flex-col items-end gap-1.5 shrink-0">
+                    <span className="text-[9px] font-bold uppercase tracking-wider text-muted-foreground">
+                      Update ticket
+                    </span>
+                    <div className="flex flex-wrap items-center gap-2">
+                      {/* Status Changer */}
                       <Select
                         value={selectedTicket.status}
                         onValueChange={(val) =>
                           onUpdateComplaintStatus?.(
                             selectedTicket.id,
-                            val as Complaint["status"]
+                            val as Complaint["status"],
                           )
                         }
                       >
@@ -1007,17 +995,15 @@ export const AdminComplaints: React.FC<AdminComplaintsProps> = ({
                           </SelectItem>
                         </SelectContent>
                       </Select>
-                    </div>
 
-                    {/* Priority Changer */}
-                    <div className="flex items-center gap-1">
+                      {/* Priority Changer */}
                       <Select
                         value={selectedTicket.priority || "medium"}
                         onValueChange={(val) =>
                           onUpdateComplaintStatus?.(
                             selectedTicket.id,
                             selectedTicket.status,
-                            val as Complaint["priority"]
+                            val as Complaint["priority"],
                           )
                         }
                       >
@@ -1031,25 +1017,22 @@ export const AdminComplaints: React.FC<AdminComplaintsProps> = ({
                           <SelectItem value="urgent">Urgent</SelectItem>
                         </SelectContent>
                       </Select>
-                    </div>
 
-                    {/* Mark Resolved Shortcut Button if not resolved */}
-                    {selectedTicket.status !== "resolved" && (
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() =>
-                          onUpdateComplaintStatus?.(
-                            selectedTicket.id,
-                            "resolved"
-                          )
-                        }
-                        className="!h-8 text-xs font-bold text-emerald-600 border-emerald-500/30 hover:bg-emerald-500/10 gap-1 hidden md:inline-flex"
-                      >
-                        <CheckCircle2 className="size-3.5" />
-                        <span>Resolve</span>
-                      </Button>
-                    )}
+                      {/* Mark Resolved shortcut */}
+                      {selectedTicket.status !== "resolved" && (
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() =>
+                            onUpdateComplaintStatus?.(selectedTicket.id, "resolved")
+                          }
+                          className="!h-8 text-xs font-bold text-emerald-600 border-emerald-500/30 hover:bg-emerald-500/10 gap-1 hidden md:inline-flex"
+                        >
+                          <CheckCircle2 className="size-3.5" />
+                          <span>Resolve</span>
+                        </Button>
+                      )}
+                    </div>
                   </div>
                 </div>
 
@@ -1088,7 +1071,7 @@ export const AdminComplaints: React.FC<AdminComplaintsProps> = ({
                       <button
                         type="button"
                         onClick={() => onNavigateTab?.("orders-audit")}
-                        className="inline-flex items-center gap-1 rounded-md bg-primary/10 px-2 py-0.5 font-mono text-[11px] font-bold text-primary hover:bg-primary/20 transition-colors"
+                        className="inline-flex items-center gap-1 rounded-md bg-primary/10 px-2 py-0.5 text-[11px] font-bold text-primary hover:bg-primary/20 transition-colors"
                       >
                         <span>{selectedTicket.orderReference}</span>
                         <ExternalLink className="size-3" />
@@ -1119,17 +1102,15 @@ export const AdminComplaints: React.FC<AdminComplaintsProps> = ({
                   return (
                     <div
                       key={message.id}
-                      className={`flex items-end gap-2.5 ${
-                        isStaff ? "flex-row-reverse" : "flex-row"
-                      }`}
+                      className={`flex items-end gap-2.5 ${isStaff ? "flex-row-reverse" : "flex-row"
+                        }`}
                     >
                       {/* Avatar */}
                       <div
-                        className={`flex size-8 shrink-0 items-center justify-center rounded-xl font-bold text-xs shadow-2xs ${
-                          isStaff
-                            ? "bg-primary text-primary-foreground ring-2 ring-primary/20"
-                            : "bg-amber-500/15 text-amber-700 dark:text-amber-400 ring-2 ring-amber-500/20"
-                        }`}
+                        className={`flex size-8 shrink-0 items-center justify-center rounded-xl font-bold text-xs shadow-2xs ${isStaff
+                          ? "bg-primary text-primary-foreground ring-2 ring-primary/20"
+                          : "bg-amber-500/15 text-amber-700 dark:text-amber-400 ring-2 ring-amber-500/20"
+                          }`}
                       >
                         {isStaff ? (
                           <Headphones className="size-4" />
@@ -1140,9 +1121,8 @@ export const AdminComplaints: React.FC<AdminComplaintsProps> = ({
 
                       {/* Bubble & Metadata */}
                       <div
-                        className={`flex max-w-[82%] sm:max-w-md flex-col ${
-                          isStaff ? "items-end" : "items-start"
-                        }`}
+                        className={`flex max-w-[82%] sm:max-w-md flex-col ${isStaff ? "items-end" : "items-start"
+                          }`}
                       >
                         <div className="mb-1 flex items-center gap-1.5 text-[10px] text-muted-foreground">
                           <span className="font-semibold text-foreground">
@@ -1163,11 +1143,10 @@ export const AdminComplaints: React.FC<AdminComplaintsProps> = ({
                         </div>
 
                         <div
-                          className={`rounded-2xl px-4 py-3 text-xs sm:text-[13px] leading-relaxed shadow-2xs ${
-                            isStaff
-                              ? "rounded-tr-xs bg-primary text-primary-foreground"
-                              : "rounded-tl-xs border border-border bg-muted/60 text-foreground"
-                          }`}
+                          className={`rounded-2xl px-4 py-3 text-xs sm:text-[13px] leading-relaxed shadow-2xs ${isStaff
+                            ? "rounded-tr-xs bg-primary text-primary-foreground"
+                            : "rounded-tl-xs border border-border bg-muted/60 text-foreground"
+                            }`}
                         >
                           <p className="whitespace-pre-wrap">{message.text}</p>
                         </div>
@@ -1245,326 +1224,14 @@ export const AdminComplaints: React.FC<AdminComplaintsProps> = ({
                   No ticket selected
                 </h3>
                 <p className="mt-1 max-w-sm text-xs text-muted-foreground">
-                  Select a dispute ticket from the inbound queue on the left to view the
-                  conversation history and respond.
+                  Select a dispute ticket from the inbound queue on the left to
+                  view the conversation history and respond.
                 </p>
               </div>
             </div>
           )}
         </div>
       </div>
-
-      {/* ========================================================
-          5. NEW TICKET DIALOG (Admin Escalation / Ticket Creation)
-          ======================================================== */}
-      <Dialog
-        open={showNewTicketModal}
-        onOpenChange={(open) => setShowNewTicketModal(open)}
-      >
-        <DialogContent
-          className="
-            flex
-            h-[90vh]
-            max-h-[90vh]
-            flex-col
-            gap-0
-            overflow-hidden
-            rounded-3xl
-            border
-            border-border
-            bg-card
-            p-0
-            shadow-2xl
-            sm:max-w-lg
-          "
-        >
-          {/* DIALOG HEADER */}
-          <DialogHeader className="relative shrink-0 overflow-hidden border-b border-border bg-gradient-to-br from-primary/10 via-card to-amber-500/10 p-5 sm:p-6">
-            <div className="relative flex items-start gap-3">
-              <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400">
-                <MessageSquareWarning className="size-5" />
-              </div>
-
-              <div className="min-w-0">
-                <DialogTitle className="text-base font-extrabold tracking-tight">
-                  Open Support Ticket (Admin)
-                </DialogTitle>
-
-                <DialogDescription className="mt-1 max-w-sm text-xs leading-relaxed">
-                  Log a support ticket or formal escalation for an agent store or direct customer.
-                </DialogDescription>
-              </div>
-            </div>
-          </DialogHeader>
-
-          {/* FORM */}
-          <form
-            onSubmit={handleCreateTicket}
-            className="flex min-h-0 flex-1 flex-col"
-          >
-            <ScrollArea className="min-h-0 flex-1 overflow-hidden">
-              <div className="p-5 sm:p-6 space-y-6">
-                {/* USER TARGET */}
-                <div className="space-y-4">
-                  <div className="flex items-center gap-2.5 border-b border-border pb-3">
-                    <div className="flex size-7 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                      <User className="size-3.5" />
-                    </div>
-                    <h3 className="text-xs font-bold text-foreground">
-                      Recipient / Target User
-                    </h3>
-                  </div>
-
-                  <div className="grid gap-4 sm:grid-cols-3">
-                    <div className="space-y-1.5">
-                      <Label htmlFor="modal-user-type" className="text-[11px] font-semibold">
-                        User Type
-                      </Label>
-                      <Select
-                        value={ticketUserType}
-                        onValueChange={(val) => setTicketUserType(val as any)}
-                      >
-                        <SelectTrigger id="modal-user-type" className="!h-10 text-xs">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="agent">Agent Store</SelectItem>
-                          <SelectItem value="customer">Direct Customer</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-
-                    <div className="space-y-1.5">
-                      <Label htmlFor="modal-user-name" className="text-[11px] font-semibold">
-                        Name / Store
-                      </Label>
-                      <Input
-                        id="modal-user-name"
-                        type="text"
-                        placeholder="e.g. Kofi Owusu"
-                        value={ticketUserName}
-                        onChange={(e) => setTicketUserName(e.target.value)}
-                        className="h-10 text-xs"
-                      />
-                    </div>
-
-                    <div className="space-y-1.5">
-                      <Label htmlFor="modal-user-contact" className="text-[11px] font-semibold">
-                        Phone / MoMo
-                      </Label>
-                      <Input
-                        id="modal-user-contact"
-                        type="text"
-                        placeholder="024XXXXXXX"
-                        value={ticketUserContact}
-                        onChange={(e) => setTicketUserContact(e.target.value)}
-                        className="h-10 text-xs tabular-nums"
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                {/* TICKET INFORMATION */}
-                <div className="space-y-4">
-                  <div className="flex items-center gap-2.5 border-b border-border pb-3">
-                    <div className="flex size-7 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                      <Tag className="size-3.5" />
-                    </div>
-                    <h3 className="text-xs font-bold text-foreground">
-                      Ticket Classification
-                    </h3>
-                  </div>
-
-                  <div className="grid gap-4 sm:grid-cols-3">
-                    <div className="space-y-1.5">
-                      <Label
-                        htmlFor="modal-ticket-category"
-                        className="text-[11px] font-semibold"
-                      >
-                        Category
-                      </Label>
-
-                      <Select
-                        value={ticketCategory}
-                        onValueChange={(value) =>
-                          setTicketCategory(value as Complaint["category"])
-                        }
-                      >
-                        <SelectTrigger
-                          id="modal-ticket-category"
-                          className="!h-10 w-full text-xs"
-                        >
-                          <SelectValue />
-                        </SelectTrigger>
-
-                        <SelectContent>
-                          <SelectItem value="commission_payout">
-                            Commission Payout
-                          </SelectItem>
-                          <SelectItem value="delivery_delay">
-                            Delivery Delay
-                          </SelectItem>
-                          <SelectItem value="failed_recharge">
-                            Failed Recharge
-                          </SelectItem>
-                          <SelectItem value="store_issue">
-                            Store Configuration
-                          </SelectItem>
-                          <SelectItem value="tier_dispute">
-                            Tier Dispute
-                          </SelectItem>
-                          <SelectItem value="momo_debit_no_credit">
-                            MoMo Debit Issue
-                          </SelectItem>
-                          <SelectItem value="general">General Help</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-
-                    <div className="space-y-1.5">
-                      <Label
-                        htmlFor="modal-ticket-priority"
-                        className="text-[11px] font-semibold"
-                      >
-                        Priority
-                      </Label>
-
-                      <Select
-                        value={ticketPriority}
-                        onValueChange={(val) => setTicketPriority(val as any)}
-                      >
-                        <SelectTrigger
-                          id="modal-ticket-priority"
-                          className="!h-10 text-xs"
-                        >
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="low">Low</SelectItem>
-                          <SelectItem value="medium">Medium</SelectItem>
-                          <SelectItem value="high">High</SelectItem>
-                          <SelectItem value="urgent">Urgent</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-
-                    <div className="space-y-1.5">
-                      <Label
-                        htmlFor="modal-ticket-order-ref"
-                        className="text-[11px] font-semibold"
-                      >
-                        Order Reference{" "}
-                        <span className="font-normal text-muted-foreground">
-                          (opt)
-                        </span>
-                      </Label>
-
-                      <Input
-                        id="modal-ticket-order-ref"
-                        type="text"
-                        placeholder="SDH-GH-2026-..."
-                        value={ticketOrderRef}
-                        onChange={(e) => setTicketOrderRef(e.target.value)}
-                        className="h-10 text-xs"
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                {/* ISSUE DESCRIPTION */}
-                <div className="space-y-4">
-                  <div className="flex items-center gap-2.5 border-b border-border pb-3">
-                    <div className="flex size-7 shrink-0 items-center justify-center rounded-lg bg-amber-500/10 text-amber-600 dark:text-amber-400">
-                      <FileText className="size-3.5" />
-                    </div>
-                    <h3 className="text-xs font-bold text-foreground">
-                      Issue & Initial Admin Note
-                    </h3>
-                  </div>
-
-                  <div className="space-y-4">
-                    <div className="space-y-1.5">
-                      <Label
-                        htmlFor="modal-ticket-subject"
-                        className="text-[11px] font-semibold"
-                      >
-                        Subject
-                      </Label>
-
-                      <Input
-                        id="modal-ticket-subject"
-                        type="text"
-                        required
-                        placeholder="Brief summary of the issue or dispute"
-                        value={ticketSubject}
-                        onChange={(e) => setTicketSubject(e.target.value)}
-                        className="h-10 text-xs"
-                      />
-                    </div>
-
-                    <div className="space-y-1.5">
-                      <Label
-                        htmlFor="modal-ticket-message"
-                        className="text-[11px] font-semibold"
-                      >
-                        Initial Message / Response
-                      </Label>
-
-                      <Textarea
-                        id="modal-ticket-message"
-                        rows={4}
-                        required
-                        placeholder="Provide details of the escalation or initial support reply..."
-                        value={ticketMessage}
-                        onChange={(e) => setTicketMessage(e.target.value)}
-                        className="text-xs"
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                {/* AUDIT NOTE */}
-                <div className="flex items-start gap-2.5 rounded-2xl border border-amber-500/20 bg-amber-500/5 p-3.5">
-                  <Clock3 className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
-
-                  <div>
-                    <p className="text-[11px] font-semibold text-foreground">
-                      Audit & SLA Tracking
-                    </p>
-
-                    <p className="mt-0.5 text-[10px] leading-relaxed text-muted-foreground">
-                      Tickets are linked to agent stores and user profiles. All replies and status updates are logged for administrative transparency.
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </ScrollArea>
-
-            {/* FORM FOOTER */}
-            <div className="shrink-0 border-t border-border bg-card p-4 sm:px-6">
-              <Button
-                type="submit"
-                disabled={!ticketSubject.trim() || !ticketMessage.trim()}
-                size="lg"
-                className="h-12 w-full gap-2 rounded-xl text-sm font-bold shadow-md"
-              >
-                <CheckCircle2 className="size-4" />
-                Submit Ticket
-              </Button>
-            </div>
-          </form>
-
-          {/* Modal Footer */}
-          <DialogFooter className="m-0 shrink-0 rounded-none border-t border-border bg-muted/30 px-5 py-3 sm:justify-center">
-            <div className="flex items-center justify-center gap-2 text-xs font-medium text-muted-foreground">
-              <Headphones className="size-4 shrink-0 text-amber-600 dark:text-amber-400" />
-              <span className="text-[11px]">
-                SDH Operations Support Desk
-              </span>
-            </div>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 };
