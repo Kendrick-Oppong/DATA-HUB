@@ -33,7 +33,9 @@ import {
   AfaApplication,
   ResultCheckerProduct,
   TelecomNetwork,
+  Transaction,
 } from "../../types";
+import { AdminTransactions } from "./AdminTransactions";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Badge } from "../ui/badge";
@@ -67,6 +69,7 @@ interface AdminOperationsProps {
   view:
     | "gateways"
     | "orders-audit"
+    | "transactions"
     | "settlement"
     | "afa-verification"
     | "vouchers-stock";
@@ -82,6 +85,8 @@ interface AdminOperationsProps {
   ) => void;
   checkers: ResultCheckerProduct[];
   onAddVoucherStock: (checkerId: string, count: number) => void;
+  transactions?: Transaction[];
+  onNavigateTab?: (tab: string) => void;
 }
 
 export const AdminOperations: React.FC<AdminOperationsProps> = ({
@@ -95,6 +100,8 @@ export const AdminOperations: React.FC<AdminOperationsProps> = ({
   onUpdateAfaStatus,
   checkers,
   onAddVoucherStock,
+  transactions = [],
+  onNavigateTab,
 }) => {
   // Orders audit state
   const [orderQuery, setOrderQuery] = useState("");
@@ -1134,6 +1141,15 @@ export const AdminOperations: React.FC<AdminOperationsProps> = ({
             </Card>
           </div>
         </div>
+      )}
+
+      {/* VIEW: PLATFORM TRANSACTIONS */}
+      {view === "transactions" && (
+        <AdminTransactions
+          transactions={transactions}
+          orders={orders}
+          onNavigateTab={onNavigateTab}
+        />
       )}
     </div>
   );

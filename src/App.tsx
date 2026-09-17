@@ -1288,6 +1288,7 @@ export default function App() {
                 view={
                   activeTab === "gateways" ||
                   activeTab === "orders-audit" ||
+                  activeTab === "transactions" ||
                   activeTab === "settlement" ||
                   activeTab === "afa-verification" ||
                   activeTab === "vouchers-stock"
@@ -1303,6 +1304,8 @@ export default function App() {
                 onUpdateAfaStatus={handleUpdateAfaStatus}
                 checkers={checkers}
                 onAddVoucherStock={handleAddVoucherStock}
+                transactions={transactions}
+                onNavigateTab={handleTabChange}
               />
             ))}
         </main>

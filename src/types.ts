@@ -109,6 +109,10 @@ export interface Transaction {
   description: string;
   status: "completed" | "pending" | "failed";
   channel: string;
+  userName?: string;
+  userRole?: "customer" | "agent" | "admin" | "storefront";
+  userId?: string;
+  recipientPhone?: string;
 }
 
 export interface ResultCheckerProduct {
