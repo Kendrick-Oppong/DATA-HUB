@@ -187,7 +187,7 @@ export const ADMIN_NAV: NavGroup[] = [
       {
         id: "orders-audit",
         altIds: ["order-monitor", "orders"],
-        label: "Order monitor",
+        label: "Orders ",
         icon: Clock,
       },
       {
