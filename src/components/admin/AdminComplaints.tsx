@@ -446,8 +446,7 @@ export const AdminComplaints: React.FC<AdminComplaintsProps> = ({
             <span>Complaints & Support Desk</span>
           </h1>
           <p className="mt-0.5 text-xs text-muted-foreground">
-            Centralized dispute resolution desk for SDH agents and direct customers.
-            Resolve gateway delays, commission payouts, tier disputes, and recharge inquiries.
+            Centralized dispute resolution desk for SDH agents and direct customers
           </p>
         </div>
 
@@ -581,7 +580,7 @@ export const AdminComplaints: React.FC<AdminComplaintsProps> = ({
               <Input
                 id="admin-complaints-search"
                 type="text"
-                placeholder="Search by ticket # (TKT-...), subject, agent/customer name, phone number, or order reference..."
+                placeholder="Search by ticket, name, phone number, or order reference..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="h-10 bg-background pl-9 text-xs"
