@@ -705,21 +705,52 @@ export default function App() {
   };
 
   const handleReplyComplaint = (ticketId: string, text: string) => {
+    const isStaff = currentRole === "admin";
+    const isAgent = currentRole === "agent";
+    const sender = isStaff ? "support_admin" : isAgent ? "agent" : "customer";
+    const senderName = isStaff
+      ? "SDH Support (Admin)"
+      : isAgent
+      ? "You (Agent)"
+      : user?.name || "Customer";
+
     const updated = complaints.map((c) => {
       if (c.id === ticketId) {
         return {
           ...c,
+          status:
+            isStaff && c.status === "open" ? ("in_progress" as const) : c.status,
           lastUpdated: "Just now",
           messages: [
             ...c.messages,
             {
               id: `msg-${Date.now()}`,
-              sender: "customer" as const,
-              senderName: user?.name || "Kojo Mensah",
+              sender: sender as any,
+              senderName,
               text,
-              timestamp: "Just now",
+              timestamp: new Date().toISOString().replace("T", " ").slice(0, 16),
             },
           ],
+        };
+      }
+      return c;
+    });
+    setComplaints(updated);
+    saveToStorage("sdh_complaints", updated);
+  };
+
+  const handleUpdateComplaintStatus = (
+    ticketId: string,
+    status: Complaint["status"],
+    priority?: Complaint["priority"]
+  ) => {
+    const updated = complaints.map((c) => {
+      if (c.id === ticketId) {
+        return {
+          ...c,
+          status,
+          ...(priority ? { priority } : {}),
+          lastUpdated: "Just now",
         };
       }
       return c;
@@ -1293,7 +1324,8 @@ export default function App() {
                   activeTab === "settlement" ||
                   activeTab === "payouts" ||
                   activeTab === "afa-verification" ||
-                  activeTab === "vouchers-stock"
+                  activeTab === "vouchers-stock" ||
+                  activeTab === "complaints"
                     ? (activeTab as any)
                     : "gateways"
                 }
@@ -1308,6 +1340,10 @@ export default function App() {
                 onAddVoucherStock={handleAddVoucherStock}
                 transactions={transactions}
                 onNavigateTab={handleTabChange}
+                complaints={complaints}
+                onReplyComplaint={handleReplyComplaint}
+                onAddComplaint={handleAddComplaint}
+                onUpdateComplaintStatus={handleUpdateComplaintStatus}
               />
             ))}
         </main>

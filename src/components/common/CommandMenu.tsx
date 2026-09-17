@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Search, X, Zap, ArrowRight, Smartphone, FileText, ShoppingBag, Shield, Wallet, BarChart3, HelpCircle, MessageSquare } from 'lucide-react';
+import { Search, X, Zap, ArrowRight, Smartphone, FileText, ShoppingBag, Shield, Wallet, BarChart3, HelpCircle, MessageSquare, Flag } from 'lucide-react';
 import { UserRole } from '../../types';
 
 interface CommandMenuProps {
@@ -71,6 +71,7 @@ export const CommandMenu: React.FC<CommandMenuProps> = ({
     { id: 'adm-gateways', label: 'Carrier Switches & Core Gateway Status', category: 'Admin Operations', icon: Shield, action: () => navigateTo('admin', 'gateways') },
     { id: 'adm-monitor', label: 'Order Monitor & Upstream Gateway Status', category: 'Admin Operations', icon: Shield, action: () => navigateTo('admin', 'orders-audit') },
     { id: 'adm-payouts', label: 'Payout Review Queue & Balances', category: 'Admin Operations', icon: Wallet, action: () => navigateTo('admin', 'settlement') },
+    { id: 'adm-complaints', label: 'Complaints & Support Tickets Desk', category: 'Admin Operations', icon: Flag, action: () => navigateTo('admin', 'complaints') },
     { id: 'adm-afa', label: 'AFA National ID Verification Desk', category: 'Admin Operations', icon: Shield, action: () => navigateTo('admin', 'afa-verification') },
     { id: 'adm-stock', label: 'Voucher Stock Inventory Management', category: 'Admin Operations', icon: FileText, action: () => navigateTo('admin', 'vouchers-stock') },
 

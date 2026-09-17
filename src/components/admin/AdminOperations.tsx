@@ -34,10 +34,12 @@ import {
   ResultCheckerProduct,
   TelecomNetwork,
   Transaction,
+  Complaint,
 } from "../../types";
 import { AdminTransactions } from "./AdminTransactions";
 import { AdminCommissions } from "./AdminCommissions";
 import { AdminPayouts } from "./AdminPayouts";
+import { AdminComplaints } from "./AdminComplaints";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Badge } from "../ui/badge";
@@ -76,7 +78,8 @@ interface AdminOperationsProps {
     | "settlement"
     | "payouts"
     | "afa-verification"
-    | "vouchers-stock";
+    | "vouchers-stock"
+    | "complaints";
   gateways: TelecomGateway[];
   onToggleGatewayStatus: (gatewayId: string) => void;
   orders: Order[];
@@ -91,6 +94,14 @@ interface AdminOperationsProps {
   onAddVoucherStock: (checkerId: string, count: number) => void;
   transactions?: Transaction[];
   onNavigateTab?: (tab: string) => void;
+  complaints?: Complaint[];
+  onReplyComplaint?: (ticketId: string, replyText: string) => void;
+  onAddComplaint?: (ticket: Complaint) => void;
+  onUpdateComplaintStatus?: (
+    ticketId: string,
+    status: Complaint["status"],
+    priority?: Complaint["priority"]
+  ) => void;
 }
 
 export const AdminOperations: React.FC<AdminOperationsProps> = ({
@@ -106,6 +117,10 @@ export const AdminOperations: React.FC<AdminOperationsProps> = ({
   onAddVoucherStock,
   transactions = [],
   onNavigateTab,
+  complaints = [],
+  onReplyComplaint = () => {},
+  onAddComplaint = () => {},
+  onUpdateComplaintStatus,
 }) => {
   // Orders audit state
   const [orderQuery, setOrderQuery] = useState("");
@@ -1110,6 +1125,18 @@ export const AdminOperations: React.FC<AdminOperationsProps> = ({
         <AdminCommissions
           orders={orders}
           onNavigateTab={onNavigateTab}
+        />
+      )}
+
+      {/* VIEW: COMPLAINTS & SUPPORT DESK */}
+      {view === "complaints" && (
+        <AdminComplaints
+          complaints={complaints}
+          onReplyComplaint={onReplyComplaint}
+          onAddComplaint={onAddComplaint}
+          onUpdateComplaintStatus={onUpdateComplaintStatus}
+          onNavigateTab={onNavigateTab}
+          orders={orders}
         />
       )}
     </div>

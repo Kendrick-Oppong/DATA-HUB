@@ -146,20 +146,29 @@ export interface Complaint {
   ticketNumber: string;
   orderReference?: string;
   category:
-  | "delivery_delay"
-  | "failed_recharge"
-  | "wrong_number"
-  | "momo_debit_no_credit"
-  | "general"
-  | "commission_payout";
+    | "delivery_delay"
+    | "failed_recharge"
+    | "wrong_number"
+    | "momo_debit_no_credit"
+    | "general"
+    | "commission_payout"
+    | "store_issue"
+    | "tier_dispute"
+    | "order_problem"
+    | "pricing_error"
+    | string;
   subject: string;
-  status: "open" | "investigating" | "resolved" | "closed";
+  status: "open" | "investigating" | "in_progress" | "resolved" | "closed";
   priority: "low" | "medium" | "high" | "urgent";
   createdAt: string;
   lastUpdated: string;
+  userType?: "agent" | "customer";
+  userName?: string;
+  userContact?: string;
+  assignedTo?: string;
   messages: {
     id: string;
-    sender: "customer" | "agent" | "support_admin";
+    sender: "customer" | "agent" | "support_admin" | "admin" | "support" | string;
     senderName: string;
     text: string;
     timestamp: string;
