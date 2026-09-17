@@ -21,7 +21,7 @@ import { AppTheme, UserAccount, UserRole } from "../../types";
 import { Button } from "../ui/button";
 import { Badge } from "../ui/badge";
 import { themeOptions } from "../../lib/themes";
-import logoImg from "../../assets/logo.png";
+import { getLogoForTheme } from "../../lib/themes";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -37,13 +37,13 @@ import {
 interface PublicNavbarProps {
   user: UserAccount | null;
   activeTab:
-    | "home"
-    | "services"
-    | "agent"
-    | "track"
-    | "faq"
-    | "about"
-    | "contact";
+  | "home"
+  | "services"
+  | "agent"
+  | "track"
+  | "faq"
+  | "about"
+  | "contact";
   onNavigateToPublic: (tab: string) => void;
   onNavigateToAuth: (mode?: "sign-in" | "sign-up") => void;
   onNavigateToDashboard: (role: UserRole) => void;
@@ -104,19 +104,19 @@ export const PublicNavbar: React.FC<PublicNavbarProps> = ({
     badge?: string;
     icon: React.ComponentType<{ className?: string }>;
   }[] = [
-    { id: "home", label: "Home", icon: Home },
-    { id: "services", label: "Services", icon: Layers3 },
-    {
-      id: "agent",
-      label: "Agent Program",
-      badge: "Earn MoMo",
-      icon: Store,
-    },
-    { id: "track", label: "Track Order", icon: Search },
-    { id: "faq", label: "FAQ", icon: HelpCircle },
-    { id: "about", label: "About NOC", icon: Info },
-    { id: "contact", label: "Contact", icon: PhoneCall },
-  ];
+      { id: "home", label: "Home", icon: Home },
+      { id: "services", label: "Services", icon: Layers3 },
+      {
+        id: "agent",
+        label: "Agent Program",
+        badge: "Earn MoMo",
+        icon: Store,
+      },
+      { id: "track", label: "Track Order", icon: Search },
+      { id: "faq", label: "FAQ", icon: HelpCircle },
+      { id: "about", label: "About NOC", icon: Info },
+      { id: "contact", label: "Contact", icon: PhoneCall },
+    ];
 
   const handleNavClick = (id: PublicNavbarProps["activeTab"]) => {
     onNavigateToPublic(id);
@@ -141,7 +141,7 @@ export const PublicNavbar: React.FC<PublicNavbarProps> = ({
             className="group h-auto cursor-pointer gap-2.5 rounded-lg p-0 text-left hover:!bg-transparent"
           >
             <div className="flex h-10 shrink-0 items-center justify-center p-1 transition-transform group-hover:scale-105">
-              <img src={logoImg} alt="Smart Data Hub Logo" className="h-8 w-auto object-contain" />
+              <img src={getLogoForTheme(theme)} alt="Smart Data Hub Logo" className="h-8 w-auto object-contain" />
             </div>
 
             <div>
@@ -174,11 +174,10 @@ export const PublicNavbar: React.FC<PublicNavbarProps> = ({
                   variant={isActive ? "default" : "ghost"}
                   size="sm"
                   onClick={() => handleNavClick(item.id)}
-                  className={`h-auto rounded-full px-2.5 py-1.5 text-[11px] font-semibold ${
-                    isActive
-                      ? "font-bold shadow-sm"
-                      : "text-muted-foreground hover:text-foreground"
-                  }`}
+                  className={`h-auto rounded-full px-2.5 py-1.5 text-[11px] font-semibold ${isActive
+                    ? "font-bold shadow-sm"
+                    : "text-muted-foreground hover:text-foreground"
+                    }`}
                 >
                   <Icon className="size-3.5" />
 
@@ -269,10 +268,10 @@ export const PublicNavbar: React.FC<PublicNavbarProps> = ({
                 <span className="font-black text-xs tracking-tight uppercase">
                   {user.name
                     ? user.name
-                        .split(" ")
-                        .map((n) => n[0])
-                        .slice(0, 2)
-                        .join("")
+                      .split(" ")
+                      .map((n) => n[0])
+                      .slice(0, 2)
+                      .join("")
                     : "U"}
                 </span>
                 <span className="absolute -bottom-0.5 -right-0.5 flex size-2.5">
@@ -289,10 +288,10 @@ export const PublicNavbar: React.FC<PublicNavbarProps> = ({
                   <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-primary/15 font-black text-sm uppercase text-primary">
                     {user.name
                       ? user.name
-                          .split(" ")
-                          .map((n) => n[0])
-                          .slice(0, 2)
-                          .join("")
+                        .split(" ")
+                        .map((n) => n[0])
+                        .slice(0, 2)
+                        .join("")
                       : "U"}
                   </div>
                   <div className="min-w-0 flex-1">
@@ -371,9 +370,8 @@ export const PublicNavbar: React.FC<PublicNavbarProps> = ({
 
       {/* Mobile Menu */}
       <div
-        className={`absolute left-0 right-0 top-full z-50 overflow-hidden transition-all duration-300 ease-in-out xl:hidden ${
-          mobileMenuOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
-        }`}
+        className={`absolute left-0 right-0 top-full z-50 overflow-hidden transition-all duration-300 ease-in-out xl:hidden ${mobileMenuOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
+          }`}
       >
         <div
           ref={mobileMenuRef}
@@ -390,11 +388,10 @@ export const PublicNavbar: React.FC<PublicNavbarProps> = ({
                   variant={isActive ? "default" : "ghost"}
                   size="sm"
                   onClick={() => handleNavClick(item.id)}
-                  className={`h-auto justify-start rounded-xl p-2.5 text-xs font-bold ${
-                    isActive
-                      ? "shadow-xs"
-                      : "text-muted-foreground hover:text-foreground"
-                  }`}
+                  className={`h-auto justify-start rounded-xl p-2.5 text-xs font-bold ${isActive
+                    ? "shadow-xs"
+                    : "text-muted-foreground hover:text-foreground"
+                    }`}
                 >
                   <Icon className="size-4" />
                   <span>{item.label}</span>

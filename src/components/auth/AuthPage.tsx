@@ -20,7 +20,7 @@ import { SignUpView } from "./SignUpView";
 import { OtpView } from "./OtpView";
 import { ForgotPasswordView } from "./ForgotPasswordView";
 import { NewPasswordView } from "./NewPasswordView";
-import logoImg from "../../assets/logo.png";
+import { getLogoFromDOM } from "../../lib/themes";
 
 export interface AuthSuccessPayload {
   name: string;
@@ -218,9 +218,8 @@ export const AuthPage: React.FC<AuthPageProps> = ({
           : "Customer Account",
         phone: trimmedIdentifier,
         role: "customer",
-        email: `${
-          trimmedIdentifier.replace(/\D/g, "") || "user"
-        }@smartdatahub.gh`,
+        email: `${trimmedIdentifier.replace(/\D/g, "") || "user"
+          }@smartdatahub.gh`,
         ghanaCard: "GHA-721948192-3",
       });
     }, 550);
@@ -498,7 +497,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                   onClick={onBackToPublic}
                   className="flex items-center gap-2 cursor-pointer group"
                 >
-                  <img src={logoImg} alt="Smart Data Hub Logo" className="h-9 w-auto object-contain transition-transform group-hover:scale-105" />
+                  <img src={getLogoFromDOM()} alt="Smart Data Hub Logo" className="h-9 w-auto object-contain transition-transform group-hover:scale-105" />
                   <div>
                     <span className="text-sm font-black tracking-tight text-foreground block">Smart Data Hub</span>
                     <span className="text-[10px] text-muted-foreground block -mt-0.5">Telecom &amp; Digital Services</span>
@@ -535,8 +534,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                       "Create your account and start using Smart Data Hub."}
 
                     {mode === "otp" &&
-                      `Enter the 6-digit verification code sent to ${
-                        otpPhone || "your mobile number"
+                      `Enter the 6-digit verification code sent to ${otpPhone || "your mobile number"
                       }.`}
 
                     {mode === "forgot-password" &&

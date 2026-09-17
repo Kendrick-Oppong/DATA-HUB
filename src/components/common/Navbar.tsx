@@ -17,7 +17,7 @@ import {
 import { UserRole, AppTheme, UserAccount } from "../../types";
 import { SignalRail } from "./SignalRail";
 import { themeOptions, getThemeOption } from "../../lib/themes";
-import logoImg from "../../assets/logo.png";
+import { getLogoForTheme } from "../../lib/themes";
 
 import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
@@ -143,7 +143,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               className="group flex cursor-pointer items-center gap-2.5"
             >
               <div className="flex h-10 items-center justify-center  p-1 transition-transform group-hover:scale-105">
-                <img src={logoImg} alt="Smart Data Hub Logo" className="h-8 w-auto object-contain" />
+                <img src={getLogoForTheme(theme)} alt="Smart Data Hub Logo" className="h-8 w-auto object-contain" />
               </div>
 
               <div className="hidden sm:block">
@@ -369,11 +369,10 @@ export const Navbar: React.FC<NavbarProps> = ({
 
                   <DropdownMenuItem
                     onClick={() => onRoleChange("customer")}
-                    className={`cursor-pointer gap-2.5 rounded-lg text-xs font-semibold ${
-                      currentRole === "customer"
-                        ? "bg-primary/10 font-bold text-primary"
-                        : ""
-                    }`}
+                    className={`cursor-pointer gap-2.5 rounded-lg text-xs font-semibold ${currentRole === "customer"
+                      ? "bg-primary/10 font-bold text-primary"
+                      : ""
+                      }`}
                   >
                     Customer Dashboard
                     {currentRole === "customer" && (
@@ -383,11 +382,10 @@ export const Navbar: React.FC<NavbarProps> = ({
 
                   <DropdownMenuItem
                     onClick={() => onRoleChange("agent")}
-                    className={`cursor-pointer gap-2.5 rounded-lg text-xs font-semibold ${
-                      currentRole === "agent"
-                        ? "bg-primary/10 font-bold text-primary"
-                        : ""
-                    }`}
+                    className={`cursor-pointer gap-2.5 rounded-lg text-xs font-semibold ${currentRole === "agent"
+                      ? "bg-primary/10 font-bold text-primary"
+                      : ""
+                      }`}
                   >
                     Agent Workspace
                     {currentRole === "agent" && (
@@ -397,11 +395,10 @@ export const Navbar: React.FC<NavbarProps> = ({
 
                   <DropdownMenuItem
                     onClick={() => onRoleChange("admin")}
-                    className={`cursor-pointer gap-2.5 rounded-lg text-xs font-semibold ${
-                      currentRole === "admin"
-                        ? "bg-primary/10 font-bold text-primary"
-                        : ""
-                    }`}
+                    className={`cursor-pointer gap-2.5 rounded-lg text-xs font-semibold ${currentRole === "admin"
+                      ? "bg-primary/10 font-bold text-primary"
+                      : ""
+                      }`}
                   >
                     <span className="flex items-center gap-1.5">
                       Admin NOC Console
@@ -417,11 +414,10 @@ export const Navbar: React.FC<NavbarProps> = ({
 
                   <DropdownMenuItem
                     onClick={() => onRoleChange("storefront")}
-                    className={`cursor-pointer gap-2.5 rounded-lg text-xs font-semibold ${
-                      currentRole === "storefront"
-                        ? "bg-primary/10 font-bold text-primary"
-                        : ""
-                    }`}
+                    className={`cursor-pointer gap-2.5 rounded-lg text-xs font-semibold ${currentRole === "storefront"
+                      ? "bg-primary/10 font-bold text-primary"
+                      : ""
+                      }`}
                   >
                     Kofi Telecom Storefront
                     {currentRole === "storefront" && (
@@ -431,11 +427,10 @@ export const Navbar: React.FC<NavbarProps> = ({
 
                   <DropdownMenuItem
                     onClick={() => onRoleChange("public")}
-                    className={`cursor-pointer gap-2.5 rounded-lg text-xs font-semibold ${
-                      currentRole === "public"
-                        ? "bg-primary/10 font-bold text-primary"
-                        : ""
-                    }`}
+                    className={`cursor-pointer gap-2.5 rounded-lg text-xs font-semibold ${currentRole === "public"
+                      ? "bg-primary/10 font-bold text-primary"
+                      : ""
+                      }`}
                   >
                     Public Marketing Site
                     {currentRole === "public" && (

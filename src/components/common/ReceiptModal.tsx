@@ -15,7 +15,7 @@ import {
   ChevronRight,
 } from "lucide-react";
 import { Order } from "../../types";
-import logoImg from "../../assets/logo.png";
+import { getLogoFromDOM } from "../../lib/themes";
 import {
   Dialog,
   DialogContent,
@@ -142,7 +142,7 @@ export const ReceiptModal: React.FC<ReceiptModalProps> = ({
           <div className="relative flex items-start justify-between gap-4">
             <div className="flex items-center gap-3">
               <div className="flex h-11 shrink-0 items-center justify-center p-1  ">
-                <img src={logoImg} alt="Smart Data Hub Logo" className="h-9 w-auto object-contain" />
+                <img src={getLogoFromDOM()} alt="Smart Data Hub Logo" className="h-9 w-auto object-contain" />
               </div>
 
               <div className="min-w-0">
@@ -392,15 +392,14 @@ export const ReceiptModal: React.FC<ReceiptModalProps> = ({
                           {/* Left: connector + dot */}
                           <div className="flex flex-col items-center shrink-0 w-6">
                             <div
-                              className={`relative flex size-6 items-center justify-center rounded-full border-2 shrink-0 transition-all ${
-                                isCompleted
-                                  ? "bg-primary border-primary text-primary-foreground"
-                                  : isCurrent
-                                    ? "bg-background border-primary text-primary"
-                                    : isFailed
-                                      ? "bg-red-500/10 border-red-500 text-red-500"
-                                      : "bg-muted border-border text-muted-foreground"
-                              }`}
+                              className={`relative flex size-6 items-center justify-center rounded-full border-2 shrink-0 transition-all ${isCompleted
+                                ? "bg-primary border-primary text-primary-foreground"
+                                : isCurrent
+                                  ? "bg-background border-primary text-primary"
+                                  : isFailed
+                                    ? "bg-red-500/10 border-red-500 text-red-500"
+                                    : "bg-muted border-border text-muted-foreground"
+                                }`}
                             >
                               {isCurrent && (
                                 <span className="absolute inset-0 rounded-full animate-ping bg-primary/20" />
@@ -419,9 +418,8 @@ export const ReceiptModal: React.FC<ReceiptModalProps> = ({
                             </div>
                             {!isLast && (
                               <div
-                                className={`w-0.5 flex-1 my-1 min-h-5 ${
-                                  isCompleted ? "bg-primary" : "bg-border"
-                                }`}
+                                className={`w-0.5 flex-1 my-1 min-h-5 ${isCompleted ? "bg-primary" : "bg-border"
+                                  }`}
                               />
                             )}
                           </div>
@@ -431,15 +429,14 @@ export const ReceiptModal: React.FC<ReceiptModalProps> = ({
                           >
                             <div className="flex flex-wrap items-center justify-between gap-2">
                               <p
-                                className={`text-xs font-bold ${
-                                  isCompleted
-                                    ? "text-foreground"
-                                    : isCurrent
-                                      ? "text-primary"
-                                      : isFailed
-                                        ? "text-red-600"
-                                        : "text-muted-foreground"
-                                }`}
+                                className={`text-xs font-bold ${isCompleted
+                                  ? "text-foreground"
+                                  : isCurrent
+                                    ? "text-primary"
+                                    : isFailed
+                                      ? "text-red-600"
+                                      : "text-muted-foreground"
+                                  }`}
                               >
                                 {item.step}
                                 {isCurrent && (
@@ -450,9 +447,8 @@ export const ReceiptModal: React.FC<ReceiptModalProps> = ({
                                 )}
                               </p>
                               <span
-                                className={`text-[9px] font-semibold text-muted-foreground tabular-nums ${
-                                  isPending ? "italic" : ""
-                                }`}
+                                className={`text-[9px] font-semibold text-muted-foreground tabular-nums ${isPending ? "italic" : ""
+                                  }`}
                               >
                                 {item.timestamp}
                               </span>
