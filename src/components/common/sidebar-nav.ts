@@ -22,6 +22,10 @@ import {
   CreditCard,
   HelpCircle,
   MessageSquare,
+  Flag,
+  Coins,
+  Download,
+  AlertTriangle,
 } from "lucide-react";
 
 export type NavItem = {
@@ -44,8 +48,7 @@ export const CUSTOMER_NAV: NavGroup[] = [
     items: [
       {
         id: "overview",
-        altIds: ["dashboard"],
-        label: "Dashboard",
+        label: "Overview",
         icon: Home,
       },
       {
@@ -100,8 +103,7 @@ export const AGENT_NAV: NavGroup[] = [
     items: [
       {
         id: "overview",
-        altIds: ["dashboard"],
-        label: "Dashboard",
+        label: "Overview",
         icon: Home,
       },
       {
@@ -174,43 +176,102 @@ export const AGENT_NAV: NavGroup[] = [
 
 export const ADMIN_NAV: NavGroup[] = [
   {
-    group: "Operations & Gateways",
+    group: "Operations",
     items: [
       {
-        id: "gateways",
+        id: "overview",
         altIds: ["dashboard"],
-        label: "Carrier Gateways & Latency",
-        icon: Server,
-        badge: "Live",
+        label: "Overview",
+        icon: Home,
       },
       {
         id: "orders-audit",
-        altIds: ["order-monitor"],
-        label: "Orders Audit & Dispatch",
+        altIds: ["order-monitor", "orders"],
+        label: "Order monitor",
         icon: Clock,
       },
       {
+        id: "transactions",
+        label: "Transactions",
+        icon: CreditCard,
+      },
+      {
+        id: "commissions",
+        label: "Commissions",
+        icon: Coins,
+      },
+      {
         id: "settlement",
-        altIds: ["payouts"],
-        label: "Settlement & Balances",
-        icon: DollarSign,
+        altIds: ["payouts", "withdrawals"],
+        label: "Payouts",
+        icon: Download,
+      },
+      {
+        id: "complaints",
+        label: "Complaints",
+        icon: Flag,
       },
     ],
   },
   {
-    group: "Services Administration",
+    group: "Services",
     items: [
       {
         id: "afa-verification",
-        altIds: ["afa-admin"],
-        label: "AFA Approvals",
+        altIds: ["afa", "afa-admin"],
+        label: "AFA",
         icon: ShieldCheck,
       },
       {
         id: "vouchers-stock",
-        altIds: ["checkers-admin"],
-        label: "Voucher Stock (WAEC/BECE)",
+        altIds: ["checkers", "checkers-admin"],
+        label: "Result Checkers",
         icon: GraduationCap,
+      },
+      {
+        id: "sms",
+        label: "SMS / Sender IDs",
+        icon: Send,
+      },
+    ],
+  },
+  {
+    group: "Manage",
+    items: [
+      {
+        id: "failed-beneficiaries",
+        label: "Beneficiary tracker",
+        icon: AlertTriangle,
+      },
+      {
+        id: "agents",
+        label: "All Agents",
+        icon: ShoppingBag,
+      },
+      {
+        id: "users",
+        label: "Users",
+        icon: Users,
+      },
+      {
+        id: "referrals",
+        label: "Referrals & Tiers",
+        icon: HelpCircle,
+      },
+      {
+        id: "notifications",
+        label: "Notifications",
+        icon: Bell,
+      },
+      {
+        id: "pricing",
+        label: "Pricing",
+        icon: Sliders,
+      },
+      {
+        id: "settings",
+        label: "Settings",
+        icon: Settings,
       },
     ],
   },

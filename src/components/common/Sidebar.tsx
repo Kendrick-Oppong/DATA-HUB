@@ -139,10 +139,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
   const roleLabel =
     currentRole === "admin"
-      ? "NOC Admin"
+      ? "Admin Portal"
       : currentRole === "agent"
         ? "Agent Portal"
-        : "Customer Account";
+        : "Customer Portal";
 
   // Shared Navigation list renderer
   const renderNavItems = (collapsed = false) => (
