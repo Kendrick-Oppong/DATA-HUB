@@ -40,6 +40,7 @@ import { AdminTransactions } from "./AdminTransactions";
 import { AdminCommissions } from "./AdminCommissions";
 import { AdminPayouts } from "./AdminPayouts";
 import { AdminComplaints } from "./AdminComplaints";
+import { AdminCheckers } from "./AdminCheckers";
 import { AdminAfa } from "./AdminAfa";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
@@ -72,15 +73,15 @@ import { SignalRail } from "../common/SignalRail";
 
 interface AdminOperationsProps {
   view:
-    | "gateways"
-    | "orders-audit"
-    | "transactions"
-    | "commissions"
-    | "settlement"
-    | "payouts"
-    | "afa-verification"
-    | "vouchers-stock"
-    | "complaints";
+  | "gateways"
+  | "orders-audit"
+  | "transactions"
+  | "commissions"
+  | "settlement"
+  | "payouts"
+  | "afa-verification"
+  | "vouchers-stock"
+  | "complaints";
   gateways: TelecomGateway[];
   onToggleGatewayStatus: (gatewayId: string) => void;
   orders: Order[];
@@ -119,8 +120,8 @@ export const AdminOperations: React.FC<AdminOperationsProps> = ({
   transactions = [],
   onNavigateTab,
   complaints = [],
-  onReplyComplaint = () => {},
-  onAddComplaint = () => {},
+  onReplyComplaint = () => { },
+  onAddComplaint = () => { },
   onUpdateComplaintStatus,
 }) => {
   // Orders audit state
@@ -751,13 +752,12 @@ export const AdminOperations: React.FC<AdminOperationsProps> = ({
                         <TableCell className="text-xs font-medium text-foreground">
                           <div className="flex items-center gap-1.5">
                             <span
-                              className={`px-1.5 py-0.2 rounded text-[9px] font-black uppercase ${
-                                ord.network === "MTN"
-                                  ? "bg-amber-400 text-amber-950"
-                                  : ord.network === "Telecel"
-                                    ? "bg-red-600 text-white"
-                                    : "bg-blue-600 text-white"
-                              }`}
+                              className={`px-1.5 py-0.2 rounded text-[9px] font-black uppercase ${ord.network === "MTN"
+                                ? "bg-amber-400 text-amber-950"
+                                : ord.network === "Telecel"
+                                  ? "bg-red-600 text-white"
+                                  : "bg-blue-600 text-white"
+                                }`}
                             >
                               {ord.network.slice(0, 3)}
                             </span>
@@ -862,9 +862,9 @@ export const AdminOperations: React.FC<AdminOperationsProps> = ({
                     {filteredOrders.length === 0
                       ? 0
                       : Math.min(
-                          currentPage * ORDERS_PER_PAGE,
-                          filteredOrders.length,
-                        )}
+                        currentPage * ORDERS_PER_PAGE,
+                        filteredOrders.length,
+                      )}
                   </span>{" "}
                   of{" "}
                   <span className="font-bold text-foreground">
@@ -897,74 +897,14 @@ export const AdminOperations: React.FC<AdminOperationsProps> = ({
         />
       )}
 
-      {/* VIEW: VOUCHERS INVENTORY WITH SEARCH & INSTANT RESTOCK */}
+      {/* VIEW: RESULTS CHECKER DESK */}
       {view === "vouchers-stock" && (
-        <div className="space-y-6">
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-4 border-b border-border">
-            <div>
-              <h1 className="text-2xl font-extrabold text-foreground tracking-tight flex items-center gap-2">
-                <GraduationCap className="w-6 h-6 text-purple-600" />
-                <span>Results Checker Stock & Inventory Allocation</span>
-              </h1>
-              <p className="text-xs text-muted-foreground mt-0.5">
-                Manage live batch numbers from WAEC, Ministry of Education, and
-                University admissions.
-              </p>
-            </div>
-            <div className="relative w-64">
-              <Search className="absolute left-3 top-2.5 w-3.5 h-3.5 text-muted-foreground" />
-              <Input
-                type="text"
-                placeholder="Search examination body..."
-                value={voucherSearch}
-                onChange={(e) => setVoucherSearch(e.target.value)}
-                className="pl-8 h-9 text-xs"
-              />
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {filteredVouchers.map((chk) => (
-              <Card key={chk.id} className="border-border shadow-xs space-y-4">
-                <CardHeader className="pb-2">
-                  <div className="flex justify-between items-start">
-                    <div>
-                      <CardTitle className="text-sm font-bold text-foreground">
-                        {chk.title}
-                      </CardTitle>
-                      <CardDescription className="text-[10px] uppercase font-semibold text-muted-foreground">
-                        {chk.examBody} Portal
-                      </CardDescription>
-                    </div>
-                    <Badge
-                      variant="outline"
-                      className="text-emerald-600 dark:text-emerald-400 font-bold text-xs tabular-nums"
-                    >
-                      {chk.stockCount} Cards In Stock
-                    </Badge>
-                  </div>
-                </CardHeader>
-
-                <CardContent className="space-y-3">
-                  <div className="flex justify-between items-center text-xs pt-2 border-t border-border">
-                    <span className="text-muted-foreground font-medium">
-                      Unit Retail: GH₵ {chk.price.toFixed(2)}
-                    </span>
-                    <Button
-                      variant="default"
-                      size="sm"
-                      onClick={() => onAddVoucherStock(chk.id, 50)}
-                      className="font-bold text-xs gap-1.5"
-                    >
-                      <Plus className="w-3.5 h-3.5" />
-                      <span>Add 50 Cards to Batch</span>
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
+        <AdminCheckers
+          checkers={checkers}
+          orders={orders}
+          onAddVoucherStock={onAddVoucherStock}
+          onNavigateTab={onNavigateTab}
+        />
       )}
 
       {/* VIEW: SETTLEMENT / AGENT PAYOUTS */}
