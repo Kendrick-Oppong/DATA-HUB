@@ -858,55 +858,81 @@ export const AgentCustomersView: React.FC<AgentCustomersViewProps> = ({
         </div>
       </Card>
 
-      {/* CUSTOMER DETAIL MODAL DIALOG (Exact Match of AgentTransactionsWallet Detail Modal) */}
+      {/* CUSTOMER DETAIL MODAL DIALOG (Match Itemized Profit & Commissions Ledger Modal) */}
       <Dialog
         open={!!selectedCust}
         onOpenChange={(open) => !open && setSelectedCust(null)}
       >
         {selectedCust && (
-          <DialogContent className="sm:max-w-md border-border bg-card">
-            <DialogHeader>
-              <DialogTitle className="flex items-center gap-2 text-base font-extrabold text-foreground">
-                <Users className="size-5 text-primary" />
-                <span>Customer Profile Details</span>
-              </DialogTitle>
-              <DialogDescription className="text-xs">
-                Detailed purchase history and carrier breakdown for{" "}
-                <span className="font-bold text-foreground">
-                  {selectedCust.name}
+          <DialogContent className="flex max-h-[90vh] sm:max-w-md flex-col gap-0 overflow-hidden rounded-3xl border border-border bg-card p-0 shadow-2xl">
+            <DialogHeader className="relative shrink-0 overflow-hidden border-b border-border bg-gradient-to-br from-primary/10 via-card to-amber-500/10 p-5 pr-10 sm:pr-12">
+              <div className="flex items-center gap-3">
+                <span
+                  className={`flex size-11 shrink-0 items-center justify-center rounded-2xl font-black text-xs shadow-sm ${
+                    selectedCust.net === "MTN"
+                      ? "bg-amber-400 text-amber-950"
+                      : selectedCust.net === "Telecel"
+                        ? "bg-red-600 text-white"
+                        : "bg-blue-600 text-white"
+                  }`}
+                >
+                  {selectedCust.net}
                 </span>
-              </DialogDescription>
+
+                <div className="min-w-0">
+                  <DialogTitle className="text-base font-extrabold text-foreground truncate">
+                    {selectedCust.name}
+                  </DialogTitle>
+                  <DialogDescription className="text-xs text-muted-foreground mt-0.5">
+                    Customer Profile Audit
+                  </DialogDescription>
+                </div>
+              </div>
             </DialogHeader>
 
-            <div className="space-y-4 py-2">
-              <div className="rounded-xl border border-border bg-muted/30 p-3 space-y-2">
-                <div className="flex justify-between items-center text-xs">
+            <div className="p-6 space-y-4 text-xs">
+              {/* Status Callout */}
+              <div className="p-3 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-between">
+                <span className="font-bold text-emerald-800 dark:text-emerald-300 flex items-center gap-1.5">
+                  <CheckCircle2 className="size-4 text-emerald-600 dark:text-emerald-400" />
+                  {selectedCust.status === "active"
+                    ? "Active Customer"
+                    : "Inactive Customer"}
+                </span>
+                <span className="font-black text-emerald-600 dark:text-emerald-400 text-sm">
+                  {selectedCust.ordersCount} orders
+                </span>
+              </div>
+
+              {/* Details Breakdown */}
+              <div className="space-y-2.5 rounded-2xl border border-border bg-muted/20 p-4">
+                <div className="flex justify-between items-center">
                   <span className="text-muted-foreground">Customer Name</span>
                   <span className="font-bold text-foreground">
                     {selectedCust.name}
                   </span>
                 </div>
-                <div className="flex justify-between items-center text-xs">
+                <div className="flex justify-between items-center">
                   <span className="text-muted-foreground">Mobile Number</span>
                   <span className="font-mono font-bold text-foreground">
                     {selectedCust.phone}
                   </span>
                 </div>
-                <div className="flex justify-between items-center text-xs">
+                <div className="flex justify-between items-center">
                   <span className="text-muted-foreground">Primary Carrier</span>
-                  <Badge variant="outline" className="font-bold text-xs">
+                  <span className="font-bold text-foreground">
                     {selectedCust.net}
-                  </Badge>
+                  </span>
                 </div>
-                <div className="flex justify-between items-center text-xs">
+                <div className="flex justify-between items-center">
                   <span className="text-muted-foreground">
                     Total Orders Placed
                   </span>
                   <span className="font-bold text-foreground">
-                    {selectedCust.ordersCount} orders
+                    {selectedCust.ordersCount}
                   </span>
                 </div>
-                <div className="flex justify-between items-center text-xs">
+                <div className="pt-2 border-t border-border flex justify-between items-center">
                   <span className="text-muted-foreground">
                     Total Cumulative Spent
                   </span>
@@ -914,37 +940,24 @@ export const AgentCustomersView: React.FC<AgentCustomersViewProps> = ({
                     GH₵ {selectedCust.totalSpent.toFixed(2)}
                   </span>
                 </div>
-                <div className="flex justify-between items-center text-xs">
+                <div className="flex justify-between items-center">
                   <span className="text-muted-foreground">Last Order Date</span>
                   <span className="font-semibold text-foreground">
                     {selectedCust.lastOrderDate}
                   </span>
                 </div>
               </div>
-            </div>
 
-            <DialogFooter className="gap-2 sm:gap-0">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setSelectedCust(null)}
-                className="text-xs font-bold"
-              >
-                Close
-              </Button>
-              <Button
-                size="sm"
-                onClick={() => {
-                  const phone = selectedCust.phone;
-                  setSelectedCust(null);
-                  if (onNavigateTab) onNavigateTab("bulk-sms");
-                }}
-                className="text-xs font-bold gap-1.5 bg-primary text-primary-foreground"
-              >
-                <Send className="size-3.5" />
-                <span>Send SMS Outreach</span>
-              </Button>
-            </DialogFooter>
+              {/* Action Buttons */}
+              <div className="flex items-center gap-2 pt-2">
+                <Button
+                  className="flex-1 rounded-xl text-xs font-bold cursor-pointer"
+                  onClick={() => setSelectedCust(null)}
+                >
+                  Close
+                </Button>
+              </div>
+            </div>
           </DialogContent>
         )}
       </Dialog>

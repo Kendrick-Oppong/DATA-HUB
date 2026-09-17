@@ -765,130 +765,132 @@ export const AgentTransactionsWallet: React.FC<
         open={!!selectedTx}
         onOpenChange={(open) => !open && setSelectedTx(null)}
       >
-        <DialogContent className="max-w-md rounded-3xl p-6">
-          <DialogHeader className="pb-3 border-b border-border">
-            <DialogTitle className="text-lg font-extrabold text-foreground flex items-center gap-2">
-              <Receipt className="size-5 text-primary" />
-              <span>Transaction Receipt</span>
-            </DialogTitle>
-            <DialogDescription className="text-xs">
-              Audited electronic ledger record from the Smart Data Hub switch
-            </DialogDescription>
-          </DialogHeader>
-
+        <DialogContent className="flex max-h-[90vh] sm:max-w-md flex-col gap-0 overflow-hidden rounded-3xl border border-border bg-card p-0 shadow-2xl">
           {selectedTx && (
-            <div className="space-y-4 py-2 text-xs">
-              <div className="p-4 rounded-2xl bg-muted/40 border border-border text-center space-y-1">
-                <span className="text-[10px] uppercase font-bold text-muted-foreground block">
-                  Amount Moved
-                </span>
-                <span
-                  className={`text-3xl font-black tabular-nums ${
-                    selectedTx.type === "credit"
-                      ? "text-emerald-600 dark:text-emerald-400"
-                      : "text-foreground"
-                  }`}
-                >
-                  {selectedTx.type === "credit" ? "+" : "−"}GH₵{" "}
-                  {selectedTx.amount.toFixed(2)}
-                </span>
-                <div className="pt-1">
-                  <Badge
-                    variant="outline"
-                    className={`text-[10px] font-bold ${
-                      selectedTx.status === "completed"
-                        ? "bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border-emerald-500/30"
-                        : "bg-amber-500/10 text-amber-700 border-amber-500/30"
+            <>
+              <DialogHeader className="relative shrink-0 overflow-hidden border-b border-border bg-gradient-to-br from-primary/10 via-card to-amber-500/10 p-5 pr-10 sm:pr-12">
+                <div className="flex items-center gap-3">
+                  <span
+                    className={`flex size-11 shrink-0 items-center justify-center rounded-2xl font-black text-xs shadow-sm ${
+                      selectedTx.type === "credit"
+                        ? "bg-emerald-500 text-white"
+                        : "bg-red-500 text-white"
                     }`}
                   >
-                    {selectedTx.status.toUpperCase()}
-                  </Badge>
+                    {selectedTx.type === "credit" ? "+" : "−"}
+                  </span>
+
+                  <div className="min-w-0">
+                    <DialogTitle className="text-base font-extrabold text-foreground truncate">
+                      {selectedTx.reference}
+                    </DialogTitle>
+                    <DialogDescription className="text-xs text-muted-foreground mt-0.5">
+                      {selectedTx.category.replace("_", " ")} Transaction Audit
+                    </DialogDescription>
+                  </div>
+                </div>
+              </DialogHeader>
+
+              <div className="p-6 space-y-4 text-xs">
+                {/* Status Callout */}
+                <div className="p-3 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-between">
+                  <span className="font-bold text-emerald-800 dark:text-emerald-300 flex items-center gap-1.5">
+                    <CheckCircle2 className="size-4 text-emerald-600 dark:text-emerald-400" />
+                    {selectedTx.status === "completed"
+                      ? "Settled & Confirmed"
+                      : selectedTx.status === "pending"
+                        ? "Processing"
+                        : "Transaction Failed"}
+                  </span>
+                  <span
+                    className={`font-black text-sm ${
+                      selectedTx.type === "credit"
+                        ? "text-emerald-600 dark:text-emerald-400"
+                        : "text-foreground"
+                    }`}
+                  >
+                    {selectedTx.type === "credit" ? "+" : "−"}GH₵{" "}
+                    {selectedTx.amount.toFixed(2)}
+                  </span>
+                </div>
+
+                {/* Details Breakdown */}
+                <div className="space-y-2.5 rounded-2xl border border-border bg-muted/20 p-4">
+                  <div className="flex justify-between items-center">
+                    <span className="text-muted-foreground">
+                      Transaction Category
+                    </span>
+                    <span className="font-bold text-foreground capitalize">
+                      {selectedTx.category.replace("_", " ")}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-muted-foreground">
+                      Payment Channel
+                    </span>
+                    <span className="font-bold text-foreground">
+                      {selectedTx.channel || "SDH Switch"}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-muted-foreground">
+                      Transaction Date
+                    </span>
+                    <span className="font-semibold text-foreground">
+                      {selectedTx.date}
+                    </span>
+                  </div>
+                  <div className="pt-2 border-t border-border flex justify-between items-center">
+                    <span className="text-muted-foreground">
+                      Transaction Amount
+                    </span>
+                    <span
+                      className={`font-semibold text-foreground ${
+                        selectedTx.type === "credit"
+                          ? "text-emerald-600 dark:text-emerald-400"
+                          : ""
+                      }`}
+                    >
+                      {selectedTx.type === "credit" ? "+" : "−"}GH₵{" "}
+                      {selectedTx.amount.toFixed(2)}
+                    </span>
+                  </div>
+                  {selectedTx.fee && selectedTx.fee > 0 && (
+                    <div className="flex justify-between items-center">
+                      <span className="text-muted-foreground">
+                        Processing Fee
+                      </span>
+                      <span className="font-semibold text-foreground">
+                        −GH₵ {selectedTx.fee.toFixed(2)}
+                      </span>
+                    </div>
+                  )}
+                  <div className="pt-2 border-t border-border flex justify-between items-center">
+                    <span className="font-bold text-foreground">
+                      Balance After Transaction
+                    </span>
+                    <span className="font-black text-foreground text-sm">
+                      GH₵ {(selectedTx.balanceAfter || 0).toFixed(2)}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Action Buttons */}
+                <div className="flex items-center gap-2 pt-2">
+                  <Button
+                    className="flex-1 rounded-xl text-xs font-bold cursor-pointer"
+                    onClick={() => setSelectedTx(null)}
+                  >
+                    Close
+                  </Button>
                 </div>
               </div>
-
-              <div className="space-y-2.5 divide-y divide-border/60">
-                <div className="flex justify-between pt-2">
-                  <span className="text-muted-foreground font-semibold">
-                    Reference ID
-                  </span>
-                  <span className="font-bold text-foreground">
-                    {selectedTx.reference}
-                  </span>
-                </div>
-
-                <div className="flex justify-between pt-2">
-                  <span className="text-muted-foreground font-semibold">
-                    Category
-                  </span>
-                  <span className="font-bold text-foreground capitalize">
-                    {selectedTx.category.replace("_", " ")}
-                  </span>
-                </div>
-
-                <div className="flex justify-between pt-2">
-                  <span className="text-muted-foreground font-semibold">
-                    Payment Channel
-                  </span>
-                  <span className="font-bold text-foreground">
-                    {selectedTx.channel}
-                  </span>
-                </div>
-
-                <div className="flex justify-between pt-2">
-                  <span className="text-muted-foreground font-semibold">
-                    Processing Fee
-                  </span>
-                  <span className="font-bold text-foreground">
-                    GH₵ {(selectedTx.fee || 0).toFixed(2)} (0%)
-                  </span>
-                </div>
-
-                <div className="flex justify-between pt-2">
-                  <span className="text-muted-foreground font-semibold">
-                    Balance After
-                  </span>
-                  <span className="font-bold text-foreground">
-                    {selectedTx.balanceAfter != null
-                      ? `GH₵ ${selectedTx.balanceAfter.toFixed(2)}`
-                      : "—"}
-                  </span>
-                </div>
-
-                <div className="flex justify-between pt-2">
-                  <span className="text-muted-foreground font-semibold">
-                    Timestamp
-                  </span>
-                  <span className="font-bold text-foreground">
-                    {selectedTx.date}
-                  </span>
-                </div>
-
-                <div className="pt-2">
-                  <span className="text-muted-foreground font-semibold block mb-1">
-                    Description &amp; Note
-                  </span>
-                  <p className="p-2.5 rounded-xl bg-muted/40 border border-border text-foreground text-xs leading-relaxed">
-                    {selectedTx.description}
-                  </p>
-                </div>
-              </div>
-            </div>
+            </>
           )}
-
-          <DialogFooter className="pt-2 border-t border-border sm:justify-end">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setSelectedTx(null)}
-              className="rounded-xl text-xs font-bold"
-            >
-              Close Receipt
-            </Button>
-          </DialogFooter>
         </DialogContent>
       </Dialog>
 
-      {/* WITHDRAW MODAL */}
+      {/* SECURE WITHDRAW MODAL */}
       <WithdrawModal
         isOpen={isWithdrawOpen}
         onClose={() => setIsWithdrawOpen(false)}
