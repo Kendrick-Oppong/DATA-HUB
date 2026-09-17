@@ -313,14 +313,11 @@ export const AgentTransactionsWallet: React.FC<
             Mobile Money Payouts &amp; Settlement Policy:
           </span>
           <span>
-            Withdrawals process instantly during operating hours (8:00 AM – 8:00
-            PM GMT). Requests outside these hours queue securely and dispatch at
-            8:00 AM the next morning. Each withdrawal requires OTP verification.
+            Withdrawals process instantly from 8:00 AM – 8:00 PM GMT. After
+            hours, requests queue for 8:00 AM. OTP verification required.
           </span>
         </div>
       </div>
-
-
 
       {/* 4 STATS CARDS TILES (Exact Match of AgentPricing / AgentBulkSms Tiles) */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
