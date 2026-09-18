@@ -33,7 +33,7 @@ import {
   Zap,
   FileText,
 } from "lucide-react";
-import { AppTheme, UserAccount, TelecomNetwork } from "../../../types";
+import { AppTheme, UserAccount, TelecomNetwork } from "../../types";
 import { themeOptions } from "../../lib/themes";
 import { SignalRail } from "../common/SignalRail";
 import { Button } from "../ui/button";
@@ -43,7 +43,7 @@ import { Badge } from "../ui/badge";
 import { Switch } from "../ui/switch";
 
 export interface AdminProfileProps {
-  theme: AppTheme;
+  theme?: AppTheme;
   onToggleTheme?: () => void;
   onSetTheme?: (theme: AppTheme) => void;
   onNavigateTab?: (tab: string) => void;

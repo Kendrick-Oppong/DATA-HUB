@@ -1336,7 +1336,8 @@ export default function App() {
                   activeTab === "agents" ||
                   activeTab === "notifications" ||
                   activeTab === "failed-beneficiaries" ||
-                  activeTab === "profile"
+                  activeTab === "profile" ||
+                  activeTab === "referrals"
                     ? (activeTab as any)
                     : "gateways"
                 }
