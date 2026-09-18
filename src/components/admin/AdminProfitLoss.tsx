@@ -128,6 +128,8 @@ export const AdminProfitLoss: React.FC<AdminProfitLossProps> = ({
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [serviceFilter, setServiceFilter] = useState<string>("all");
   const [networkFilter, setNetworkFilter] = useState<string>("all");
+  const [serviceSubTab, setServiceSubTab] = useState<"service-line" | "carrier-matrix">("service-line");
+  const [incentiveSubTab, setIncentiveSubTab] = useState<"tier-bonus" | "referral-limits">("tier-bonus");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 8;
 
@@ -557,7 +559,8 @@ export const AdminProfitLoss: React.FC<AdminProfitLossProps> = ({
             <span>Profit &amp; Loss Analytics</span>
           </h1>
           <p className="mt-0.5 text-xs text-muted-foreground">
-            Executive financial statement, wholesale carrier COGS, channel incentive disbursements, and net profit ledger.
+            Executive Financial summary, carrier COGS, incentives, and net
+            profit.
           </p>
         </div>
 
@@ -575,8 +578,9 @@ export const AdminProfitLoss: React.FC<AdminProfitLossProps> = ({
               setCurrentPage(1);
             }}
           >
-            <SelectTrigger className="h-9 w-36 text-xs font-bold bg-background">
-              <SelectValue />
+            <SelectTrigger className="h-9 w-36 rounded-full text-xs font-bold bg-background">
+
+              <SelectValue placeholder="Select Period"/>
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="today">Today</SelectItem>
@@ -728,16 +732,94 @@ export const AdminProfitLoss: React.FC<AdminProfitLossProps> = ({
 
         {/* ── TAB 1: P&L STATEMENT & WATERFALL ── */}
         <TabsContent value="statement" className="m-0 space-y-6">
+          {/* 7-Day Financial Trajectory (Full Width — matching Revenue & Net Margin Trajectory layout) */}
+          <Card className="rounded-2xl bg-card shadow-xs">
+            <CardHeader className="border-b border-border pb-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div>
+                  <CardTitle className="text-base font-extrabold text-foreground flex items-center gap-2">
+                    <TrendingUp className="size-5 text-emerald-600" />
+                    <span>7-Day Profit Trajectory</span>
+                  </CardTitle>
+                  <p className="text-xs text-muted-foreground mt-0.5">
+                    Daily gross volume &amp; net profit breakdown for the last 7
+                    days
+                  </p>
+                </div>
+                <span className="text-xs text-emerald-600 dark:text-emerald-400 font-bold tabular-nums bg-emerald-500/10 border border-emerald-500/20 px-3 py-1 rounded-full">
+                  +14.2% Growth
+                </span>
+              </div>
+            </CardHeader>
+            <CardContent className="p-5">
+              <div className="flex h-36 items-end gap-2">
+                {weeklyTrends.map((t, i) => {
+                  const maxRev =
+                    Math.max(...weeklyTrends.map((d) => d.revenue)) || 1;
+                  const cogsHeight = Math.max(
+                    2,
+                    ((t.revenue - t.profit) / maxRev) * 100,
+                  );
+                  const profitHeight = Math.max(2, (t.profit / maxRev) * 100);
+
+                  return (
+                    <div
+                      key={i}
+                      className="group flex flex-1 flex-col items-center gap-1"
+                    >
+                      <div
+                        className="w-full relative flex flex-col justify-end"
+                        style={{ height: "120px" }}
+                      >
+                        {/* COGS bar (bottom) */}
+                        <div
+                          className="w-full rounded-sm bg-muted transition-all duration-500"
+                          style={{ height: `${cogsHeight}%` }}
+                          title={`COGS: GH₵ ${t.cost.toFixed(2)}`}
+                        />
+                        {/* Profit bar (top) */}
+                        <div
+                          className="w-full rounded-sm bg-primary/80 transition-all duration-500"
+                          style={{ height: `${profitHeight}%` }}
+                          title={`Net Profit: GH₵ ${t.profit.toFixed(2)}`}
+                        />
+                        {/* hover count */}
+                        <span className="absolute -top-5 left-1/2 -translate-x-1/2 text-[10px] font-bold text-foreground opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                          GH₵ {t.revenue.toFixed(0)}
+                        </span>
+                      </div>
+                      <span className="text-[10px] font-medium text-muted-foreground">
+                        {t.day}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+
+              <div className="mt-4 flex items-center gap-4 text-[10px]">
+                <div className="flex items-center gap-1.5">
+                  <div className="size-2.5 rounded-sm bg-primary/80" />
+                  <span className="text-muted-foreground">Net Profit</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <div className="size-2.5 rounded-sm bg-muted" />
+                  <span className="text-muted-foreground">COGS / Expense</span>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Income Statement Breakdown */}
-            <Card className="rounded-2xl border border-border bg-card shadow-xs lg:col-span-2">
+            <Card className="rounded-2xl bg-card shadow-xs lg:col-span-2">
               <CardHeader className="border-b border-border pb-4">
                 <CardTitle className="flex items-center gap-2 text-base font-extrabold text-foreground">
                   <BarChart3 className="size-5 text-primary" />
                   <span>Executive Platform Income Statement</span>
                 </CardTitle>
                 <CardDescription className="mt-1 text-xs">
-                  Full step-by-step accounting waterfall according to SDH pricing specifications.
+                  Full step-by-step accounting waterfall according to SDH
+                  pricing specifications.
                 </CardDescription>
               </CardHeader>
               <CardContent className="p-4 sm:p-6 space-y-4">
@@ -755,25 +837,44 @@ export const AdminProfitLoss: React.FC<AdminProfitLossProps> = ({
                     <div>
                       <span>Data: </span>
                       <strong className="text-foreground tabular-nums">
-                        GH₵ {(serviceBreakdowns.find((s) => s.service === "data")?.revenue || 0).toFixed(2)}
+                        GH₵{" "}
+                        {(
+                          serviceBreakdowns.find((s) => s.service === "data")
+                            ?.revenue || 0
+                        ).toFixed(2)}
                       </strong>
                     </div>
                     <div>
                       <span>Checkers: </span>
                       <strong className="text-foreground tabular-nums">
-                        GH₵ {(serviceBreakdowns.find((s) => s.service === "checker")?.revenue || 0).toFixed(2)}
+                        GH₵{" "}
+                        {(
+                          serviceBreakdowns.find((s) => s.service === "checker")
+                            ?.revenue || 0
+                        ).toFixed(2)}
                       </strong>
                     </div>
                     <div>
                       <span>AFA: </span>
                       <strong className="text-foreground tabular-nums">
-                        GH₵ {(serviceBreakdowns.find((s) => s.service === "afa")?.revenue || 0).toFixed(2)}
+                        GH₵{" "}
+                        {(
+                          serviceBreakdowns.find((s) => s.service === "afa")
+                            ?.revenue || 0
+                        ).toFixed(2)}
                       </strong>
                     </div>
                     <div>
                       <span>Airtime/SMS: </span>
                       <strong className="text-foreground tabular-nums">
-                        GH₵ {((serviceBreakdowns.find((s) => s.service === "airtime")?.revenue || 0) + (serviceBreakdowns.find((s) => s.service === "sms")?.revenue || 0)).toFixed(2)}
+                        GH₵{" "}
+                        {(
+                          (serviceBreakdowns.find(
+                            (s) => s.service === "airtime",
+                          )?.revenue || 0) +
+                          (serviceBreakdowns.find((s) => s.service === "sms")
+                            ?.revenue || 0)
+                        ).toFixed(2)}
                       </strong>
                     </div>
                   </div>
@@ -790,7 +891,8 @@ export const AdminProfitLoss: React.FC<AdminProfitLossProps> = ({
                     </span>
                   </div>
                   <p className="text-[11px] text-muted-foreground">
-                    Upstream telecom wholesale (MTN, Telecel, AT), WAEC syndicate voucher inventory, and SMS gateways.
+                    Upstream telecom wholesale (MTN, Telecel, AT), WAEC
+                    syndicate voucher inventory, and SMS gateways.
                   </p>
                 </div>
 
@@ -801,7 +903,8 @@ export const AdminProfitLoss: React.FC<AdminProfitLossProps> = ({
                       = Platform Gross Margin (M = R - C)
                     </span>
                     <span className="text-[10px] text-muted-foreground">
-                      Base margin pool for channel compensation &amp; platform retention
+                      Base margin pool for channel compensation &amp; platform
+                      retention
                     </span>
                   </div>
                   <span className="text-base font-black tabular-nums text-blue-700 dark:text-blue-400">
@@ -821,19 +924,25 @@ export const AdminProfitLoss: React.FC<AdminProfitLossProps> = ({
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-[11px] pt-1 border-t border-amber-500/20">
                     <div>
-                      <span className="text-muted-foreground">Agent Store Commissions: </span>
+                      <span className="text-muted-foreground">
+                        Agent Store Commissions:{" "}
+                      </span>
                       <strong className="text-foreground tabular-nums">
                         GH₵ {summary.agentCommissions.toFixed(2)}
                       </strong>
                     </div>
                     <div>
-                      <span className="text-muted-foreground">Tier Margin Bonuses: </span>
+                      <span className="text-muted-foreground">
+                        Tier Margin Bonuses:{" "}
+                      </span>
                       <strong className="text-foreground tabular-nums">
                         GH₵ {summary.tierBonuses.toFixed(2)}
                       </strong>
                     </div>
                     <div>
-                      <span className="text-muted-foreground">Referral Program: </span>
+                      <span className="text-muted-foreground">
+                        Referral Program:{" "}
+                      </span>
                       <strong className="text-foreground tabular-nums">
                         GH₵ {summary.referralAllocated.toFixed(2)}
                       </strong>
@@ -848,7 +957,8 @@ export const AdminProfitLoss: React.FC<AdminProfitLossProps> = ({
                       = Net Retained Platform Profit
                     </span>
                     <span className="text-[11px] text-muted-foreground">
-                      Final SDH platform bottom line ({summary.netMarginPct.toFixed(1)}% of gross revenue)
+                      Final SDH platform bottom line (
+                      {summary.netMarginPct.toFixed(1)}% of gross revenue)
                     </span>
                   </div>
                   <span className="text-2xl font-black tabular-nums text-emerald-700 dark:text-emerald-400">
@@ -858,53 +968,9 @@ export const AdminProfitLoss: React.FC<AdminProfitLossProps> = ({
               </CardContent>
             </Card>
 
-            {/* Right Column: 7-Day Trend & Safeguard */}
+            {/* Right Column: Safeguard Index */}
             <div className="space-y-6">
-              {/* 7-Day Financial Trajectory */}
-              <Card className="rounded-2xl border border-border bg-card shadow-xs">
-                <CardHeader className="border-b border-border pb-3">
-                  <CardTitle className="text-sm font-extrabold text-foreground flex items-center justify-between">
-                    <span>7-Day Profit Trajectory</span>
-                    <span className="text-xs text-emerald-600 dark:text-emerald-400 font-bold tabular-nums">
-                      +14.2% Growth
-                    </span>
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="p-4">
-                  {/* Clean SVG Trajectory Chart */}
-                  <div className="h-40 w-full flex items-end justify-between gap-1 pt-4 pb-2">
-                    {weeklyTrends.map((t) => {
-                      const maxRev = Math.max(...weeklyTrends.map((d) => d.revenue)) || 1;
-                      const barHeight = Math.max(15, (t.revenue / maxRev) * 100);
-                      const profitHeight = Math.max(8, (t.profit / maxRev) * 100);
-
-                      return (
-                        <div key={t.day} className="flex-1 flex flex-col items-center gap-1.5 h-full justify-end">
-                          <div className="w-full max-w-[28px] bg-muted/60 rounded-t-sm relative flex flex-col justify-end overflow-hidden" style={{ height: `${barHeight}%` }}>
-                            <div className="w-full bg-emerald-500/40 rounded-t-sm" style={{ height: `${profitHeight}%` }} />
-                          </div>
-                          <span className="text-[10px] font-bold text-muted-foreground">
-                            {t.day}
-                          </span>
-                        </div>
-                      );
-                    })}
-                  </div>
-                  <div className="pt-3 border-t border-border flex items-center justify-between text-[11px] text-muted-foreground">
-                    <div className="flex items-center gap-1.5">
-                      <span className="size-2 rounded-full bg-muted-foreground/50" />
-                      <span>Gross Revenue</span>
-                    </div>
-                    <div className="flex items-center gap-1.5">
-                      <span className="size-2 rounded-full bg-emerald-500" />
-                      <span>Net Profit</span>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Safeguard Index */}
-              <Card className="rounded-2xl border border-border bg-card shadow-xs">
+              <Card className="rounded-2xl bg-card shadow-xs">
                 <CardHeader className="border-b border-border pb-3">
                   <CardTitle className="text-sm font-extrabold text-foreground flex items-center gap-2">
                     <ShieldCheck className="size-4 text-emerald-600" />
@@ -913,20 +979,31 @@ export const AdminProfitLoss: React.FC<AdminProfitLossProps> = ({
                 </CardHeader>
                 <CardContent className="p-4 space-y-3">
                   <div className="flex items-center justify-between text-xs">
-                    <span className="text-muted-foreground">Required Floor:</span>
-                    <span className="font-bold text-foreground">70.0% Real Sales</span>
+                    <span className="text-muted-foreground">
+                      Required Floor:
+                    </span>
+                    <span className="font-bold text-foreground">
+                      70.0% Real Sales
+                    </span>
                   </div>
                   <div className="flex items-center justify-between text-xs">
-                    <span className="text-muted-foreground">Current Platform Actual:</span>
+                    <span className="text-muted-foreground">
+                      Current Platform Actual:
+                    </span>
                     <span className="font-extrabold text-emerald-600 dark:text-emerald-400 tabular-nums">
                       82.4% Compliant
                     </span>
                   </div>
                   <div className="w-full h-2 rounded-full bg-muted overflow-hidden">
-                    <div className="h-full bg-emerald-500 rounded-full" style={{ width: "82.4%" }} />
+                    <div
+                      className="h-full bg-emerald-500 rounded-full"
+                      style={{ width: "82.4%" }}
+                    />
                   </div>
                   <p className="text-[11px] text-muted-foreground leading-relaxed">
-                    Referral compensation is hard-capped at 30% of tier qualification score, ensuring SDH never pays incentives unsupported by underlying telecom sales.
+                    Referral compensation is hard-capped at 30% of tier
+                    qualification score, ensuring SDH never pays incentives
+                    unsupported by underlying telecom sales.
                   </p>
                 </CardContent>
               </Card>
@@ -936,270 +1013,398 @@ export const AdminProfitLoss: React.FC<AdminProfitLossProps> = ({
 
         {/* ── TAB 2: SERVICE & CARRIER MARGINS ── */}
         <TabsContent value="services" className="m-0 space-y-6">
-          {/* Service Product Line Profitability */}
-          <Card className="rounded-2xl border border-border bg-card shadow-xs">
+          <Card className="rounded-2xl bg-card shadow-xs">
             <CardHeader className="border-b border-border pb-4">
-              <CardTitle className="flex items-center gap-2 text-base font-extrabold text-foreground">
-                <Layers className="size-5 text-primary" />
-                <span>Service Product Line Profitability</span>
-              </CardTitle>
-              <CardDescription className="mt-1 text-xs">
-                Contribution margin by digital service vertical.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="p-0">
-              <div className="overflow-x-auto">
-                <Table>
-                  <TableHeader>
-                    <TableRow className="bg-muted/30">
-                      <TableHead className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
-                        Service Line
-                      </TableHead>
-                      <TableHead className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground text-center">
-                        Delivered Orders
-                      </TableHead>
-                      <TableHead className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground text-right">
-                        Gross Revenue (GH₵)
-                      </TableHead>
-                      <TableHead className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground text-right">
-                        Supplier COGS (GH₵)
-                      </TableHead>
-                      <TableHead className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground text-right">
-                        Incentives (GH₵)
-                      </TableHead>
-                      <TableHead className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground text-right">
-                        Net Profit (GH₵)
-                      </TableHead>
-                      <TableHead className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground text-center">
-                        Net Margin %
-                      </TableHead>
-                      <TableHead className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground text-right">
-                        Profit Share
-                      </TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {serviceBreakdowns.map((sb) => (
-                      <TableRow key={sb.service} className="hover:bg-muted/20 transition-colors">
-                        <TableCell className="py-3 font-extrabold text-xs text-foreground">
-                          {getServiceLabel(sb.service)}
-                        </TableCell>
-                        <TableCell className="py-3 text-center text-xs font-bold tabular-nums">
-                          {sb.count}
-                        </TableCell>
-                        <TableCell className="py-3 text-right text-xs font-bold tabular-nums text-foreground">
-                          GH₵ {sb.revenue.toFixed(2)}
-                        </TableCell>
-                        <TableCell className="py-3 text-right text-xs font-medium tabular-nums text-muted-foreground">
-                          GH₵ {sb.supplierCost.toFixed(2)}
-                        </TableCell>
-                        <TableCell className="py-3 text-right text-xs font-medium tabular-nums text-amber-700 dark:text-amber-400">
-                          GH₵ {(sb.agentCommission + sb.tierBonus).toFixed(2)}
-                        </TableCell>
-                        <TableCell className="py-3 text-right text-xs font-black tabular-nums text-emerald-600 dark:text-emerald-400">
-                          +GH₵ {sb.netProfit.toFixed(2)}
-                        </TableCell>
-                        <TableCell className="py-3 text-center">
-                          <Badge className="bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30 text-[10px] font-bold tabular-nums">
-                            {sb.marginPct.toFixed(1)}%
-                          </Badge>
-                        </TableCell>
-                        <TableCell className="py-3 text-right text-xs font-bold tabular-nums text-muted-foreground">
-                          {sb.profitShare.toFixed(1)}%
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
-            </CardContent>
-          </Card>
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                  <CardTitle className="flex items-center gap-2 text-base font-extrabold text-foreground">
+                    {serviceSubTab === "service-line" ? (
+                      <>
+                        <Layers className="size-5 text-primary" />
+                        <span>Service Product Line Profitability</span>
+                      </>
+                    ) : (
+                      <>
+                        <Wifi className="size-5 text-amber-500" />
+                        <span>
+                          Telecom Carrier Margin Matrix (Data Bundles)
+                        </span>
+                      </>
+                    )}
+                  </CardTitle>
+                  <CardDescription className="mt-1 text-xs">
+                    {serviceSubTab === "service-line"
+                      ? "Contribution margin by digital service vertical."
+                      : "Performance across MTN Ghana, Telecel, and AirtelTigo."}
+                  </CardDescription>
+                </div>
 
-          {/* Carrier Margin Matrix */}
-          <Card className="rounded-2xl border border-border bg-card shadow-xs">
-            <CardHeader className="border-b border-border pb-4">
-              <CardTitle className="flex items-center gap-2 text-base font-extrabold text-foreground">
-                <Wifi className="size-5 text-amber-500" />
-                <span>Telecom Carrier Margin Matrix (Data Bundles)</span>
-              </CardTitle>
-              <CardDescription className="mt-1 text-xs">
-                Performance across MTN Ghana, Telecel, and AirtelTigo.
-              </CardDescription>
+                {/* Pill Tab Switcher in Header */}
+                <div className="flex items-center gap-1.5 bg-muted/40 p-1 rounded-full border border-border shrink-0">
+                  {(
+                    [
+                      { id: "service-line", label: "Service Product Line" },
+                      { id: "carrier-matrix", label: "Carrier Margin Matrix" },
+                    ] as Array<{
+                      id: "service-line" | "carrier-matrix";
+                      label: string;
+                    }>
+                  ).map((tab) => {
+                    const active = serviceSubTab === tab.id;
+                    return (
+                      <button
+                        key={tab.id}
+                        type="button"
+                        onClick={() => setServiceSubTab(tab.id)}
+                        className={`flex items-center gap-1.5 rounded-full py-1.5 px-3 text-xs font-bold transition-all cursor-pointer ${
+                          active
+                            ? "bg-card text-foreground shadow-xs border border-border"
+                            : "text-muted-foreground hover:text-foreground"
+                        }`}
+                      >
+                        <span>{tab.label}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
             </CardHeader>
             <CardContent className="p-0">
-              <div className="overflow-x-auto">
-                <Table>
-                  <TableHeader>
-                    <TableRow className="bg-muted/30">
-                      <TableHead className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
-                        Carrier
-                      </TableHead>
-                      <TableHead className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground text-center">
-                        Delivered
-                      </TableHead>
-                      <TableHead className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground text-right">
-                        Gross Volume (GH₵)
-                      </TableHead>
-                      <TableHead className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground text-right">
-                        Supplier Outflow (GH₵)
-                      </TableHead>
-                      <TableHead className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground text-right">
-                        Retained Profit (GH₵)
-                      </TableHead>
-                      <TableHead className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground text-center">
-                        Carrier Margin
-                      </TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {carrierMargins.map((cm) => (
-                      <TableRow key={cm.network} className="hover:bg-muted/20 transition-colors">
-                        <TableCell className="py-3 font-extrabold text-xs">
-                          {getNetworkBadge(cm.network)}
-                        </TableCell>
-                        <TableCell className="py-3 text-center text-xs font-bold tabular-nums">
-                          {cm.count}
-                        </TableCell>
-                        <TableCell className="py-3 text-right text-xs font-bold tabular-nums text-foreground">
-                          GH₵ {cm.revenue.toFixed(2)}
-                        </TableCell>
-                        <TableCell className="py-3 text-right text-xs font-medium tabular-nums text-muted-foreground">
-                          GH₵ {cm.supplier.toFixed(2)}
-                        </TableCell>
-                        <TableCell className="py-3 text-right text-xs font-black tabular-nums text-emerald-600 dark:text-emerald-400">
-                          +GH₵ {cm.netProfit.toFixed(2)}
-                        </TableCell>
-                        <TableCell className="py-3 text-center">
-                          <Badge className="bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30 text-[10px] font-bold tabular-nums">
-                            {cm.marginPct.toFixed(1)}%
-                          </Badge>
-                        </TableCell>
+              {serviceSubTab === "service-line" ? (
+                <div className="overflow-x-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow className="bg-muted/30">
+                        <TableHead className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
+                          Service Line
+                        </TableHead>
+                        <TableHead className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground text-center">
+                          Delivered Orders
+                        </TableHead>
+                        <TableHead className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground text-right">
+                          Gross Revenue (GH₵)
+                        </TableHead>
+                        <TableHead className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground text-right">
+                          Supplier COGS (GH₵)
+                        </TableHead>
+                        <TableHead className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground text-right">
+                          Incentives (GH₵)
+                        </TableHead>
+                        <TableHead className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground text-right">
+                          Net Profit (GH₵)
+                        </TableHead>
+                        <TableHead className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground text-center">
+                          Net Margin %
+                        </TableHead>
+                        <TableHead className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground text-right">
+                          Profit Share
+                        </TableHead>
                       </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
+                    </TableHeader>
+                    <TableBody>
+                      {serviceBreakdowns.map((sb) => (
+                        <TableRow
+                          key={sb.service}
+                          className="hover:bg-muted/20 transition-colors"
+                        >
+                          <TableCell className="py-3 font-extrabold text-xs text-foreground">
+                            {getServiceLabel(sb.service)}
+                          </TableCell>
+                          <TableCell className="py-3 text-center text-xs font-bold tabular-nums">
+                            {sb.count}
+                          </TableCell>
+                          <TableCell className="py-3 text-right text-xs font-bold tabular-nums text-foreground">
+                            GH₵ {sb.revenue.toFixed(2)}
+                          </TableCell>
+                          <TableCell className="py-3 text-right text-xs font-medium tabular-nums text-muted-foreground">
+                            GH₵ {sb.supplierCost.toFixed(2)}
+                          </TableCell>
+                          <TableCell className="py-3 text-right text-xs font-medium tabular-nums text-amber-700 dark:text-amber-400">
+                            GH₵ {(sb.agentCommission + sb.tierBonus).toFixed(2)}
+                          </TableCell>
+                          <TableCell className="py-3 text-right text-xs font-black tabular-nums text-emerald-600 dark:text-emerald-400">
+                            +GH₵ {sb.netProfit.toFixed(2)}
+                          </TableCell>
+                          <TableCell className="py-3 text-center">
+                            <Badge className="bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30 text-[10px] font-bold tabular-nums">
+                              {sb.marginPct.toFixed(1)}%
+                            </Badge>
+                          </TableCell>
+                          <TableCell className="py-3 text-right text-xs font-bold tabular-nums text-muted-foreground">
+                            {sb.profitShare.toFixed(1)}%
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              ) : (
+                <div className="overflow-x-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow className="bg-muted/30">
+                        <TableHead className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
+                          Carrier
+                        </TableHead>
+                        <TableHead className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground text-center">
+                          Delivered
+                        </TableHead>
+                        <TableHead className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground text-right">
+                          Gross Volume (GH₵)
+                        </TableHead>
+                        <TableHead className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground text-right">
+                          Supplier Outflow (GH₵)
+                        </TableHead>
+                        <TableHead className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground text-right">
+                          Retained Profit (GH₵)
+                        </TableHead>
+                        <TableHead className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground text-center">
+                          Carrier Margin
+                        </TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {carrierMargins.map((cm) => (
+                        <TableRow
+                          key={cm.network}
+                          className="hover:bg-muted/20 transition-colors"
+                        >
+                          <TableCell className="py-3 font-extrabold text-xs">
+                            {getNetworkBadge(cm.network)}
+                          </TableCell>
+                          <TableCell className="py-3 text-center text-xs font-bold tabular-nums">
+                            {cm.count}
+                          </TableCell>
+                          <TableCell className="py-3 text-right text-xs font-bold tabular-nums text-foreground">
+                            GH₵ {cm.revenue.toFixed(2)}
+                          </TableCell>
+                          <TableCell className="py-3 text-right text-xs font-medium tabular-nums text-muted-foreground">
+                            GH₵ {cm.supplier.toFixed(2)}
+                          </TableCell>
+                          <TableCell className="py-3 text-right text-xs font-black tabular-nums text-emerald-600 dark:text-emerald-400">
+                            +GH₵ {cm.netProfit.toFixed(2)}
+                          </TableCell>
+                          <TableCell className="py-3 text-center">
+                            <Badge className="bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30 text-[10px] font-bold tabular-nums">
+                              {cm.marginPct.toFixed(1)}%
+                            </Badge>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              )}
             </CardContent>
           </Card>
         </TabsContent>
 
         {/* ── TAB 3: INCENTIVE PROGRAMME & SAFEGUARDS ── */}
         <TabsContent value="incentives" className="m-0 space-y-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Tier Bonus Distribution Matrix */}
-            <Card className="rounded-2xl border border-border bg-card shadow-xs">
-              <CardHeader className="border-b border-border pb-4">
-                <CardTitle className="flex items-center gap-2 text-base font-extrabold text-foreground">
-                  <Coins className="size-5 text-amber-500" />
-                  <span>Tier Margin Bonus Distribution (§1)</span>
-                </CardTitle>
-                <CardDescription className="mt-1 text-xs">
-                  Bonuses calculated as a percentage of platform margin (wholesale - supplier).
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="p-0">
+          <Card className="rounded-2xl bg-card shadow-xs">
+            <CardHeader className="border-b border-border pb-4">
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                  <CardTitle className="flex items-center gap-2 text-base font-extrabold text-foreground">
+                    {incentiveSubTab === "tier-bonus" ? (
+                      <>
+                        <Coins className="size-5 text-amber-500" />
+                        <span>Tier Margin Bonus Distribution</span>
+                      </>
+                    ) : (
+                      <>
+                        <ShieldCheck className="size-5 text-emerald-600" />
+                        <span>Referral Liabilities &amp; Limits</span>
+                      </>
+                    )}
+                  </CardTitle>
+                  <CardDescription className="mt-1 text-xs">
+                    {incentiveSubTab === "tier-bonus"
+                      ? "Bonuses calculated as a percentage of platform margin (wholesale - supplier)."
+                      : "Liability exposure and anti-churn safeguards."}
+                  </CardDescription>
+                </div>
+
+                {/* Pill Tab Switcher in Header */}
+                <div className="flex items-center gap-1.5 bg-muted/40 p-1 rounded-full border border-border shrink-0">
+                  {(
+                    [
+                      { id: "tier-bonus", label: "Tier Margin Bonus" },
+                      { id: "referral-limits", label: "Referral Liabilities" },
+                    ] as Array<{
+                      id: "tier-bonus" | "referral-limits";
+                      label: string;
+                    }>
+                  ).map((tab) => {
+                    const active = incentiveSubTab === tab.id;
+                    return (
+                      <button
+                        key={tab.id}
+                        type="button"
+                        onClick={() => setIncentiveSubTab(tab.id)}
+                        className={`flex items-center gap-1.5 rounded-full py-1.5 px-3 text-xs font-bold transition-all cursor-pointer ${
+                          active
+                            ? "bg-card text-foreground shadow-xs border border-border"
+                            : "text-muted-foreground hover:text-foreground"
+                        }`}
+                      >
+                        <span>{tab.label}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent
+              className={
+                incentiveSubTab === "tier-bonus"
+                  ? "p-0"
+                  : "p-4 sm:p-6 space-y-4"
+              }
+            >
+              {incentiveSubTab === "tier-bonus" ? (
                 <Table>
                   <TableHeader>
                     <TableRow className="bg-muted/30">
-                      <TableHead className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">Tier</TableHead>
-                      <TableHead className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground text-center">Bonus Rate</TableHead>
-                      <TableHead className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground text-right">Qualified Score</TableHead>
-                      <TableHead className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground text-right">Period Outflow</TableHead>
+                      <TableHead className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
+                        Tier
+                      </TableHead>
+                      <TableHead className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground text-center">
+                        Bonus Rate
+                      </TableHead>
+                      <TableHead className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground text-right">
+                        Qualified Score
+                      </TableHead>
+                      <TableHead className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground text-right">
+                        Period Outflow
+                      </TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     <TableRow>
-                      <TableCell className="py-3 text-xs font-bold text-muted-foreground">Bronze</TableCell>
-                      <TableCell className="py-3 text-center text-xs font-bold tabular-nums">0.0%</TableCell>
-                      <TableCell className="py-3 text-right text-xs font-medium tabular-nums text-muted-foreground">&lt; GH₵ 200</TableCell>
-                      <TableCell className="py-3 text-right text-xs font-bold tabular-nums text-foreground">GH₵ 0.00</TableCell>
+                      <TableCell className="py-3 text-xs font-bold text-muted-foreground">
+                        Bronze
+                      </TableCell>
+                      <TableCell className="py-3 text-center text-xs font-bold tabular-nums">
+                        0.0%
+                      </TableCell>
+                      <TableCell className="py-3 text-right text-xs font-medium tabular-nums text-muted-foreground">
+                        &lt; GH₵ 200
+                      </TableCell>
+                      <TableCell className="py-3 text-right text-xs font-bold tabular-nums text-foreground">
+                        GH₵ 0.00
+                      </TableCell>
                     </TableRow>
                     <TableRow>
-                      <TableCell className="py-3 text-xs font-bold text-foreground">Silver</TableCell>
-                      <TableCell className="py-3 text-center text-xs font-bold text-primary tabular-nums">5.0%</TableCell>
-                      <TableCell className="py-3 text-right text-xs font-medium tabular-nums text-muted-foreground">GH₵ 200 - 499</TableCell>
+                      <TableCell className="py-3 text-xs font-bold text-foreground">
+                        Silver
+                      </TableCell>
+                      <TableCell className="py-3 text-center text-xs font-bold text-primary tabular-nums">
+                        5.0%
+                      </TableCell>
+                      <TableCell className="py-3 text-right text-xs font-medium tabular-nums text-muted-foreground">
+                        GH₵ 200 - 499
+                      </TableCell>
                       <TableCell className="py-3 text-right text-xs font-bold tabular-nums text-foreground">
                         GH₵ {(summary.tierBonuses * 0.28).toFixed(2)}
                       </TableCell>
                     </TableRow>
                     <TableRow>
-                      <TableCell className="py-3 text-xs font-bold text-foreground">Gold</TableCell>
-                      <TableCell className="py-3 text-center text-xs font-bold text-amber-600 tabular-nums">10.0%</TableCell>
-                      <TableCell className="py-3 text-right text-xs font-medium tabular-nums text-muted-foreground">GH₵ 500 - 1,499</TableCell>
+                      <TableCell className="py-3 text-xs font-bold text-foreground">
+                        Gold
+                      </TableCell>
+                      <TableCell className="py-3 text-center text-xs font-bold text-amber-600 tabular-nums">
+                        10.0%
+                      </TableCell>
+                      <TableCell className="py-3 text-right text-xs font-medium tabular-nums text-muted-foreground">
+                        GH₵ 500 - 1,499
+                      </TableCell>
                       <TableCell className="py-3 text-right text-xs font-bold tabular-nums text-foreground">
                         GH₵ {(summary.tierBonuses * 0.44).toFixed(2)}
                       </TableCell>
                     </TableRow>
                     <TableRow>
-                      <TableCell className="py-3 text-xs font-bold text-foreground">Platinum</TableCell>
-                      <TableCell className="py-3 text-center text-xs font-bold text-purple-600 tabular-nums">15.0%</TableCell>
-                      <TableCell className="py-3 text-right text-xs font-medium tabular-nums text-muted-foreground">GH₵ 1,500+</TableCell>
+                      <TableCell className="py-3 text-xs font-bold text-foreground">
+                        Platinum
+                      </TableCell>
+                      <TableCell className="py-3 text-center text-xs font-bold text-purple-600 tabular-nums">
+                        15.0%
+                      </TableCell>
+                      <TableCell className="py-3 text-right text-xs font-medium tabular-nums text-muted-foreground">
+                        GH₵ 1,500+
+                      </TableCell>
                       <TableCell className="py-3 text-right text-xs font-bold tabular-nums text-foreground">
                         GH₵ {(summary.tierBonuses * 0.28).toFixed(2)}
                       </TableCell>
                     </TableRow>
                   </TableBody>
                 </Table>
-              </CardContent>
-            </Card>
+              ) : (
+                <>
+                  <div className="rounded-xl border border-border bg-muted/80 p-3.5 space-y-1">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block">
+                      Total Referral Program Spend
+                    </span>
+                    <p className="text-xl font-black tabular-nums text-foreground">
+                      GH₵ {summary.referralAllocated.toFixed(2)}
+                    </p>
+                    <span className="text-[11px] text-muted-foreground">
+                      GH₵ 5.00 referrer reward · GH₵ 2.00 referred welcome
+                      credit
+                    </span>
+                  </div>
 
-            {/* Referral Liabilities & Safeguards */}
-            <Card className="rounded-2xl border border-border bg-card shadow-xs">
-              <CardHeader className="border-b border-border pb-4">
-                <CardTitle className="flex items-center gap-2 text-base font-extrabold text-foreground">
-                  <ShieldCheck className="size-5 text-emerald-600" />
-                  <span>Referral Liabilities &amp; Limits (§3 &amp; §4)</span>
-                </CardTitle>
-                <CardDescription className="mt-1 text-xs">
-                  Liability exposure and anti-churn safeguards.
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="p-4 sm:p-6 space-y-4">
-                <div className="rounded-xl border border-border bg-muted/20 p-3.5 space-y-1">
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block">
-                    Total Referral Program Spend
-                  </span>
-                  <div className="text-xl font-black tabular-nums text-foreground">
-                    GH₵ {summary.referralAllocated.toFixed(2)}
+                  <div className="space-y-2.5 text-xs">
+                    <div className="flex items-center justify-between py-1.5 border-b border-border">
+                      <span className="text-muted-foreground">
+                        Monthly Referral Cap:
+                      </span>
+                      <span className="font-bold text-foreground">
+                        GH₵ 50.00 / agent
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between py-1.5 border-b border-border">
+                      <span className="text-muted-foreground">
+                        Recruitment Overrides:
+                      </span>
+                      <span className="font-bold text-foreground">
+                        5.0% on direct recruits
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between py-1.5 border-b border-border">
+                      <span className="text-muted-foreground">
+                        Override Monthly Cap:
+                      </span>
+                      <span className="font-bold text-foreground">
+                        GH₵ 100.00 / agent
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between py-1.5">
+                      <span className="text-muted-foreground">
+                        Credit Expiry:
+                      </span>
+                      <span className="font-bold text-foreground">
+                        30 days rolling
+                      </span>
+                    </div>
                   </div>
-                  <span className="text-[11px] text-muted-foreground">
-                    GH₵ 5.00 referrer reward · GH₵ 2.00 referred welcome credit
-                  </span>
-                </div>
-
-                <div className="space-y-2.5 text-xs">
-                  <div className="flex items-center justify-between py-1.5 border-b border-border">
-                    <span className="text-muted-foreground">Monthly Referral Cap:</span>
-                    <span className="font-bold text-foreground">GH₵ 50.00 / agent</span>
-                  </div>
-                  <div className="flex items-center justify-between py-1.5 border-b border-border">
-                    <span className="text-muted-foreground">Recruitment Overrides:</span>
-                    <span className="font-bold text-foreground">5.0% on direct recruits</span>
-                  </div>
-                  <div className="flex items-center justify-between py-1.5 border-b border-border">
-                    <span className="text-muted-foreground">Override Monthly Cap:</span>
-                    <span className="font-bold text-foreground">GH₵ 100.00 / agent</span>
-                  </div>
-                  <div className="flex items-center justify-between py-1.5">
-                    <span className="text-muted-foreground">Credit Expiry:</span>
-                    <span className="font-bold text-foreground">30 days rolling</span>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
+                </>
+              )}
+            </CardContent>
+          </Card>
         </TabsContent>
 
         {/* ── TAB 4: FINANCIAL AUDIT LEDGER ── (Exact AdminPricing Search & Table Pattern) */}
         <TabsContent value="ledger" className="m-0 space-y-6">
-          <Card className="rounded-2xl border border-border bg-card shadow-xs">
+          <Card className="rounded-2xl bg-card shadow-xs">
             <CardHeader className="border-b border-border pb-4">
               <CardTitle className="flex items-center gap-2 text-base font-extrabold text-foreground">
                 <SlidersHorizontal className="size-5 text-primary" />
                 <span>Financial Transaction Audit Ledger</span>
               </CardTitle>
               <CardDescription className="mt-1 text-xs">
-                Per-order retail receipts, supplier COGS, agent commissions, and net platform profit.
+                Per-order retail receipts, supplier COGS, agent commissions, and
+                net platform profit.
               </CardDescription>
             </CardHeader>
 
@@ -1280,14 +1485,20 @@ export const AdminProfitLoss: React.FC<AdminProfitLossProps> = ({
                         setCurrentPage(1);
                       }}
                     >
-                      <SelectTrigger className="h-9 text-xs bg-muted/30">
+                      <SelectTrigger className="h-9 w-full text-xs bg-muted/30">
                         <SelectValue placeholder="All statuses" />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="all">All statuses</SelectItem>
-                        <SelectItem value="delivered">Delivered (Settled)</SelectItem>
-                        <SelectItem value="processing">Processing (In Flight)</SelectItem>
-                        <SelectItem value="failed">Failed / Refunded</SelectItem>
+                        <SelectItem value="delivered">
+                          Delivered (Settled)
+                        </SelectItem>
+                        <SelectItem value="processing">
+                          Processing (In Flight)
+                        </SelectItem>
+                        <SelectItem value="failed">
+                          Failed / Refunded
+                        </SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -1301,7 +1512,7 @@ export const AdminProfitLoss: React.FC<AdminProfitLossProps> = ({
                         setCurrentPage(1);
                       }}
                     >
-                      <SelectTrigger className="h-9 text-xs bg-muted/30">
+                      <SelectTrigger className="h-9 w-full text-xs bg-muted/30">
                         <SelectValue placeholder="All services" />
                       </SelectTrigger>
                       <SelectContent>
@@ -1324,7 +1535,7 @@ export const AdminProfitLoss: React.FC<AdminProfitLossProps> = ({
                         setCurrentPage(1);
                       }}
                     >
-                      <SelectTrigger className="h-9 text-xs bg-muted/30">
+                      <SelectTrigger className="h-9 w-full text-xs bg-muted/30">
                         <SelectValue placeholder="All networks" />
                       </SelectTrigger>
                       <SelectContent>
@@ -1426,7 +1637,9 @@ export const AdminProfitLoss: React.FC<AdminProfitLossProps> = ({
                             GH₵ {row.agentCommission.toFixed(2)}
                           </TableCell>
                           <TableCell className="py-3 text-right text-xs font-black tabular-nums text-emerald-600 dark:text-emerald-400">
-                            {row.netProfit > 0 ? `+GH₵ ${row.netProfit.toFixed(2)}` : "GH₵ 0.00"}
+                            {row.netProfit > 0
+                              ? `+GH₵ ${row.netProfit.toFixed(2)}`
+                              : "GH₵ 0.00"}
                           </TableCell>
                           <TableCell className="py-3 text-center">
                             {row.status === "delivered" ? (
@@ -1465,7 +1678,8 @@ export const AdminProfitLoss: React.FC<AdminProfitLossProps> = ({
                 <div>
                   Showing{" "}
                   <span className="font-bold text-foreground">{startItem}</span>{" "}
-                  - <span className="font-bold text-foreground">{endItem}</span> of{" "}
+                  - <span className="font-bold text-foreground">{endItem}</span>{" "}
+                  of{" "}
                   <span className="font-bold text-foreground">
                     {filteredLedger.length}
                   </span>{" "}
@@ -1497,7 +1711,8 @@ export const AdminProfitLoss: React.FC<AdminProfitLossProps> = ({
                 </Badge>
               </DialogTitle>
               <DialogDescription className="text-xs">
-                Detailed step-by-step financial decomposition for this transaction.
+                Detailed step-by-step financial decomposition for this
+                transaction.
               </DialogDescription>
             </DialogHeader>
 
@@ -1507,13 +1722,17 @@ export const AdminProfitLoss: React.FC<AdminProfitLossProps> = ({
                   {selectedAuditItem.productName}
                 </div>
                 <div className="text-[11px] text-muted-foreground">
-                  {selectedAuditItem.date} · Customer: {selectedAuditItem.customerName} ({selectedAuditItem.recipientPhone})
+                  {selectedAuditItem.date} · Customer:{" "}
+                  {selectedAuditItem.customerName} (
+                  {selectedAuditItem.recipientPhone})
                 </div>
               </div>
 
               <div className="space-y-2 border-t border-border pt-3">
                 <div className="flex justify-between items-center">
-                  <span className="text-muted-foreground">1. Retail Revenue Received:</span>
+                  <span className="text-muted-foreground">
+                    1. Retail Revenue Received:
+                  </span>
                   <span className="font-bold text-foreground tabular-nums">
                     GH₵ {selectedAuditItem.retailRevenue.toFixed(2)}
                   </span>
@@ -1596,31 +1815,45 @@ export const AdminProfitLoss: React.FC<AdminProfitLossProps> = ({
               <div className="space-y-2">
                 <div className="flex justify-between font-bold text-foreground">
                   <span>Gross Operating Revenue:</span>
-                  <span className="tabular-nums">GH₵ {summary.grossRevenue.toFixed(2)}</span>
+                  <span className="tabular-nums">
+                    GH₵ {summary.grossRevenue.toFixed(2)}
+                  </span>
                 </div>
                 <div className="flex justify-between text-rose-600">
                   <span>Cost of Goods Sold (Wholesale Invoices):</span>
-                  <span className="tabular-nums">-GH₵ {summary.supplierCost.toFixed(2)}</span>
+                  <span className="tabular-nums">
+                    -GH₵ {summary.supplierCost.toFixed(2)}
+                  </span>
                 </div>
                 <div className="flex justify-between font-bold text-blue-600 pt-1 border-t border-border">
                   <span>Gross Platform Profit:</span>
-                  <span className="tabular-nums">GH₵ {summary.grossMargin.toFixed(2)}</span>
+                  <span className="tabular-nums">
+                    GH₵ {summary.grossMargin.toFixed(2)}
+                  </span>
                 </div>
                 <div className="flex justify-between text-amber-700">
                   <span>Agent Commissions &amp; Storefront Markups:</span>
-                  <span className="tabular-nums">-GH₵ {summary.agentCommissions.toFixed(2)}</span>
+                  <span className="tabular-nums">
+                    -GH₵ {summary.agentCommissions.toFixed(2)}
+                  </span>
                 </div>
                 <div className="flex justify-between text-amber-700">
                   <span>Tier Margin Performance Bonuses:</span>
-                  <span className="tabular-nums">-GH₵ {summary.tierBonuses.toFixed(2)}</span>
+                  <span className="tabular-nums">
+                    -GH₵ {summary.tierBonuses.toFixed(2)}
+                  </span>
                 </div>
                 <div className="flex justify-between text-amber-700">
                   <span>Referral Incentives &amp; Recruitment Overrides:</span>
-                  <span className="tabular-nums">-GH₵ {summary.referralAllocated.toFixed(2)}</span>
+                  <span className="tabular-nums">
+                    -GH₵ {summary.referralAllocated.toFixed(2)}
+                  </span>
                 </div>
                 <div className="flex justify-between font-black text-emerald-600 dark:text-emerald-400 text-sm pt-2 border-t border-border">
                   <span>Net Retained Platform Profit:</span>
-                  <span className="tabular-nums text-base">GH₵ {summary.netProfit.toFixed(2)}</span>
+                  <span className="tabular-nums text-base">
+                    GH₵ {summary.netProfit.toFixed(2)}
+                  </span>
                 </div>
               </div>
             </div>
