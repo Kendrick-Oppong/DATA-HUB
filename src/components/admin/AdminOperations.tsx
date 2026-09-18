@@ -40,6 +40,7 @@ import { AdminTransactions } from "./AdminTransactions";
 import { AdminCommissions } from "./AdminCommissions";
 import { AdminPayouts } from "./AdminPayouts";
 import { AdminComplaints } from "./AdminComplaints";
+import { AdminSms } from "./AdminSms";
 import { AdminCheckers } from "./AdminCheckers";
 import { AdminAfa } from "./AdminAfa";
 import { Button } from "../ui/button";
@@ -81,6 +82,7 @@ interface AdminOperationsProps {
   | "payouts"
   | "afa-verification"
   | "vouchers-stock"
+  | "sms"
   | "complaints";
   gateways: TelecomGateway[];
   onToggleGatewayStatus: (gatewayId: string) => void;
@@ -905,6 +907,11 @@ export const AdminOperations: React.FC<AdminOperationsProps> = ({
           onAddVoucherStock={onAddVoucherStock}
           onNavigateTab={onNavigateTab}
         />
+      )}
+
+      {/* VIEW: SMS & SENDER IDs */}
+      {view === "sms" && (
+        <AdminSms onNavigateTab={onNavigateTab} />
       )}
 
       {/* VIEW: SETTLEMENT / AGENT PAYOUTS */}

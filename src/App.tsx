@@ -84,18 +84,18 @@ import rubyRedLogoUrl from "./assets/ruby-red-logo.png";
 export type AppRoute =
   | { type: "public"; tab: string }
   | {
-      type: "auth";
-      mode:
-        | "sign-in"
-        | "sign-up"
-        | "otp"
-        | "forgot-password"
-        | "new-password"
-        | "two-factor"
-        | "kyc-verify";
-      redirectTargetRole?: UserRole;
-      redirectReason?: string | null;
-    }
+    type: "auth";
+    mode:
+    | "sign-in"
+    | "sign-up"
+    | "otp"
+    | "forgot-password"
+    | "new-password"
+    | "two-factor"
+    | "kyc-verify";
+    redirectTargetRole?: UserRole;
+    redirectReason?: string | null;
+  }
   | { type: "storefront" }
   | { type: "dashboard"; role: "customer" | "agent" | "admin"; tab: string }
   | { type: "legal"; page: "terms" | "privacy" };
@@ -711,8 +711,8 @@ export default function App() {
     const senderName = isStaff
       ? "SDH Support (Admin)"
       : isAgent
-      ? "You (Agent)"
-      : user?.name || "Customer";
+        ? "You (Agent)"
+        : user?.name || "Customer";
 
     const updated = complaints.map((c) => {
       if (c.id === ticketId) {
@@ -1140,25 +1140,25 @@ export default function App() {
                 activeTab === "guides" ||
                 activeTab === "profile" ||
                 activeTab === "notifications") && (
-                <CustomerWalletOrders
-                  view={activeTab as any}
-                  walletBalance={walletBalance}
-                  onOpenFundWallet={() => setIsFundWalletOpen(true)}
-                  orders={orders}
-                  transactions={transactions}
-                  complaints={complaints}
-                  onOpenReceipt={(order) => setSelectedReceiptOrder(order)}
-                  onAddComplaint={handleAddComplaint}
-                  onReplyComplaint={handleReplyComplaint}
-                  theme={theme}
-                  onToggleTheme={toggleTheme}
-                  onSetTheme={handleSetTheme}
-                  onOpenSecurityPins={() => setIsSecurityPinsOpen(true)}
-                  user={user}
-                  onUpdateUser={handleUpdateUser}
-                  onUpdateOrders={setOrders}
-                />
-              )}
+                  <CustomerWalletOrders
+                    view={activeTab as any}
+                    walletBalance={walletBalance}
+                    onOpenFundWallet={() => setIsFundWalletOpen(true)}
+                    orders={orders}
+                    transactions={transactions}
+                    complaints={complaints}
+                    onOpenReceipt={(order) => setSelectedReceiptOrder(order)}
+                    onAddComplaint={handleAddComplaint}
+                    onReplyComplaint={handleReplyComplaint}
+                    theme={theme}
+                    onToggleTheme={toggleTheme}
+                    onSetTheme={handleSetTheme}
+                    onOpenSecurityPins={() => setIsSecurityPinsOpen(true)}
+                    user={user}
+                    onUpdateUser={handleUpdateUser}
+                    onUpdateOrders={setOrders}
+                  />
+                )}
             </>
           )}
 
@@ -1236,23 +1236,23 @@ export default function App() {
                 activeTab === "wallet" ||
                 activeTab === "transactions" ||
                 activeTab === "verify") && (
-                <AgentCommerce
-                  view={activeTab as any}
-                  storeConfig={storeConfig}
-                  bundles={initialBundles}
-                  orders={orders}
-                  commissionBalance={commissionBalance}
-                  walletBalance={walletBalance}
-                  transactions={transactions}
-                  onOpenFundWallet={() => setIsFundWalletOpen(true)}
-                  onWithdrawSuccess={handleWithdrawSuccess}
-                  onUpdateOrders={(updatedOrders) => {
-                    setOrders(updatedOrders);
-                    saveToStorage("sdh_orders_v4", updatedOrders);
-                  }}
-                  onNavigateTab={handleTabChange}
-                />
-              )}
+                  <AgentCommerce
+                    view={activeTab as any}
+                    storeConfig={storeConfig}
+                    bundles={initialBundles}
+                    orders={orders}
+                    commissionBalance={commissionBalance}
+                    walletBalance={walletBalance}
+                    transactions={transactions}
+                    onOpenFundWallet={() => setIsFundWalletOpen(true)}
+                    onWithdrawSuccess={handleWithdrawSuccess}
+                    onUpdateOrders={(updatedOrders) => {
+                      setOrders(updatedOrders);
+                      saveToStorage("sdh_orders_v4", updatedOrders);
+                    }}
+                    onNavigateTab={handleTabChange}
+                  />
+                )}
 
               {activeTab === "notifications" && <AgentNotificationsView />}
 
@@ -1318,14 +1318,15 @@ export default function App() {
               <AdminOperations
                 view={
                   activeTab === "gateways" ||
-                  activeTab === "orders-audit" ||
-                  activeTab === "transactions" ||
-                  activeTab === "commissions" ||
-                  activeTab === "settlement" ||
-                  activeTab === "payouts" ||
-                  activeTab === "afa-verification" ||
-                  activeTab === "vouchers-stock" ||
-                  activeTab === "complaints"
+                    activeTab === "orders-audit" ||
+                    activeTab === "transactions" ||
+                    activeTab === "commissions" ||
+                    activeTab === "settlement" ||
+                    activeTab === "payouts" ||
+                    activeTab === "afa-verification" ||
+                    activeTab === "vouchers-stock" ||
+                    activeTab === "sms" ||
+                    activeTab === "complaints"
                     ? (activeTab as any)
                     : "gateways"
                 }
