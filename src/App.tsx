@@ -1326,7 +1326,9 @@ export default function App() {
                     activeTab === "afa-verification" ||
                     activeTab === "vouchers-stock" ||
                     activeTab === "sms" ||
-                    activeTab === "complaints"
+                    activeTab === "complaints" ||
+                    activeTab === "users" ||
+                    activeTab === "agents"
                     ? (activeTab as any)
                     : "gateways"
                 }

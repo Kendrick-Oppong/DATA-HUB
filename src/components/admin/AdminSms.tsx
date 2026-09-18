@@ -1033,7 +1033,7 @@ export const AdminSms: React.FC<AdminSmsProps> = ({
                         <span
                           className={`rounded-full px-1.5 py-0.5 text-[9px] font-black tabular-nums ${
                             active
-                              ? tab.id === "sender-ids" && stats.pending > 0
+                              ? (tab.id as string) === "sender-ids" && stats.pending > 0
                                 ? "bg-amber-500/20 text-amber-700 dark:text-amber-400"
                                 : "bg-primary/15 text-primary"
                               : "bg-muted-foreground/20 text-muted-foreground"

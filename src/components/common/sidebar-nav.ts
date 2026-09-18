@@ -244,12 +244,8 @@ export const ADMIN_NAV: NavGroup[] = [
         icon: AlertTriangle,
       },
       {
-        id: "agents",
-        label: "All Agents",
-        icon: ShoppingBag,
-      },
-      {
         id: "users",
+        altIds: ["agents", "all-agents"],
         label: "Users",
         icon: Users,
       },

@@ -43,6 +43,7 @@ import { AdminComplaints } from "./AdminComplaints";
 import { AdminSms } from "./AdminSms";
 import { AdminCheckers } from "./AdminCheckers";
 import { AdminAfa } from "./AdminAfa";
+import { AdminUsers } from "./AdminUsers";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Badge } from "../ui/badge";
@@ -83,7 +84,9 @@ interface AdminOperationsProps {
   | "afa-verification"
   | "vouchers-stock"
   | "sms"
-  | "complaints";
+  | "complaints"
+  | "users"
+  | "agents";
   gateways: TelecomGateway[];
   onToggleGatewayStatus: (gatewayId: string) => void;
   orders: Order[];
@@ -946,6 +949,11 @@ export const AdminOperations: React.FC<AdminOperationsProps> = ({
           onNavigateTab={onNavigateTab}
           orders={orders}
         />
+      )}
+
+      {/* VIEW: USERS & AGENTS DIRECTORY */}
+      {(view === "users" || view === "agents") && (
+        <AdminUsers onNavigateTab={onNavigateTab} />
       )}
     </div>
   );
