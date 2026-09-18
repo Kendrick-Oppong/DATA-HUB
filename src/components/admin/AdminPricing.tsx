@@ -139,7 +139,8 @@ const DEFAULT_SERVICE_FEES: ServiceFeeRecord[] = [
     retailPrice: 35.0,
     wholesaleCost: 20.0,
     agentCommission: 10.0,
-    description: "Official Farmers Association Ghana biometric registration & SIM clearance",
+    description:
+      "Official Farmers Association Ghana biometric registration & SIM clearance",
   },
   {
     id: "srv-util-ecg",
@@ -223,10 +224,13 @@ export const AdminPricing: React.FC<AdminPricingProps> = ({
     const totalPackages = bundlesList.length;
     const avgWholesale =
       totalPackages > 0
-        ? bundlesList.reduce((sum, b) => sum + b.wholesalePrice, 0) / totalPackages
+        ? bundlesList.reduce((sum, b) => sum + b.wholesalePrice, 0) /
+          totalPackages
         : 0;
     const totalCheckers = checkersList.length;
-    const activeAirtime = airtimeRates.filter((r) => r.status === "active").length;
+    const activeAirtime = airtimeRates.filter(
+      (r) => r.status === "active",
+    ).length;
 
     return {
       totalPackages,
@@ -399,7 +403,8 @@ export const AdminPricing: React.FC<AdminPricingProps> = ({
             <span>Pricing &amp; Tariff Administration</span>
           </h1>
           <p className="mt-0.5 text-xs text-muted-foreground">
-            Manage platform wholesale rates, retail price caps, carrier VTU discounts, result checker pricing, and service fees.
+            Manage platform wholesale rates, retail price caps, carrier VTU
+            discounts, result checker pricing, and service fees.
           </p>
         </div>
 
@@ -505,41 +510,45 @@ export const AdminPricing: React.FC<AdminPricingProps> = ({
       </div>
 
       {/* ── 3. NAVIGATION TABS ── (Store Builder Tabs Approach) */}
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+      <Tabs
+        value={activeTab}
+        onValueChange={setActiveTab}
+        className="space-y-6"
+      >
         <ScrollArea className="w-full whitespace-nowrap pb-2">
           <div className="min-w-full p-1">
             <TabsList className="inline-flex h-14 w-max min-w-full items-center justify-start gap-1.5 rounded-2xl border border-border/80 bg-muted/70 p-1.5 text-muted-foreground shadow-2xs">
               <TabsTrigger
                 value="data"
-                className="h-11 rounded-xl px-4 py-2 text-xs font-extrabold flex items-center gap-2 transition-all data-active:!bg-background data-active:text-foreground data-active:shadow-sm cursor-pointer"
+                className="h-6 rounded-xl px-4 py-2 text-[12px] flex items-center gap-2 transition-all data-active:!bg-background data-active:text-foreground data-active:shadow-sm"
               >
                 <Layers className="w-4 h-4 text-primary" />
                 <span>Data Packages &amp; Wholesale</span>
               </TabsTrigger>
               <TabsTrigger
                 value="airtime"
-                className="h-11 rounded-xl px-4 py-2 text-xs font-extrabold flex items-center gap-2 transition-all data-active:!bg-background data-active:text-foreground data-active:shadow-sm cursor-pointer"
+                className="h-6 rounded-xl px-4 py-2 text-[12px] flex items-center gap-2 transition-all data-active:!bg-background data-active:text-foreground data-active:shadow-sm"
               >
                 <Zap className="w-4 h-4 text-amber-500" />
                 <span>Airtime Rates</span>
               </TabsTrigger>
               <TabsTrigger
                 value="checkers"
-                className="h-11 rounded-xl px-4 py-2 text-xs font-extrabold flex items-center gap-2 transition-all data-active:!bg-background data-active:text-foreground data-active:shadow-sm cursor-pointer"
+                className="h-6 rounded-xl px-4 py-2 text-[12px] flex items-center gap-2 transition-all data-active:!bg-background data-active:text-foreground data-active:shadow-sm"
               >
                 <GraduationCap className="w-4 h-4 text-purple-500" />
                 <span>Result Checkers</span>
               </TabsTrigger>
               <TabsTrigger
                 value="services"
-                className="h-11 rounded-xl px-4 py-2 text-xs font-extrabold flex items-center gap-2 transition-all data-active:!bg-background data-active:text-foreground data-active:shadow-sm cursor-pointer"
+                className="h-6 rounded-xl px-4 py-2 text-[12px] flex items-center gap-2 transition-all data-active:!bg-background data-active:text-foreground data-active:shadow-sm"
               >
                 <Store className="w-4 h-4 text-emerald-500" />
                 <span>AFA &amp; Service Fees</span>
               </TabsTrigger>
             </TabsList>
           </div>
-          <ScrollBar orientation="horizontal" />
+          <ScrollBar orientation="horizontal" className="h-2" />
         </ScrollArea>
 
         {/* ── TAB 1: DATA PACKAGES & WHOLESALE ── (Product Catalog & Wholesale Pricing from Store Builder) */}
@@ -552,7 +561,8 @@ export const AdminPricing: React.FC<AdminPricingProps> = ({
                   <span>Product Catalog &amp; Wholesale Pricing</span>
                 </CardTitle>
                 <CardDescription className="mt-1 text-xs">
-                  Wholesale carrier rates synced with SDH gateway. Selling prices are floor-protected against cost.
+                  Wholesale carrier rates synced with SDH gateway. Selling
+                  prices are floor-protected against cost.
                 </CardDescription>
               </div>
             </CardHeader>
@@ -647,10 +657,14 @@ export const AdminPricing: React.FC<AdminPricingProps> = ({
                         <SelectValue placeholder="All telecom carriers" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="ALL">All telecom carriers</SelectItem>
+                        <SelectItem value="ALL">
+                          All telecom carriers
+                        </SelectItem>
                         <SelectItem value="MTN">MTN Ghana</SelectItem>
                         <SelectItem value="Telecel">Telecel Ghana</SelectItem>
-                        <SelectItem value="AirtelTigo">AT (AirtelTigo)</SelectItem>
+                        <SelectItem value="AirtelTigo">
+                          AT (AirtelTigo)
+                        </SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -839,7 +853,8 @@ export const AdminPricing: React.FC<AdminPricingProps> = ({
                   <span>Carrier VTU Airtime Discount &amp; Margin Rules</span>
                 </CardTitle>
                 <CardDescription className="mt-1 text-xs">
-                  Configure telco carrier commission rates and agent reselling margins for instant VTU top-ups.
+                  Configure telco carrier commission rates and agent reselling
+                  margins for instant VTU top-ups.
                 </CardDescription>
               </div>
             </CardHeader>
@@ -870,7 +885,9 @@ export const AdminPricing: React.FC<AdminPricingProps> = ({
                       <TableCell className="py-3 font-extrabold text-xs text-foreground">
                         <div className="flex items-center gap-2">
                           {getNetworkBadge(r.network)}
-                          <span className="font-extrabold text-xs">{r.name}</span>
+                          <span className="font-extrabold text-xs">
+                            {r.name}
+                          </span>
                         </div>
                       </TableCell>
                       <TableCell className="py-3">
@@ -884,7 +901,8 @@ export const AdminPricing: React.FC<AdminPricingProps> = ({
                         </Badge>
                       </TableCell>
                       <TableCell className="py-3 text-xs text-muted-foreground font-semibold tabular-nums">
-                        GH₵ {r.minTopup.toFixed(2)} – GH₵ {r.maxTopup.toFixed(2)}
+                        GH₵ {r.minTopup.toFixed(2)} – GH₵{" "}
+                        {r.maxTopup.toFixed(2)}
                       </TableCell>
                       <TableCell className="py-3 text-center">
                         <Badge className="bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30 text-[10px] font-bold uppercase">
@@ -909,7 +927,8 @@ export const AdminPricing: React.FC<AdminPricingProps> = ({
                   <span>Exam Result Checkers Pricing &amp; Stock</span>
                 </CardTitle>
                 <CardDescription className="mt-1 text-xs">
-                  Set retail prices and wholesale costs for WAEC WASSCE, BECE, CSSPS, and NOVDEC tokens.
+                  Set retail prices and wholesale costs for WAEC WASSCE, BECE,
+                  CSSPS, and NOVDEC tokens.
                 </CardDescription>
               </div>
             </CardHeader>
@@ -947,7 +966,10 @@ export const AdminPricing: React.FC<AdminPricingProps> = ({
                           {c.title}
                         </TableCell>
                         <TableCell className="py-3">
-                          <Badge variant="outline" className="text-[10px] font-extrabold">
+                          <Badge
+                            variant="outline"
+                            className="text-[10px] font-extrabold"
+                          >
                             {c.examBody}
                           </Badge>
                         </TableCell>
@@ -982,7 +1004,8 @@ export const AdminPricing: React.FC<AdminPricingProps> = ({
                   <span>AFA &amp; System Service Fees</span>
                 </CardTitle>
                 <CardDescription className="mt-1 text-xs">
-                  Fee structures for farmer association onboarding, ECG/GWCL processing, and bulk messaging.
+                  Fee structures for farmer association onboarding, ECG/GWCL
+                  processing, and bulk messaging.
                 </CardDescription>
               </div>
             </CardHeader>
