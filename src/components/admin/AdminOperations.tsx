@@ -45,6 +45,8 @@ import { AdminCheckers } from "./AdminCheckers";
 import { AdminAfa } from "./AdminAfa";
 import { AdminUsers } from "./AdminUsers";
 import { AdminNotifications } from "./AdminNotifications";
+import { AdminProfile } from "./AdminProfile";
+import { AdminBeneficiaryTracker } from "./AdminBeneficiaryTracker";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Badge } from "../ui/badge";
@@ -88,7 +90,9 @@ interface AdminOperationsProps {
     | "complaints"
     | "users"
     | "agents"
-    | "notifications";
+    | "notifications"
+    | "failed-beneficiaries"
+    | "profile";
   gateways: TelecomGateway[];
   onToggleGatewayStatus: (gatewayId: string) => void;
   orders: Order[];
@@ -958,6 +962,14 @@ export const AdminOperations: React.FC<AdminOperationsProps> = ({
       {view === "notifications" && (
         <AdminNotifications onNavigateTab={onNavigateTab} />
       )}
+
+      {/* VIEW: FAILED MTN BENEFICIARY TRACKER */}
+      {view === "failed-beneficiaries" && (
+        <AdminBeneficiaryTracker onNavigateTab={onNavigateTab} />
+      )}
+
+      {/* VIEW: ADMIN PROFILE */}
+      {view === "profile" && <AdminProfile onNavigateTab={onNavigateTab} />}
     </div>
   );
 };
