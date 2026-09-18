@@ -49,6 +49,7 @@ import { AdminProfile } from "./AdminProfile";
 import { AdminBeneficiaryTracker } from "./AdminBeneficiaryTracker";
 import { AdminReferralsTiers } from "./AdminReferralsTiers";
 import { AdminPricing } from "./AdminPricing";
+import { AdminProfitLoss } from "./AdminProfitLoss";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Badge } from "../ui/badge";
@@ -96,6 +97,8 @@ interface AdminOperationsProps {
     | "failed-beneficiaries"
     | "referrals"
     | "pricing"
+    | "profit-loss"
+    | "analytics"
     | "profile";
   gateways: TelecomGateway[];
   onToggleGatewayStatus: (gatewayId: string) => void;
@@ -983,6 +986,17 @@ export const AdminOperations: React.FC<AdminOperationsProps> = ({
       {/* VIEW: PRICING & TARIFF ADMINISTRATION */}
       {view === "pricing" && (
         <AdminPricing onNavigateTab={onNavigateTab} />
+      )}
+
+      {/* VIEW: PROFIT & LOSS ANALYTICS */}
+      {(view === "profit-loss" || view === "analytics") && (
+        <AdminProfitLoss
+          orders={orders}
+          afaApplications={afaApplications}
+          checkers={checkers}
+          transactions={transactions}
+          onNavigateTab={onNavigateTab}
+        />
       )}
     </div>
   );

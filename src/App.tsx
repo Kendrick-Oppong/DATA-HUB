@@ -1338,7 +1338,9 @@ export default function App() {
                   activeTab === "failed-beneficiaries" ||
                   activeTab === "profile" ||
                   activeTab === "referrals" ||
-                  activeTab === "pricing"
+                  activeTab === "pricing" ||
+                  activeTab === "profit-loss" ||
+                  activeTab === "analytics"
                     ? (activeTab as any)
                     : "gateways"
                 }

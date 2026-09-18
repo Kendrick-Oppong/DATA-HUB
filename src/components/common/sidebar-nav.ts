@@ -201,6 +201,12 @@ export const ADMIN_NAV: NavGroup[] = [
         icon: Coins,
       },
       {
+        id: "profit-loss",
+        altIds: ["analytics", "pnl"],
+        label: "Profit & Loss",
+        icon: TrendingUp,
+      },
+      {
         id: "settlement",
         altIds: ["payouts", "withdrawals"],
         label: "Payouts",

@@ -311,20 +311,27 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
       {/* Row 1: Core Platform KPI Tiles - Exactly replicating AgentDashboard tile structure */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-        <div className="rounded-xl border border-border bg-card p-3.5 shadow-2xs">
-          <div className="flex items-center gap-2">
-            <div className="flex size-7 items-center justify-center rounded-lg bg-emerald-500/10">
-              <TrendingUp className="size-3.5 text-emerald-600 dark:text-emerald-400" />
+        <div
+          className="rounded-xl border border-border bg-card p-3.5 shadow-2xs cursor-pointer hover:border-emerald-500/50 transition-colors"
+          onClick={() => onNavigateTab("profit-loss")}
+          title="View detailed Profit & Loss Analytics"
+        >
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <div className="flex size-7 items-center justify-center rounded-lg bg-emerald-500/10">
+                <TrendingUp className="size-3.5 text-emerald-600 dark:text-emerald-400" />
+              </div>
+              <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                Revenue Today
+              </span>
             </div>
-            <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
-              Revenue Today
-            </span>
+            <ArrowRight className="size-3 text-muted-foreground" />
           </div>
           <p className="mt-2 text-xl font-black tabular-nums text-foreground">
             GH₵ {totalRevenueToday.toFixed(2)}
           </p>
-          <p className="text-[10px] text-muted-foreground font-medium">
-            {totalOrdersToday} orders today
+          <p className="text-[10px] text-emerald-600 dark:text-emerald-400 font-medium">
+            Open P&amp;L analytics →
           </p>
         </div>
 
