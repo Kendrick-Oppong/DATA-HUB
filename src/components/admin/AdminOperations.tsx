@@ -44,6 +44,7 @@ import { AdminSms } from "./AdminSms";
 import { AdminCheckers } from "./AdminCheckers";
 import { AdminAfa } from "./AdminAfa";
 import { AdminUsers } from "./AdminUsers";
+import { AdminNotifications } from "./AdminNotifications";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Badge } from "../ui/badge";
@@ -75,18 +76,19 @@ import { SignalRail } from "../common/SignalRail";
 
 interface AdminOperationsProps {
   view:
-  | "gateways"
-  | "orders-audit"
-  | "transactions"
-  | "commissions"
-  | "settlement"
-  | "payouts"
-  | "afa-verification"
-  | "vouchers-stock"
-  | "sms"
-  | "complaints"
-  | "users"
-  | "agents";
+    | "gateways"
+    | "orders-audit"
+    | "transactions"
+    | "commissions"
+    | "settlement"
+    | "payouts"
+    | "afa-verification"
+    | "vouchers-stock"
+    | "sms"
+    | "complaints"
+    | "users"
+    | "agents"
+    | "notifications";
   gateways: TelecomGateway[];
   onToggleGatewayStatus: (gatewayId: string) => void;
   orders: Order[];
@@ -107,7 +109,7 @@ interface AdminOperationsProps {
   onUpdateComplaintStatus?: (
     ticketId: string,
     status: Complaint["status"],
-    priority?: Complaint["priority"]
+    priority?: Complaint["priority"],
   ) => void;
 }
 
@@ -125,8 +127,8 @@ export const AdminOperations: React.FC<AdminOperationsProps> = ({
   transactions = [],
   onNavigateTab,
   complaints = [],
-  onReplyComplaint = () => { },
-  onAddComplaint = () => { },
+  onReplyComplaint = () => {},
+  onAddComplaint = () => {},
   onUpdateComplaintStatus,
 }) => {
   // Orders audit state
@@ -757,12 +759,13 @@ export const AdminOperations: React.FC<AdminOperationsProps> = ({
                         <TableCell className="text-xs font-medium text-foreground">
                           <div className="flex items-center gap-1.5">
                             <span
-                              className={`px-1.5 py-0.2 rounded text-[9px] font-black uppercase ${ord.network === "MTN"
-                                ? "bg-amber-400 text-amber-950"
-                                : ord.network === "Telecel"
-                                  ? "bg-red-600 text-white"
-                                  : "bg-blue-600 text-white"
-                                }`}
+                              className={`px-1.5 py-0.2 rounded text-[9px] font-black uppercase ${
+                                ord.network === "MTN"
+                                  ? "bg-amber-400 text-amber-950"
+                                  : ord.network === "Telecel"
+                                    ? "bg-red-600 text-white"
+                                    : "bg-blue-600 text-white"
+                              }`}
                             >
                               {ord.network.slice(0, 3)}
                             </span>
@@ -867,9 +870,9 @@ export const AdminOperations: React.FC<AdminOperationsProps> = ({
                     {filteredOrders.length === 0
                       ? 0
                       : Math.min(
-                        currentPage * ORDERS_PER_PAGE,
-                        filteredOrders.length,
-                      )}
+                          currentPage * ORDERS_PER_PAGE,
+                          filteredOrders.length,
+                        )}
                   </span>{" "}
                   of{" "}
                   <span className="font-bold text-foreground">
@@ -913,9 +916,7 @@ export const AdminOperations: React.FC<AdminOperationsProps> = ({
       )}
 
       {/* VIEW: SMS & SENDER IDs */}
-      {view === "sms" && (
-        <AdminSms onNavigateTab={onNavigateTab} />
-      )}
+      {view === "sms" && <AdminSms onNavigateTab={onNavigateTab} />}
 
       {/* VIEW: SETTLEMENT / AGENT PAYOUTS */}
       {(view === "settlement" || view === "payouts") && (
@@ -933,10 +934,7 @@ export const AdminOperations: React.FC<AdminOperationsProps> = ({
 
       {/* VIEW: STOREFRONT COMMISSIONS */}
       {view === "commissions" && (
-        <AdminCommissions
-          orders={orders}
-          onNavigateTab={onNavigateTab}
-        />
+        <AdminCommissions orders={orders} onNavigateTab={onNavigateTab} />
       )}
 
       {/* VIEW: COMPLAINTS & SUPPORT DESK */}
@@ -954,6 +952,11 @@ export const AdminOperations: React.FC<AdminOperationsProps> = ({
       {/* VIEW: USERS & AGENTS DIRECTORY */}
       {(view === "users" || view === "agents") && (
         <AdminUsers onNavigateTab={onNavigateTab} />
+      )}
+
+      {/* VIEW: NOTIFICATIONS */}
+      {view === "notifications" && (
+        <AdminNotifications onNavigateTab={onNavigateTab} />
       )}
     </div>
   );
