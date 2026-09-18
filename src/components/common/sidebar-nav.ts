@@ -264,11 +264,7 @@ export const ADMIN_NAV: NavGroup[] = [
         label: "Pricing",
         icon: Sliders,
       },
-      {
-        id: "settings",
-        label: "Settings",
-        icon: Settings,
-      },
+   
     ],
   },
 ];
